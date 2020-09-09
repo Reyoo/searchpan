@@ -99,8 +99,8 @@ user:
 wx:
   mp:
     configs:
-      - appId: wx3cddfbbf67f75ed6 # 第一个公众号的appid
-        secret: 1479a16c4ec3c78c29b9f1b2192aa260 # 公众号的appsecret
+      - appId: 11111# 第一个公众号的appid
+        secret: 111111# 公众号的appsecret
         token: 1111 # 接口配置里的Token值
         aesKey: 1111 # 接口配置里的EncodingAESKey值
 #      - appId: 2222 # 第二个公众号的appid，以下同上
