@@ -1,5 +1,8 @@
 package com.libbytian.pan.system.security.simple;
 
+import com.libbytian.pan.system.model.SystemPermissionModel;
+import com.libbytian.pan.system.service.ISystemPermissionService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -10,6 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /** 配置路径访问限制,若你的用户角色比较简单,不需要存数据库,
  * 可以在ApplicationConfigurerAdapter里配置如
@@ -22,6 +26,11 @@ import java.util.List;
  */
 @Component("accessDecisionService")
 public class AccessDecisionService {
+
+
+    @Autowired
+    ISystemPermissionService iSystemPermissionService;
+
 
     private AntPathMatcher antPathMatcher = new AntPathMatcher();
 
@@ -61,13 +70,14 @@ public class AccessDecisionService {
      * @return
      */
     private List<String> queryUrlByUserName(String userName) {
-        switch (userName) {
-            case "admin":
-                return Arrays.asList("/innerMsg", "/secret");
-            case "user":
-                return Arrays.asList("/innerMsg");
-            default:
-                return new ArrayList<>();
-        }
+        /**
+         * 根据用户获取权限entry
+         */
+        List<SystemPermissionModel> systemPermissionModelList = iSystemPermissionService.getPermissionByUsername(userName);
+        /**
+         * 重排序获取url
+         */
+        List<String> urlList = systemPermissionModelList.stream().map(SystemPermissionModel::getPermissionUrl).collect(Collectors.toList());
+        return urlList;
     }
 }
