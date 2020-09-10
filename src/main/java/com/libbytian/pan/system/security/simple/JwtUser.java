@@ -1,6 +1,5 @@
 package com.libbytian.pan.system.security.simple;
 
-import com.libbytian.pan.system.model.SystemUserModel;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -8,7 +7,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -16,27 +14,17 @@ import java.util.stream.Collectors;
  * @date 2019/4/8 11:29.
  */
 public class JwtUser implements UserDetails {
-
-    private  SystemUserModel systemUserModel;
-
-    private Set<SimpleGrantedAuthority> authorities;
-//    private String username;
-//    private String password;
-//    private List<SimpleGrantedAuthority> authorities;
+    private String username;
+    private String password;
+    private List<SimpleGrantedAuthority> authorities;
 
     public JwtUser() {
     }
 
-//    public JwtUser(String username, String password, String ... roles) {
-//        this.username = username;
-//        this.password = password;
-//        this.authorities= Arrays.stream(roles).map(SimpleGrantedAuthority::new).collect(Collectors.toList());
-//    }
-
-    public JwtUser(SystemUserModel systemUserModel, Set<SimpleGrantedAuthority> authorities) {
-        this.systemUserModel = systemUserModel;
-        this.authorities = authorities;
-//        this.authorities= Arrays.stream(roles).map(SimpleGrantedAuthority::new).collect(Collectors.toList());
+    public JwtUser(String username, String password, String ... roles) {
+        this.username = username;
+        this.password = password;
+        this.authorities= Arrays.stream(roles).map(SimpleGrantedAuthority::new).collect(Collectors.toList());
     }
 
     @Override
@@ -46,12 +34,12 @@ public class JwtUser implements UserDetails {
 
     @Override
     public String getPassword() {
-        return systemUserModel.getPassword();
+        return this.password;
     }
 
     @Override
     public String getUsername() {
-        return systemUserModel.getUsername();
+        return this.username;
     }
 
     @Override
@@ -74,15 +62,15 @@ public class JwtUser implements UserDetails {
         return true;
     }
 
-//    public void setUsername(String username) {
-//        this.username = username;
-//    }
-//
-//    public void setPassword(String password) {
-//        this.password = password;
-//    }
-//
-//    public void setAuthorities(List<SimpleGrantedAuthority> authorities) {
-//        this.authorities = authorities;
-//    }
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public void setAuthorities(List<SimpleGrantedAuthority> authorities) {
+        this.authorities = authorities;
+    }
 }

@@ -71,7 +71,7 @@ public class JwtUserDetailServiceImpl implements UserDetailsService {
         for (SystemRoleModel systemRoleModel: roles ) {
             authorities.add(new CustomRole(systemRoleModel));
         }
-        return new JwtUser(systemUserModel,new HashSet(authorities));
+        return new JwtUser(username,systemUserModel.getPassword());
     }
 
 

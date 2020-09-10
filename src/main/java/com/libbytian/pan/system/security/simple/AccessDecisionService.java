@@ -30,7 +30,7 @@ public class AccessDecisionService {
         List<String> whiteList = new ArrayList();
         whiteList.add("/login/register");
         whiteList.add("/wechat/**");
-        //不需要登录也能访问的(permitAll)
+        //不也能访问的(permitAll)
 
         for (String url : whiteList) {
             if (antPathMatcher.match(url, request.getRequestURI())) {

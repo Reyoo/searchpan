@@ -37,9 +37,11 @@ public class JwtHeadFilter extends OncePerRequestFilter {
         try {
             Jwt jwt = JwtHelper.decodeAndVerify(token, verifier);
             String claims = jwt.getClaims();
+            System.out.println(claims);
             user = JSON.parseObject(claims, JwtUser.class);
             //todo: 可以在这里添加检查用户是否过期,冻结...
         }catch (Exception e){
+            System.out.println(e.getMessage());
             //这里也可以filterChain.doFilter(request,response)然后return,那最后就会调用
             //.exceptionHandling().authenticationEntryPoint,也就是本列中的"需要登陆"
             response.setContentType("application/json;charset=UTF-8");
