@@ -14,9 +14,18 @@ import java.io.IOException;
  */
 public class LoginFailureHandler extends SimpleUrlAuthenticationFailureHandler {
 
+    /**
+     * 登录失败 返回提示 权限框架完全运行后应当做跳转页面或者报文提示处理
+     * @param request
+     * @param response
+     * @param exception
+     * @throws IOException
+     * @throws ServletException
+     */
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
         response.setContentType("application/json;charset=UTF-8");
-        response.getWriter().write("登录失败");
+
+        response.getWriter().write("onAuthenticationFailure --> " + exception.getMessage());
     }
 }

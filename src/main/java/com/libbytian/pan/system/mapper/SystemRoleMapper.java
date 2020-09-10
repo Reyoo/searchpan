@@ -20,6 +20,11 @@ import java.util.List;
 @Mapper
 public interface SystemRoleMapper extends BaseMapper<SystemRoleModel> {
 
-    @Select("select role_id , role_name, role_status from sys_role where role_id in (select role_id from sys_user_role where user_id = #{0})")
+    @Select("select role_id AS roleId , role_name AS roleName, role_status AS roleStatus from sys_role where role_id in (select role_id from sys_user_role where user_id = #{0})")
     List<SystemRoleModel> selectUserByUsername(String userId);
+
+
+    @Select("select role_id AS roleId , role_name AS roleName, role_status AS roleStatus from sys_role where role_name = #{0}")
+    SystemRoleModel selectRoleByRolename(String roleName);
+
 }

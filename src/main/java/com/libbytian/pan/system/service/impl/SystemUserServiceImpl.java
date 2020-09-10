@@ -2,9 +2,13 @@ package com.libbytian.pan.system.service.impl;
 
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.libbytian.pan.system.mapper.SystemRoleMapper;
 import com.libbytian.pan.system.mapper.SystemUserMapper;
+import com.libbytian.pan.system.mapper.SystemUserToRoleMapper;
+import com.libbytian.pan.system.model.SystemRoleModel;
 import com.libbytian.pan.system.model.SystemUserModel;
 import com.libbytian.pan.system.model.SystemUserToRole;
+import com.libbytian.pan.system.service.ISystemRoleService;
 import com.libbytian.pan.system.service.ISystemUserService;
 import com.libbytian.pan.system.service.ISystemUserToRoleService;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +35,8 @@ public class SystemUserServiceImpl extends ServiceImpl<SystemUserMapper, SystemU
 
     private final SystemUserMapper systemUserMapper ;
 
+    private final ISystemRoleService systemRoleService;
+
 
     @Override
     public SystemUserModel getUserByUserName(String username) {
@@ -45,13 +51,25 @@ public class SystemUserServiceImpl extends ServiceImpl<SystemUserMapper, SystemU
 
     @Override
     public SystemUserModel register(SystemUserModel user) {
+        user.setStatus(0);
         user.setCreateTime(LocalDateTime.now());
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         String encode = encoder.encode(user.getPassword());
         user.setPassword(encode);
         boolean result = this.save(user);
+        /**
+         * 新用户赋权限为 ROLE_NORMAL
+         */
+
+        /**
+         * 1. 先去查询角色表中ROLE_NORMAL 对应的id
+         * 2. 拿着 角色id 绑定用户id 插入到库中
+         */
+
+        SystemRoleModel systemRoleModel = systemRoleService.getRoleByRolename("ROLE_NORMAL");
+
         if (result) {
-            SystemUserToRole userToRole  = SystemUserToRole.builder().userId(user.getUserId()).roleId("ROLE_NORMAL").build();
+            SystemUserToRole userToRole  = SystemUserToRole.builder().userId(user.getUserId()).roleId(systemRoleModel.getRoleId()).build();
             userToRoleService.save(userToRole);
         }
         return user;

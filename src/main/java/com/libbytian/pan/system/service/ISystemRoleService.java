@@ -13,4 +13,7 @@ public interface ISystemRoleService extends IService<SystemRoleModel> {
 
     List<SystemRoleModel> getRolenameByUserId(String userId);
 
+
+    SystemRoleModel getRoleByRolename(String rolename);
+
 }

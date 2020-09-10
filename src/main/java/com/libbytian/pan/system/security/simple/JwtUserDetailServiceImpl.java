@@ -36,8 +36,6 @@ public class JwtUserDetailServiceImpl implements UserDetailsService {
     @Autowired
     private ISystemUserService iSystemUserService;
 
-    @Autowired
-    private ISystemUserToRoleService iUserToRoleService;
 
     @Autowired
     private ISystemRoleService iSystemRoleService;

@@ -18,12 +18,17 @@ public class LoginController {
 
     private final ISystemUserService iUserService;
 
-    @GetMapping(value = "/login")
-    public String login() {
-        return "login";
-    }
+//    @GetMapping(value = "/login")
+//    public String login() {
+//        return "login";
+//    }
 
 
+    /**
+     * 注册新用户
+     * @param user
+     * @return
+     */
     @RequestMapping(path = "/login/register" ,method = RequestMethod.POST)
     public AjaxResult loginRegister(@RequestBody SystemUserModel user){
             try{

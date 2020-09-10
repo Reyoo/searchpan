@@ -1,4 +1,4 @@
-package com.libbytian.pan.system.filter;
+package com.libbytian.pan.system.security.filter;
 
 import com.alibaba.fastjson.JSON;
 import com.libbytian.pan.system.security.simple.JwtLoginToken;

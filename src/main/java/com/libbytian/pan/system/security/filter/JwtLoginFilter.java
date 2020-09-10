@@ -1,4 +1,4 @@
-package com.libbytian.pan.system.filter;
+package com.libbytian.pan.system.security.filter;
 
 import com.libbytian.pan.system.security.simple.JwtLoginToken;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -18,6 +18,9 @@ import javax.servlet.http.HttpServletResponse;
 public class JwtLoginFilter extends AbstractAuthenticationProcessingFilter {
 
 
+    /**
+     * 设置登录的url 请求方式
+     */
     public JwtLoginFilter() {
         super(new AntPathRequestMatcher("/login/signin", "POST"));
     }
