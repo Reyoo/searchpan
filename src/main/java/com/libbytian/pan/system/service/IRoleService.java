@@ -10,5 +10,5 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(propagation = Propagation.REQUIRES_NEW)
 public interface IRoleService extends IService<SystemRoleModel> {
 
-    Page<SystemRoleModel> select(Page<SystemRoleModel> page , SystemRoleModel role);
+    IPage<SystemRoleModel> select(Page<SystemRoleModel> page , SystemRoleModel role);
 }

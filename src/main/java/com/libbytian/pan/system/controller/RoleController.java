@@ -17,11 +17,11 @@ public class RoleController {
     private final IRoleService iRoleService;
 
     @RequestMapping(value = "role/selct",method = RequestMethod.GET)
-    public AjaxResult select(@RequestParam int start , @RequestParam int limit , @RequestBody SystemUserModel role){
+    public AjaxResult select(@RequestParam int start , @RequestParam int limit , @RequestBody SystemRoleModel role){
 
-        Page<SystemUserModel> page = new Page<>(start,limit);
+        Page<SystemRoleModel> page = new Page<>(start,limit);
 
-//        iRoleService.select(page,role);
+        iRoleService.select(page,role);
 
         return AjaxResult.success();
 
