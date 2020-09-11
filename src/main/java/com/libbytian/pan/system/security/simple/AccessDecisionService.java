@@ -39,6 +39,8 @@ public class AccessDecisionService {
         List<String> whiteList = new ArrayList();
         whiteList.add("/login/register");
         whiteList.add("/wechat/**");
+        whiteList.add(("/per/**"));
+        whiteList.add(("/role/**"));
         //不也能访问的(permitAll)
 
         for (String url : whiteList) {

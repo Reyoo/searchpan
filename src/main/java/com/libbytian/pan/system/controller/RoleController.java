@@ -16,15 +16,82 @@ public class RoleController {
 
     private final IRoleService iRoleService;
 
-    @RequestMapping(value = "role/selct",method = RequestMethod.GET)
-    public AjaxResult select(@RequestParam int start , @RequestParam int limit , @RequestBody SystemRoleModel role){
+
+    /**
+     * 根据roleName，查询用户信息
+     * @param start
+     * @param limit
+     * @param roleName
+     * @return
+     */
+    @RequestMapping(value = "role/find",method = RequestMethod.GET)
+    public AjaxResult findRole(@RequestParam int start , @RequestParam int limit , @RequestParam String roleName){
 
         Page<SystemRoleModel> page = new Page<>(start,limit);
 
-        iRoleService.select(page,role);
+        try {
+            IPage<SystemUserModel> result = iRoleService.findRole(page,roleName);
 
-        return AjaxResult.success();
+            return AjaxResult.success(result);
+        } catch (Exception e) {
+
+            return AjaxResult.error(e.getMessage());
+        }
 
     }
+
+
+    /**
+     * 新增角色
+     * @param role
+     * @return
+     */
+    @RequestMapping(value = "role/add",method = RequestMethod.POST)
+    public AjaxResult addRole(@RequestBody SystemRoleModel role){
+
+        try {
+            iRoleService.addRole(role);
+
+            return AjaxResult.success();
+        } catch (Exception e) {
+            return AjaxResult.error(e.getMessage());
+        }
+
+    }
+
+    /**
+     * 根据角色ID修改角色名
+     * @param role
+     * @return
+     */
+    @RequestMapping(value = "role/put",method = RequestMethod.PUT)
+    public AjaxResult putRole(@RequestBody SystemRoleModel role){
+
+        try {
+            iRoleService.putRole(role);
+            return AjaxResult.success();
+        } catch (Exception e) {
+            return AjaxResult.error(e.getMessage());
+        }
+    }
+
+
+    /**
+     * 根据角色ID删除角色
+     * @param roleId
+     * @return
+     */
+    @RequestMapping(value = "role/drop",method = RequestMethod.DELETE)
+    public AjaxResult dropRole(@RequestParam String roleId){
+
+        try {
+            iRoleService.dropRole(roleId);
+            return AjaxResult.success();
+        } catch (Exception e) {
+            return AjaxResult.error(e.getMessage());
+        }
+    }
+
+
 
 }
