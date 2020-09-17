@@ -20,12 +20,6 @@ public class LoginController {
     private final ISystemUserService iUserService;
 
 
-//    @GetMapping(value = "/login")
-//    public String login() {
-//        return "login";
-//    }
-
-
     /**
      * 注册新用户
      * @param user
