@@ -75,14 +75,11 @@ public class PermissionController {
     public AjaxResult addPermission(@RequestBody SystemPermissionModel permission){
 
        int result = iPermissionService.addPermission(permission);
-
        if(result==1){
            return AjaxResult.success();
        }else {
            return AjaxResult.error();
        }
-
-
     }
 
 

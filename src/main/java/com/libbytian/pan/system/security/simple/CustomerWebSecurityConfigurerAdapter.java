@@ -87,7 +87,7 @@ public class CustomerWebSecurityConfigurerAdapter extends WebSecurityConfigurerA
                 .addFilterAfter(headFilter, JwtLoginFilter.class)
                 //禁用session
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and()
+                .and().cors().and()
                 .csrf().disable().authorizeRequests()
                 .and()
                 .formLogin()

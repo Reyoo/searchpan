@@ -38,11 +38,11 @@ public class AccessDecisionService {
 
         List<String> whiteList = new ArrayList();
         whiteList.add("/login/register");
-        whiteList.add("/login/**");
+//        whiteList.add("/login/**");
         whiteList.add("/wechat/**");
-        whiteList.add(("/per/**"));
-        whiteList.add(("/role/**"));
-        whiteList.add(("/home/**"));
+//        whiteList.add(("/per/**"));
+//        whiteList.add(("/role/**"));
+//        whiteList.add(("/home/**"));
         //不也能访问的(permitAll)
 
         for (String url : whiteList) {

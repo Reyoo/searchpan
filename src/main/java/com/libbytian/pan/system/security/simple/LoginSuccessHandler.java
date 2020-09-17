@@ -36,6 +36,7 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
         //签发token
         Map map = new HashMap();
         map.put("username", authentication.getName());
+        map.put("route", "userManagement");
         map.put("token", token);
         map.put("status",0);
 
