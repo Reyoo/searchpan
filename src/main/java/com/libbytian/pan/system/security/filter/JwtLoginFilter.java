@@ -46,7 +46,9 @@ public class JwtLoginFilter extends AbstractAuthenticationProcessingFilter {
            return authenticatedToken;
 
        }catch (Exception e){
-           throw new BadCredentialsException("坏的凭证");
+           System.out.println(e.getMessage());
+           System.out.println(e.getLocalizedMessage());
+           throw new BadCredentialsException(e.getMessage());
        }
     }
 

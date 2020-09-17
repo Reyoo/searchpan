@@ -25,7 +25,8 @@ public class LoginController {
      * @param user
      * @return
      */
-    @RequestMapping(path = "/login/register" ,method = RequestMethod.POST)
+    @RequestMapping(path = "/login/register" ,method = RequestMethod.POST )
+
     public AjaxResult loginRegister(@RequestBody SystemUserModel user){
             try{
                int count = iUserService.selectByName(user.getUsername());

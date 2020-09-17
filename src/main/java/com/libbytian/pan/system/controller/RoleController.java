@@ -27,7 +27,6 @@ public class RoleController {
     @RequestMapping(value = "role/find",method = RequestMethod.GET)
     public AjaxResult findUserByRole(@RequestParam(defaultValue = "0") int start , @RequestParam(defaultValue = "10") int limit , @RequestParam String roleName){
         Page<SystemRoleModel> page = new Page<>(start,limit);
-
         try {
             IPage<SystemUserModel> result = iRoleService.findUserByRole(page,roleName);
 

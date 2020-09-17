@@ -30,12 +30,21 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
      */
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
+
         response.setContentType("application/json;charset=UTF-8");
         String userJsonStr = JSON.toJSONString(authentication.getPrincipal());
         String token = JwtHelper.encode(userJsonStr, signer).getEncoded();
+
+
+        /**
+         * 判断用户权限： 设置路由
+         * 封装map 为实体类
+         * ROLE_ADMIN 返回
+         */
         //签发token
         Map map = new HashMap();
         map.put("username", authentication.getName());
+        map.put("route", "userManagement");
         map.put("token", token);
         map.put("status",0);
 
