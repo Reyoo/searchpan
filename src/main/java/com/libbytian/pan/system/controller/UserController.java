@@ -16,27 +16,12 @@ public class UserController {
 
     private final IUserService iUserService;
 
-    /**
-     * 全查询
-     * @return
-     */
-
-    @RequestMapping(value = "/login/selectall",method = RequestMethod.GET)
-    public IPage<SystemUserModel> findByPage(@RequestParam int start,@RequestParam  int limit){
-
-        Page<SystemUserModel> page = new Page<>(start,limit);
-
-        IPage<SystemUserModel> result = iUserService.findByPage(page);
-
-        return result;
-    }
-
 
     /**
      * 条件查询
      * @param start
      * @param limit
-     * @param
+     * @param user = null 则为全查询
      * @return
      */
     @RequestMapping(value = "/login/select",method = RequestMethod.GET)
@@ -79,12 +64,11 @@ public class UserController {
      * @return
      */
     @RequestMapping(value = "/login/update",method = RequestMethod.PUT)
-    public AjaxResult updateUser(@RequestBody SystemUserModel user){
+    public AjaxResult updateUser(@RequestBody SystemUserModel user) {
 
         try {
-            iUserService.updateUser(user);
-
-            return AjaxResult.success();
+                iUserService.updateUser(user);
+                return AjaxResult.success();
         } catch (Exception e) {
             return AjaxResult.error(e.getMessage());
         }

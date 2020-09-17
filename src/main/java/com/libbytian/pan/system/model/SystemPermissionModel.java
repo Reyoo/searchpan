@@ -8,6 +8,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 /**
  * @author: QiSun
  * @date: 2020-09-10
@@ -45,4 +47,10 @@ public class SystemPermissionModel {
      */
     @TableField("permission_status")
     private String permissionstatus;
+
+    /**
+     * 创建时间
+     */
+    @TableField("createtime")
+    private LocalDateTime createtime;
 }

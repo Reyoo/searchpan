@@ -34,6 +34,14 @@ public interface ISystemUserService extends IService<SystemUserModel> {
      */
     SystemUserModel register(SystemUserModel user );
 
+
+    /**
+     * 查询用户是否存在
+     * @param username
+     * @return
+     */
+    int selectByName(String username);
+
 //    Map<String, Object> getLoginUserAndMenuInfo(User user);
 //
 //    void deleteByUserNo(String userNo)throws Exception;

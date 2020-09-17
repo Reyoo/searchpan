@@ -12,6 +12,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class IRoleServiceImpl extends ServiceImpl<RoleMapper, SystemRoleModel> implements IRoleService {
@@ -20,12 +22,26 @@ public class IRoleServiceImpl extends ServiceImpl<RoleMapper, SystemRoleModel> i
 
 
     @Override
-    public IPage<SystemUserModel> findRole(Page<SystemRoleModel> page, String roleName) {
+    public IPage<SystemUserModel> findUserByRole(Page<SystemRoleModel> page, String roleName) {
 
-        IPage<SystemUserModel> result = roleMapper.select(page,roleName);
+        IPage<SystemUserModel> result = roleMapper.selectUserByRole(page,roleName);
 
         return result;
 
+    }
+
+    @Override
+    public IPage<SystemUserModel> findRoleById(Page<SystemRoleModel> page, String roleId) {
+
+       IPage<SystemRoleModel> result = roleMapper.selectRoleById(page,roleId);
+
+        return null;
+    }
+
+    @Override
+    public int roleNameCount(String roleName) {
+
+        return roleMapper.roleNameCount(roleName);
     }
 
     @Override
@@ -33,7 +49,8 @@ public class IRoleServiceImpl extends ServiceImpl<RoleMapper, SystemRoleModel> i
 
         String roleId = role.getRoleId();
         String rolename =  role.getRoleName();
-        return roleMapper.insert(roleId,rolename);
+        LocalDateTime localDateTime = LocalDateTime.now();
+        return roleMapper.insert(roleId,rolename,localDateTime);
     }
 
     @Override

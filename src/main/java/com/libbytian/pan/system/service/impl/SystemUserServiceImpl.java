@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.libbytian.pan.system.mapper.SystemRoleMapper;
 import com.libbytian.pan.system.mapper.SystemUserMapper;
 import com.libbytian.pan.system.mapper.SystemUserToRoleMapper;
+import com.libbytian.pan.system.mapper.UserMapper;
 import com.libbytian.pan.system.model.SystemRoleModel;
 import com.libbytian.pan.system.model.SystemUserModel;
 import com.libbytian.pan.system.model.SystemUserToRole;
@@ -36,6 +37,8 @@ public class SystemUserServiceImpl extends ServiceImpl<SystemUserMapper, SystemU
     private final SystemUserMapper systemUserMapper ;
 
     private final ISystemRoleService systemRoleService;
+
+    private final UserMapper userMapper;
 
 
     @Override
@@ -73,6 +76,20 @@ public class SystemUserServiceImpl extends ServiceImpl<SystemUserMapper, SystemU
             userToRoleService.save(userToRole);
         }
         return user;
+    }
+
+    /**
+     * 查询用户是否存在
+     * @param username
+     * @return
+     */
+    @Override
+    public int selectByName(String username) {
+
+        int count = userMapper.selectByName(username);
+
+        return count;
+
     }
 //
 //    @Override

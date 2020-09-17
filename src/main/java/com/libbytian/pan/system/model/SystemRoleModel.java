@@ -8,6 +8,8 @@ import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.*;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
+import java.util.Date;
 
 /**
  * <p>
@@ -42,6 +44,9 @@ public class SystemRoleModel extends Model<SystemRoleModel> {
      */
     @TableField("role_status")
     private String roleStatus;
+
+    @TableField("createtime")
+    private LocalDateTime createtime;
 
     @Override
     protected Serializable pkVal() {

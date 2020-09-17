@@ -11,7 +11,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(propagation = Propagation.REQUIRES_NEW)
 public interface IRoleService extends IService<SystemRoleModel> {
 
-    IPage<SystemUserModel> findRole(Page<SystemRoleModel> page , String roleName);
+    IPage<SystemUserModel> findUserByRole(Page<SystemRoleModel> page , String roleName);
+    IPage<SystemUserModel> findRoleById(Page<SystemRoleModel> page , String roleId);
+    int roleNameCount(String roleName);
     int addRole(SystemRoleModel role);
     int putRole(SystemRoleModel role);
     int dropRole(String roleId);

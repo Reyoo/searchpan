@@ -15,6 +15,7 @@ import com.libbytian.pan.system.service.IUserService;
 import lombok.RequiredArgsConstructor;
 import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -42,17 +43,22 @@ public class IUserServiceImpl extends ServiceImpl<SystemUserMapper,SystemUserMod
 
 
     @Override
-    public SystemUserModel updateUser(SystemUserModel user) {
+    public SystemUserModel updateUser(SystemUserModel user)  {
+
         user.setLastLoginTime(LocalDateTime.now());
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         String encode = encoder.encode(user.getPassword());
         user.setPassword(encode);
+
+
         boolean result = this.updateById(user);
+
 
         if(result){
             SystemUserToRole userToRole =  SystemUserToRole.builder().userId(user.getUserId()).roleId("ROLE_NORMAL").build();
             userToRoleService.save(userToRole);
         }
+
         return user;
     }
 
@@ -82,5 +88,7 @@ public class IUserServiceImpl extends ServiceImpl<SystemUserMapper,SystemUserMod
         return userMapper.selectPage(page,queryWrapper);
 
     }
+
+
 
 }

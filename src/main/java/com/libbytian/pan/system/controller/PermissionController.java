@@ -66,6 +66,11 @@ public class PermissionController {
         return AjaxResult.success();
     }
 
+    /**
+     * 添加
+     * @param permission
+     * @return
+     */
     @RequestMapping(value = "per/add",method = RequestMethod.POST)
     public AjaxResult addPermission(@RequestBody SystemPermissionModel permission){
 

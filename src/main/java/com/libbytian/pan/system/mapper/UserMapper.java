@@ -25,4 +25,10 @@ public interface UserMapper extends BaseMapper<SystemUserModel> {
 
     @Delete("delete from sys_user where user_name = #{0}")
     int deleteUserByUsername(String username);
+
+
+    @Select("select COUNT(*) from sys_user WHERE user_name = #{username} ")
+    int selectByName(String username);
+
+
 }

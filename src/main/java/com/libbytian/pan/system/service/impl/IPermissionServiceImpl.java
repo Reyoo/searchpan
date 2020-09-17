@@ -10,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class IPermissionServiceImpl extends ServiceImpl<PermissionMapper, SystemPermissionModel> implements IPermissionService {
@@ -44,9 +46,11 @@ public class IPermissionServiceImpl extends ServiceImpl<PermissionMapper, System
     @Override
     public int addPermission(SystemPermissionModel permission) {
 
+        LocalDateTime localDateTime = LocalDateTime.now();
+
         String permissionComment = permission.getPermissionComment();
         String permissionUrl = permission.getPermissionUrl();
 
-        return permissionMapper.add(permissionUrl,permissionComment);
+        return permissionMapper.add(permissionUrl,permissionComment,localDateTime);
     }
 }
