@@ -25,10 +25,9 @@ public class UserController {
      * @return
      */
     @RequestMapping(value = "/login/select",method = RequestMethod.GET)
-    public AjaxResult findConditionByPage(@RequestParam int start, @RequestParam  int limit, @RequestBody SystemUserModel user){
+    public AjaxResult findConditionByPage(@RequestParam(defaultValue = "0")int start, @RequestParam(defaultValue = "10")  int limit, @RequestBody(required = false) SystemUserModel user){
 
         Page<SystemUserModel> page = new Page<>(start,limit);
-
         try {
             IPage<SystemUserModel> result = iUserService.findConditionByPage(page,user);
 
