@@ -12,12 +12,9 @@ import org.springframework.transaction.annotation.Transactional;
 public interface IRoleService extends IService<SystemRoleModel> {
 
     IPage<SystemUserModel> findUserByRole(Page<SystemRoleModel> page , String roleName);
-    IPage<SystemRoleModel> findRoleById(Page<SystemRoleModel> page , String roleId);
+    IPage<SystemUserModel> findRoleById(Page<SystemRoleModel> page , String roleId);
     int roleNameCount(String roleName);
     int addRole(SystemRoleModel role);
     int putRole(SystemRoleModel role);
     int dropRole(String roleId);
-
-
-    boolean checkEmail(String roleName);
 }
