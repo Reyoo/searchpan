@@ -30,10 +30,9 @@ public class UserController {
         Page<SystemUserModel> page = new Page<>(start,limit);
         try {
             IPage<SystemUserModel> result = iUserService.findConditionByPage(page,user);
-
             return  AjaxResult.success(result);
-
         } catch (Exception e) {
+            System.out.println(e.getMessage());
             return AjaxResult.error(e.getMessage());
         }
 
