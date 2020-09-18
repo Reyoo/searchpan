@@ -76,12 +76,17 @@ public class IUserServiceImpl extends ServiceImpl<SystemUserMapper,SystemUserMod
 
         QueryWrapper queryWrapper = new QueryWrapper();
 
-        if(systemUserModel.getUsername() != null){
-            queryWrapper.eq("user_name",systemUserModel.getUsername());
-        }
+        /**
+         * 这里systemusermodel 不做空判断 。getusername 空指针  null.getUsername
+         */
+        if(systemUserModel != null){
+            if(systemUserModel.getUsername() != null){
+                queryWrapper.eq("user_name",systemUserModel.getUsername());
+            }
 
-        if(systemUserModel.getUserId() != null){
-            queryWrapper.eq("user_id",systemUserModel.getUserId());
+            if(systemUserModel.getUserId() != null){
+                queryWrapper.eq("user_id",systemUserModel.getUserId());
+            }
         }
 
 
