@@ -16,8 +16,7 @@ import java.util.stream.Collectors;
 public class JwtUser implements UserDetails {
     private String username;
     private String password;
-    private List<GrantedAuthority> authorities;
-
+    private List<SimpleGrantedAuthority> authorities;
     public JwtUser() {
     }
 
@@ -25,13 +24,6 @@ public class JwtUser implements UserDetails {
         this.username = username;
         this.password = password;
         this.authorities= Arrays.stream(roles).map(SimpleGrantedAuthority::new).collect(Collectors.toList());
-    }
-
-
-    public JwtUser(String username, String password, List<GrantedAuthority> authorities) {
-        this.username = username;
-        this.password = password;
-        this.authorities= authorities;
     }
 
     @Override
@@ -77,7 +69,7 @@ public class JwtUser implements UserDetails {
         this.password = password;
     }
 
-    public void setAuthorities(List<GrantedAuthority> authorities) {
+    public void setAuthorities(List<SimpleGrantedAuthority> authorities) {
         this.authorities = authorities;
     }
 }

@@ -10,6 +10,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 
 /**
@@ -35,13 +36,26 @@ public class SystemTemDetailsModel extends Model<SystemTemDetailsModel> {
      * 关键字
      */
     @TableField("templatedetails_keyword")
-    private String temdetailsKeyword;
+    private String keyword;
 
     /**
      * 关键字对应回复
      */
     @TableField("templatedetails_value")
-    private String temdetailsValue;
+    private String keywordToValue;
+
+    /**
+     * 创建时间
+     */
+    @TableField("createtime")
+    private LocalDateTime createtime;
+
+    /**
+     * 排序状态 默认0 ，1 置顶
+     */
+    @TableField("templatedetails_status")
+    private Integer temdetailsstatus;
+
 
     @Override
     protected Serializable pkVal() {

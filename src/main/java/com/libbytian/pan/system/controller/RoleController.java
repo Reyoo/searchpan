@@ -10,9 +10,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 @RestController
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class RoleController {
@@ -28,7 +25,7 @@ public class RoleController {
      * @return
      */
     @RequestMapping(value = "role/find",method = RequestMethod.GET)
-    public AjaxResult findUserByRole(@RequestParam int start , @RequestParam int limit , @RequestParam String roleName){
+    public AjaxResult findUserByRole(@RequestParam(defaultValue = "0") int start , @RequestParam(defaultValue = "10") int limit , @RequestParam String roleName){
         Page<SystemRoleModel> page = new Page<>(start,limit);
         try {
             IPage<SystemUserModel> result = iRoleService.findUserByRole(page,roleName);
@@ -41,14 +38,25 @@ public class RoleController {
 
     }
 
+    /**
+     * 根据角色ID，查询角色信息
+     * @param start
+     * @param limit
+     * @param roleId
+     * @return
+     */
     @RequestMapping(value = "/role/findRoleById",method = RequestMethod.GET)
     public AjaxResult findRoleById(@RequestParam int start ,@RequestParam int limit , @RequestParam String roleId){
 
         Page<SystemRoleModel> page =  new Page<>(start,limit);
 
+        try {
+            IPage<SystemRoleModel> result = iRoleService.findRoleById(page,roleId);
 
-
-        return AjaxResult.success();
+            return AjaxResult.success(result);
+        } catch (Exception e) {
+            return AjaxResult.error(e.getMessage());
+        }
     }
 
 
@@ -60,11 +68,7 @@ public class RoleController {
     @RequestMapping(value = "role/add",method = RequestMethod.POST)
     public AjaxResult addRole(@RequestBody SystemRoleModel role){
 
-        String roleName = role.getRoleName();
-
-        boolean flag = checkEmail(roleName);
-
-        if(flag) {
+//        boolean flag = iRoleService.checkEmail(roleName);
 
 
             try {
@@ -73,7 +77,6 @@ public class RoleController {
                     return AjaxResult.error("角色名已存在，请重新输入");
                 }
 
-
                 iRoleService.addRole(role);
 
                 return AjaxResult.success();
@@ -81,10 +84,6 @@ public class RoleController {
                 return AjaxResult.error(e.getMessage());
             }
 
-
-        }else {
-            return AjaxResult.error("角色名应为邮箱格式！");
-        }
     }
 
     /**
@@ -120,21 +119,6 @@ public class RoleController {
         }
     }
 
-
-
-    public boolean checkEmail(String roleName){
-        boolean flag = false;
-        try {
-            String check = "^([a-z0-9A-Z]+[-|_|\\.]?)+[a-z0-9A-Z]@([a-z0-9A-Z]+(-[a-z0-9A-Z]+)?\\.)+[a-zA-Z]{2,}$";
-            Pattern regex = Pattern.compile(check);
-            Matcher matcher = regex.matcher(roleName);
-            flag = matcher.matches();
-        } catch (Exception e) {
-            flag = false;
-
-        }
-        return  flag;
-    }
 
 
 }
