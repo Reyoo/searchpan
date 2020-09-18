@@ -36,13 +36,13 @@ public class SystemTemDetailsModel extends Model<SystemTemDetailsModel> {
      * 关键字
      */
     @TableField("templatedetails_keyword")
-    private String temdetailsKeyword;
+    private String keyword;
 
     /**
      * 关键字对应回复
      */
     @TableField("templatedetails_value")
-    private String temdetailsValue;
+    private String keywordToValue;
 
     /**
      * 创建时间
@@ -54,7 +54,7 @@ public class SystemTemDetailsModel extends Model<SystemTemDetailsModel> {
      * 排序状态 默认0 ，1 置顶
      */
     @TableField("templatedetails_status")
-    private String temdetailsstatus;
+    private Integer temdetailsstatus;
 
 
     @Override

@@ -18,25 +18,39 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Data
 @TableName("sys_template")
-public class SystemTemplate extends Model<SystemTemplate> {
+public class SystemTemplateModel extends Model<SystemTemplateModel> {
 
     private static final long serialVersionUID = 1L;
 
-
+    /**
+     * 主键
+     */
     @TableId(value = "template_id",type = IdType.AUTO)
     private Integer templateid;
 
+    /**
+     * 模板名称
+     */
     @TableField(value = "template_name")
     private String templatename;
 
+    /**
+     * 创建时间
+     */
     @TableField(value = "template_createtime")
     private LocalDateTime templatecreatetime;
 
+    /**
+     * 最后修改时间
+     */
     @TableField(value = "template_lastupdate")
     private LocalDateTime templatelastupdate;
 
-    @TableField(value = "temolate_status")
-    private String temolatestatus;
+    /**
+     * 状态值 0正常，-1删除
+     */
+    @TableField(value = "template_status")
+    private Integer templatestatus;
 
 
     @Override
