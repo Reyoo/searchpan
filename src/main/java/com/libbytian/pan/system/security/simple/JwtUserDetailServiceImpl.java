@@ -2,11 +2,9 @@ package com.libbytian.pan.system.security.simple;
 
 import com.libbytian.pan.system.model.SystemRoleModel;
 import com.libbytian.pan.system.model.SystemUserModel;
-import com.libbytian.pan.system.model.SystemUserToRole;
 import com.libbytian.pan.system.security.model.CustomRole;
 import com.libbytian.pan.system.service.ISystemRoleService;
 import com.libbytian.pan.system.service.ISystemUserService;
-import com.libbytian.pan.system.service.ISystemUserToRoleService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,8 +16,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
+
 import java.util.List;
 
 /**
