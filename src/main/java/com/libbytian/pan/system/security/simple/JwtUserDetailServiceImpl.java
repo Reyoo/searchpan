@@ -54,7 +54,7 @@ public class JwtUserDetailServiceImpl implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
-        Collection<GrantedAuthority> authorities = new ArrayList<>();
+        List<GrantedAuthority> authorities = new ArrayList<>();
         // 从数据库中取出数据信息
         if (StringUtils.isEmpty(username)){
             log.info("用户名输入不能为空");
@@ -71,7 +71,7 @@ public class JwtUserDetailServiceImpl implements UserDetailsService {
         for (SystemRoleModel systemRoleModel: roles ) {
             authorities.add(new CustomRole(systemRoleModel));
         }
-        return new JwtUser(username,systemUserModel.getPassword());
+        return new JwtUser(username,systemUserModel.getPassword(),authorities);
     }
 
 
