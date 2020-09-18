@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.libbytian.pan.system.model.SystemTemDetailsModel;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.Select;
 
 import java.time.LocalDateTime;
@@ -14,14 +15,14 @@ import java.time.LocalDateTime;
 public interface SystemTemDetailsMapper extends BaseMapper<SystemTemDetailsModel> {
 
 
+//     @Insert("INSERT INTO sys_temdetails (templatedetails_keyword  ,templatedetails_value  ,createtime  ,templatedetails_status) VALUES(#{keyword},#{keywordToValue},#{localDateTime},0)")
+//     int  addTemDetails(String keyword , String keywordToValue , LocalDateTime localDateTime);
+
+
      @Insert("INSERT INTO sys_temdetails (templatedetails_keyword  ,templatedetails_value  ,createtime  ,templatedetails_status) VALUES(#{keyword},#{keywordToValue},#{localDateTime},0)")
-     int  addTemDetails(String keyword , String keywordToValue , LocalDateTime localDateTime);
+     @Options(useGeneratedKeys = true, keyProperty = "user.temdetailsId")
+     int  addTemDetails(String keyword , String keywordToValue , LocalDateTime localDateTime,SystemTemDetailsModel user);
 
-
-     //sql还未修改
-     @Select("SELECT td.templatedetails_id AS temdetailsId,templatedetails_keyword,templatedetails_value,td.createtime,templatedetails_status FROM sys_temdetails td LEFT JOIN " +
-             "tem_template tt ON td.templatedetails_id = tt.templatedetails_id LEFT JOIN" + "sys_template t ON tt.template_id = t.template_id LEFT JOIN " +
-             "user_template ut ON t.template_id = ut.template_id LEFT JOIN sys_user u ON ut.user_id = u.user_id WHERE u.user_name = 'zhangshan' ORDER BY " +
-             "td.templatedetails_status DESC,td.createtime DESC")
+     @Select("SELECT td.templatedetails_id AS temdetailsId,templatedetails_keyword AS keyword,templatedetails_value AS keywordToValue,td.createtime,templatedetails_status AS temdetailsstatus FROM sys_temdetails td LEFT JOIN tem_template tt ON td.templatedetails_id = tt.templatedetails_id WHERE tt.template_id =1 ORDER BY td.templatedetails_status DESC,td.createtime DESC")
      IPage<SystemTemDetailsModel> selectTemDetails(Page page);
 }

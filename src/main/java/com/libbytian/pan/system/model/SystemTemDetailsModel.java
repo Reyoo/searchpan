@@ -1,5 +1,6 @@
 package com.libbytian.pan.system.model;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -29,8 +30,8 @@ public class SystemTemDetailsModel extends Model<SystemTemDetailsModel> {
     /**
      * 主键
      */
-    @TableId("templatedetails_id")
-    private String temdetailsId;
+    @TableId(value = "templatedetails_id" , type = IdType.AUTO)
+    private Integer temdetailsId;
 
     /**
      * 关键字

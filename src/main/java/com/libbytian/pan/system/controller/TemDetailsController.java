@@ -1,5 +1,6 @@
 package com.libbytian.pan.system.controller;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.libbytian.pan.system.common.AjaxResult;
 import com.libbytian.pan.system.model.SystemTemDetailsModel;
@@ -23,31 +24,55 @@ public class TemDetailsController {
      * @param keywordToValue
      * @return
      */
+//    @RequestMapping(value = "/details/addTemDetails",method = RequestMethod.POST)
+//    public AjaxResult addTemDetails(@RequestParam String keyword , @RequestParam String keywordToValue){
+//
+//        try {
+//            int result = iSystemTemDetailsService.addTemDetails(keyword,keywordToValue);
+//            if(result == 1){
+//              return   AjaxResult.success();
+//            }else {
+//             return    AjaxResult.error("添加失败！");
+//            }
+//        } catch (Exception e) {
+//          return   AjaxResult.error(e.getMessage());
+//        }
+//
+//    }
+
     @RequestMapping(value = "/details/addTemDetails",method = RequestMethod.POST)
     public AjaxResult addTemDetails(@RequestParam String keyword , @RequestParam String keywordToValue){
 
         try {
             int result = iSystemTemDetailsService.addTemDetails(keyword,keywordToValue);
             if(result == 1){
-              return   AjaxResult.success();
+                return   AjaxResult.success();
             }else {
-             return    AjaxResult.error("添加失败！");
+                return    AjaxResult.error("添加失败！");
             }
         } catch (Exception e) {
-          return   AjaxResult.error(e.getMessage());
+            return   AjaxResult.error(e.getMessage());
         }
 
     }
 
 
+    /**
+     * 查询默认模板（tt.template_id =1）下模板详情(后续可改成动态)
+     * @param start
+     * @param limit
+     * @return
+     */
+    @RequestMapping(value = "/details/findTemDetails",method = RequestMethod.GET)
     public AjaxResult findTemDetails(@RequestParam(defaultValue = "0") int start ,@RequestParam(defaultValue = "10") int limit ){
 
         Page<SystemTemDetailsModel> page =  new Page<>(start,limit);
-
-        iSystemTemDetailsService.findTemDetails(page);
-
-
-        return AjaxResult.success();
+        try {
+            IPage<SystemTemDetailsModel> result = iSystemTemDetailsService.findTemDetails(page);
+            return AjaxResult.success(result);
+        } catch (Exception e) {
+            return AjaxResult.error(e.getMessage());
+        }
     }
 
 }
