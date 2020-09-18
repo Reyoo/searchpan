@@ -1,5 +1,8 @@
 package com.libbytian.pan.system.security.simple;
 
+import com.libbytian.pan.system.model.SystemRoleModel;
+import com.libbytian.pan.system.model.SystemUserModel;
+import com.libbytian.pan.system.security.model.CustomRole;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,7 +20,6 @@ public class JwtUser implements UserDetails {
     private String username;
     private String password;
     private List<SimpleGrantedAuthority> authorities;
-
     public JwtUser() {
     }
 
@@ -26,6 +28,7 @@ public class JwtUser implements UserDetails {
         this.password = password;
         this.authorities= Arrays.stream(roles).map(SimpleGrantedAuthority::new).collect(Collectors.toList());
     }
+
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -73,4 +76,5 @@ public class JwtUser implements UserDetails {
     public void setAuthorities(List<SimpleGrantedAuthority> authorities) {
         this.authorities = authorities;
     }
+
 }

@@ -32,5 +32,9 @@ public class ISystemTemDetailsServiceImpl extends ServiceImpl<SystemTemDetailsMa
     @Override
     public IPage<SystemTemDetailsModel> findTemDetails(Page page) {
 
+        //临时添加，需要修改
+        IPage<SystemTemDetailsModel> oage = new Page<>();
+
+        return oage;
     }
 }
