@@ -30,10 +30,8 @@ public class PermissionController {
 
         try {
             IPage<SystemPermissionModel>  result = iPermissionService.findPermission(page,username);
-
             return AjaxResult.success(result);
         } catch (Exception e) {
-
             return AjaxResult.error(e.getMessage());
         }
     }

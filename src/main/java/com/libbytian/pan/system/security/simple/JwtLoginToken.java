@@ -25,6 +25,7 @@ public class JwtLoginToken extends AbstractAuthenticationToken {
         this.principal = principal;
         this.credentials = credentials;
         setAuthenticated(false);
+//        setAuthenticated(true);
     }
 
     /**创建一个已认证的授权令牌,如注释中说的那样,这个方法应该由AuthenticationProvider来调用

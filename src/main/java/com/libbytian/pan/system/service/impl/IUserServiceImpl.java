@@ -72,16 +72,16 @@ public class IUserServiceImpl extends ServiceImpl<SystemUserMapper,SystemUserMod
 
 
     @Override
-    public IPage<SystemUserModel> findConditionByPage(Page<SystemUserModel> page, SystemUserModel user) {
+    public IPage<SystemUserModel> findConditionByPage(Page<SystemUserModel> page, SystemUserModel systemUserModel) {
 
         QueryWrapper queryWrapper = new QueryWrapper();
 
-        if(user.getUsername() != null){
-            queryWrapper.eq("user_name",user.getUsername());
+        if(systemUserModel.getUsername() != null){
+            queryWrapper.eq("user_name",systemUserModel.getUsername());
         }
 
-        if(user.getUserId() != null){
-            queryWrapper.eq("user_id",user.getUserId());
+        if(systemUserModel.getUserId() != null){
+            queryWrapper.eq("user_id",systemUserModel.getUserId());
         }
 
 

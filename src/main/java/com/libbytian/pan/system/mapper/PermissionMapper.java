@@ -37,4 +37,5 @@ public interface PermissionMapper extends BaseMapper<SystemPermissionModel> {
     int add(String permissionUrl, String permissionComment, LocalDateTime localDateTime);
 
 
+
 }

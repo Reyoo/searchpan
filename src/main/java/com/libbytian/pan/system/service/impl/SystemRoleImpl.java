@@ -3,7 +3,6 @@ package com.libbytian.pan.system.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.libbytian.pan.system.mapper.SystemRoleMapper;
-import com.libbytian.pan.system.mapper.SystemUserToRoleMapper;
 import com.libbytian.pan.system.model.SystemRoleModel;
 import com.libbytian.pan.system.service.ISystemRoleService;
 
@@ -21,12 +20,19 @@ public class SystemRoleImpl extends ServiceImpl<SystemRoleMapper, SystemRoleMode
 
     @Override
     public List<SystemRoleModel> getRolenameByUserId(String username) {
-        return systemRoleMapper.selectUserByUsername(username);
+        return systemRoleMapper.selectUserByUserId(username);
     }
+
 
     @Override
     public SystemRoleModel getRoleByRolename(String rolename) {
         return systemRoleMapper.selectRoleByRolename(rolename);
     }
+
+    @Override
+    public List<SystemRoleModel> getRoleByUserName(String username) {
+        return systemRoleMapper.selectRoleByUsername(username);
+    }
+
 }
 
