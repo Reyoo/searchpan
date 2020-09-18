@@ -51,7 +51,7 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
             authenticationSuccessModel.setUsername(authentication.getName());
             authenticationSuccessModel.setRoute("userManagement");
             authenticationSuccessModel.setToken(token);
-            authenticationSuccessModel.setStatus(0);
+            authenticationSuccessModel.setStatus(200);
             response.getWriter().write(JSON.toJSONString(authenticationSuccessModel));
 //        }
 //        iSystemRoleService.getRolenameByUserId("15");
