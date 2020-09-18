@@ -6,6 +6,7 @@ import com.libbytian.pan.system.common.AjaxResult;
 import com.libbytian.pan.system.model.SystemTemDetailsModel;
 import com.libbytian.pan.system.service.ISystemTemDetailsService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
+@Slf4j
 public class TemDetailsController {
 
     private final ISystemTemDetailsService iSystemTemDetailsService;
@@ -71,6 +73,8 @@ public class TemDetailsController {
             IPage<SystemTemDetailsModel> result = iSystemTemDetailsService.findTemDetails(page);
             return AjaxResult.success(result);
         } catch (Exception e) {
+            e.printStackTrace();
+            log.error(e.getMessage());
             return AjaxResult.error(e.getMessage());
         }
     }
