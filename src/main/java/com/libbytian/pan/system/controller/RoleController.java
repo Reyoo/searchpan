@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
+@RequestMapping("/role")
 public class RoleController {
 
     private final IRoleService iRoleService;
@@ -24,7 +25,7 @@ public class RoleController {
      * @param roleName
      * @return
      */
-    @RequestMapping(value = "role/find",method = RequestMethod.GET)
+    @RequestMapping(value = "/findrole",method = RequestMethod.GET)
     public AjaxResult findUserByRole(@RequestParam(defaultValue = "0") int start , @RequestParam(defaultValue = "10") int limit , @RequestParam String roleName){
         Page<SystemRoleModel> page = new Page<>(start,limit);
         try {
@@ -45,7 +46,7 @@ public class RoleController {
      * @param roleId
      * @return
      */
-    @RequestMapping(value = "/role/findRoleById",method = RequestMethod.GET)
+    @RequestMapping(value = "/findrolebyid",method = RequestMethod.GET)
     public AjaxResult findRoleById(@RequestParam int start ,@RequestParam int limit , @RequestParam String roleId){
 
         Page<SystemRoleModel> page =  new Page<>(start,limit);
@@ -65,7 +66,7 @@ public class RoleController {
      * @param role
      * @return
      */
-    @RequestMapping(value = "role/add",method = RequestMethod.POST)
+    @RequestMapping(value = "/addrole",method = RequestMethod.POST)
     public AjaxResult addRole(@RequestBody SystemRoleModel role){
 
 //        boolean flag = iRoleService.checkEmail(roleName);
@@ -91,7 +92,7 @@ public class RoleController {
      * @param role
      * @return
      */
-    @RequestMapping(value = "role/put",method = RequestMethod.PUT)
+    @RequestMapping(value = "/putrole",method = RequestMethod.PUT)
     public AjaxResult putRole(@RequestBody SystemRoleModel role){
 
         try {
@@ -108,7 +109,7 @@ public class RoleController {
      * @param roleId
      * @return
      */
-    @RequestMapping(value = "role/drop",method = RequestMethod.DELETE)
+    @RequestMapping(value = "/droprole",method = RequestMethod.DELETE)
     public AjaxResult dropRole(@RequestParam String roleId){
 
         try {

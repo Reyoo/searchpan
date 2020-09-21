@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
+@RequestMapping("/user")
 public class UserController {
 
     private final IUserService iUserService;
@@ -19,17 +20,17 @@ public class UserController {
 
     /**
      * 条件查询
-     * @param start
+     * @param page
      * @param limit
      * @param user = null 则为全查询
      * @return
      */
-    @RequestMapping(value = "/login/select",method = RequestMethod.GET)
-    public AjaxResult findConditionByPage(@RequestParam(defaultValue = "0")int start, @RequestParam(defaultValue = "10")  int limit, @RequestBody(required = false) SystemUserModel user){
+    @RequestMapping(value = "/select",method = RequestMethod.GET)
+    public AjaxResult findConditionByPage(@RequestParam(defaultValue = "1")int page, @RequestParam(defaultValue = "10")  int limit, @RequestBody(required = false) SystemUserModel user){
 
-        Page<SystemUserModel> page = new Page<>(start,limit);
+        Page<SystemUserModel> findpage = new Page<>(page,limit);
         try {
-            IPage<SystemUserModel> result = iUserService.findConditionByPage(page,user);
+            IPage<SystemUserModel> result = iUserService.findConditionByPage(findpage,user);
             return  AjaxResult.success(result);
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -45,7 +46,7 @@ public class UserController {
      * @param username
      * @return
      */
-    @RequestMapping(value = "/login/delete",method = RequestMethod.DELETE)
+    @RequestMapping(value = "/delete",method = RequestMethod.DELETE)
     public AjaxResult deleteUuser(@RequestParam String username){
 
         try {
@@ -61,7 +62,7 @@ public class UserController {
      * @param user
      * @return
      */
-    @RequestMapping(value = "/login/update",method = RequestMethod.PUT)
+    @RequestMapping(value = "/update",method = RequestMethod.PUT)
     public AjaxResult updateUser(@RequestBody SystemUserModel user) {
 
         try {
