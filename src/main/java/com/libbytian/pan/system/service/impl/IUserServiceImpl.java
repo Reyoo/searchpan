@@ -45,7 +45,7 @@ public class IUserServiceImpl extends ServiceImpl<SystemUserMapper,SystemUserMod
 
 
     @Override
-    public SystemUserModel updateUser(SystemUserModel user) throws Exception {
+    public SystemUserModel updateUser(SystemUserModel user1) throws Exception {
 
         if(user.getUsername().isEmpty()){
             throw new Exception("用户名不能为空");
