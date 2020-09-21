@@ -26,6 +26,6 @@ public class LoginFailureHandler extends SimpleUrlAuthenticationFailureHandler {
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
         response.setContentType("application/json;charset=UTF-8");
 
-        response.getWriter().write("onAuthenticationFailure --> " + exception.getMessage());
+        response.getWriter().write( exception.getMessage());
     }
 }

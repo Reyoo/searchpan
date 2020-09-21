@@ -1,8 +1,13 @@
 package com.libbytian.pan.system.security.simple;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.google.gson.JsonObject;
+import com.libbytian.pan.system.common.AjaxResult;
 import com.libbytian.pan.system.model.SystemRoleModel;
 import com.libbytian.pan.system.model.SystemUserModel;
 import com.libbytian.pan.system.security.model.CustomRole;
+import com.libbytian.pan.system.security.model.ResultExceptionModel;
 import com.libbytian.pan.system.service.ISystemRoleService;
 import com.libbytian.pan.system.service.ISystemUserService;
 import lombok.extern.slf4j.Slf4j;
@@ -55,12 +60,13 @@ public class JwtUserDetailServiceImpl implements UserDetailsService {
         // 从数据库中取出数据信息
         if (StringUtils.isEmpty(username)){
             log.info("用户名输入不能为空");
-            throw new UsernameNotFoundException("用户名不能为空");
+            throw new UsernameNotFoundException(JSONObject.toJSONString(new ResultExceptionModel("用户名不能为空!!",0,"")));
         }
         SystemUserModel systemUserModel = iSystemUserService.getUserByUserName(username);
 
         if (systemUserModel == null){
-            throw new UsernameNotFoundException("该用户名不存在!");
+            throw new UsernameNotFoundException(JSONObject.toJSONString(new ResultExceptionModel("该用户名不存在!",0,"")));
+
         }
         System.out.println(systemUserModel.getPassword());
         List<SystemRoleModel> roles = iSystemRoleService.getRolenameByUserId(systemUserModel.getUserId());

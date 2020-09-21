@@ -96,6 +96,10 @@ user:
   lxxh:
     aidianying: http://www.lxxh1.com
 
+temp:
+  fileroot: 'D:/'
+  filePath: /temp
+
 wx:
   mp:
     configs:

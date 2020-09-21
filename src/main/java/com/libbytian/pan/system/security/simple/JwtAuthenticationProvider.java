@@ -1,5 +1,8 @@
 package com.libbytian.pan.system.security.simple;
 
+import com.alibaba.fastjson.JSONObject;
+import com.libbytian.pan.system.common.AjaxResult;
+import com.libbytian.pan.system.security.model.ResultExceptionModel;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.*;
 import org.springframework.security.core.Authentication;
@@ -61,11 +64,12 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
     private void additionalAuthenticationChecks(UserDetails userDetails,
                                                   JwtLoginToken authentication) throws AuthenticationException {
         if (authentication.getCredentials() == null) {
-            throw new BadCredentialsException("Bad credentials");
+            throw new BadCredentialsException(JSONObject.toJSONString(new ResultExceptionModel("密码错误!!",0,"")));
+
         }
         String presentedPassword = authentication.getCredentials().toString();
         if (!passwordEncoder.matches(presentedPassword, userDetails.getPassword())) {
-            throw new BadCredentialsException("Bad credentials");
+            throw new BadCredentialsException(JSONObject.toJSONString(new ResultExceptionModel("密码错误!!",0,"")));
         }
     }
 

@@ -7,10 +7,15 @@ import com.libbytian.pan.system.model.SystemTemDetailsModel;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.InputStream;
+
 @Transactional(propagation = Propagation.REQUIRES_NEW)
 public interface ISystemTemDetailsService extends IService<SystemTemDetailsModel> {
 
     int addTemDetails(String keyword ,String keywordToValue);
 
     IPage<SystemTemDetailsModel> findTemDetails(Page page);
+
+    int exportExceltoDb(String filename, InputStream inputStream);
+
 }

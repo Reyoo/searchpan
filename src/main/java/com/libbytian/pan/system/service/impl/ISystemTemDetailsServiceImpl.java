@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.InputStream;
 import java.time.LocalDateTime;
 
 @Service
@@ -22,47 +23,41 @@ public class ISystemTemDetailsServiceImpl extends ServiceImpl<SystemTemDetailsMa
     private final SystemTemDetailsMapper systemTemDetailsMapper;
     private final ITemToTemDetailsService iTemToTemDetailsService;
 
-//    @Override
-//    public int addTemDetails(String keyword, String keywordToValue) {
-//
-//        LocalDateTime localDateTime = LocalDateTime.now();
-//
-//       int result = systemTemDetailsMapper.addTemDetails(keyword,keywordToValue,localDateTime);
-//
-//       if(result == 1){
-//
-//           TemToTemDetailsModel temToDetails = TemToTemDetailsModel.builder().templateid(1).templatedetailsid(systemTemDetailsModel.getTemdetailsId()).build();
-//
-//           iTemToTemDetailsService.save(temToDetails);
-//       }
-//
-//        return result;
-//    }
 
+    /**
+     *
+     * @param filename
+     * @param inputStream
+     * @return
+     */
+    @Override
+    public int exportExceltoDb(String filename, InputStream inputStream) {
+        return 0;
+    }
+
+
+    /**
+     *
+     * @param keyword
+     * @param keywordToValue
+     * @return
+     */
     @Override
     public int addTemDetails(String keyword, String keywordToValue) {
 
         SystemTemDetailsModel user = new SystemTemDetailsModel();
-
         LocalDateTime localDateTime = LocalDateTime.now();
         user.setKeywordToValue(keywordToValue);
         user.setKeyword(keyword);
         user.setCreatetime(localDateTime);
-
-        int result = systemTemDetailsMapper.addTemDetails(keyword,keywordToValue,localDateTime,user);
-
+        int result = systemTemDetailsMapper.addTemDetails(keyword, keywordToValue, localDateTime, user);
         int id = user.getTemdetailsId();
-
-        if(result == 1){
-
+        if (result == 1) {
             TemToTemDetailsModel temToDetails = TemToTemDetailsModel.builder().templateid(1).templatedetailsid(id).build();
-
             iTemToTemDetailsService.save(temToDetails);
         }
-
         return result;
     }
-
 
 
     @Override

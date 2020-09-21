@@ -81,20 +81,23 @@ public class TemDetailsController {
 
 
     @RequestMapping(value = "/details/export", method = RequestMethod.POST)
-    public AjaxResult addTemDetails(@RequestBody MultipartFile f) {
+    public AjaxResult addTemDetails(@RequestBody MultipartFile multipartFile) {
 
         try {
-//            int result = iSystemTemDetailsService.addTemDetails(keyword, keywordToValue);
-            int result=1;
-            if (result == 1) {
-                return AjaxResult.success();
-            } else {
-                return AjaxResult.error("添加失败！");
+            if(multipartFile.isEmpty()){
+                return AjaxResult.error("上传失败，请选择文件");
             }
-        } catch (Exception e) {
+            iSystemTemDetailsService.exportExceltoDb(multipartFile.getOriginalFilename(),multipartFile.getInputStream());
+
+            return AjaxResult.success();
+
+        }catch (Exception e){
             return AjaxResult.error(e.getMessage());
         }
 
     }
+
+
+
 
 }
