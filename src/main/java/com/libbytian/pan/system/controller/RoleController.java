@@ -92,7 +92,7 @@ public class RoleController {
      * @param role
      * @return
      */
-    @RequestMapping(value = "/putrole",method = RequestMethod.PUT)
+    @RequestMapping(value = "/putrole",method = RequestMethod.PATCH)
     public AjaxResult putRole(@RequestBody SystemRoleModel role){
 
         try {

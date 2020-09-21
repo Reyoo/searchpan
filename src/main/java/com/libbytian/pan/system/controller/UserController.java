@@ -62,7 +62,7 @@ public class UserController {
      * @param user
      * @return
      */
-    @RequestMapping(value = "/update",method = RequestMethod.PUT)
+    @RequestMapping(value = "/update",method = RequestMethod.PATCH)
     public AjaxResult updateUser(@RequestBody SystemUserModel user) {
 
         try {
