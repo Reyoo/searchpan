@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.libbytian.pan.system.mapper.SystemUserMapper;
@@ -43,16 +44,22 @@ public class IUserServiceImpl extends ServiceImpl<SystemUserMapper,SystemUserMod
 
 
     @Override
-    public SystemUserModel updateUser(SystemUserModel user)  {
+    public SystemUserModel updateUser(SystemUserModel user) throws Exception {
 
-        user.setLastLoginTime(LocalDateTime.now());
-        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-        String encode = encoder.encode(user.getPassword());
-        user.setPassword(encode);
+       if(user.getUsername()!=null && !user.getUsername().isEmpty() && user.getPassword()!=null && !user.getPassword().isEmpty()){
 
+           user.setLastLoginTime(LocalDateTime.now());
+           BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+           String encode = encoder.encode(user.getPassword());
+           user.setPassword(encode);
+
+       }else {
+           throw new Exception("请输入正确的账号和密码");
+       }
+
+//        userMapper.updateUser(user);
 
         boolean result = this.updateById(user);
-
 
         if(result){
             SystemUserToRole userToRole =  SystemUserToRole.builder().userId(user.getUserId()).roleId("ROLE_NORMAL").build();
@@ -65,6 +72,7 @@ public class IUserServiceImpl extends ServiceImpl<SystemUserMapper,SystemUserMod
 
     @Override
     public IPage<SystemUserModel> findConditionByPage(Page<SystemUserModel> page, SystemUserModel user) {
+
 
         QueryWrapper queryWrapper = new QueryWrapper();
 
@@ -93,6 +101,9 @@ public class IUserServiceImpl extends ServiceImpl<SystemUserMapper,SystemUserMod
             }
 
         }
+
+
+        queryWrapper.orderByDesc("createtime");
 
 
         return userMapper.selectPage(page,queryWrapper);

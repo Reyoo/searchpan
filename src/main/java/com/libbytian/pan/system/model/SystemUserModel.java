@@ -46,7 +46,7 @@ public class SystemUserModel extends Model<SystemUserModel>   {
     private String password;
 
     /**
-     * 创建时间
+     * 最后修改时间
      */
     @TableField("user_last_login_time")
     private LocalDateTime lastLoginTime;
