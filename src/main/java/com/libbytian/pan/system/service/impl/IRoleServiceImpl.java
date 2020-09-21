@@ -51,7 +51,7 @@ public class IRoleServiceImpl extends ServiceImpl<SystemRoleMapper, SystemRoleMo
         String roleId = role.getRoleId();
         String rolename =  role.getRoleName();
         LocalDateTime localDateTime = LocalDateTime.now();
-        return roleMapper.insert(roleId,rolename,localDateTime);
+        return roleMapper.insert(roleId,rolename,role.getShowName() ,localDateTime);
     }
 
     @Override
@@ -64,8 +64,7 @@ public class IRoleServiceImpl extends ServiceImpl<SystemRoleMapper, SystemRoleMo
 
     @Override
     public int dropRole(String roleId) {
-
-        return roleMapper.delete(roleId);
+        return roleMapper.deleteById(roleId);
     }
 
 
