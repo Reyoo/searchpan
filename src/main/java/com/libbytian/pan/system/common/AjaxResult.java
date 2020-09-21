@@ -14,7 +14,7 @@ import java.util.Objects;
 public class AjaxResult extends HashMap<String, Object> {
     private static final long serialVersionUID = 1L;
 
-    private static final String CODE_TAG = "code";
+    private static final String STATUS_TAG = "status";
 
     private static final String MSG_TAG = "msg";
 
@@ -55,7 +55,7 @@ public class AjaxResult extends HashMap<String, Object> {
     /**
      * 状态码
      */
-    private int code;
+    private int status;
 
     /**
      * 返回内容
@@ -81,7 +81,7 @@ public class AjaxResult extends HashMap<String, Object> {
      * @param msg  返回内容
      */
     public AjaxResult(Type type, String msg) {
-        super.put(CODE_TAG, type.value);
+        super.put(STATUS_TAG, type.value);
         super.put(MSG_TAG, msg);
     }
 
@@ -93,7 +93,7 @@ public class AjaxResult extends HashMap<String, Object> {
      * @param data 数据对象
      */
     public AjaxResult(Type type, String msg, Object data) {
-        super.put(CODE_TAG, type.value);
+        super.put(STATUS_TAG, type.value);
         super.put(MSG_TAG, msg);
         if(ObjectUtil.isNotNull(data)){
             super.put(DATA_TAG, data);
@@ -194,7 +194,7 @@ public class AjaxResult extends HashMap<String, Object> {
     public String toString() {
         return "AjaxResult{" +
                 "type=" + type +
-                ", code=" + code +
+                ", status=" + status +
                 ", msg='" + msg + '\'' +
                 ", data=" + data +
                 '}';
@@ -212,7 +212,7 @@ public class AjaxResult extends HashMap<String, Object> {
             return false;
         }
         AjaxResult that = (AjaxResult) o;
-        return code == that.code &&
+        return status == that.status &&
                 type == that.type &&
                 Objects.equals(msg, that.msg) &&
                 Objects.equals(data, that.data);
@@ -220,7 +220,7 @@ public class AjaxResult extends HashMap<String, Object> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), type, code, msg, data);
+        return Objects.hash(super.hashCode(), type, status, msg, data);
     }
 }
 

@@ -49,12 +49,12 @@ public class SystemUserServiceImpl extends ServiceImpl<SystemUserMapper, SystemU
     /**
      * 设置所有通过注册的用户均为普通用户，用户权限变更需要在管理端进行配置
      * @param user
-     * @return
+     * @return`
      */
 
     @Override
     public SystemUserModel register(SystemUserModel user) {
-        user.setStatus(0);
+        user.setStatus(true);
         user.setCreateTime(LocalDateTime.now());
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         String encode = encoder.encode(user.getPassword());

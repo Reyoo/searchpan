@@ -19,8 +19,6 @@ public interface IUserService extends IService<SystemUserModel> {
 
     SystemUserModel updateUser(SystemUserModel user) throws Exception;
 
-    IPage<SystemUserModel> findByPage(Page<SystemUserModel> page);
-
     IPage<SystemUserModel> findConditionByPage(Page<SystemUserModel> page, SystemUserModel user);
 
 

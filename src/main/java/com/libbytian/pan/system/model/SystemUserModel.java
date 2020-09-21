@@ -62,7 +62,7 @@ public class SystemUserModel extends Model<SystemUserModel>   {
      * 状态值（1：启用，2：禁用，3：删除）
      */
     @TableField("status")
-    private Integer status;
+    private boolean status;
 
 
 

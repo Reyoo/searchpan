@@ -62,14 +62,6 @@ public class IUserServiceImpl extends ServiceImpl<SystemUserMapper,SystemUserMod
         return user;
     }
 
-    @Override
-    public IPage<SystemUserModel> findByPage(Page<SystemUserModel> page){
-
-        return userMapper.selectPage(page,null);
-
-
-    }
-
 
     @Override
     public IPage<SystemUserModel> findConditionByPage(Page<SystemUserModel> page, SystemUserModel systemUserModel) {
