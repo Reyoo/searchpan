@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.libbytian.pan.system.mapper.SystemUserToRoleMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.libbytian.pan.system.model.SystemUserToRole">
+        <id column="id" property="userToRoleId" />
+        <result column="user_id" property="userId" />
+        <result column="role_id" property="roleId" />
+        <result column="user_role_status" property="userRoleStatus" />
+
+
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id AS userToRoleId,
+         user_id AS userId,
+         role_id AS roleId,
+         user_role_status AS userRoleStatus
+    </sql>
+
+
+
+
+</mapper>
