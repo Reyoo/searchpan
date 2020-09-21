@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.libbytian.pan.system.common.AjaxResult;
 import com.libbytian.pan.system.mapper.SystemUserMapper;
 import com.libbytian.pan.system.mapper.UserMapper;
 import com.libbytian.pan.system.model.SystemUserModel;
@@ -46,21 +47,16 @@ public class IUserServiceImpl extends ServiceImpl<SystemUserMapper,SystemUserMod
     @Override
     public SystemUserModel updateUser(SystemUserModel user) throws Exception {
 
-       if(user.getUsername()!=null && !user.getUsername().isEmpty() && user.getPassword()!=null && !user.getPassword().isEmpty()){
-
-           user.setLastLoginTime(LocalDateTime.now());
-           BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-           String encode = encoder.encode(user.getPassword());
-           user.setPassword(encode);
-
-       }else {
-           throw new Exception("请输入正确的账号和密码");
-       }
-
-//        userMapper.updateUser(user);
-
-        boolean result = this.updateById(user);
-
+        if(user.getUsername().isEmpty()){
+            throw new Exception("用户名不能为空");
+        }
+        user.setLastLoginTime(LocalDateTime.now());
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        String encode = encoder.encode(user.getPassword());
+        SystemUserModel olduser = userMapper.selectUserByUsername(user.getUsername());
+        user.setUserId( olduser.getUserId());
+        user.setPassword(encode);
+        boolean result = this.saveOrUpdate(user);
         if(result){
             SystemUserToRole userToRole =  SystemUserToRole.builder().userId(user.getUserId()).roleId("ROLE_NORMAL").build();
             userToRoleService.save(userToRole);

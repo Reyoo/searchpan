@@ -13,6 +13,7 @@ public interface IRoleService extends IService<SystemRoleModel> {
 
     IPage<SystemUserModel> findUserByRole(Page<SystemRoleModel> page , String roleName);
     IPage<SystemRoleModel> findRoleById(Page<SystemRoleModel> page , String roleId);
+//    IPage<SystemRoleModel> findRole(Page<SystemRoleModel> page , SystemUserModel systemUserModel);
     int roleNameCount(String roleName);
     int addRole(SystemRoleModel role);
     int putRole(SystemRoleModel role);

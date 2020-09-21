@@ -20,16 +20,16 @@ public class RoleController {
 
     /**
      * 根据角色名，查询用户信息
-     * @param start
+     * @param page
      * @param limit
      * @param roleName
      * @return
      */
     @RequestMapping(value = "/findrole",method = RequestMethod.GET)
-    public AjaxResult findUserByRole(@RequestParam(defaultValue = "0") int start , @RequestParam(defaultValue = "10") int limit , @RequestParam String roleName){
-        Page<SystemRoleModel> page = new Page<>(start,limit);
+    public AjaxResult findUserByRole(@RequestParam(defaultValue = "0") int page , @RequestParam(defaultValue = "10") int limit , @RequestParam String roleName){
+        Page<SystemRoleModel> syspage = new Page<>(page,limit);
         try {
-            IPage<SystemUserModel> result = iRoleService.findUserByRole(page,roleName);
+            IPage<SystemUserModel> result = iRoleService.findUserByRole(syspage,roleName);
 
             return AjaxResult.success(result);
         } catch (Exception e) {
@@ -92,7 +92,7 @@ public class RoleController {
      * @param role
      * @return
      */
-    @RequestMapping(value = "/putrole",method = RequestMethod.PUT)
+    @RequestMapping(value = "/putrole",method = RequestMethod.PATCH)
     public AjaxResult putRole(@RequestBody SystemRoleModel role){
 
         try {
