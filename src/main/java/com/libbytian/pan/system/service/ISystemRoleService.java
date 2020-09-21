@@ -16,12 +16,12 @@ public interface ISystemRoleService extends IService<SystemRoleModel> {
      * @param userId
      * @return
      */
-    List<SystemRoleModel> getRolenameByUserId(String userId);
+    List<SystemRoleModel> getRolenameByUserId(String userId) throws Exception;
 
 
-    SystemRoleModel getRoleByRolename(String rolename);
+    SystemRoleModel getRoleByRolename(String rolename) throws Exception;
 
 
-    List<SystemRoleModel> getRoleByUserName(String username);
+    List<SystemRoleModel> getRoleByUserName(String username) throws Exception;
 
 }

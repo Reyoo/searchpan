@@ -42,7 +42,7 @@ public class SystemUserServiceImpl extends ServiceImpl<SystemUserMapper, SystemU
 
 
     @Override
-    public SystemUserModel getUserByUserName(String username) {
+    public SystemUserModel getUserByUserName(String username)  throws Exception{
         return systemUserMapper.selectUserByUsername(username);
     }
 
@@ -53,7 +53,7 @@ public class SystemUserServiceImpl extends ServiceImpl<SystemUserMapper, SystemU
      */
 
     @Override
-    public SystemUserModel register(SystemUserModel user) {
+    public SystemUserModel register(SystemUserModel user)  throws Exception{
         user.setStatus(true);
         user.setCreateTime(LocalDateTime.now());
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
@@ -84,7 +84,7 @@ public class SystemUserServiceImpl extends ServiceImpl<SystemUserMapper, SystemU
      * @return
      */
     @Override
-    public int selectByName(String username) {
+    public int selectByName(String username) throws Exception {
 
         int count = userMapper.selectByName(username);
 

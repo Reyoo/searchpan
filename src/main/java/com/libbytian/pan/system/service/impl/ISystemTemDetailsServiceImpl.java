@@ -31,7 +31,7 @@ public class ISystemTemDetailsServiceImpl extends ServiceImpl<SystemTemDetailsMa
      * @return
      */
     @Override
-    public int exportExceltoDb(String filename, InputStream inputStream) {
+    public int exportExceltoDb(String filename, InputStream inputStream)  throws Exception{
         return 0;
     }
 
@@ -43,7 +43,7 @@ public class ISystemTemDetailsServiceImpl extends ServiceImpl<SystemTemDetailsMa
      * @return
      */
     @Override
-    public int addTemDetails(String keyword, String keywordToValue) {
+    public int addTemDetails(String keyword, String keywordToValue) throws Exception  {
 
         SystemTemDetailsModel user = new SystemTemDetailsModel();
         LocalDateTime localDateTime = LocalDateTime.now();
@@ -61,7 +61,7 @@ public class ISystemTemDetailsServiceImpl extends ServiceImpl<SystemTemDetailsMa
 
 
     @Override
-    public IPage<SystemTemDetailsModel> findTemDetails(Page page) {
+    public IPage<SystemTemDetailsModel> findTemDetails(Page page)  throws Exception {
 
         return systemTemDetailsMapper.selectTemDetails(page);
     }

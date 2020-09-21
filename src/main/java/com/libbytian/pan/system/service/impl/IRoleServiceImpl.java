@@ -23,7 +23,7 @@ public class IRoleServiceImpl extends ServiceImpl<SystemRoleMapper, SystemRoleMo
     private final SystemRoleMapper roleMapper;
 
     @Override
-    public IPage<SystemRoleModel> findRole(Page<SystemRoleModel> page, SystemRoleModel systemRoleModel) {
+    public IPage<SystemRoleModel> findRole(Page<SystemRoleModel> page, SystemRoleModel systemRoleModel) throws Exception {
 
         QueryWrapper queryWrapper = new QueryWrapper();
 
@@ -45,7 +45,7 @@ public class IRoleServiceImpl extends ServiceImpl<SystemRoleMapper, SystemRoleMo
     }
 
     @Override
-    public IPage<SystemUserModel> findUserByRole(Page<SystemRoleModel> page, String roleName) {
+    public IPage<SystemUserModel> findUserByRole(Page<SystemRoleModel> page, String roleName)  throws Exception {
 
         IPage<SystemUserModel> result = roleMapper.selectUserByRole(page,roleName);
 
@@ -54,7 +54,7 @@ public class IRoleServiceImpl extends ServiceImpl<SystemRoleMapper, SystemRoleMo
     }
 
     @Override
-    public IPage<SystemRoleModel> findRoleById(Page<SystemRoleModel> page, String roleId) {
+    public IPage<SystemRoleModel> findRoleById(Page<SystemRoleModel> page, String roleId) throws Exception  {
 
        IPage<SystemRoleModel> result = roleMapper.selectRoleById(page,roleId);
 
@@ -68,7 +68,7 @@ public class IRoleServiceImpl extends ServiceImpl<SystemRoleMapper, SystemRoleMo
     }
 
     @Override
-    public int addRole(SystemRoleModel role) {
+    public int addRole(SystemRoleModel role) throws Exception {
 
         String roleId = role.getRoleId();
         String rolename =  role.getRoleName();
@@ -85,7 +85,7 @@ public class IRoleServiceImpl extends ServiceImpl<SystemRoleMapper, SystemRoleMo
     }
 
     @Override
-    public int dropRole(String roleId) {
+    public int dropRole(String roleId) throws Exception {
         return roleMapper.deleteById(roleId);
     }
 
@@ -96,7 +96,7 @@ public class IRoleServiceImpl extends ServiceImpl<SystemRoleMapper, SystemRoleMo
      * @return
      */
     @Override
-    public boolean checkEmail(String roleName) {
+    public boolean checkEmail(String roleName) throws Exception {
         boolean flag = false;
         try {
             String check = "^([a-z0-9A-Z]+[-|_|\\.]?)+[a-z0-9A-Z]@([a-z0-9A-Z]+(-[a-z0-9A-Z]+)?\\.)+[a-zA-Z]{2,}$";

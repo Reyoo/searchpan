@@ -11,14 +11,14 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(propagation = Propagation.REQUIRES_NEW)
 public interface IRoleService extends IService<SystemRoleModel> {
 
-    IPage<SystemUserModel> findUserByRole(Page<SystemRoleModel> page , String roleName);
-    IPage<SystemRoleModel> findRoleById(Page<SystemRoleModel> page , String roleId);
-    IPage<SystemRoleModel> findRole(Page<SystemRoleModel> page , SystemRoleModel systemRoleModel);
+    IPage<SystemUserModel> findUserByRole(Page<SystemRoleModel> page , String roleName) throws Exception;
+    IPage<SystemRoleModel> findRoleById(Page<SystemRoleModel> page , String roleId) throws Exception;
+    IPage<SystemRoleModel> findRole(Page<SystemRoleModel> page , SystemRoleModel systemRoleModel) throws Exception;
     int roleNameCount(String roleName);
-    int addRole(SystemRoleModel role);
+    int addRole(SystemRoleModel role) throws Exception;
     int putRole(SystemRoleModel role);
-    int dropRole(String roleId);
+    int dropRole(String roleId) throws Exception;
 
 
-    boolean checkEmail(String roleName);
+    boolean checkEmail(String roleName) throws Exception;
 }

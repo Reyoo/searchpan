@@ -43,7 +43,7 @@ public class PermissionController {
      * @param body
      * @return
      */
-    @RequestMapping(value = "/put",method = RequestMethod.PUT)
+    @RequestMapping(value = "/update",method = RequestMethod.PUT)
     public AjaxResult putPermission(String username , @RequestBody SystemPermissionModel body){
 
         iPermissionService.putPermission(username,body);

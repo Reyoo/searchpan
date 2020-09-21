@@ -11,6 +11,6 @@ import java.util.List;
 @Transactional(propagation = Propagation.REQUIRES_NEW)
 public interface ISystemUserToRoleService extends IService<SystemUserToRole> {
 
-    List<SystemUserToRole> getUserRoleByuserID(String userId);
+    List<SystemUserToRole> getUserRoleByuserID(String userId) throws Exception;
 
 }

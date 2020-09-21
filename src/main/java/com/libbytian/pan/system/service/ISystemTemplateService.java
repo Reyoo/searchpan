@@ -11,5 +11,5 @@ import org.springframework.transaction.annotation.Transactional;
 public interface ISystemTemplateService extends IService<SystemTemplateModel> {
 
 
-     IPage<SystemTemplateModel> findTemById(Page page ,int templateid);
+     IPage<SystemTemplateModel> findTemById(Page page ,int templateid) throws Exception;
 }

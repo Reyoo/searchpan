@@ -17,6 +17,6 @@ public interface ISystemPermissionService extends IService<SystemPermissionModel
      * @param username
      * @return
      */
-    List<SystemPermissionModel> getPermissionByUsername(String username);
+    List<SystemPermissionModel> getPermissionByUsername(String username) throws Exception;
 
 }

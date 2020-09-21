@@ -23,7 +23,7 @@ public interface ISystemUserService extends IService<SystemUserModel> {
 //     * @param username 用户名
 //     * @return 用户
 //     */
-    SystemUserModel getUserByUserName(String username);
+    SystemUserModel getUserByUserName(String username) throws Exception;
 //
 //    User getUserByMobile(String mobile);
 
@@ -32,7 +32,7 @@ public interface ISystemUserService extends IService<SystemUserModel> {
      * @param user
      * @return
      */
-    SystemUserModel register(SystemUserModel user );
+    SystemUserModel register(SystemUserModel user ) throws Exception;
 
 
     /**
@@ -40,7 +40,7 @@ public interface ISystemUserService extends IService<SystemUserModel> {
      * @param username
      * @return
      */
-    int selectByName(String username);
+    int selectByName(String username) throws Exception;
 
 //    Map<String, Object> getLoginUserAndMenuInfo(User user);
 //

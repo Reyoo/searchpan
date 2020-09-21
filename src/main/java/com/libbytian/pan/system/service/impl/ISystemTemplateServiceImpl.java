@@ -18,7 +18,7 @@ public class ISystemTemplateServiceImpl extends ServiceImpl<SystemTemplateMapper
 
 
     @Override
-    public IPage<SystemTemplateModel> findTemById(Page page, int templateid) {
+    public IPage<SystemTemplateModel> findTemById(Page page, int templateid) throws Exception {
        return systemTemplateMapper.selectTemById(page,templateid);
     }
 }

@@ -37,7 +37,7 @@ public class IUserServiceImpl extends ServiceImpl<SystemUserMapper,SystemUserMod
 
 
     @Override
-    public int deleteUserByUsername(String username) {
+    public int deleteUserByUsername(String username) throws Exception {
 
         return userMapper.deleteUserByUsername(username);
     }
@@ -67,7 +67,7 @@ public class IUserServiceImpl extends ServiceImpl<SystemUserMapper,SystemUserMod
 
 
     @Override
-    public IPage<SystemUserModel> findConditionByPage(Page<SystemUserModel> page, SystemUserModel systemUserModel) {
+    public IPage<SystemUserModel> findConditionByPage(Page<SystemUserModel> page, SystemUserModel systemUserModel) throws Exception {
 
         QueryWrapper queryWrapper = new QueryWrapper();
 
