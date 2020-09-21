@@ -43,14 +43,15 @@ public class UserController {
 
     /**
      * 删除
-     * @param username
+     * @param id
      * @return
      */
-    @RequestMapping(value = "/delete",method = RequestMethod.DELETE)
-    public AjaxResult deleteUuser(@RequestParam String username){
+    @RequestMapping(value = "/delete/{id}",method = RequestMethod.DELETE)
+    public AjaxResult deleteUser(@PathVariable String id){
 
         try {
-            iUserService.deleteUserByUsername(username);
+//            iUserService.deleteUserByUsername(username);
+            iUserService.removeById(id);
             return AjaxResult.success();
         } catch (Exception e) {
             return AjaxResult.error(e.getMessage());

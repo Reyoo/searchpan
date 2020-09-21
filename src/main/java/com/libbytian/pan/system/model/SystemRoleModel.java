@@ -39,11 +39,20 @@ public class SystemRoleModel extends Model<SystemRoleModel> {
     @TableField("role_name")
     private String roleName;
 
+
+    /**
+     * 角色状态
+     */
+    @TableField("show_name")
+    private String showName;
     /**
      * 角色状态
      */
     @TableField("role_status")
     private String roleStatus;
+
+
+
 
     @TableField("createtime")
     private LocalDateTime createtime;
