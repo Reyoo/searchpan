@@ -11,7 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(propagation = Propagation.REQUIRES_NEW)
 public interface IPermissionService extends IService<SystemPermissionModel> {
 
-    IPage<SystemPermissionModel> findPermission(Page page, String name);
+    IPage<SystemPermissionModel> findPermission(Page page, SystemPermissionModel systemPermissionModel);
 
     int putPermission(String name, SystemPermissionModel body);
 

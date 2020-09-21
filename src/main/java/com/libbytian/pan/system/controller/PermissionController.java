@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
+@RequestMapping("/per")
 public class PermissionController {
 
     private final IPermissionService iPermissionService;
@@ -20,16 +21,15 @@ public class PermissionController {
      * 分页查询
      * @param start
      * @param limit
-     * @param username
+     * @param systemPermissionModel
      * @return
      */
-    @RequestMapping(value = "per/find" , method = RequestMethod.GET)
-    public AjaxResult findPermission(@RequestParam int start , @RequestParam int limit , @RequestParam String username){
+    @RequestMapping(value = "/find" , method = RequestMethod.GET)
+    public AjaxResult findPermission(@RequestParam(defaultValue = "1") int start , @RequestParam(defaultValue = "10") int limit , @RequestBody(required = false) SystemPermissionModel systemPermissionModel){
 
         Page<SystemPermissionModel> page = new Page<>(start,limit);
-
         try {
-            IPage<SystemPermissionModel>  result = iPermissionService.findPermission(page,username);
+            IPage<SystemPermissionModel>  result = iPermissionService.findPermission(page,systemPermissionModel);
             return AjaxResult.success(result);
         } catch (Exception e) {
             return AjaxResult.error(e.getMessage());
@@ -43,7 +43,7 @@ public class PermissionController {
      * @param body
      * @return
      */
-    @RequestMapping(value = "per/put",method = RequestMethod.PUT)
+    @RequestMapping(value = "/put",method = RequestMethod.PUT)
     public AjaxResult putPermission(String username , @RequestBody SystemPermissionModel body){
 
         iPermissionService.putPermission(username,body);
@@ -57,7 +57,7 @@ public class PermissionController {
      * @param permissionId
      * @return
      */
-    @RequestMapping(value = "per/drop" ,method = RequestMethod.DELETE)
+    @RequestMapping(value = "/drop" ,method = RequestMethod.DELETE)
     public AjaxResult dropPermission(@RequestParam String permissionId){
 
         iPermissionService.dropPermission(permissionId);
@@ -69,7 +69,7 @@ public class PermissionController {
      * @param permission
      * @return
      */
-    @RequestMapping(value = "per/add",method = RequestMethod.POST)
+    @RequestMapping(value = "/add",method = RequestMethod.POST)
     public AjaxResult addPermission(@RequestBody SystemPermissionModel permission){
 
        int result = iPermissionService.addPermission(permission);

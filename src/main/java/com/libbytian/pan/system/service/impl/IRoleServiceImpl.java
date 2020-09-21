@@ -1,5 +1,6 @@
 package com.libbytian.pan.system.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -21,6 +22,27 @@ public class IRoleServiceImpl extends ServiceImpl<SystemRoleMapper, SystemRoleMo
 
     private final SystemRoleMapper roleMapper;
 
+    @Override
+    public IPage<SystemRoleModel> findRole(Page<SystemRoleModel> page, SystemRoleModel systemRoleModel) {
+
+        QueryWrapper queryWrapper = new QueryWrapper();
+
+        /**
+         * 这里systemusermodel 不做空判断 。getusername 空指针  null.getUsername
+         */
+        if(systemRoleModel != null){
+            if(systemRoleModel.getRoleName() != null){
+                queryWrapper.eq("role_name",systemRoleModel.getRoleName());
+            }
+
+            if(systemRoleModel.getShowName() != null){
+                queryWrapper.eq("show_name",systemRoleModel.getShowName());
+            }
+        }
+        queryWrapper.orderByDesc("createtime");
+
+        return roleMapper.selectPage(page,queryWrapper);
+    }
 
     @Override
     public IPage<SystemUserModel> findUserByRole(Page<SystemRoleModel> page, String roleName) {

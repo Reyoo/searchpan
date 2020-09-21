@@ -49,7 +49,7 @@ public class SystemRoleModel extends Model<SystemRoleModel> {
      * 角色状态
      */
     @TableField("role_status")
-    private String roleStatus;
+    private boolean roleStatus;
 
 
 
