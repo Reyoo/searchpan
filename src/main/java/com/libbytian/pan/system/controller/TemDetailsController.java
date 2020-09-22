@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-@RequestMapping("/details")
 @RestController
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 @Slf4j
@@ -26,7 +25,22 @@ public class TemDetailsController {
      * @param keywordToValue
      * @return
      */
-    @RequestMapping(value = "/addTemDetails", method = RequestMethod.POST)
+//    @RequestMapping(value = "/details/addTemDetails",method = RequestMethod.POST)
+//    public AjaxResult addTemDetails(@RequestParam String keyword , @RequestParam String keywordToValue){
+//
+//        try {
+//            int result = iSystemTemDetailsService.addTemDetails(keyword,keywordToValue);
+//            if(result == 1){
+//              return   AjaxResult.success();
+//            }else {
+//             return    AjaxResult.error("添加失败！");
+//            }
+//        } catch (Exception e) {
+//          return   AjaxResult.error(e.getMessage());
+//        }
+//
+//    }
+    @RequestMapping(value = "/details/addTemDetails", method = RequestMethod.POST)
     public AjaxResult addTemDetails(@RequestParam String keyword, @RequestParam String keywordToValue) {
 
         try {
@@ -50,7 +64,7 @@ public class TemDetailsController {
      * @param limit
      * @return
      */
-    @RequestMapping(value = "/findTemDetails", method = RequestMethod.GET)
+    @RequestMapping(value = "/details/findTemDetails", method = RequestMethod.GET)
     public AjaxResult findTemDetails(@RequestParam(defaultValue = "0") int start, @RequestParam(defaultValue = "10") int limit) {
 
         Page<SystemTemDetailsModel> page = new Page<>(start, limit);
@@ -65,22 +79,22 @@ public class TemDetailsController {
     }
 
 
-
     @RequestMapping(value = "/details/export", method = RequestMethod.POST)
-    public AjaxResult addTemDetails(@RequestBody MultipartFile f) {
+    public AjaxResult addTemDetails(@RequestBody MultipartFile multipartFile) {
 
         try {
-//            int result = iSystemTemDetailsService.addTemDetails(keyword, keywordToValue);
-            int result=1;
-            if (result == 1) {
-                return AjaxResult.success();
-            } else {
-                return AjaxResult.error("添加失败！");
+            if(multipartFile.isEmpty()){
+                return AjaxResult.error("上传失败，请选择文件");
             }
-        } catch (Exception e) {
+            iSystemTemDetailsService.exportExceltoDb(multipartFile.getOriginalFilename(),multipartFile.getInputStream());
+
+            return AjaxResult.success();
+
+        }catch (Exception e){
             return AjaxResult.error(e.getMessage());
         }
 
     }
+
 
 }

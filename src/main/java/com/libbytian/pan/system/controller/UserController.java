@@ -40,7 +40,6 @@ public class UserController {
     }
 
 
-
     /**
      * 删除
      * @param id
@@ -50,7 +49,6 @@ public class UserController {
     public AjaxResult deleteUser(@PathVariable String id){
 
         try {
-//            iUserService.deleteUserByUsername(username);
             iUserService.removeById(id);
             return AjaxResult.success();
         } catch (Exception e) {
@@ -59,7 +57,7 @@ public class UserController {
     }
 
     /**
-     * 修改
+     * 更细用户
      * @param user
      * @return
      */

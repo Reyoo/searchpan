@@ -20,8 +20,8 @@ public interface SystemRoleMapper extends BaseMapper<SystemRoleModel> {
     @Select("SELECT r.role_name AS roleName , r.show_name AS ,showName , r.createtime,r.role_status AS roleStatus FROM sys_role WHERE r.role_id = #{roleId}")
     IPage<SystemRoleModel> selectRoleById(Page page , String roleId);
 
-    @Insert("INSERT INTO sys_role (role_id,role_name ,show_name ,createtime,role_status) VALUES(#{roleId},#{roleName},#{showName},#{localDateTime},0)")
-    int insert(String roleId, String roleName, String showName,LocalDateTime localDateTime);
+//    @Insert("INSERT INTO sys_role (role_id,role_name ,show_name ,createtime,role_status) VALUES(#{roleId},#{roleName},#{showName},#{localDateTime},0)")
+//    int insert(String roleId, String roleName, String showName,LocalDateTime localDateTime);
 
 
 //    @Update("<script>"

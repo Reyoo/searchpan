@@ -1,5 +1,6 @@
 package com.libbytian.pan.system.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -21,9 +22,30 @@ public class IRoleServiceImpl extends ServiceImpl<SystemRoleMapper, SystemRoleMo
 
     private final SystemRoleMapper roleMapper;
 
+    @Override
+    public IPage<SystemRoleModel> findRole(Page<SystemRoleModel> page, SystemRoleModel systemRoleModel) throws Exception {
+
+        QueryWrapper queryWrapper = new QueryWrapper();
+
+        /**
+         * 这里systemusermodel 不做空判断 。getusername 空指针  null.getUsername
+         */
+        if(systemRoleModel != null){
+            if(systemRoleModel.getRoleName() != null){
+                queryWrapper.eq("role_name",systemRoleModel.getRoleName());
+            }
+
+            if(systemRoleModel.getShowName() != null){
+                queryWrapper.eq("show_name",systemRoleModel.getShowName());
+            }
+        }
+        queryWrapper.orderByDesc("createtime");
+
+        return roleMapper.selectPage(page,queryWrapper);
+    }
 
     @Override
-    public IPage<SystemUserModel> findUserByRole(Page<SystemRoleModel> page, String roleName) {
+    public IPage<SystemUserModel> findUserByRole(Page<SystemRoleModel> page, String roleName)  throws Exception {
 
         IPage<SystemUserModel> result = roleMapper.selectUserByRole(page,roleName);
 
@@ -32,7 +54,7 @@ public class IRoleServiceImpl extends ServiceImpl<SystemRoleMapper, SystemRoleMo
     }
 
     @Override
-    public IPage<SystemRoleModel> findRoleById(Page<SystemRoleModel> page, String roleId) {
+    public IPage<SystemRoleModel> findRoleById(Page<SystemRoleModel> page, String roleId) throws Exception  {
 
        IPage<SystemRoleModel> result = roleMapper.selectRoleById(page,roleId);
 
@@ -46,12 +68,12 @@ public class IRoleServiceImpl extends ServiceImpl<SystemRoleMapper, SystemRoleMo
     }
 
     @Override
-    public int addRole(SystemRoleModel role) {
+    public int addRole(SystemRoleModel role) throws Exception {
 
         String roleId = role.getRoleId();
         String rolename =  role.getRoleName();
         LocalDateTime localDateTime = LocalDateTime.now();
-        return roleMapper.insert(roleId,rolename,role.getShowName() ,localDateTime);
+        return roleMapper.insert(role);
     }
 
     @Override
@@ -63,7 +85,7 @@ public class IRoleServiceImpl extends ServiceImpl<SystemRoleMapper, SystemRoleMo
     }
 
     @Override
-    public int dropRole(String roleId) {
+    public int dropRole(String roleId) throws Exception {
         return roleMapper.deleteById(roleId);
     }
 
@@ -74,7 +96,7 @@ public class IRoleServiceImpl extends ServiceImpl<SystemRoleMapper, SystemRoleMo
      * @return
      */
     @Override
-    public boolean checkEmail(String roleName) {
+    public boolean checkEmail(String roleName) throws Exception {
         boolean flag = false;
         try {
             String check = "^([a-z0-9A-Z]+[-|_|\\.]?)+[a-z0-9A-Z]@([a-z0-9A-Z]+(-[a-z0-9A-Z]+)?\\.)+[a-zA-Z]{2,}$";

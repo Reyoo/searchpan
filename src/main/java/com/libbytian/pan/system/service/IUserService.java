@@ -15,11 +15,11 @@ public interface IUserService extends IService<SystemUserModel> {
 
 
 
-    int deleteUserByUsername(String username);
+    int deleteUserByUsername(String username) throws Exception;
 
     SystemUserModel updateUser(SystemUserModel user) throws Exception;
 
-    IPage<SystemUserModel> findConditionByPage(Page<SystemUserModel> page, SystemUserModel user);
+    IPage<SystemUserModel> findConditionByPage(Page<SystemUserModel> page, SystemUserModel user) throws Exception;
 
 
 

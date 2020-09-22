@@ -22,24 +22,24 @@ public class LoginController {
 
     /**
      * 注册新用户
+     *
      * @param user
      * @return
      */
-    @RequestMapping(path = "/login/register" ,method = RequestMethod.POST )
+    @RequestMapping(path = "/login/register", method = RequestMethod.POST)
 
-    public AjaxResult loginRegister(@RequestBody SystemUserModel user){
-            try{
-               int count = iUserService.selectByName(user.getUsername());
+    public AjaxResult loginRegister(@RequestBody SystemUserModel user) {
+        try {
+            int count = iUserService.selectByName(user.getUsername());
 
-               if(count>0){
-                   return AjaxResult.error("该用户已存在,不可添加");
-               }
-
-                iUserService.register(user);
-                return  AjaxResult.success();
-            }catch (Exception e){
-                return  AjaxResult.error(e.getMessage());
+            if (count > 0) {
+                return AjaxResult.error("该用户已存在,不可添加");
             }
+            iUserService.register(user);
+            return AjaxResult.success();
+        } catch (Exception e) {
+            return AjaxResult.error(e.getMessage());
+        }
     }
 
 }

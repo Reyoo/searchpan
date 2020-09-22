@@ -19,7 +19,7 @@ public class SystemUserToRoleImpl extends ServiceImpl<SystemUserToRoleMapper, Sy
     private final SystemUserToRoleMapper userToRoleMapper ;
 
     @Override
-    public List<SystemUserToRole> getUserRoleByuserID(String userId) {
+    public List<SystemUserToRole> getUserRoleByuserID(String userId) throws Exception{
         return null;
     }
 }

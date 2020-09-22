@@ -19,18 +19,18 @@ public class SystemRoleImpl extends ServiceImpl<SystemRoleMapper, SystemRoleMode
     private final SystemRoleMapper systemRoleMapper ;
 
     @Override
-    public List<SystemRoleModel> getRolenameByUserId(String username) {
+    public List<SystemRoleModel> getRolenameByUserId(String username)   {
         return systemRoleMapper.selectUserByUserId(username);
     }
 
 
     @Override
-    public SystemRoleModel getRoleByRolename(String rolename) {
+    public SystemRoleModel getRoleByRolename(String rolename)   {
         return systemRoleMapper.selectRoleByRolename(rolename);
     }
 
     @Override
-    public List<SystemRoleModel> getRoleByUserName(String username) {
+    public List<SystemRoleModel> getRoleByUserName(String username)  throws Exception{
         return systemRoleMapper.selectRoleByUsername(username);
     }
 

@@ -21,7 +21,7 @@ public class SystemPermissionImpl extends ServiceImpl<SystemPermissionMapper, Sy
     private final SystemPermissionMapper systemPermissionMapper ;
 
     @Override
-    public List<SystemPermissionModel> getPermissionByUsername(String username) {
+    public List<SystemPermissionModel> getPermissionByUsername(String username) throws Exception {
         return systemPermissionMapper.selectUserByUsername(username);
     }
 }

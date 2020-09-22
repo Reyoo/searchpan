@@ -12,10 +12,10 @@ import java.io.InputStream;
 @Transactional(propagation = Propagation.REQUIRES_NEW)
 public interface ISystemTemDetailsService extends IService<SystemTemDetailsModel> {
 
-    int addTemDetails(String keyword ,String keywordToValue);
+    int addTemDetails(String keyword ,String keywordToValue) throws Exception;
 
-    IPage<SystemTemDetailsModel> findTemDetails(Page page);
+    IPage<SystemTemDetailsModel> findTemDetails(Page page) throws Exception;
 
-    int exportExceltoDb(String filename, InputStream inputStream);
+    int exportExceltoDb(String filename, InputStream inputStream) throws Exception;
 
 }
