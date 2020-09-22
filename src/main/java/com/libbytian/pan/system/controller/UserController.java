@@ -4,10 +4,17 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.libbytian.pan.system.common.AjaxResult;
 import com.libbytian.pan.system.model.SystemUserModel;
+import com.libbytian.pan.system.model.SystemUserToRole;
+import com.libbytian.pan.system.service.ISystemUserToRoleService;
 import com.libbytian.pan.system.service.IUserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import javax.swing.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 
 @RestController
@@ -16,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
     private final IUserService iUserService;
+    private  final ISystemUserToRoleService iSystemUserToRoleService;
 
 
     /**
@@ -71,4 +79,26 @@ public class UserController {
             return AjaxResult.error(e.getMessage());
         }
     }
+
+
+
+    /**
+     * 获取用户角色
+     * @param user
+     * @return
+     */
+    @RequestMapping(value = "/geturole",method = RequestMethod.GET)
+    public AjaxResult finduserRole(@RequestBody SystemUserModel user) {
+
+        try {
+
+            List<SystemUserToRole> systemUserToRoles =  iSystemUserToRoleService.getUserRoleByuserID(user.getUserId());
+            List<String> roleIds = systemUserToRoles.stream().map(SystemUserToRole::getRoleId).collect(Collectors.toList());
+            return AjaxResult.success(roleIds);
+        } catch (Exception e) {
+            return AjaxResult.error(e.getMessage());
+        }
+    }
+
+
 }
