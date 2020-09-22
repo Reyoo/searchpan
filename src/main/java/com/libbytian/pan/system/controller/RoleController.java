@@ -5,7 +5,6 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.libbytian.pan.system.common.AjaxResult;
 import com.libbytian.pan.system.model.SystemRoleModel;
-import com.libbytian.pan.system.model.SystemUserModel;
 import com.libbytian.pan.system.service.IRoleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,13 +29,16 @@ public class RoleController {
      * @return
      */
     @RequestMapping(value = "/findrole", method = RequestMethod.GET)
-    public AjaxResult findUserByRole(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int limit, @RequestBody(required = false) SystemRoleModel systemRoleModel) {
+    public AjaxResult findUserByRole(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int limit, @RequestParam(defaultValue = "false") boolean isall,  @RequestBody(required = false) SystemRoleModel systemRoleModel) {
         Page<SystemRoleModel> syspage = new Page<>(page, limit);
         try {
-            IPage<SystemRoleModel> result = iRoleService.findRole(syspage, systemRoleModel);
-            return AjaxResult.success(result);
+            if(!isall){
+                IPage<SystemRoleModel> result = iRoleService.findRole(syspage, systemRoleModel);
+                return AjaxResult.success(result);
+            }else{
+                return  AjaxResult.success(iRoleService.list());
+            }
         } catch (Exception e) {
-
             return AjaxResult.error(e.getMessage());
         }
 
@@ -73,10 +75,6 @@ public class RoleController {
      */
     @RequestMapping(value = "/addrole", method = RequestMethod.POST)
     public AjaxResult addRole(@RequestBody SystemRoleModel role) {
-
-//        boolean flag = iRoleService.checkEmail(roleName);
-
-
         try {
             role.setCreatetime(LocalDateTime.now());
             iRoleService.save(role);
@@ -127,5 +125,7 @@ public class RoleController {
             return AjaxResult.error(e.getMessage());
         }
     }
+
+
 
 }
