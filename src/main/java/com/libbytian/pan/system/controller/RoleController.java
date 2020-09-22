@@ -1,5 +1,6 @@
 package com.libbytian.pan.system.controller;
 
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.libbytian.pan.system.common.AjaxResult;
@@ -9,6 +10,8 @@ import com.libbytian.pan.system.service.IRoleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDateTime;
 
 @RestController
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
@@ -20,6 +23,7 @@ public class RoleController {
 
     /**
      * 根据角色名，查询用户信息
+     *
      * @param page
      * @param limit
      * @param systemRoleModel
@@ -74,15 +78,11 @@ public class RoleController {
 
 
         try {
-            int count = iRoleService.roleNameCount(role.getRoleName());
-            if (count > 0) {
-                return AjaxResult.error("角色名已存在，请重新输入");
-            }
-
-            iRoleService.addRole(role);
-
+            role.setCreatetime(LocalDateTime.now());
+            iRoleService.save(role);
             return AjaxResult.success();
         } catch (Exception e) {
+            e.printStackTrace();
             return AjaxResult.error(e.getMessage());
         }
 
@@ -98,10 +98,10 @@ public class RoleController {
     public AjaxResult putRole(@RequestBody SystemRoleModel role) {
 
         try {
-            if("ROLE_ADMIN".equals(role.getRoleName()) || "ROLE_NORMAL".equals(role.getRoleName()) || "ROLE_PAYUSER".equals(role.getRoleName())){
+            if ("ROLE_ADMIN".equals(role.getRoleName()) || "ROLE_NORMAL".equals(role.getRoleName()) || "ROLE_PAYUSER".equals(role.getRoleName())) {
                 return AjaxResult.error("该用户权限不允许修改");
             }
-            iRoleService.putRole(role);
+            iRoleService.updateById(role);
             return AjaxResult.success();
         } catch (Exception e) {
             return AjaxResult.error(e.getMessage());
@@ -114,10 +114,13 @@ public class RoleController {
      * @param roleId
      * @return
      */
-    @RequestMapping(value = "/droprole", method = RequestMethod.DELETE)
-    public AjaxResult dropRole(@RequestParam String roleId) {
+    @RequestMapping(value = "/droprole/{roleId}", method = RequestMethod.DELETE)
+    public AjaxResult dropRole(@PathVariable String roleId) {
 
         try {
+            if(StrUtil.isBlank(roleId)){
+                return  AjaxResult.error("字段不能为空");
+            }
             iRoleService.dropRole(roleId);
             return AjaxResult.success();
         } catch (Exception e) {

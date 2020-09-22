@@ -1,12 +1,15 @@
 package com.libbytian.pan.system.controller;
 
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.libbytian.pan.system.common.AjaxResult;
 import com.libbytian.pan.system.model.SystemPermissionModel;
 import com.libbytian.pan.system.service.IPermissionService;
 import lombok.RequiredArgsConstructor;
+import org.aspectj.weaver.loadtime.Aj;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -19,17 +22,17 @@ public class PermissionController {
 
     /**
      * 分页查询
-     * @param start
+     * @param page
      * @param limit
      * @param systemPermissionModel
      * @return
      */
-    @RequestMapping(value = "/find" , method = RequestMethod.GET)
-    public AjaxResult findPermission(@RequestParam(defaultValue = "1") int start , @RequestParam(defaultValue = "10") int limit , @RequestBody(required = false) SystemPermissionModel systemPermissionModel){
+    @RequestMapping(value = "/getper", method = RequestMethod.GET)
+    public AjaxResult findPermission(@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int limit, @RequestBody(required = false) SystemPermissionModel systemPermissionModel) {
 
-        Page<SystemPermissionModel> page = new Page<>(start,limit);
+        Page<SystemPermissionModel> systemPermissionModelPage = new Page<>(page, limit);
         try {
-            IPage<SystemPermissionModel>  result = iPermissionService.findPermission(page,systemPermissionModel);
+            IPage<SystemPermissionModel> result = iPermissionService.findPermission(systemPermissionModelPage, systemPermissionModel);
             return AjaxResult.success(result);
         } catch (Exception e) {
             return AjaxResult.error(e.getMessage());
@@ -38,46 +41,58 @@ public class PermissionController {
 
 
     /**
-     * 修改  username未使用
-     * @param username
-     * @param body
+     *  更新
+     * @param systemPermissionModel
      * @return
      */
-    @RequestMapping(value = "/update",method = RequestMethod.PUT)
-    public AjaxResult putPermission(String username , @RequestBody SystemPermissionModel body){
+    @RequestMapping(value = "/updateper", method = RequestMethod.PUT)
+    public AjaxResult putPermission(@RequestBody SystemPermissionModel systemPermissionModel) {
 
-        iPermissionService.putPermission(username,body);
-
-        return AjaxResult.success();
+        try {
+            iPermissionService.updateById( systemPermissionModel);
+            return AjaxResult.success();
+        } catch (Exception e) {
+            return AjaxResult.error(e.getMessage());
+        }
 
     }
 
     /**
      * 删除
+     *
      * @param permissionId
      * @return
      */
-    @RequestMapping(value = "/drop" ,method = RequestMethod.DELETE)
-    public AjaxResult dropPermission(@RequestParam String permissionId){
+    @RequestMapping(value = "/dropper/{permissionId}", method = RequestMethod.DELETE)
+    public AjaxResult dropPermission(@PathVariable  @NonNull String permissionId) {
+        try {
+            iPermissionService.dropPermission(permissionId);
+            return AjaxResult.success();
+        } catch (Exception e) {
+            return AjaxResult.error(e.getMessage());
+        }
 
-        iPermissionService.dropPermission(permissionId);
-        return AjaxResult.success();
     }
 
     /**
      * 添加
+     *
      * @param permission
      * @return
      */
-    @RequestMapping(value = "/add",method = RequestMethod.POST)
-    public AjaxResult addPermission(@RequestBody SystemPermissionModel permission){
+    @RequestMapping(value = "/addper", method = RequestMethod.POST)
+    public AjaxResult addPermission(@RequestBody SystemPermissionModel permission) {
 
-       int result = iPermissionService.addPermission(permission);
-       if(result==1){
-           return AjaxResult.success();
-       }else {
-           return AjaxResult.error();
-       }
+        try {
+            int result = iPermissionService.addPermission(permission);
+            if (result == 1) {
+                return AjaxResult.success();
+            } else {
+                return AjaxResult.error();
+            }
+        } catch (Exception e) {
+            return AjaxResult.error(e.getMessage());
+        }
     }
 
 

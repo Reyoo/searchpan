@@ -12,13 +12,16 @@ import java.time.LocalDateTime;
 public interface PermissionMapper extends BaseMapper<SystemPermissionModel> {
 
 
+    /**
+     * 传用户 颗粒度可以更细 暂时不做这么细的权限划分
+     * @param page
+     * @param username
+     * @return
+     */
     @Select("SELECT P.permission_id AS permissionId,permission_url As permissionUrl,permission_comment AS permissionComment,permission_status As permissionstatus ,createtime from \n" +
             "sys_permission p LEFT JOIN role_permission r ON  p.permission_id = r.permission_id LEFT JOIN sys_user_role s ON r.role_id = s.role_id LEFT JOIN sys_user u ON s.user_id = u.user_id WHERE u.user_name = #{username}")
     IPage<SystemPermissionModel> selectByPage(Page page, String username);
 
-
-
-//    @Update("UPDATE sys_permission SET permission_url  = #{permissionUrl} ,permission_comment  = #{permissionComment} WHERE permission_id  = #{permissionId}")
 
     @Update("<script>"
             + "UPDATE `sys_permission` "

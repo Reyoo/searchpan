@@ -37,9 +37,6 @@ public class IPermissionServiceImpl extends ServiceImpl<PermissionMapper, System
             if(systemPermissionModel.getPermissionComment() != null){
                 queryWrapper.eq("permission_comment",systemPermissionModel.getPermissionComment());
             }
-            if(systemPermissionModel.getPermissionstatus() != null){
-                queryWrapper.eq("permission_status",systemPermissionModel.getPermissionstatus());
-            }
         }
         queryWrapper.orderByDesc("createtime");
 

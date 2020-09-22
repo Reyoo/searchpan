@@ -19,7 +19,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-@TableName("permission")
+@TableName("sys_permission")
 public class SystemPermissionModel {
 
 
@@ -46,7 +46,7 @@ public class SystemPermissionModel {
      * 权限状态
      */
     @TableField("permission_status")
-    private String permissionstatus;
+    private boolean permissionstatus;
 
     /**
      * 创建时间

@@ -23,7 +23,7 @@ public interface ISystemUserService extends IService<SystemUserModel> {
 //     * @param username 用户名
 //     * @return 用户
 //     */
-    SystemUserModel getUserByUserName(String username) throws Exception;
+    SystemUserModel getUserByUserName(String username) ;
 //
 //    User getUserByMobile(String mobile);
 

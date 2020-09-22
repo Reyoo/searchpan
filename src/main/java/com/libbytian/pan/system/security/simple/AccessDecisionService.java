@@ -15,11 +15,12 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/** 配置路径访问限制,若你的用户角色比较简单,不需要存数据库,
+/**
+ * 配置路径访问限制,若你的用户角色比较简单,不需要存数据库,
  * 可以在ApplicationConfigurerAdapter里配置如
- *    httpSecurity
- *    .authorizeRequests()
- *    .antMatchers("/order").....
+ * httpSecurity
+ * .authorizeRequests()
+ * .antMatchers("/order").....
  *
  * @author niXueChao
  * @date 2019/4/10 10:33.
@@ -66,20 +67,25 @@ public class AccessDecisionService {
     }
 
     /**
-     * 模拟数据库查询用户权限
-     *
+     * 数据库查询用户权限
      * @param userName
      * @return
      */
     private List<String> queryUrlByUserName(String userName) {
-        /**
-         * 根据用户获取权限entry
-         */
-        List<SystemPermissionModel> systemPermissionModelList = iSystemPermissionService.getPermissionByUsername(userName);
-        /**
-         * 重排序获取url
-         */
-        List<String> urlList = systemPermissionModelList.stream().map(SystemPermissionModel::getPermissionUrl).collect(Collectors.toList());
-        return urlList;
+        try {
+            /**
+             * 根据用户获取权限entry
+             */
+            List<SystemPermissionModel> systemPermissionModelList = iSystemPermissionService.getPermissionByUsername(userName);
+            /**
+             * 重排序获取url
+             */
+            List<String> urlList = systemPermissionModelList.stream().map(SystemPermissionModel::getPermissionUrl).collect(Collectors.toList());
+            return urlList;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ArrayList<>();
+        }
+
     }
 }

@@ -1,28 +1,20 @@
 package com.libbytian.pan.system.service.impl;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.libbytian.pan.system.common.AjaxResult;
 import com.libbytian.pan.system.mapper.SystemUserMapper;
-import com.libbytian.pan.system.mapper.UserMapper;
 import com.libbytian.pan.system.model.SystemUserModel;
 import com.libbytian.pan.system.model.SystemUserToRole;
 import com.libbytian.pan.system.service.ISystemUserToRoleService;
 import com.libbytian.pan.system.service.IUserService;
 import lombok.RequiredArgsConstructor;
-import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 
 @Service
@@ -30,7 +22,7 @@ import java.util.List;
 public class IUserServiceImpl extends ServiceImpl<SystemUserMapper,SystemUserModel> implements IUserService {
 
 
-    private final UserMapper userMapper;
+    private final SystemUserMapper userMapper;
 
     private final ISystemUserToRoleService userToRoleService;
 

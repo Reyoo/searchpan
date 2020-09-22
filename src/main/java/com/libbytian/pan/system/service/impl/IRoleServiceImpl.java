@@ -73,7 +73,7 @@ public class IRoleServiceImpl extends ServiceImpl<SystemRoleMapper, SystemRoleMo
         String roleId = role.getRoleId();
         String rolename =  role.getRoleName();
         LocalDateTime localDateTime = LocalDateTime.now();
-        return roleMapper.insert(roleId,rolename,role.getShowName() ,localDateTime);
+        return roleMapper.insert(role);
     }
 
     @Override
