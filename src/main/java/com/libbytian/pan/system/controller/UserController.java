@@ -101,4 +101,22 @@ public class UserController {
     }
 
 
+    /**
+     * 更新用户角色表
+     * @param systemUserToRole
+     * @return
+     */
+    @RequestMapping(value = "/addusertorole",method = RequestMethod.POST)
+    public AjaxResult finduserRole(@RequestBody  List<SystemUserToRole>  systemUserToRole) {
+
+        try {
+            iSystemUserToRoleService.removeById(systemUserToRole.get(0).getUserId());
+            return AjaxResult.success(iSystemUserToRoleService.saveBatch(systemUserToRole));
+        } catch (Exception e) {
+            return AjaxResult.error(e.getMessage());
+        }
+    }
+
+
+
 }
