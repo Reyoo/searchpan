@@ -42,7 +42,7 @@ public class ISystemTemDetailsServiceImpl extends ServiceImpl<SystemTemDetailsMa
      */
     @Override
     public int exportExceltoDb(String filename, InputStream inputStream)  throws Exception{
-        SystemTemDetailsModel systemTemDetailsModel = new SystemTemDetailsModel();
+        List<SystemTemDetailsModel> systemTemDetailsModelList = new ArrayList<>();
         Workbook wb =null;
         Sheet sheet = null;
         Row row = null;
@@ -81,9 +81,8 @@ public class ISystemTemDetailsServiceImpl extends ServiceImpl<SystemTemDetailsMa
 
         //遍历解析出来的list
         for (Map<String,String> map : list) {
+            SystemTemDetailsModel systemTemDetailsModel = new SystemTemDetailsModel();
             for (Map.Entry<String,String> entry : map.entrySet()) {
-                System.out.print(entry.getKey()+" -----------------------> "+entry.getValue()+",");
-
                 if(entry.getKey().equals("question")){
                     systemTemDetailsModel.setKeyword(entry.getValue());
                 }
@@ -100,11 +99,11 @@ public class ISystemTemDetailsServiceImpl extends ServiceImpl<SystemTemDetailsMa
                 }
 
             }
-//                systemTemDetailsMapper.insert(systemTemDetailsModel);
-
-            systemTemDetailsMapper.insertTemDetails(systemTemDetailsModel.getKeyword(),systemTemDetailsModel.getKeywordToValue(),systemTemDetailsModel.getCreatetime(),systemTemDetailsModel.getTemdetailsstatus());
+            systemTemDetailsModelList.add(systemTemDetailsModel);
 
         }
+        System.out.println( this.saveBatch(systemTemDetailsModelList));
+
 
 
         return 0;

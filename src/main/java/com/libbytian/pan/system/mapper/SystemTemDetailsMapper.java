@@ -26,7 +26,4 @@ public interface SystemTemDetailsMapper extends BaseMapper<SystemTemDetailsModel
      @Select("SELECT td.templatedetails_id AS temdetailsId,templatedetails_keyword AS keyword,templatedetails_value AS keywordToValue,td.createtime,templatedetails_status AS temdetailsstatus FROM sys_temdetails td LEFT JOIN tem_temdetails tt ON td.templatedetails_id = tt.templatedetails_id WHERE tt.template_id =1 ORDER BY td.templatedetails_status DESC,td.createtime DESC")
      IPage<SystemTemDetailsModel> selectTemDetails(Page page);
 
-
-     @Insert("INSERT INTO sys_temdetails (templatedetails_keyword  ,templatedetails_value  ,createtime  ,templatedetails_status) VALUES(#{keyword},#{keywordToValue},#{localDateTime},#{temdetailsstatus})")
-     Integer insertTemDetails(String keyword , String keywordToValue , LocalDateTime localDateTime,int temdetailsstatus);
 }
