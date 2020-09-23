@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.InputStream;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -32,6 +33,7 @@ public class ISystemTemDetailsServiceImpl extends ServiceImpl<SystemTemDetailsMa
     private final ITemToTemDetailsService iTemToTemDetailsService;
 
 
+
     /**
      *
      * @param filename
@@ -40,13 +42,13 @@ public class ISystemTemDetailsServiceImpl extends ServiceImpl<SystemTemDetailsMa
      */
     @Override
     public int exportExceltoDb(String filename, InputStream inputStream)  throws Exception{
-
+        SystemTemDetailsModel systemTemDetailsModel = new SystemTemDetailsModel();
         Workbook wb =null;
         Sheet sheet = null;
         Row row = null;
         List<Map<String,String>> list = null;
         String cellData = null;
-        String columns[] = {"id","question","answer","date_time","isTop"};
+        String columns[] = {"id","question","answer","userid","date_time","isTop"};
         wb = ReadOrWriteExcelUtil.readExcel(filename, inputStream);
         if(wb != null){
             //用来存放表中数据
@@ -73,12 +75,35 @@ public class ISystemTemDetailsServiceImpl extends ServiceImpl<SystemTemDetailsMa
                 list.add(map);
             }
         }
+
+        //String转LocalDateTime格式
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
         //遍历解析出来的list
         for (Map<String,String> map : list) {
             for (Map.Entry<String,String> entry : map.entrySet()) {
-                System.out.print(entry.getKey()+":"+entry.getValue()+",");
+                System.out.print(entry.getKey()+" -----------------------> "+entry.getValue()+",");
+
+                if(entry.getKey().equals("question")){
+                    systemTemDetailsModel.setKeyword(entry.getValue());
+                }
+                if(entry.getKey().equals("answer")){
+                    systemTemDetailsModel.setKeywordToValue(entry.getValue());
+                }
+                if(entry.getKey().equals("date_time")){
+
+                    LocalDateTime time = LocalDateTime.parse(entry.getValue(),dateTimeFormatter);
+                    systemTemDetailsModel.setCreatetime(time);
+                }
+                if(entry.getKey().equals("isTop")){
+                    systemTemDetailsModel.setTemdetailsstatus(Integer.valueOf(entry.getValue()));
+                }
+
             }
-            System.out.println("==============");
+//                systemTemDetailsMapper.insert(systemTemDetailsModel);
+
+            systemTemDetailsMapper.insertTemDetails(systemTemDetailsModel.getKeyword(),systemTemDetailsModel.getKeywordToValue(),systemTemDetailsModel.getCreatetime(),systemTemDetailsModel.getTemdetailsstatus());
+
         }
 
 

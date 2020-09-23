@@ -5,12 +5,18 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.libbytian.pan.system.common.AjaxResult;
 import com.libbytian.pan.system.model.SystemRoleModel;
+import com.libbytian.pan.system.model.SystemRoleToPermission;
+import com.libbytian.pan.system.model.SystemUserModel;
+import com.libbytian.pan.system.model.SystemUserToRole;
 import com.libbytian.pan.system.service.IRoleService;
+import com.libbytian.pan.system.service.IRoleToPermissionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
@@ -18,6 +24,7 @@ import java.time.LocalDateTime;
 public class RoleController {
 
     private final IRoleService iRoleService;
+    private final IRoleToPermissionService iRoleToPermissionService;
 
 
     /**
@@ -124,6 +131,27 @@ public class RoleController {
         } catch (Exception e) {
             return AjaxResult.error(e.getMessage());
         }
+    }
+
+
+    /**
+     * 获取角色对应权限
+     * @param role
+     * @return
+     */
+    @RequestMapping(value = "/getrpermission",method = RequestMethod.GET)
+    public AjaxResult findrolePermission(@RequestBody SystemRoleModel role) {
+
+        try {
+
+             List<SystemRoleToPermission> systemRoleToPermissions =  iRoleToPermissionService.getRolePermissionByroleID(role.getRoleId());
+             List<String> permissionIds  = systemRoleToPermissions.stream().map(SystemRoleToPermission::getPermissionid).collect(Collectors.toList());
+
+            return AjaxResult.success(permissionIds);
+        } catch (Exception e) {
+            return AjaxResult.error(e.getMessage());
+        }
+
     }
 
 

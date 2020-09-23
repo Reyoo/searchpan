@@ -79,7 +79,7 @@ public class TemDetailsController {
     }
 
 
-    @RequestMapping(value = "/details/export", method = RequestMethod.POST)
+    @RequestMapping(value = "/details/excelinport", method = RequestMethod.POST)
     public AjaxResult addTemDetails(@RequestBody MultipartFile multipartFile) {
 
         try {

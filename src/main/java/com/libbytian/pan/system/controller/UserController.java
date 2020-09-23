@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 public class UserController {
 
     private final IUserService iUserService;
-    private  final ISystemUserToRoleService iSystemUserToRoleService;
+    private final ISystemUserToRoleService iSystemUserToRoleService;
 
 
     /**
