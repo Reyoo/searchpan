@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
 
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-public class IRoleServiceImpl extends ServiceImpl<SystemRoleMapper, SystemRoleModel> implements IRoleService {
+public class RoleServiceImpl extends ServiceImpl<SystemRoleMapper, SystemRoleModel> implements IRoleService {
 
     private final SystemRoleMapper roleMapper;
 

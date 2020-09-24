@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-public class IPermissionServiceImpl extends ServiceImpl<PermissionMapper, SystemPermissionModel> implements IPermissionService {
+public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, SystemPermissionModel> implements IPermissionService {
 
     private final PermissionMapper permissionMapper;
 

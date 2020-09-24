@@ -1,11 +1,15 @@
 package com.libbytian.pan.system.service.impl;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import cn.hutool.core.lang.UUID;
+import cn.hutool.core.util.RandomUtil;
+import cn.hutool.core.util.StrUtil;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.libbytian.pan.system.mapper.SystemTemDetailsMapper;
+import com.libbytian.pan.system.mapper.TemToTemDetailsMapper;
 import com.libbytian.pan.system.model.SystemTemDetailsModel;
-import com.libbytian.pan.system.model.TemToTemDetailsModel;
+import com.libbytian.pan.system.model.SystemTemToTemdetails;
+import com.libbytian.pan.system.model.SystemUserToRole;
 import com.libbytian.pan.system.service.ISystemTemDetailsService;
 import com.libbytian.pan.system.service.ITemToTemDetailsService;
 import com.libbytian.pan.system.util.ReadOrWriteExcelUtil;
@@ -26,12 +30,11 @@ import java.util.Map;
 
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-public class ISystemTemDetailsServiceImpl extends ServiceImpl<SystemTemDetailsMapper, SystemTemDetailsModel> implements ISystemTemDetailsService {
+public class SystemTemDetailsServiceImpl extends ServiceImpl<SystemTemDetailsMapper, SystemTemDetailsModel> implements ISystemTemDetailsService {
 
 
     private final SystemTemDetailsMapper systemTemDetailsMapper;
     private final ITemToTemDetailsService iTemToTemDetailsService;
-
 
 
     /**
@@ -41,8 +44,10 @@ public class ISystemTemDetailsServiceImpl extends ServiceImpl<SystemTemDetailsMa
      * @return
      */
     @Override
-    public int exportExceltoDb(String filename, InputStream inputStream)  throws Exception{
+    public int exportExceltoDb(String filename, InputStream inputStream ,String templateId)  throws Exception{
         List<SystemTemDetailsModel> systemTemDetailsModelList = new ArrayList<>();
+        List<String> uuidList = new ArrayList<>();
+
         Workbook wb =null;
         Sheet sheet = null;
         Row row = null;
@@ -79,9 +84,11 @@ public class ISystemTemDetailsServiceImpl extends ServiceImpl<SystemTemDetailsMa
         //String转LocalDateTime格式
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
+
         //遍历解析出来的list
         for (Map<String,String> map : list) {
             SystemTemDetailsModel systemTemDetailsModel = new SystemTemDetailsModel();
+
             for (Map.Entry<String,String> entry : map.entrySet()) {
                 if(entry.getKey().equals("question")){
                     systemTemDetailsModel.setKeyword(entry.getValue());
@@ -97,46 +104,65 @@ public class ISystemTemDetailsServiceImpl extends ServiceImpl<SystemTemDetailsMa
                 if(entry.getKey().equals("isTop")){
                     systemTemDetailsModel.setTemdetailsstatus(Integer.valueOf(entry.getValue()));
                 }
-
             }
+
+            String uuid = UUID.randomUUID().toString();
+            systemTemDetailsModel.setTemdetailsId(uuid);
+            uuidList.add(uuid);
             systemTemDetailsModelList.add(systemTemDetailsModel);
-
         }
-        System.out.println( this.saveBatch(systemTemDetailsModelList));
 
 
+        this.saveBatch(systemTemDetailsModelList);
+
+        for (String uuid : uuidList) {
+            SystemTemToTemdetails temToTemdetails= SystemTemToTemdetails.builder().templateid(templateId).templatedetailsid(uuid).build();
+            iTemToTemDetailsService.save(temToTemdetails);
+        }
 
         return 0;
     }
 
 
-    /**
-     *
-     * @param keyword
-     * @param keywordToValue
-     * @return
-     */
-    @Override
-    public int addTemDetails(String keyword, String keywordToValue) throws Exception  {
 
-        SystemTemDetailsModel user = new SystemTemDetailsModel();
-        LocalDateTime localDateTime = LocalDateTime.now();
-        user.setKeywordToValue(keywordToValue);
-        user.setKeyword(keyword);
-        user.setCreatetime(localDateTime);
-        int result = systemTemDetailsMapper.addTemDetails(keyword, keywordToValue, localDateTime, user);
-        int id = user.getTemdetailsId();
+    @Override
+    public int addTemDetails(SystemTemDetailsModel systemTemDetailsModel, String templateId) throws Exception {
+
+        systemTemDetailsModel.setCreatetime(LocalDateTime.now());
+        systemTemDetailsModel.setTemdetailsId(UUID.randomUUID().toString());
+        systemTemDetailsModel.setTemdetailsstatus(0);
+
+        //插入模板详情表
+        int result = systemTemDetailsMapper.insert(systemTemDetailsModel);
+
         if (result == 1) {
-            TemToTemDetailsModel temToDetails = TemToTemDetailsModel.builder().templateid(1).templatedetailsid(id).build();
+            //插入模板_模板详情表
+            SystemTemToTemdetails temToDetails = SystemTemToTemdetails.builder().templateid(templateId).templatedetailsid(systemTemDetailsModel.getTemdetailsId()).build();
             iTemToTemDetailsService.save(temToDetails);
+
         }
         return result;
     }
 
-
     @Override
-    public IPage<SystemTemDetailsModel> findTemDetails(Page page)  throws Exception {
+    public int updateTemDetails(SystemTemDetailsModel systemTemDetailsModel) throws Exception {
 
-        return systemTemDetailsMapper.selectTemDetails(page);
+        if(systemTemDetailsModel.getTemdetailsId() == null){
+            throw new Exception("未绑定id，请重新输入");
+        }
+        if(systemTemDetailsModel.getKeyword() == null || systemTemDetailsModel.getKeyword().isEmpty()){
+            throw new Exception("请填写关键词");
+        }
+        if(systemTemDetailsModel.getKeywordToValue() == null || systemTemDetailsModel.getKeywordToValue().isEmpty()){
+            throw new Exception("请填写回复内容");
+        }
+        LocalDateTime localDateTime = LocalDateTime.now();
+        systemTemDetailsModel.setCreatetime(localDateTime);
+
+        int result = systemTemDetailsMapper.updateById(systemTemDetailsModel);
+
+        return result;
     }
+
+
 }

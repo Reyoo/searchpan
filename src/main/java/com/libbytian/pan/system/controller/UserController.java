@@ -3,9 +3,13 @@ package com.libbytian.pan.system.controller;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.libbytian.pan.system.common.AjaxResult;
+import com.libbytian.pan.system.mapper.SystemUserToRoleMapper;
+import com.libbytian.pan.system.model.SystemTemplateModel;
 import com.libbytian.pan.system.model.SystemUserModel;
 import com.libbytian.pan.system.model.SystemUserToRole;
+import com.libbytian.pan.system.model.SystemUserToTemplate;
 import com.libbytian.pan.system.service.ISystemUserToRoleService;
+import com.libbytian.pan.system.service.ISystemUserToTemplateService;
 import com.libbytian.pan.system.service.IUserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +28,8 @@ public class UserController {
 
     private final IUserService iUserService;
     private final ISystemUserToRoleService iSystemUserToRoleService;
+    private final SystemUserToRoleMapper systemUserToRoleMapper;
+    private final ISystemUserToTemplateService iSystemUserToTemplateService;
 
 
     /**
@@ -33,7 +39,7 @@ public class UserController {
      * @param user = null 则为全查询
      * @return
      */
-    @RequestMapping(value = "/select",method = RequestMethod.GET)
+    @RequestMapping(value = "/selectuser",method = RequestMethod.POST)
     public AjaxResult findConditionByPage(@RequestParam(defaultValue = "1")int page, @RequestParam(defaultValue = "10")  int limit, @RequestBody(required = false) SystemUserModel user){
 
         Page<SystemUserModel> findpage = new Page<>(page,limit);
@@ -49,11 +55,11 @@ public class UserController {
 
 
     /**
-     * 删除
+     * 删除用户
      * @param id
      * @return
      */
-    @RequestMapping(value = "/delete/{id}",method = RequestMethod.DELETE)
+    @RequestMapping(value = "/deletebyid/{id}",method = RequestMethod.DELETE)
     public AjaxResult deleteUser(@PathVariable String id){
 
         try {
@@ -65,11 +71,11 @@ public class UserController {
     }
 
     /**
-     * 更细用户
+     * 更新用户
      * @param user
      * @return
      */
-    @RequestMapping(value = "/update",method = RequestMethod.PATCH)
+    @RequestMapping(value = "/updateuser",method = RequestMethod.PATCH)
     public AjaxResult updateUser(@RequestBody SystemUserModel user) {
 
         try {
@@ -110,12 +116,56 @@ public class UserController {
     public AjaxResult finduserRole(@RequestBody  List<SystemUserToRole>  systemUserToRole) {
 
         try {
-            iSystemUserToRoleService.removeById(systemUserToRole.get(0).getUserId());
+            iSystemUserToRoleService.removeByIds(systemUserToRole.stream().map(SystemUserToRole::getUserToRoleId).collect(Collectors.toList()));
             return AjaxResult.success(iSystemUserToRoleService.saveBatch(systemUserToRole));
         } catch (Exception e) {
             return AjaxResult.error(e.getMessage());
         }
     }
+
+
+    /**
+     * 获取用户所有的模板
+     * @param userId
+     * @return
+     */
+    @RequestMapping(value = "getusertemplate", method =RequestMethod.GET)
+    public AjaxResult getuserTemplate(@RequestParam String userId){
+
+        try {
+            SystemTemplateModel result = iUserService.findTemplateById(userId);
+            return AjaxResult.success(result);
+        } catch (Exception e) {
+            return AjaxResult.error(e.getMessage());
+        }
+
+    }
+
+
+
+
+
+    /**
+     * 更新用户模板表
+     * @param systemUserToTemplates
+     * @return
+     */
+    @RequestMapping(value = "/addusertotemplate",method = RequestMethod.POST)
+    public AjaxResult finduserTemplate(@RequestBody  List<SystemUserToTemplate>  systemUserToTemplates) {
+
+        //临时设置，更新用户模板表时把status默认设为0,如sun7有更好的实现，可删除
+        for (SystemUserToTemplate userToTemplate : systemUserToTemplates) {
+            userToTemplate.setUserTemplateStatus("0");
+        }
+        try {
+            iSystemUserToTemplateService.removeByIds(systemUserToTemplates.stream().map(SystemUserToTemplate::getUserTotemplateId).collect(Collectors.toList()));
+            return AjaxResult.success(iSystemUserToTemplateService.saveBatch(systemUserToTemplates));
+
+        } catch (Exception e) {
+            return AjaxResult.error(e.getMessage());
+        }
+    }
+
 
 
 

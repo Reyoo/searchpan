@@ -30,8 +30,8 @@ public class SystemTemDetailsModel extends Model<SystemTemDetailsModel> {
     /**
      * 主键
      */
-    @TableId(value = "templatedetails_id" , type = IdType.AUTO)
-    private Integer temdetailsId;
+    @TableId(value = "templatedetails_id",type = IdType.INPUT)
+    private String temdetailsId;
 
     /**
      * 关键字

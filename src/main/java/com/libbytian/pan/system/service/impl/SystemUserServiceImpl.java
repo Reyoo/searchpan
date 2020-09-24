@@ -1,14 +1,11 @@
 package com.libbytian.pan.system.service.impl;
 
 
+import cn.hutool.core.lang.UUID;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.libbytian.pan.system.mapper.SystemUserMapper;
-import com.libbytian.pan.system.model.SystemRoleModel;
-import com.libbytian.pan.system.model.SystemUserModel;
-import com.libbytian.pan.system.model.SystemUserToRole;
-import com.libbytian.pan.system.service.ISystemRoleService;
-import com.libbytian.pan.system.service.ISystemUserService;
-import com.libbytian.pan.system.service.ISystemUserToRoleService;
+import com.libbytian.pan.system.model.*;
+import com.libbytian.pan.system.service.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -34,6 +31,10 @@ public class SystemUserServiceImpl extends ServiceImpl<SystemUserMapper, SystemU
     private final SystemUserMapper systemUserMapper ;
 
     private final ISystemRoleService systemRoleService;
+
+    private final ISystemUserToTemplateService userToTemplateService;
+
+    private final ISystemTemplateService systemTemplateService;
 
 
 
@@ -63,6 +64,7 @@ public class SystemUserServiceImpl extends ServiceImpl<SystemUserMapper, SystemU
         /**
          * 1. 先去查询角色表中ROLE_NORMAL 对应的id
          * 2. 拿着 角色id 绑定用户id 插入到库中
+         * 3. 拿着 默认模板id=1 绑定用户id
          */
 
         SystemRoleModel systemRoleModel = systemRoleService.getRoleByRolename("ROLE_NORMAL");
@@ -70,6 +72,18 @@ public class SystemUserServiceImpl extends ServiceImpl<SystemUserMapper, SystemU
         if (result) {
             SystemUserToRole userToRole  = SystemUserToRole.builder().userId(user.getUserId()).roleId(systemRoleModel.getRoleId()).build();
             userToRoleService.save(userToRole);
+          //新增模板,存入模板表 sys_template
+            String uuid = UUID.randomUUID().toString();
+            SystemTemplateModel template =  new SystemTemplateModel();
+            template.setTemplateid(uuid);
+            template.setTemplatename("模板1");
+            template.setTemplatecreatetime(LocalDateTime.now());
+            template.setTemplatestatus(0);
+            systemTemplateService.save(template);
+
+            //模板ID绑定用户ID
+            SystemUserToTemplate userToTemplate  = SystemUserToTemplate.builder().userId(user.getUserId()).templateId(uuid).userTemplateStatus("0").build();
+            userToTemplateService.save(userToTemplate);
         }
         return user;
     }

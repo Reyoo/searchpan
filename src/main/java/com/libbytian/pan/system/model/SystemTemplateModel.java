@@ -25,8 +25,8 @@ public class SystemTemplateModel extends Model<SystemTemplateModel> {
     /**
      * 主键
      */
-    @TableId(value = "template_id",type = IdType.AUTO)
-    private Integer templateid;
+    @TableId(value = "template_id",type = IdType.INPUT)
+    private String templateid;
 
     /**
      * 模板名称

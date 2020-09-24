@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.libbytian.pan.system.mapper.SystemUserMapper;
+import com.libbytian.pan.system.model.SystemTemplateModel;
 import com.libbytian.pan.system.model.SystemUserModel;
 import com.libbytian.pan.system.model.SystemUserToRole;
 import com.libbytian.pan.system.service.ISystemUserToRoleService;
@@ -19,20 +20,12 @@ import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-public class IUserServiceImpl extends ServiceImpl<SystemUserMapper,SystemUserModel> implements IUserService {
+public class UserServiceImpl extends ServiceImpl<SystemUserMapper,SystemUserModel> implements IUserService {
 
 
     private final SystemUserMapper userMapper;
 
     private final ISystemUserToRoleService userToRoleService;
-
-
-
-    @Override
-    public int deleteUserByUsername(String username) throws Exception {
-
-        return userMapper.deleteUserByUsername(username);
-    }
 
 
 
@@ -93,6 +86,13 @@ public class IUserServiceImpl extends ServiceImpl<SystemUserMapper,SystemUserMod
 
     }
 
+
+
+    @Override
+    public SystemTemplateModel findTemplateById(String userId) {
+
+        return userMapper.findTemplateById(userId);
+    }
 
 
 }

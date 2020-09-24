@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+@RequestMapping("/details")
 @RestController
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 @Slf4j
@@ -18,33 +19,18 @@ public class TemDetailsController {
 
     private final ISystemTemDetailsService iSystemTemDetailsService;
 
+
     /**
      * 添加关键字及对应回复
-     *
-     * @param keyword
-     * @param keywordToValue
+     * @param systemTemDetailsModel 传入 key，value
+     * @param templateId  存入的模板
      * @return
      */
-//    @RequestMapping(value = "/details/addTemDetails",method = RequestMethod.POST)
-//    public AjaxResult addTemDetails(@RequestParam String keyword , @RequestParam String keywordToValue){
-//
-//        try {
-//            int result = iSystemTemDetailsService.addTemDetails(keyword,keywordToValue);
-//            if(result == 1){
-//              return   AjaxResult.success();
-//            }else {
-//             return    AjaxResult.error("添加失败！");
-//            }
-//        } catch (Exception e) {
-//          return   AjaxResult.error(e.getMessage());
-//        }
-//
-//    }
-    @RequestMapping(value = "/details/addTemDetails", method = RequestMethod.POST)
-    public AjaxResult addTemDetails(@RequestParam String keyword, @RequestParam String keywordToValue) {
+    @RequestMapping(value = "/addTemDetails", method = RequestMethod.POST)
+    public AjaxResult addTemDetails(@RequestBody SystemTemDetailsModel systemTemDetailsModel , @RequestParam String templateId) {
 
         try {
-            int result = iSystemTemDetailsService.addTemDetails(keyword, keywordToValue);
+            int result = iSystemTemDetailsService.addTemDetails(systemTemDetailsModel, templateId);
             if (result == 1) {
                 return AjaxResult.success();
             } else {
@@ -58,35 +44,60 @@ public class TemDetailsController {
 
 
     /**
-     * 查询默认模板（tt.template_id =1）下模板详情(后续可改成动态)
-     *
-     * @param start
-     * @param limit
+     * 更新关键字及对应回复
+     * @param systemTemDetailsModel
      * @return
      */
-    @RequestMapping(value = "/details/findTemDetails", method = RequestMethod.GET)
-    public AjaxResult findTemDetails(@RequestParam(defaultValue = "0") int start, @RequestParam(defaultValue = "10") int limit) {
+    @RequestMapping(value = "/updateTemDetails", method = RequestMethod.PATCH)
+    public AjaxResult updateTemDetails(@RequestBody SystemTemDetailsModel systemTemDetailsModel) {
 
-        Page<SystemTemDetailsModel> page = new Page<>(start, limit);
         try {
-            IPage<SystemTemDetailsModel> result = iSystemTemDetailsService.findTemDetails(page);
-            return AjaxResult.success(result);
+            int result = iSystemTemDetailsService.updateTemDetails(systemTemDetailsModel);
+            if (result == 1) {
+                return AjaxResult.success();
+            } else {
+                return AjaxResult.error("修改失败！");
+            }
         } catch (Exception e) {
-            e.printStackTrace();
-            log.error(e.getMessage());
             return AjaxResult.error(e.getMessage());
         }
+
+
+    }
+
+    /**
+     * 根据ID删除对应模板详情
+     * @param
+     * @return
+     */
+    @RequestMapping(value = "/removeTemDetails", method = RequestMethod.DELETE)
+    public AjaxResult deleteTemDetails(@RequestParam int temdetailsId) {
+
+        try {
+            iSystemTemDetailsService.removeById(temdetailsId);
+            return AjaxResult.success("删除成功");
+        } catch (Exception e) {
+            return AjaxResult.error(e.getMessage());
+        }
+
+
     }
 
 
-    @RequestMapping(value = "/details/excelinport", method = RequestMethod.POST)
-    public AjaxResult addTemDetails(@RequestBody MultipartFile multipartFile) {
+    /**
+     * 导入excel入库并绑定模板ID
+     * @param multipartFile
+     * @param templateId
+     * @return
+     */
+    @RequestMapping(value = "/excelinport", method = RequestMethod.POST)
+    public AjaxResult addTemDetails(@RequestBody MultipartFile multipartFile,@RequestParam String templateId) {
 
         try {
             if(multipartFile.isEmpty()){
                 return AjaxResult.error("上传失败，请选择文件");
             }
-            iSystemTemDetailsService.exportExceltoDb(multipartFile.getOriginalFilename(),multipartFile.getInputStream());
+            iSystemTemDetailsService.exportExceltoDb(multipartFile.getOriginalFilename(),multipartFile.getInputStream(),templateId);
 
             return AjaxResult.success();
 

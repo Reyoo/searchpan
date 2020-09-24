@@ -6,7 +6,6 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.libbytian.pan.system.common.AjaxResult;
 import com.libbytian.pan.system.model.SystemRoleModel;
 import com.libbytian.pan.system.model.SystemRoleToPermission;
-import com.libbytian.pan.system.model.SystemUserModel;
 import com.libbytian.pan.system.model.SystemUserToRole;
 import com.libbytian.pan.system.service.IRoleService;
 import com.libbytian.pan.system.service.IRoleToPermissionService;
@@ -139,19 +138,36 @@ public class RoleController {
      * @param role
      * @return
      */
-    @RequestMapping(value = "/getrpermission",method = RequestMethod.GET)
+    @RequestMapping(value = "/getroletopermission",method = RequestMethod.GET)
     public AjaxResult findrolePermission(@RequestBody SystemRoleModel role) {
 
         try {
 
              List<SystemRoleToPermission> systemRoleToPermissions =  iRoleToPermissionService.getRolePermissionByroleID(role.getRoleId());
-             List<String> permissionIds  = systemRoleToPermissions.stream().map(SystemRoleToPermission::getPermissionid).collect(Collectors.toList());
+             List<String> permissionIds  = systemRoleToPermissions.stream().map(SystemRoleToPermission::getPermissionId).collect(Collectors.toList());
 
             return AjaxResult.success(permissionIds);
         } catch (Exception e) {
             return AjaxResult.error(e.getMessage());
         }
 
+    }
+
+
+    /**
+     * 更新角色权限
+     * @param systemRoleToPermission
+     * @return
+     */
+    @RequestMapping(value = "/addroletopermission",method = RequestMethod.POST)
+    public AjaxResult findrolePermission(@RequestBody  List<SystemRoleToPermission>  systemRoleToPermission) {
+
+        try {
+            iRoleToPermissionService.removeByIds(systemRoleToPermission.stream().map(SystemRoleToPermission::getPermissionId).collect(Collectors.toList()));
+            return AjaxResult.success(iRoleToPermissionService.saveBatch(systemRoleToPermission));
+        } catch (Exception e) {
+            return AjaxResult.error(e.getMessage());
+        }
     }
 
 

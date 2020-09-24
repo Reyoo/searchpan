@@ -13,42 +13,36 @@ import lombok.NoArgsConstructor;
 import java.io.Serializable;
 
 @Builder
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Data
-@TableName("role_permission")
-public class SystemRoleToPermission extends Model<SystemRoleToPermission> {
+@TableName("user_template")
+public class SystemUserToTemplate extends Model<SystemUserToTemplate> {
 
     private static final long serialVersionUID = 1L;
 
     /**
      * 主键
      */
-    @TableId(value = "role_permission_id" , type = IdType.AUTO)
-    private Integer rolepermissionId;
-
+    @TableId(value = "user_template_id", type = IdType.AUTO)
+    private Integer userTotemplateId;
     /**
-     * 橘色编号
+     * 用户编号
      */
-    @TableField("role_id")
-    private String roleId;
-
+    @TableField("user_id")
+    private String userId;
     /**
-     * 权限编号
+     * 模板编号
      */
-    @TableField("permission_id")
-    private String permissionId;
+    @TableField("template_id")
+    private String templateId;
 
 
-    /**
-     * 角色权限状态
-     */
-    @TableField("role_permission_status")
-    private Integer rolepermissionstatus;
-
+    @TableField("user_template_status")
+    private String userTemplateStatus;
 
     @Override
     protected Serializable pkVal() {
-        return this.rolepermissionId;
+        return this.userTotemplateId;
     }
 }

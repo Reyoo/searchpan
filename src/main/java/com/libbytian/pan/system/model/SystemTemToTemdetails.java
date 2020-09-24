@@ -20,7 +20,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @Data
 @TableName("tem_temdetails")
-public class TemToTemDetailsModel extends Model<TemToTemDetailsModel> {
+public class SystemTemToTemdetails extends Model<SystemTemToTemdetails> {
 
     /**
      * 关联表主键
@@ -32,13 +32,13 @@ public class TemToTemDetailsModel extends Model<TemToTemDetailsModel> {
      * 模板主键
      */
     @TableField(value = "template_id")
-    private Integer templateid;
+    private String templateid;
 
     /**
      * 模板详情主键
      */
     @TableField(value = "templatedetails_id")
-    private Integer templatedetailsid;
+    private String templatedetailsid;
 
     @Override
     protected Serializable pkVal() {
