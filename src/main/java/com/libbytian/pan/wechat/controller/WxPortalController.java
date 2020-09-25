@@ -19,10 +19,7 @@ import me.chanjar.weixin.mp.bean.message.WxMpXmlOutMessage;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlOutTextMessage;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.tomcat.util.http.fileupload.servlet.ServletRequestContext;
-import org.dom4j.Attribute;
-import org.dom4j.Document;
-import org.dom4j.DocumentException;
-import org.dom4j.Element;
+import org.dom4j.*;
 import org.dom4j.io.SAXReader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -30,6 +27,9 @@ import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -56,6 +56,7 @@ public class WxPortalController {
 
     final Base64.Decoder decoder = Base64.getDecoder();
     final Base64.Encoder encoder = Base64.getEncoder();
+
 
 
      @Autowired
@@ -140,8 +141,6 @@ public class WxPortalController {
 
 //        ---------------------------------------------------------------------------------
 
-
-
         //解析传入的username,拿到user,查询对应模板
         String username =  new String(decoder.decode(verification), "UTF-8");
         SystemUserModel user = iUserService.findByUsername(username);
@@ -163,43 +162,6 @@ public class WxPortalController {
         }
 
 //      ---------------------------------------------------------------------------------
-
-        //1.创建Reader对象
-        SAXReader reader = new SAXReader();
-        //2.加载xml
-        Document document = reader.read(requestBody);
-        //3.获取根节点
-        Element rootElement = document.getRootElement();
-        Iterator iterator = rootElement.elementIterator();
-
-        while (iterator.hasNext()){
-            Element stu = (Element) iterator.next();
-            List<Attribute> attributes = stu.attributes();
-            System.out.println("======获取属性值======");
-            for (Attribute attribute : attributes) {
-                System.out.println(attribute.getValue());
-            }
-            System.out.println("======遍历子节点======");
-            Iterator iterator1 = stu.elementIterator();
-            while (iterator1.hasNext()){
-                Element stuChild = (Element) iterator1.next();
-                System.out.println("节点名："+stuChild.getName()+"---节点值："+stuChild.getStringValue());
-            }
-        }
-
-
-
-
-
-
-
-
-
-
-
-
-
-//        -----------------------------------------------------------------------------------
 
         String out = null;
         try {
@@ -259,18 +221,41 @@ public class WxPortalController {
 //                        .append("----->分隔符<-----");
 //            } );
 
-            //关键字 头部广告
+            // 准备数据并解析。
+            byte[] bytes = requestBody.getBytes("UTF-8");
+
+
+            //1.创建Reader对象
+            SAXReader reader = new SAXReader();
+            //2.加载xml
+            Document document = reader.read(new ByteArrayInputStream(bytes));
+            //3.获取根节点
+            Element rootElement = document.getRootElement();
+            Iterator iterator = rootElement.elementIterator();
+
+            String searchName = "";
+
+            while (iterator.hasNext()) {
+                Element stu = (Element) iterator.next();
+                if (stu.getName().equals("Content")) {
+                    List<Node> attributes = stu.content();
+                    searchName = attributes.get(0).getText();
+                }
+
+            }
+
+            /**
+             * 响应内容
+             * 关键字 头部广告 headmodel.getKeywordToValue()
+             * 关键字 底部广告 lastmodel.getKeywordToValue()
+             */
             stringBuffer.append(headmodel.getKeywordToValue());
-            stringBuffer.append("\n");
-
-            stringBuffer.append("<a href =\"https://www.baidu.com/s?wd=" +"123123"+"\">[八佰]关键词已获取，点击查看是否找到该内容</a>");
-
-            //关键字 导航区
-
-            stringBuffer.append("\n");
-            //关键字 底部广告
+            stringBuffer.append("\r\n");
+            stringBuffer.append("<a href =\"https://www.baidu.com/s?wd=" +"123123"+"\">[");
+            stringBuffer.append(searchName);
+            stringBuffer.append("]关键词已获取，点击查看是否找到该内容</a>");
+            stringBuffer.append("\r\n");
             stringBuffer.append(lastmodel.getKeywordToValue());
-
 
 
 
@@ -279,8 +264,6 @@ public class WxPortalController {
                     .toUser(inMessage.getFromUser())
                     .fromUser(inMessage.getToUser())
                     .content(stringBuffer.toString()).build();
-
-
 
 
 //            System.out.println("==============");
@@ -320,9 +303,9 @@ public class WxPortalController {
         return null;
     }
 
-
     /**
      * 注册用户获取公众号配置URL
+     * 目前使用穿透测试 拼接URL 第一段 随时需换
      * @param username
      * @return
      */
