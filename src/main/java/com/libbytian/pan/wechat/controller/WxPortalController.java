@@ -251,9 +251,13 @@ public class WxPortalController {
              */
             stringBuffer.append(headmodel.getKeywordToValue());
             stringBuffer.append("\r\n");
-            stringBuffer.append("<a href =\"https://www.baidu.com/s?wd=" +"123123"+"\">[");
+            stringBuffer.append("\r\n");
+            stringBuffer.append("<a href =\"https://search.douban.com/movie/subject_search?search_text=");
+            stringBuffer.append(searchName);
+            stringBuffer.append("\">[");
             stringBuffer.append(searchName);
             stringBuffer.append("]关键词已获取，点击查看是否找到该内容</a>");
+            stringBuffer.append("\r\n");
             stringBuffer.append("\r\n");
             stringBuffer.append(lastmodel.getKeywordToValue());
 
