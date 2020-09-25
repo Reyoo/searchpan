@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 /**
- * @author niXueChao
+ * @author qisun
  * @date 2019/4/2 23:34.
  */
 @RestController
@@ -21,13 +21,25 @@ public class LoginController {
 
 
     /**
+     * 登录跳转
+     * @return
+     */
+    @RequestMapping(path = "/", method = RequestMethod.GET)
+    public String dispathLogin() {
+        return "/login/signin";
+    }
+
+
+
+
+
+    /**
      * 注册新用户
      *
      * @param user
      * @return
      */
     @RequestMapping(path = "/login/register", method = RequestMethod.POST)
-
     public AjaxResult loginRegister(@RequestBody SystemUserModel user) {
         try {
             int count = iUserService.selectByName(user.getUsername());
