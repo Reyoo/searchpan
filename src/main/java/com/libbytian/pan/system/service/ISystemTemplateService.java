@@ -8,11 +8,15 @@ import com.libbytian.pan.system.model.SystemTemplateModel;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Transactional(propagation = Propagation.REQUIRES_NEW)
 public interface ISystemTemplateService extends IService<SystemTemplateModel> {
 
 
      IPage<SystemTemDetailsModel> findTemDetails(Page page,String templateId) throws Exception;
+
+     List<SystemTemDetailsModel> findTemDetails(String templateId) throws Exception;
 
      IPage<SystemTemplateModel> findTemById(Page page,SystemTemplateModel systemTemDetailsModel) throws Exception;
 

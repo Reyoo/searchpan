@@ -20,6 +20,8 @@ public interface IUserService extends IService<SystemUserModel> {
 
     IPage<SystemUserModel> findConditionByPage(Page<SystemUserModel> page, SystemUserModel user) throws Exception;
 
+    SystemUserModel findByUsername(String username) throws Exception;
+
     SystemTemplateModel findTemplateById(String userId);
 
 

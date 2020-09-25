@@ -16,6 +16,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 
 @Service
@@ -86,6 +87,10 @@ public class UserServiceImpl extends ServiceImpl<SystemUserMapper,SystemUserMode
 
     }
 
+    @Override
+    public SystemUserModel findByUsername(String username) throws Exception {
+        return userMapper.selectUserByUsername(username);
+    }
 
 
     @Override

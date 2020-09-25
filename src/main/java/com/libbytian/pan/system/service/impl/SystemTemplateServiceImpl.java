@@ -12,6 +12,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class SystemTemplateServiceImpl extends ServiceImpl<SystemTemplateMapper,SystemTemplateModel> implements ISystemTemplateService {
@@ -22,6 +24,17 @@ public class SystemTemplateServiceImpl extends ServiceImpl<SystemTemplateMapper,
     @Override
     public IPage<SystemTemDetailsModel> findTemDetails(Page page, String templateId) throws Exception {
         return systemTemplateMapper.selectTemDetails(page,templateId);
+    }
+
+    /**
+     * 不分页查询
+     * @param templateId
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public List<SystemTemDetailsModel> findTemDetails(String templateId) throws Exception {
+        return systemTemplateMapper.selectTemDetails(templateId);
     }
 
     @Override
