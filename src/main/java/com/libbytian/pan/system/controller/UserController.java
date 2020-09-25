@@ -28,7 +28,6 @@ public class UserController {
 
     private final IUserService iUserService;
     private final ISystemUserToRoleService iSystemUserToRoleService;
-    private final SystemUserToRoleMapper systemUserToRoleMapper;
     private final ISystemUserToTemplateService iSystemUserToTemplateService;
 
 
@@ -143,8 +142,6 @@ public class UserController {
 
 
 
-
-
     /**
      * 更新用户模板表
      * @param systemUserToTemplates
@@ -165,6 +162,8 @@ public class UserController {
             return AjaxResult.error(e.getMessage());
         }
     }
+
+
 
 
 
