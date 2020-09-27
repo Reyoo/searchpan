@@ -38,7 +38,7 @@ public class UserController {
      * @param user = null 则为全查询
      * @return
      */
-    @RequestMapping(value = "/selectuser",method = RequestMethod.POST)
+    @RequestMapping(value = "/select",method = RequestMethod.POST)
     public AjaxResult findConditionByPage(@RequestParam(defaultValue = "1")int page, @RequestParam(defaultValue = "10")  int limit, @RequestBody(required = false) SystemUserModel user){
 
         Page<SystemUserModel> findpage = new Page<>(page,limit);
@@ -46,7 +46,7 @@ public class UserController {
             IPage<SystemUserModel> result = iUserService.findConditionByPage(findpage,user);
             return  AjaxResult.success(result);
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            e.printStackTrace();
             return AjaxResult.error(e.getMessage());
         }
 
@@ -58,7 +58,7 @@ public class UserController {
      * @param id
      * @return
      */
-    @RequestMapping(value = "/deletebyid/{id}",method = RequestMethod.DELETE)
+    @RequestMapping(value = "/delete/{id}",method = RequestMethod.DELETE)
     public AjaxResult deleteUser(@PathVariable String id){
 
         try {
@@ -74,7 +74,7 @@ public class UserController {
      * @param user
      * @return
      */
-    @RequestMapping(value = "/updateuser",method = RequestMethod.PATCH)
+    @RequestMapping(value = "/update",method = RequestMethod.PATCH)
     public AjaxResult updateUser(@RequestBody SystemUserModel user) {
 
         try {
@@ -129,10 +129,10 @@ public class UserController {
      * @return
      */
     @RequestMapping(value = "getusertemplate", method =RequestMethod.GET)
-    public AjaxResult getuserTemplate(@RequestParam String userId){
+    public AjaxResult getuserTemplate(@RequestParam String username){
 
         try {
-            SystemTemplateModel result = iUserService.findTemplateById(userId);
+            SystemTemplateModel result = iUserService.findTemplateById(username);
             return AjaxResult.success(result);
         } catch (Exception e) {
             return AjaxResult.error(e.getMessage());

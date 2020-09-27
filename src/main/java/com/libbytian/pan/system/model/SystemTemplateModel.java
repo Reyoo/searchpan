@@ -53,6 +53,14 @@ public class SystemTemplateModel extends Model<SystemTemplateModel> {
     private Integer templatestatus;
 
 
+
+    /**
+     * 状态值 0正常，-1删除
+     */
+    @TableField(exist = false)
+    private Integer detillsize;
+
+
     @Override
     protected Serializable pkVal() {
         return this.templateid;

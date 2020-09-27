@@ -22,7 +22,7 @@ public interface IUserService extends IService<SystemUserModel> {
 
     SystemUserModel findByUsername(String username) throws Exception;
 
-    SystemTemplateModel findTemplateById(String userId);
+    SystemTemplateModel findTemplateById(String username);
 
 
 

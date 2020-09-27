@@ -94,9 +94,9 @@ public class UserServiceImpl extends ServiceImpl<SystemUserMapper,SystemUserMode
 
 
     @Override
-    public SystemTemplateModel findTemplateById(String userId) {
+    public SystemTemplateModel findTemplateById(String username) {
 
-        return userMapper.findTemplateById(userId);
+        return userMapper.findTemplateById(username);
     }
 
 

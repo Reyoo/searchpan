@@ -45,15 +45,34 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
         Set<String> roles = AuthorityUtils.authorityListToSet(authentication.getAuthorities());
 
 
-//        if (roles.contains("ROLE_ADMIN")){
+        if (roles.contains("ROLE_ADMIN")){
             //签发token
             AuthenticationSuccessModel authenticationSuccessModel = new AuthenticationSuccessModel();
             authenticationSuccessModel.setUsername(authentication.getName());
-            authenticationSuccessModel.setRoute("userManagement");
+            //登录到系统管理
+            authenticationSuccessModel.setRoute("index/userManagement");
             authenticationSuccessModel.setToken(token);
             authenticationSuccessModel.setStatus(200);
             response.getWriter().write(JSON.toJSONString(authenticationSuccessModel));
-//        }
+        }
+
+
+        /**
+         * 付费用户
+         */
+        if (roles.contains("ROLE_PAYUSER")){
+            //签发token
+            AuthenticationSuccessModel authenticationSuccessModel = new AuthenticationSuccessModel();
+            authenticationSuccessModel.setUsername(authentication.getName());
+            //登录到系统管理
+            authenticationSuccessModel.setRoute("mainManagement");
+            authenticationSuccessModel.setToken(token);
+            authenticationSuccessModel.setStatus(200);
+            response.getWriter().write(JSON.toJSONString(authenticationSuccessModel));
+        }
+
+
+
 //        iSystemRoleService.getRolenameByUserId("15");
         /**
          * 判断用户权限： 设置路由
