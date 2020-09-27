@@ -22,8 +22,8 @@ public class SystemTemplateServiceImpl extends ServiceImpl<SystemTemplateMapper,
 
 
     @Override
-    public IPage<SystemTemDetailsModel> findTemDetails(Page page, String templateId) throws Exception {
-        return systemTemplateMapper.selectTemDetails(page,templateId);
+    public IPage<SystemTemDetailsModel> findTemDetailsPage(Page page, String templateId) throws Exception {
+        return systemTemplateMapper.selectTemDetailsPage(page,templateId);
     }
 
     /**

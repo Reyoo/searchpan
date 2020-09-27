@@ -27,15 +27,15 @@
 <!--    selectUser-->
 
     <!-- set 元素可以用于动态包含需要更新的列，忽略其它不更新的列 -->
-    <update id="updateUser" parameterType="com.libbytian.pan.system.model.SystemUserModel" >
-        update sys_user
-        <set>
-            <if test="password != null">user_password=#{user.password},</if>
-            <if test="lastLoginTime != null">user_last_login_time=#{user.lastLoginTime},</if>
-            <if test="mobile != null">tel=#{user.mobile}</if>
-        </set>
-        where user_name=#{user.username}
-    </update>
+<!--    <update id="updateUser" parameterType="com.libbytian.pan.system.model.SystemUserModel" >-->
+<!--        update sys_user-->
+<!--        <set>-->
+<!--            <if test="password != null">user_password=#{user.password},</if>-->
+<!--            <if test="lastLoginTime != null">user_last_login_time=#{user.lastLoginTime},</if>-->
+<!--            <if test="mobile != null">tel=#{user.mobile}</if>-->
+<!--        </set>-->
+<!--        where user_name=#{user.username}-->
+<!--    </update>-->
 
 <!--    <select id="selectUser" parameterType="Map" resultType="com.libbytian.pan.system.model.SystemUserModel">-->
 <!--        select * from sys_user-->
