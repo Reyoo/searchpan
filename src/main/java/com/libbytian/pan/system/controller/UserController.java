@@ -1,5 +1,6 @@
 package com.libbytian.pan.system.controller;
 
+import cn.hutool.core.lang.UUID;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.libbytian.pan.system.common.AjaxResult;
@@ -8,13 +9,14 @@ import com.libbytian.pan.system.model.SystemTemplateModel;
 import com.libbytian.pan.system.model.SystemUserModel;
 import com.libbytian.pan.system.model.SystemUserToRole;
 import com.libbytian.pan.system.model.SystemUserToTemplate;
-import com.libbytian.pan.system.service.ISystemUserToRoleService;
-import com.libbytian.pan.system.service.ISystemUserToTemplateService;
-import com.libbytian.pan.system.service.IUserService;
+import com.libbytian.pan.system.service.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpRequest;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.swing.*;
 import java.util.Arrays;
 import java.util.List;
@@ -26,9 +28,10 @@ import java.util.stream.Collectors;
 @RequestMapping("/user")
 public class UserController {
 
-    private final IUserService iUserService;
+    private final ISystemUserService iSystemUserService;
     private final ISystemUserToRoleService iSystemUserToRoleService;
     private final ISystemUserToTemplateService iSystemUserToTemplateService;
+    private final ISystemTemplateService iSystemTemplateService;
 
 
     /**
@@ -43,7 +46,7 @@ public class UserController {
 
         Page<SystemUserModel> findpage = new Page<>(page,limit);
         try {
-            IPage<SystemUserModel> result = iUserService.findConditionByPage(findpage,user);
+            IPage<SystemUserModel> result = iSystemUserService.findConditionByPage(findpage,user);
             return  AjaxResult.success(result);
         } catch (Exception e) {
             e.printStackTrace();
@@ -62,7 +65,7 @@ public class UserController {
     public AjaxResult deleteUser(@PathVariable String id){
 
         try {
-            iUserService.removeById(id);
+            iSystemUserService.removeById(id);
             return AjaxResult.success();
         } catch (Exception e) {
             return AjaxResult.error(e.getMessage());
@@ -78,7 +81,7 @@ public class UserController {
     public AjaxResult updateUser(@RequestBody SystemUserModel user) {
 
         try {
-                iUserService.updateUser(user);
+            iSystemUserService.updateUser(user);
                 return AjaxResult.success();
         } catch (Exception e) {
             return AjaxResult.error(e.getMessage());
@@ -125,14 +128,13 @@ public class UserController {
 
     /**
      * 获取用户所有的模板
-     * @param userId
      * @return
      */
     @RequestMapping(value = "getusertemplate", method =RequestMethod.GET)
     public AjaxResult getuserTemplate(@RequestParam String username){
 
         try {
-            SystemTemplateModel result = iUserService.findTemplateById(username);
+            List<SystemTemplateModel> result = iSystemUserService.findTemplateById(username);
             return AjaxResult.success(result);
         } catch (Exception e) {
             return AjaxResult.error(e.getMessage());
@@ -162,6 +164,42 @@ public class UserController {
             return AjaxResult.error(e.getMessage());
         }
     }
+
+
+
+
+    /**
+     * 新增用户模板表
+     * @param
+     * @return
+     */
+    @RequestMapping(value = "/addtemplatetouser",method = RequestMethod.POST)
+    @Transactional
+    public AjaxResult finduserTemplate(HttpServletRequest httpRequest, @RequestBody(required = true) SystemTemplateModel  systemTemplateModel) {
+
+        try {
+            String uuid = UUID.randomUUID().toString();
+            systemTemplateModel.setTemplateid(uuid);
+            iSystemTemplateService.save(systemTemplateModel);
+
+
+
+            /**
+             * 插入模板 后  用户绑定 用户模板表
+             */
+            String user =  httpRequest.getRemoteUser();
+            iSystemUserService.findByUsername(user);
+
+
+
+            return AjaxResult.success();
+
+        } catch (Exception e) {
+            return AjaxResult.error(e.getMessage());
+        }
+    }
+
+
 
 
 

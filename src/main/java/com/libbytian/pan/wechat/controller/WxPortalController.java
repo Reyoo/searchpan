@@ -1,13 +1,11 @@
 package com.libbytian.pan.wechat.controller;
 
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.libbytian.pan.system.model.SystemTemDetailsModel;
 import com.libbytian.pan.system.model.SystemTemplateModel;
 import com.libbytian.pan.system.model.SystemUserModel;
 import com.libbytian.pan.system.service.ISystemTemplateService;
-import com.libbytian.pan.system.service.IUserService;
+import com.libbytian.pan.system.service.ISystemUserService;
 import com.libbytian.pan.wechat.model.MovieNameAndUrlModel;
 import com.libbytian.pan.wechat.service.NormalPageService;
 import lombok.RequiredArgsConstructor;
@@ -18,24 +16,17 @@ import me.chanjar.weixin.mp.bean.message.WxMpXmlMessage;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlOutMessage;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlOutTextMessage;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.tomcat.util.http.fileupload.servlet.ServletRequestContext;
 import org.dom4j.*;
 import org.dom4j.io.SAXReader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
 import java.time.Duration;
 import java.time.LocalTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author sun7127
@@ -52,7 +43,7 @@ public class WxPortalController {
     private final WxMpMessageRouter messageRouter;
 
     private final ISystemTemplateService systemTemplateService;
-    private final IUserService iUserService;
+    private final com.libbytian.pan.system.service.ISystemUserService ISystemUserService;
 
     final Base64.Decoder decoder = Base64.getDecoder();
     final Base64.Encoder encoder = Base64.getEncoder();
@@ -143,11 +134,24 @@ public class WxPortalController {
 
         //解析传入的username,拿到user,查询对应模板
         String username =  new String(decoder.decode(verification), "UTF-8");
-        SystemUserModel user = iUserService.findByUsername(username);
-        SystemTemplateModel template =  iUserService.findTemplateById(user.getUserId());
+        SystemUserModel user = ISystemUserService.findByUsername(username);
+        List<SystemTemplateModel> systemTemplateModels =  ISystemUserService.findTemplateById(username);
+
+        for(SystemTemplateModel systemTemplateModel :systemTemplateModels ){
+            System.out.println("===========================");
+            System.out.println(systemTemplateModel.getTemplatestatus());
+            System.out.println("===========================");
+        }
+
+
+        List<SystemTemplateModel> systemTemplateModelListstatusOn = systemTemplateModels.stream().filter(systemTemplateModel -> systemTemplateModel.getTemplatestatus().equals(Boolean.TRUE)).collect(Collectors.toList());
+
+
+
+
 
         //通过模板ID，查询对应的模板详情，取出关键词，头部广告，底部广告
-        List<SystemTemDetailsModel> systemdetails = systemTemplateService.findTemDetails(template.getTemplateid());
+        List<SystemTemDetailsModel> systemdetails = systemTemplateService.findTemDetails(systemTemplateModelListstatusOn.get(0).getTemplateid());
 
         SystemTemDetailsModel headmodel = new SystemTemDetailsModel();
         SystemTemDetailsModel lastmodel = new SystemTemDetailsModel();

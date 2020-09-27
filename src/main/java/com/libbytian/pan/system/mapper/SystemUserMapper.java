@@ -32,7 +32,7 @@ public interface SystemUserMapper extends BaseMapper<SystemUserModel> {
     int selectByName(String username);
 
     @Select("SELECT t.template_id AS templateid , template_name AS templatename , template_createtime AS templatecreatetime , template_lastupdate AS templatelastupdate , template_status AS templatestatus FROM sys_template t LEFT JOIN user_template ut ON t.template_id = ut.template_id LEFT JOIN sys_user u ON ut.user_id = u.user_id WHERE u.user_name = #{username}")
-    SystemTemplateModel findTemplateById(String username);
+    List<SystemTemplateModel> findTemplateById(String username);
 
 
 }

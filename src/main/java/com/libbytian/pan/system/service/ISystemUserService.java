@@ -2,10 +2,15 @@ package com.libbytian.pan.system.service;
 
 
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.libbytian.pan.system.model.SystemTemplateModel;
 import com.libbytian.pan.system.model.SystemUserModel;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 /**
  * <p>
@@ -41,6 +46,17 @@ public interface ISystemUserService extends IService<SystemUserModel> {
      * @return
      */
     int selectByName(String username) throws Exception;
+
+
+
+
+    SystemUserModel updateUser(SystemUserModel user) throws Exception;
+
+    IPage<SystemUserModel> findConditionByPage(Page<SystemUserModel> page, SystemUserModel user) throws Exception;
+
+    SystemUserModel findByUsername(String username) throws Exception;
+
+    List<SystemTemplateModel> findTemplateById(String username);
 
 //    Map<String, Object> getLoginUserAndMenuInfo(User user);
 //

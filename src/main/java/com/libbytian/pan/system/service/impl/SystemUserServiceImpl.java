@@ -2,6 +2,9 @@ package com.libbytian.pan.system.service.impl;
 
 
 import cn.hutool.core.lang.UUID;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.libbytian.pan.system.mapper.SystemUserMapper;
 import com.libbytian.pan.system.model.*;
@@ -12,6 +15,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * <p>
@@ -78,7 +82,7 @@ public class SystemUserServiceImpl extends ServiceImpl<SystemUserMapper, SystemU
             template.setTemplateid(uuid);
             template.setTemplatename("模板1");
             template.setTemplatecreatetime(LocalDateTime.now());
-            template.setTemplatestatus(0);
+            template.setTemplatestatus(true);
             systemTemplateService.save(template);
 
             //模板ID绑定用户ID
@@ -101,215 +105,77 @@ public class SystemUserServiceImpl extends ServiceImpl<SystemUserMapper, SystemU
         return count;
 
     }
-//
-//    @Override
-//    public Map<String, Object> getLoginUserAndMenuInfo(User user) {
-//        Map<String, Object> result = new HashMap<>();
-//        UserToRole userToRole = userToRoleService.selectByUserNo(user.getUserNo());
-//        user.setToken(JWTUtil.sign(user.getUserNo(), user.getPassword()));
-//        result.put("user",user);
-//        List<Menu> buttonList = new ArrayList<Menu>();
-//        //根据角色主键查询启用的菜单权限
-//        List<Menu> menuList = menuService.findMenuByRoleCode(userToRole.getRoleCode());
-//        List<Menu> retMenuList = menuService.treeMenuList(Constant.ROOT_MENU, menuList);
-//        for (Menu buttonMenu : menuList) {
-//            if(buttonMenu.getMenuType() == Constant.TYPE_BUTTON){
-//                buttonList.add(buttonMenu);
-//            }
-//        }
-//        result.put("menuList",retMenuList);
-//        result.put("buttonList",buttonList);
-//        return result;
-//    }
-//
-//    @Override
-//    public void deleteByUserNo(String userNo) throws Exception{
-//        User user = this.selectById(userNo);
-//        if (ComUtil.isEmpty(user)) {
-//            throw new BusinessException(CodeEnum.INVALID_USER.getMsg(),CodeEnum.INVALID_USER.getCode());
-//        }
-//        EntityWrapper<UserToRole> ew = new EntityWrapper<>();
-//        ew.eq("user_no", userNo);
-//        userToRoleService.delete(ew);
-//        this.deleteById(userNo);
-//    }
-//
-//    @Override
-//    public Page<User> selectPageByConditionUser(Page<User> userPage, String info, Integer[] status, String startTime, String endTime) {
-//        //注意！！ 分页 total 是经过插件自动 回写 到传入 page 对象
-//        return userPage.setRecords(mapper.selectPageByConditionUser(userPage, info,status,startTime,endTime));
-//    }
-//
-//    @Override
-//    public Map<String, Object> checkMobileAndPasswd(JSONObject requestJson) throws Exception{
-//        //由于 @ValidationParam注解已经验证过mobile和passWord参数，所以可以直接get使用没毛病。
-//        String identity = requestJson.getString("identity");
-//        InfoToUser infoToUser = infoToUserService.selectOne(new EntityWrapper<InfoToUser>().eq("identity_info ", identity));
-//        if(ComUtil.isEmpty(infoToUser)){
-//            throw new BusinessException(CodeEnum.INVALID_USER.getMsg(),CodeEnum.INVALID_USER.getCode());
-//        }
-//        User user = this.selectOne(new EntityWrapper<User>().where("user_no = {0} and status = 1",infoToUser.getUserNo()));
-//        if (ComUtil.isEmpty(user) || !BCrypt.checkpw(requestJson.getString("password"), user.getPassword())) {
-//            throw new BusinessException(CodeEnum.INVALID_USERNAME_PASSWORD.getMsg(),CodeEnum.INVALID_USERNAME_PASSWORD.getCode());
-//        }
-//        //测试websocket用户登录给管理员发送消息的例子  前端代码参考父目录下WebSocketDemo.html
-////        noticeService.insertByThemeNo("themeNo-cwr3fsxf233edasdfcf2s3","13888888888");
-////        MyWebSocketService.sendMessageTo(JSONObject.toJSONString(user),"13888888888");
-//        return this.getLoginUserAndMenuInfo(user);
-//    }
-//
-//
-//
-//    @Override
-//    public Map<String, Object> checkMobileAndCatcha(JSONObject requestJson) throws Exception {
-//        String mobile = requestJson.getString("mobile");
-//        if(!StringUtil.checkMobileNumber(mobile)){
-//            throw new BusinessException(CodeEnum.MOBILE_ERROR.getMsg(),CodeEnum.MOBILE_ERROR.getCode());
-//        }
-//        User user = this.getUserByMobile(mobile);
-//        //如果不是启用的状态
-//        if(!ComUtil.isEmpty(user) && user.getStatus() != Constant.ENABLE){
-//            throw new BusinessException("该用户状态不是启用的!");
-//        }
-//        List<SmsVerify> smsVerifies = smsVerifyService.getByMobileAndCaptchaAndType(mobile,
-//                requestJson.getString("captcha"), SmsSendUtil.SMSType.getType(SmsSendUtil.SMSType.AUTH.name()));
-//        if(ComUtil.isEmpty(smsVerifies)){
-//            throw new BusinessException(CodeEnum.VERIFY_PARAM_ERROR.getMsg(),CodeEnum.VERIFY_PARAM_ERROR.getCode());
-//        }
-//        if(SmsSendUtil.isCaptchaPassTime(smsVerifies.get(0).getCreateTime())){
-//            throw new BusinessException(CodeEnum.VERIFY_PARAM_PASS.getMsg(),CodeEnum.VERIFY_PARAM_PASS.getCode());
-//        }
-//        if (ComUtil.isEmpty(user)) {
-//            //设置默认密码
-//            User userRegister = User.builder().password(BCrypt.hashpw("123456", BCrypt.gensalt()))
-//                    .mobile(mobile).username(mobile).build();
-//            user =this.register(userRegister, Constant.RoleType.USER);
-//        }
-//        return this.getLoginUserAndMenuInfo(user);
-//    }
-//
-//    @Override
-//    public User checkAndRegisterUser(JSONObject requestJson) throws Exception {
-//        //可直接转为java对象,简化操作,不用再set一个个属性
-//        User userRegister = requestJson.toJavaObject(User.class);
-//        if(!StringUtil.checkMobileNumber(userRegister.getMobile())){
-//            throw new BusinessException(CodeEnum.MOBILE_ERROR.getMsg(),CodeEnum.MOBILE_ERROR.getCode());
-//        }
-//        if (!userRegister.getPassword().equals(requestJson.getString("rePassword"))) {
-//            throw new BusinessException(CodeEnum.INVALID_RE_PASSWORD.getMsg(),CodeEnum.INVALID_RE_PASSWORD.getCode());
-//        }
-//        List<SmsVerify> smsVerifies = smsVerifyService.getByMobileAndCaptchaAndType(userRegister.getMobile(),
-//                requestJson.getString("captcha"), SmsSendUtil.SMSType.getType(SmsSendUtil.SMSType.REG.name()));
-//        if(ComUtil.isEmpty(smsVerifies)){
-//            throw new BusinessException(CodeEnum.VERIFY_PARAM_ERROR.getMsg(),CodeEnum.VERIFY_PARAM_ERROR.getCode());
-//        }
-//        //验证码是否过期
-//        if(SmsSendUtil.isCaptchaPassTime(smsVerifies.get(0).getCreateTime())){
-//            throw new BusinessException(CodeEnum.VERIFY_PARAM_PASS.getMsg(),CodeEnum.VERIFY_PARAM_PASS.getCode());
-//        }
-//        userRegister.setPassword(BCrypt.hashpw(requestJson.getString("password"), BCrypt.gensalt()));
-//        User registerUser = this.register(userRegister, Constant.RoleType.USER);
-//        infoToUserService.insert(InfoToUser.builder().userNo(registerUser.getUserNo())
-//                .identityInfo(userRegister.getMobile()).identityType(Constant.LOGIN_MOBILE).build());
-//        //默认注册普通用户
-//        return registerUser;
-//    }
-//
-//    @Override
-//    public User updateForgetPasswd(JSONObject requestJson) throws Exception {
-//        String mobile = requestJson.getString("mobile");
-//        if(!StringUtil.checkMobileNumber(mobile)){
-//            throw new BusinessException(CodeEnum.MOBILE_ERROR.getMsg(),CodeEnum.MOBILE_ERROR.getCode());
-//        }
-//        if (!requestJson.getString("password").equals(requestJson.getString("rePassword"))) {
-//            throw new BusinessException(CodeEnum.INVALID_RE_PASSWORD.getMsg(),CodeEnum.INVALID_RE_PASSWORD.getCode());
-//        }
-//        User user = this.getUserByMobile(mobile);
-//        roleService.getRoleIsAdminByUserNo(user.getUserNo());
-//        if(ComUtil.isEmpty(user)){
-//            throw new BusinessException(CodeEnum.INVALID_USER.getMsg(),CodeEnum.INVALID_USER.getCode());
-//        }
-//        List<SmsVerify> smsVerifies = smsVerifyService.getByMobileAndCaptchaAndType(mobile,
-//                requestJson.getString("captcha"), SmsSendUtil.SMSType.getType(SmsSendUtil.SMSType.FINDPASSWORD.name()));
-//        if(ComUtil.isEmpty(smsVerifies)){
-//            throw new BusinessException(CodeEnum.VERIFY_PARAM_ERROR.getMsg(),CodeEnum.VERIFY_PARAM_ERROR.getCode());
-//        }
-//        if(SmsSendUtil.isCaptchaPassTime(smsVerifies.get(0).getCreateTime())){
-//            throw new BusinessException(CodeEnum.VERIFY_PARAM_PASS.getMsg(),CodeEnum.VERIFY_PARAM_PASS.getCode());
-//        }
-//        user.setPassword(BCrypt.hashpw(requestJson.getString("password"),BCrypt.gensalt()));
-//        this.updateById(user);
-//        return user;
-//    }
-//
-//    @Override
-//    public void resetMobile(User currentUser, JSONObject requestJson) throws Exception {
-//        String newMobile = requestJson.getString("newMobile");
-//        if(!StringUtil.checkMobileNumber(newMobile)){
-//          throw  new BusinessException(CodeEnum.MOBILE_ERROR.getMsg(),CodeEnum.MOBILE_ERROR.getCode());
-//        }
-//        List<SmsVerify> smsVerifies = smsVerifyService.getByMobileAndCaptchaAndType(newMobile,
-//                requestJson.getString("captcha"), SmsSendUtil.SMSType.getType(SmsSendUtil.SMSType.MODIFYINFO.name()));
-//        if(ComUtil.isEmpty(smsVerifies)){
-//            throw  new BusinessException(CodeEnum.VERIFY_PARAM_ERROR.getMsg(),CodeEnum.VERIFY_PARAM_ERROR.getCode());
-//        }
-//        if(SmsSendUtil.isCaptchaPassTime(smsVerifies.get(0).getCreateTime())){
-//            throw  new BusinessException(CodeEnum.VERIFY_PARAM_PASS.getMsg(),CodeEnum.VERIFY_PARAM_PASS.getCode());
-//        }
-//        currentUser.setMobile(newMobile);
-//        this.updateById(currentUser);
-//    }
-//
-//    @Override
-//    public void resetPassWord(User currentUser, JSONObject requestJson) throws Exception {
-//        if (!requestJson.getString("password").equals(requestJson.getString("rePassword"))) {
-//            throw  new BusinessException(CodeEnum.INVALID_RE_PASSWORD.getMsg(),CodeEnum.INVALID_RE_PASSWORD.getCode());
-//        }
-//        if(!BCrypt.checkpw(requestJson.getString("oldPassword"),currentUser.getPassword())){
-//            throw  new BusinessException(CodeEnum.INVALID_USERNAME_PASSWORD.getMsg(),CodeEnum.INVALID_USERNAME_PASSWORD.getCode());
-//        }
-//        currentUser.setPassword(BCrypt.hashpw(requestJson.getString("password"),BCrypt.gensalt()));
-//        this.updateById(currentUser);
-//    }
-//
-//    @Override
-//    public User insertUserByAdmin(JSONObject requestJson) throws Exception {
-//        User user = requestJson.toJavaObject(User.class);
-//        if(!ComUtil.isEmpty(this.selectOne(new EntityWrapper<User>().eq("user_name", user.getUsername())))){
-//            throw new BusinessException(CodeEnum.INVALID_USER_EXIST.getMsg(),CodeEnum.INVALID_USER_EXIST.getCode());
-//        }
-//        Role role = roleService.selectOne(
-//                new EntityWrapper<Role>().eq("role_name", requestJson.getString("roleName")));
-//        if(ComUtil.isEmpty(role)){
-//            throw new BusinessException(CodeEnum.INVALID_ROLE.getMsg(),CodeEnum.INVALID_ROLE.getCode());
-//        }
-//        String userNo = GenerationSequenceUtil.generateUUID("user");
-//        if(!ComUtil.isEmpty(user.getMobile())){
-//            if(!StringUtil.checkMobileNumber(user.getMobile())){
-//                throw new BusinessException(CodeEnum.MOBILE_ERROR.getMsg(),CodeEnum.MOBILE_ERROR.getCode());
-//            }
-//            infoToUserService.insert(InfoToUser.builder().identityInfo(user.getMobile())
-//                    .identityType(Constant.LOGIN_MOBILE).userNo(userNo)
-//                    .identityInfo(user.getMobile()).build());
-//        }
-//        if(!ComUtil.isEmpty(user.getEmail())){
-//            if(!StringUtil.checkEmail(user.getEmail())){
-//                throw new BusinessException(CodeEnum.EMAIL_ERROR.getMsg());
-//            }
-//            infoToUserService.insert(InfoToUser.builder().userNo(userNo)
-//                    .identityInfo(user.getEmail()).identityType(Constant.LOGIN_EMAIL).build());
-//        }
-//        user.setPassword(BCrypt.hashpw("123456", BCrypt.gensalt()));
-//        user.setUserNo(userNo);
-//        user.setCreateTime(System.currentTimeMillis());
-//        user.setStatus(Constant.ENABLE);
-//        this.insert(user);
-//        infoToUserService.insert(InfoToUser.builder().userNo(userNo)
-//                .identityInfo(user.getUsername()).identityType(Constant.LOGIN_USERNAME).build());
-//        UserToRole userToRole  = UserToRole.builder().userNo(user.getUserNo()).roleCode(role.getRoleCode()).build();
-//        userToRoleService.insert(userToRole);
-//        return user;
-//    }
+
+
+    @Override
+    public SystemUserModel updateUser(SystemUserModel user) throws Exception {
+
+        if(user.getUsername().isEmpty()){
+            throw new Exception("用户名不能为空");
+        }
+        user.setLastLoginTime(LocalDateTime.now());
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        String encode = encoder.encode(user.getPassword());
+        SystemUserModel olduser = systemUserMapper.selectUserByUsername(user.getUsername());
+        user.setUserId( olduser.getUserId());
+        user.setPassword(encode);
+        boolean result = this.saveOrUpdate(user);
+        if(result){
+            SystemUserToRole userToRole =  SystemUserToRole.builder().userId(user.getUserId()).roleId("ROLE_NORMAL").build();
+            userToRoleService.save(userToRole);
+        }
+
+        return user;
+    }
+
+
+    @Override
+    public IPage<SystemUserModel> findConditionByPage(Page<SystemUserModel> page, SystemUserModel systemUserModel) throws Exception {
+
+        QueryWrapper queryWrapper = new QueryWrapper();
+
+        /**
+         * 这里systemusermodel 不做空判断 。getusername 空指针  null.getUsername
+         */
+        if(systemUserModel != null){
+
+            if(systemUserModel.getUserId() != null){
+                queryWrapper.eq("user_id",systemUserModel.getUserId());
+            }
+            if(systemUserModel.getUsername() != null){
+                queryWrapper.eq("user_name",systemUserModel.getUsername());
+            }
+            if(systemUserModel.getMobile() != null){
+                queryWrapper.eq("user_mobile",systemUserModel.getUserId());
+            }
+            if(systemUserModel.getLastLoginTime() != null){
+                queryWrapper.eq("user_last_login_time",systemUserModel.getUserId());
+            }
+            if(systemUserModel.getCreateTime() != null){
+                queryWrapper.eq("createtime",systemUserModel.getUserId());
+            }
+            if(systemUserModel.isStatus()){
+                queryWrapper.eq("status",systemUserModel.isStatus());
+            }
+        }
+        queryWrapper.orderByDesc("createtime");
+
+        return systemUserMapper.selectPage(page,queryWrapper);
+
+    }
+
+    @Override
+    public SystemUserModel findByUsername(String username) throws Exception {
+        return systemUserMapper.selectUserByUsername(username);
+    }
+
+
+    @Override
+    public List<SystemTemplateModel> findTemplateById(String username) {
+
+        return systemUserMapper.findTemplateById(username);
+    }
+
 
 
 }

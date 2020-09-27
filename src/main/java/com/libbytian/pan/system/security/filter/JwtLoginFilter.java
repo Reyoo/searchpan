@@ -1,16 +1,12 @@
 package com.libbytian.pan.system.security.filter;
 
 import com.libbytian.pan.system.security.simple.JwtLoginToken;
-import com.libbytian.pan.system.service.IUserService;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

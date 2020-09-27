@@ -50,7 +50,7 @@ public class SystemTemplateModel extends Model<SystemTemplateModel> {
      * 状态值 0正常，-1删除
      */
     @TableField(value = "template_status")
-    private Integer templatestatus;
+    private Boolean templatestatus;
 
 
 
@@ -58,7 +58,7 @@ public class SystemTemplateModel extends Model<SystemTemplateModel> {
      * 状态值 0正常，-1删除
      */
     @TableField(exist = false)
-    private Integer detillsize;
+    private Integer detialsize;
 
 
     @Override

@@ -1,6 +1,9 @@
 package com.libbytian.pan.system.controller;
 
+import cn.hutool.core.util.StrUtil;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.libbytian.pan.system.common.AjaxResult;
 import com.libbytian.pan.system.model.SystemTemDetailsModel;
@@ -10,6 +13,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RequestMapping("/template")
 @Slf4j
@@ -32,7 +37,7 @@ public class TemplateController {
 
         Page<SystemTemDetailsModel> findpage = new Page<>(page, limit);
         try {
-            IPage<SystemTemDetailsModel> result = iSystemTemplateService.findTemDetailsPage(findpage,templateId);
+            IPage<SystemTemDetailsModel> result = iSystemTemplateService.findTemDetailsPage(findpage, templateId);
             return AjaxResult.success(result);
         } catch (Exception e) {
             e.printStackTrace();
@@ -41,31 +46,36 @@ public class TemplateController {
         }
     }
 
-
     /**
-     * 查询所有模板
-     * @param page
-     * @param limit
+     * @param systemTemplateModel
      * @return
      */
 
-    @RequestMapping(value = "/findtemplate",method = RequestMethod.POST)
-    public AjaxResult findTemById(@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int limit , @RequestBody SystemTemplateModel systemTemplateModel){
-
-        Page<SystemTemplateModel> findpage = new Page<>(page,limit);
+    @RequestMapping(value = "/findtemplate", method = RequestMethod.POST)
+    public AjaxResult findAllTemplate(@RequestBody(required = false) SystemTemplateModel systemTemplateModel) {
 
         try {
-            IPage<SystemTemplateModel> result = iSystemTemplateService.findTemById(findpage,systemTemplateModel);
+            QueryWrapper<SystemTemplateModel> wrapper = new QueryWrapper();
+            List<SystemTemplateModel> systemTemplateModels = null;
+            if (systemTemplateModel == null) {
+                systemTemplateModels = iSystemTemplateService.list();
+            } else {
 
-            return AjaxResult.success(result);
+                if (StrUtil.isNotBlank(systemTemplateModel.getTemplateid())) {
+                    wrapper.eq("template_id", systemTemplateModel.getTemplateid());
+                }
+                if (StrUtil.isNotBlank(systemTemplateModel.getTemplatename())) {
+                    wrapper.eq("template_name", systemTemplateModel.getTemplatename());
+                }
+
+                systemTemplateModels = iSystemTemplateService.list(wrapper);
+            }
+
+            return AjaxResult.success(systemTemplateModels);
         } catch (Exception e) {
-
             return AjaxResult.error(e.getMessage());
         }
     }
-
-
-
 
 
 }
