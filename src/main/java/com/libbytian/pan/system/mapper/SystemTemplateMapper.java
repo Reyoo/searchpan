@@ -14,7 +14,7 @@ import java.util.List;
 public interface SystemTemplateMapper extends BaseMapper<SystemTemplateModel> {
 
     @Select("SELECT td.templatedetails_id AS temdetailsId,templatedetails_keyword AS keyword,templatedetails_value AS keywordToValue,td.createtime,templatedetails_status AS temdetailsstatus FROM sys_temdetails td LEFT JOIN tem_temdetails tt ON td.templatedetails_id = tt.templatedetails_id WHERE tt.template_id =#{templateId} ORDER BY td.templatedetails_status DESC,td.createtime DESC")
-    IPage<SystemTemDetailsModel> selectTemDetails(Page page, String templateId);
+    IPage<SystemTemDetailsModel> selectTemDetailsPage(Page page, String templateId);
 
 
     @Select("SELECT td.templatedetails_id AS temdetailsId,templatedetails_keyword AS keyword,templatedetails_value AS keywordToValue,td.createtime,templatedetails_status AS temdetailsstatus FROM sys_temdetails td LEFT JOIN tem_temdetails tt ON td.templatedetails_id = tt.templatedetails_id WHERE tt.template_id =#{templateId} ORDER BY td.templatedetails_status DESC,td.createtime DESC")

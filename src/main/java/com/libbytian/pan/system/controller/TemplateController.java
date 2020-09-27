@@ -32,7 +32,7 @@ public class TemplateController {
 
         Page<SystemTemDetailsModel> findpage = new Page<>(page, limit);
         try {
-            IPage<SystemTemDetailsModel> result = iSystemTemplateService.findTemDetails(findpage,templateId);
+            IPage<SystemTemDetailsModel> result = iSystemTemplateService.findTemDetailsPage(findpage,templateId);
             return AjaxResult.success(result);
         } catch (Exception e) {
             e.printStackTrace();

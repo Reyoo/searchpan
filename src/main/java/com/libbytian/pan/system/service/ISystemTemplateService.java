@@ -14,7 +14,7 @@ import java.util.List;
 public interface ISystemTemplateService extends IService<SystemTemplateModel> {
 
 
-     IPage<SystemTemDetailsModel> findTemDetails(Page page,String templateId) throws Exception;
+     IPage<SystemTemDetailsModel> findTemDetailsPage(Page page,String templateId) throws Exception;
 
      List<SystemTemDetailsModel> findTemDetails(String templateId) throws Exception;
 
