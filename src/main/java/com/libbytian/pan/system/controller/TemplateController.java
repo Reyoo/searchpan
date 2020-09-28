@@ -35,31 +35,6 @@ public class TemplateController {
 
 
     /**
-     * 根据模板ID查询模板详情
-     *
-     * @param page
-     * @param limit
-     * @return
-     */
-    @RequestMapping(value = "/findTemDetails", method = RequestMethod.GET)
-    public AjaxResult findTemDetails(@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int limit, @RequestParam String templateId) {
-
-        Page<SystemTemDetailsModel> findpage = new Page<>(page, limit);
-        try {
-            IPage<SystemTemDetailsModel> result = iSystemTemplateService.findTemDetailsPage(findpage, templateId);
-            return AjaxResult.success(result);
-        } catch (Exception e) {
-            e.printStackTrace();
-            log.error(e.getMessage());
-            return AjaxResult.error(e.getMessage());
-        }
-    }
-
-
-
-
-
-    /**
      * @param systemTemplateModel
      * @return
      * @Description: 查询所有模板、根据条件查询模板
@@ -126,7 +101,7 @@ public class TemplateController {
      */
     @RequestMapping(value = "/refresh", method = RequestMethod.PATCH)
     @Transactional
-    public AjaxResult updateTemplate( @RequestBody(required = true) SystemTemplateModel systemTemplateModel) {
+    public AjaxResult updateTemplate(@RequestBody(required = true) SystemTemplateModel systemTemplateModel) {
 
         try {
             boolean isupdate = iSystemTemplateService.updateById(systemTemplateModel);

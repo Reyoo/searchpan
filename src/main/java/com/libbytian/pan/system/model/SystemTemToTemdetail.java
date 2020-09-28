@@ -20,7 +20,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @Data
 @TableName("tem_temdetails")
-public class SystemTemToTemdetails extends Model<SystemTemToTemdetails> {
+public class SystemTemToTemdetail extends Model<SystemTemToTemdetail> {
 
     /**
      * 关联表主键

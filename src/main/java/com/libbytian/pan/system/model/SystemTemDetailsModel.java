@@ -30,7 +30,7 @@ public class SystemTemDetailsModel extends Model<SystemTemDetailsModel> {
     /**
      * 主键
      */
-    @TableId(value = "templatedetails_id",type = IdType.INPUT)
+    @TableId(value = "templatedetails_id",type = IdType.ASSIGN_UUID)
     private String temdetailsId;
 
     /**
@@ -59,10 +59,10 @@ public class SystemTemDetailsModel extends Model<SystemTemDetailsModel> {
 
 
     /**
-     * 排序状态 默认0 ，1 置顶
+     * 排序位置
      */
-    @TableField("order")
-    private Integer order;
+    @TableField("show_order")
+    private Integer showOrder;
 
 
 
