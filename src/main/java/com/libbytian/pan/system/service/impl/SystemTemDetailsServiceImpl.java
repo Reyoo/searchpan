@@ -1,17 +1,12 @@
 package com.libbytian.pan.system.service.impl;
 
 import cn.hutool.core.lang.UUID;
-import cn.hutool.core.util.RandomUtil;
-import cn.hutool.core.util.StrUtil;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.libbytian.pan.system.mapper.SystemTemDetailsMapper;
-import com.libbytian.pan.system.mapper.TemToTemDetailsMapper;
 import com.libbytian.pan.system.model.SystemTemDetailsModel;
 import com.libbytian.pan.system.model.SystemTemToTemdetails;
-import com.libbytian.pan.system.model.SystemUserToRole;
 import com.libbytian.pan.system.service.ISystemTemDetailsService;
-import com.libbytian.pan.system.service.ITemToTemDetailsService;
+import com.libbytian.pan.system.service.ISystemTmplToTmplDetailsService;
 import com.libbytian.pan.system.util.ReadOrWriteExcelUtil;
 import lombok.RequiredArgsConstructor;
 import org.apache.poi.ss.usermodel.Row;
@@ -34,7 +29,7 @@ public class SystemTemDetailsServiceImpl extends ServiceImpl<SystemTemDetailsMap
 
 
     private final SystemTemDetailsMapper systemTemDetailsMapper;
-    private final ITemToTemDetailsService iTemToTemDetailsService;
+    private final ISystemTmplToTmplDetailsService iSystemTmplToTmplDetailsService;
 
 
     /**
@@ -117,7 +112,7 @@ public class SystemTemDetailsServiceImpl extends ServiceImpl<SystemTemDetailsMap
 
         for (String uuid : uuidList) {
             SystemTemToTemdetails temToTemdetails= SystemTemToTemdetails.builder().templateid(templateId).templatedetailsid(uuid).build();
-            iTemToTemDetailsService.save(temToTemdetails);
+            iSystemTmplToTmplDetailsService.save(temToTemdetails);
         }
 
         return 0;
@@ -138,7 +133,7 @@ public class SystemTemDetailsServiceImpl extends ServiceImpl<SystemTemDetailsMap
         if (result == 1) {
             //插入模板_模板详情表
             SystemTemToTemdetails temToDetails = SystemTemToTemdetails.builder().templateid(templateId).templatedetailsid(systemTemDetailsModel.getTemdetailsId()).build();
-            iTemToTemDetailsService.save(temToDetails);
+            iSystemTmplToTmplDetailsService.save(temToDetails);
 
         }
         return result;

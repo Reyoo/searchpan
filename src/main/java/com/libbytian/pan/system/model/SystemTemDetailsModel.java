@@ -58,6 +58,14 @@ public class SystemTemDetailsModel extends Model<SystemTemDetailsModel> {
     private Integer temdetailsstatus;
 
 
+    /**
+     * 排序状态 默认0 ，1 置顶
+     */
+    @TableField("order")
+    private Integer order;
+
+
+
     @Override
     protected Serializable pkVal() {
         return this.temdetailsId;

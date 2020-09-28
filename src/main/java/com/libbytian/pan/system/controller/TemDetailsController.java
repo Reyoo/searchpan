@@ -26,7 +26,7 @@ public class TemDetailsController {
      * @param templateId  存入的模板
      * @return
      */
-    @RequestMapping(value = "/addTemDetails", method = RequestMethod.POST)
+    @RequestMapping(value = "/add", method = RequestMethod.POST)
     public AjaxResult addTemDetails(@RequestBody SystemTemDetailsModel systemTemDetailsModel , @RequestParam String templateId) {
 
         try {

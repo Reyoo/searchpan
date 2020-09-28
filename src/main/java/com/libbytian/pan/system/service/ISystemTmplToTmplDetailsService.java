@@ -6,6 +6,6 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional(propagation = Propagation.REQUIRES_NEW)
-public interface ITemToTemDetailsService extends IService<SystemTemToTemdetails> {
+public interface ISystemTmplToTmplDetailsService extends IService<SystemTemToTemdetails> {
 
 }
