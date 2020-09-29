@@ -171,19 +171,6 @@ public class WxPortalController {
         try {
 
 
-//        if(!"c3VucWklM0ExMjM0NTY3OA==".equals(verification)){
-//            throw new IllegalArgumentException("权限有误，请核实!");
-//        }
-
-        //根据用户 verification 解析成用户名密码获取用户设置模板
-//        String userAndPasswd =  new String(decoder.decode(verification), "UTF-8");
-//        System.out.println(userAndPasswd);
-
-        //从数据库中获取用户模板信息
-        //从模板信息中获取用户模板详细
-
-        //返回模板信息
-
         if (!wxService.checkSignature(timestamp, nonce, signature)) {
             throw new IllegalArgumentException("非法请求，可能属于伪造的请求！");
         }

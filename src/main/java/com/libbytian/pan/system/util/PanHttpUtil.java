@@ -1,12 +1,13 @@
 package com.libbytian.pan.system.util;
 
 import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.servlet.http.HttpServletRequest;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
-@Log4j2
+@Slf4j
 public class PanHttpUtil {
 
     public static String getIpAddress(HttpServletRequest request){

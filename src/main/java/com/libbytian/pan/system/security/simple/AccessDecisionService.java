@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
  * .authorizeRequests()
  * .antMatchers("/order").....
  *
- * @author niXueChao
+ * @author SunQi
  * @date 2019/4/10 10:33.
  */
 @Component("accessDecisionService")
@@ -38,11 +38,19 @@ public class AccessDecisionService {
     public boolean hasPermission(HttpServletRequest request, Authentication auth) {
 
         List<String> whiteList = new ArrayList();
+        /**
+         * 注册接口放过
+         */
         whiteList.add("/login/register");
-        whiteList.add("/wechat/**");
-//        whiteList.add("/**");
+        /**
+         * 验证码接口放过
+         */
+        whiteList.add("/captcha/captchaImage");
 
-        //不也能访问的(permitAll)
+        /**
+         * 付费用户放过。完成项目后应该消掉
+         */
+        whiteList.add("/wechat/**");
 
         for (String url : whiteList) {
             if (antPathMatcher.match(url, request.getRequestURI())) {

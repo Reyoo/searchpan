@@ -1,4 +1,4 @@
-package com.libbytian.pan.system.security.simple;
+package com.libbytian.pan.system.security.handle;
 
 import com.alibaba.fastjson.JSON;
 import com.libbytian.pan.system.model.SystemRoleModel;
@@ -43,12 +43,11 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
         String userJsonStr = JSON.toJSONString(authentication.getPrincipal());
         String token = JwtHelper.encode(userJsonStr, signer).getEncoded();
         Set<String> roles = AuthorityUtils.authorityListToSet(authentication.getAuthorities());
-
-
+        //签发token
+        AuthenticationSuccessModel authenticationSuccessModel = new AuthenticationSuccessModel();
+        authenticationSuccessModel.setUsername(authentication.getName());
         if (roles.contains("ROLE_ADMIN")){
-            //签发token
-            AuthenticationSuccessModel authenticationSuccessModel = new AuthenticationSuccessModel();
-            authenticationSuccessModel.setUsername(authentication.getName());
+
             //登录到系统管理
             authenticationSuccessModel.setRoute("index/userManagement");
             authenticationSuccessModel.setToken(token);
@@ -56,15 +55,12 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
             response.getWriter().write(JSON.toJSONString(authenticationSuccessModel));
         }
 
-
         /**
          * 付费用户
          */
         if (roles.contains("ROLE_PAYUSER")){
-            //签发token
-            AuthenticationSuccessModel authenticationSuccessModel = new AuthenticationSuccessModel();
-            authenticationSuccessModel.setUsername(authentication.getName());
-            //登录到系统管理
+
+            //登录到cms管理
             authenticationSuccessModel.setRoute("mainManagement");
             authenticationSuccessModel.setToken(token);
             authenticationSuccessModel.setStatus(200);

@@ -23,6 +23,12 @@ spring:
     host: 123.57.130.90
     port: 36379
     password: 123qwe!@#
+#    lettuce:
+#      pool:
+#        max-active: 8
+#        min-idle: 0
+#        max-wait: -1ms
+#    database: 0
 
   # 配置数据源
   datasource:
