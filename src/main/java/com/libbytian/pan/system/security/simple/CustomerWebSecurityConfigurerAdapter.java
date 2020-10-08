@@ -8,6 +8,7 @@ import com.libbytian.pan.system.security.handle.LoginFailureHandler;
 import com.libbytian.pan.system.security.handle.LoginSuccessHandler;
 import com.libbytian.pan.system.security.point.CustomAuthenticationEntryPoint;
 import com.libbytian.pan.system.security.provider.JwtAuthenticationProvider;
+import com.libbytian.pan.system.security.token.JwtUserDetailServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

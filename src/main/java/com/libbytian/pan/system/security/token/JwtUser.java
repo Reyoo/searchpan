@@ -1,4 +1,4 @@
-package com.libbytian.pan.system.security.simple;
+package com.libbytian.pan.system.security.token;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

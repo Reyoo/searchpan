@@ -4,7 +4,7 @@ import com.alibaba.druid.util.StringUtils;
 import com.alibaba.fastjson.JSON;
 import com.libbytian.pan.system.exception.ImageCodeException;
 import com.libbytian.pan.system.security.token.JwtLoginToken;
-import com.libbytian.pan.system.security.simple.JwtUser;
+import com.libbytian.pan.system.security.token.JwtUser;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -73,40 +73,5 @@ public class JwtHeadFilter extends OncePerRequestFilter {
     }
 
 
-    /**
-     *
-     * Description:验证图片验证码是否正确
-     * @param httpServletRequest
-     * @author huangweicheng
-     * @date 2019/10/22
-     */
-    private void checkImageCode(HttpServletRequest httpServletRequest) throws ImageCodeException
-    {
-        /*从cookie取值*/
-        Cookie[] cookies = httpServletRequest.getCookies();
-        String uuid = "";
-        for (Cookie cookie : cookies)
-        {
-            String cookieName = cookie.getName();
-            if ("captcha".equals(cookieName))
-            {
-                uuid = cookie.getValue();
-            }
-        }
-        String redisImageCode = (String) redisTemplate.opsForValue().get(uuid);
-        /*获取图片验证码与redis验证*/
-        String imageCode = httpServletRequest.getParameter("imageCode");
-        /*redis的验证码不能为空*/
-        if (StringUtils.isEmpty(redisImageCode) || StringUtils.isEmpty(imageCode))
-        {
-            throw new ImageCodeException("验证码不能为空");
-        }
-        /*校验验证码*/
-        if (!imageCode.equalsIgnoreCase(redisImageCode))
-        {
-            throw new ImageCodeException("验证码错误");
-        }
-        redisTemplate.delete(redisImageCode);
-    }
 
 }
