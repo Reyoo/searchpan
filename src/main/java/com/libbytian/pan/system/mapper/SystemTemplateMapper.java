@@ -9,6 +9,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
+import java.util.Map;
 
 @Mapper
 public interface SystemTemplateMapper extends BaseMapper<SystemTemplateModel> {
@@ -22,6 +23,9 @@ public interface SystemTemplateMapper extends BaseMapper<SystemTemplateModel> {
 
     @Select("SELECT * FROM sys_template WHERE  template_id =#{templateId}")
     IPage<SystemTemplateModel> findTemById(Page page, int templateId);
+
+    @Select("SELECT template_id AS templateid , template_name AS templatename , FROM sys_template ")
+    Map selectTemNameAndSize();
 
 
 }

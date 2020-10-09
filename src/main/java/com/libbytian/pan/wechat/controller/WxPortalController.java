@@ -5,8 +5,6 @@ import com.libbytian.pan.system.model.SystemTemDetailsModel;
 import com.libbytian.pan.system.model.SystemTemplateModel;
 import com.libbytian.pan.system.model.SystemUserModel;
 import com.libbytian.pan.system.service.ISystemTemplateService;
-import com.libbytian.pan.system.service.ISystemUserService;
-import com.libbytian.pan.wechat.model.MovieNameAndUrlModel;
 import com.libbytian.pan.wechat.service.NormalPageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -26,6 +24,7 @@ import java.io.ByteArrayInputStream;
 import java.time.Duration;
 import java.time.LocalTime;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -44,6 +43,7 @@ public class WxPortalController {
 
     private final ISystemTemplateService systemTemplateService;
     private final com.libbytian.pan.system.service.ISystemUserService ISystemUserService;
+
 
     final Base64.Decoder decoder = Base64.getDecoder();
     final Base64.Encoder encoder = Base64.getEncoder();
@@ -144,6 +144,10 @@ public class WxPortalController {
         }
 
 
+
+
+
+
         List<SystemTemplateModel> systemTemplateModelListstatusOn = systemTemplateModels.stream().filter(systemTemplateModel -> systemTemplateModel.getTemplatestatus().equals(Boolean.TRUE)).collect(Collectors.toList());
 
 
@@ -175,47 +179,51 @@ public class WxPortalController {
 //            throw new IllegalArgumentException("权限有误，请核实!");
 //        }
 
-        //根据用户 verification 解析成用户名密码获取用户设置模板
+            //根据用户 verification 解析成用户名密码获取用户设置模板
 //        String userAndPasswd =  new String(decoder.decode(verification), "UTF-8");
 //        System.out.println(userAndPasswd);
 
-        //从数据库中获取用户模板信息
-        //从模板信息中获取用户模板详细
+            //从数据库中获取用户模板信息
+            //从模板信息中获取用户模板详细
 
-        //返回模板信息
+            //返回模板信息
 
-        if (!wxService.checkSignature(timestamp, nonce, signature)) {
-            throw new IllegalArgumentException("非法请求，可能属于伪造的请求！");
-        }
-
-
-        if (encType == null) {
-            // 明文传输的消息
-            WxMpXmlMessage inMessage = WxMpXmlMessage.fromXml(requestBody);
-            WxMpXmlOutMessage outMessage = this.route(inMessage);
-            if (outMessage == null) {
-                return "";
+            if (!wxService.checkSignature(timestamp, nonce, signature)) {
+                throw new IllegalArgumentException("非法请求，可能属于伪造的请求！");
             }
 
 
-            List<MovieNameAndUrlModel> realMovieList = new ArrayList();
+            if (encType == null) {
+                // 明文传输的消息
+                WxMpXmlMessage inMessage = WxMpXmlMessage.fromXml(requestBody);
+                WxMpXmlOutMessage outMessage = this.route(inMessage);
+                if (outMessage == null) {
+                    return "";
+                }
+
+
+//            List<MovieNameAndUrlModel> realMovieList = new ArrayList();
 //            List<MovieNameAndUrlModel> movieNameAndUrls =(List<MovieNameAndUrlModel>) normalPageService.getNormalUrl(unreadUrl+"/?s="+inMessage.getContent()).get("data");
 
-            LocalTime begin = LocalTime.now();
+                LocalTime begin = LocalTime.now();
+
+
 //            movieNameAndUrls.stream().forEach( movieNameAndUrl ->
 //                    realMovieList.add(normalPageService.getMoviePanUrl(movieNameAndUrl)));
 //            List<MovieNameAndUrlModel> movieNameAndUrls1 =(List<MovieNameAndUrlModel>) normalPageService.getNormalUrl(lxxhUrl+"/?s="+inMessage.getContent()).get("data");
 //            movieNameAndUrls1.stream().forEach( movieNameAndUrl ->
 //                    realMovieList.add(normalPageService.getMoviePanUrl2(movieNameAndUrl)));
-            LocalTime end = LocalTime.now();
-            Duration duration = Duration.between(begin, end);
-            System.out.println("Duration: " + duration);
-            StringBuffer stringBuffer = new StringBuffer();
+                LocalTime end = LocalTime.now();
+                Duration duration = Duration.between(begin, end);
+                System.out.println("Duration: " + duration);
+                StringBuffer stringBuffer = new StringBuffer();
+
+
 //            realMovieList.stream().forEach(innerMovie -> {
 //                stringBuffer.append("电影名 :" )
 //                        .append(innerMovie.getMovieName())
 //                        .append("<a href=\\\"http://www.baidu.com/signin.html?openid=\" + openid + \"\\\">登录/注册</a>\"")
-
+//
 //                        .append("\n")
 //                .append("百度网盘 : ")
 //                .append(innerMovie.getWangPanUrl())
@@ -225,28 +233,30 @@ public class WxPortalController {
 //                        .append("----->分隔符<-----");
 //            } );
 
-            // 准备数据并解析。
-            byte[] bytes = requestBody.getBytes("UTF-8");
 
+                // 准备数据并解析。
+                byte[] bytes = requestBody.getBytes("UTF-8");
+                //1.创建Reader对象
+                SAXReader reader = new SAXReader();
+                //2.加载xml
+                Document document = reader.read(new ByteArrayInputStream(bytes));
+                //3.获取根节点
+                Element rootElement = document.getRootElement();
+                Iterator iterator = rootElement.elementIterator();
 
-            //1.创建Reader对象
-            SAXReader reader = new SAXReader();
-            //2.加载xml
-            Document document = reader.read(new ByteArrayInputStream(bytes));
-            //3.获取根节点
-            Element rootElement = document.getRootElement();
-            Iterator iterator = rootElement.elementIterator();
+                String searchName = "";
 
-            String searchName = "";
+                while (iterator.hasNext()) {
+                    Element stu = (Element) iterator.next();
+                    if (stu.getName().equals("Content")) {
+                        List<Node> attributes = stu.content();
+                        searchName = attributes.get(0).getText();
+                    }
 
-            while (iterator.hasNext()) {
-                Element stu = (Element) iterator.next();
-                if (stu.getName().equals("Content")) {
-                    List<Node> attributes = stu.content();
-                    searchName = attributes.get(0).getText();
                 }
 
-            }
+
+
 
             /**
              * 响应内容
@@ -265,8 +275,56 @@ public class WxPortalController {
             stringBuffer.append("\r\n");
             stringBuffer.append(lastmodel.getKeywordToValue());
 
+                //        --------------------Redis----------------------------------
 
+//                List<MovieNameAndUrlModel> realMovieList = new ArrayList();
+//                //查询缓存中是否存在
+//                boolean hasKey = redisUtils.exists(searchName);
+//
+//                if (hasKey) {
+//                    //获取缓存
+//                    Object object = redisUtils.get(searchName);
+//
+//                    List<MovieNameAndUrlModel>  list = JSONObject.parseArray((String) object,MovieNameAndUrlModel.class);
+//
+//                    log.info("从缓存获取的数据" + list);
+//
+//
+//                } else {
+//                    //从数据库中获取信息
+//                    log.info("从爬虫中获取数据");
+//
+//                    List<MovieNameAndUrlModel> movieNameAndUrls =(List<MovieNameAndUrlModel>) normalPageService.getNormalUrl(unreadUrl+"/?s="+searchName).get("data");
+//
+//                    movieNameAndUrls.stream().forEach( movieNameAndUrl ->
+//                            realMovieList.add(normalPageService.getMoviePanUrl(movieNameAndUrl)));
+//                    List<MovieNameAndUrlModel> movieNameAndUrls1 =(List<MovieNameAndUrlModel>) normalPageService.getNormalUrl(lxxhUrl+"/?s="+searchName).get("data");
+//                    movieNameAndUrls1.stream().forEach( movieNameAndUrl ->
+//                            realMovieList.add(normalPageService.getMoviePanUrl2(movieNameAndUrl)));
+//
+//                    //数据插入缓存（set中的参数含义：key值，user对象，缓存存在时间10（long类型），时间单位）
+//                    String list = JSON.toJSON(realMovieList).toString();
+//
+//                    redisUtils.set(searchName, list, 10L, TimeUnit.MINUTES);
+//
+//
+//                    log.info("数据插入缓存" + realMovieList.toString());
+//
+//                    realMovieList.stream().forEach(innerMovie -> {
+//                        stringBuffer.append("电影名 :" )
+//                                .append(innerMovie.getMovieName())
+//                                .append("\n")
+//                                .append("百度网盘 : ")
+//                                .append(innerMovie.getWangPanUrl())
+//                                .append("\n")
+//                                .append(innerMovie.getWangPanPassword())
+//                                .append("\n")
+//                                .append("----->分隔符<-----");
+//                    } );
+//
+//                }
 
+//        --------------------Redis----------------------------------
 
             outMessage = WxMpXmlOutTextMessage.TEXT()
                     .toUser(inMessage.getFromUser())
@@ -324,6 +382,7 @@ public class WxPortalController {
         return "http://kwwaws.natappfree.cc"+"/wechat/portal/"+encodeusername;
 
     }
+
 
 
 }

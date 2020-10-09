@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
@@ -39,7 +40,7 @@ public class SystemTemplateServiceImpl extends ServiceImpl<SystemTemplateMapper,
 
     @Override
     public IPage<SystemTemplateModel> findTemById(Page page, SystemTemplateModel systemTemplateModel) throws Exception {
-//        return systemTemplateMapper.findTemById(page,templateId);
+
         QueryWrapper queryWrapper = new QueryWrapper<>();
         if (systemTemplateModel != null){
             if (systemTemplateModel.getTemplateid()!=null){
@@ -62,5 +63,10 @@ public class SystemTemplateServiceImpl extends ServiceImpl<SystemTemplateMapper,
 
             return  systemTemplateMapper.selectPage(page,queryWrapper);
 
+    }
+
+    @Override
+    public Map findTemNameAndSize() {
+        return null;
     }
 }

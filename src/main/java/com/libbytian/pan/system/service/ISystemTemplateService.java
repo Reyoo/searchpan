@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 
 @Transactional(propagation = Propagation.REQUIRES_NEW)
 public interface ISystemTemplateService extends IService<SystemTemplateModel> {
@@ -19,6 +20,8 @@ public interface ISystemTemplateService extends IService<SystemTemplateModel> {
      List<SystemTemDetailsModel> findTemDetails(String templateId) throws Exception;
 
      IPage<SystemTemplateModel> findTemById(Page page,SystemTemplateModel systemTemDetailsModel) throws Exception;
+
+     Map findTemNameAndSize();
 
 
 }

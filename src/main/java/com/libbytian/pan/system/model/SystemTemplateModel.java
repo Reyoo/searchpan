@@ -55,7 +55,7 @@ public class SystemTemplateModel extends Model<SystemTemplateModel> {
 
 
     /**
-     * 状态值 0正常，-1删除
+     * 条数
      */
     @TableField(exist = false)
     private Integer detialsize;

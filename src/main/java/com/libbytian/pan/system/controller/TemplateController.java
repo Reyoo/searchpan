@@ -77,5 +77,18 @@ public class TemplateController {
         }
     }
 
+    /**
+     * 查询显示所有模板及其SIZE
+     * @return
+     */
+    @RequestMapping(value = "/findTemNameAndSize",method = RequestMethod.GET)
+    public AjaxResult findTemNameAndSize(){
+
+
+
+        return AjaxResult.success();
+    }
+
+
 
 }
