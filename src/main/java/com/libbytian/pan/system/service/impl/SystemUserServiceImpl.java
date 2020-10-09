@@ -86,7 +86,7 @@ public class SystemUserServiceImpl extends ServiceImpl<SystemUserMapper, SystemU
             systemTemplateService.save(template);
 
             //模板ID绑定用户ID
-            SystemUserToTemplate userToTemplate  = SystemUserToTemplate.builder().userId(user.getUserId()).templateId(uuid).userTemplateStatus("0").build();
+            SystemUserToTemplate userToTemplate  = SystemUserToTemplate.builder().userId(user.getUserId()).templateId(uuid).userTemplateStatus(true).build();
             userToTemplateService.save(userToTemplate);
         }
         return user;

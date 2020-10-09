@@ -1,4 +1,4 @@
-package com.libbytian.pan.system.security.simple;
+package com.libbytian.pan.system.security.handle;
 
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;

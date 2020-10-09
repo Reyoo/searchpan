@@ -1,4 +1,4 @@
-package com.libbytian.pan.system.security.simple;
+package com.libbytian.pan.system.security.token;
 
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
@@ -18,14 +18,12 @@ public class JwtLoginToken extends AbstractAuthenticationToken {
 
     /**创建一个未认证的授权令牌,
      * 这时传入的principal是用户名
-     *
      */
     public JwtLoginToken(Object principal, Object credentials) {
         super(null);
         this.principal = principal;
         this.credentials = credentials;
         setAuthenticated(false);
-//        setAuthenticated(true);
     }
 
     /**创建一个已认证的授权令牌,如注释中说的那样,这个方法应该由AuthenticationProvider来调用

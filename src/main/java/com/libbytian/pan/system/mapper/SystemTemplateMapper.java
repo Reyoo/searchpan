@@ -9,23 +9,22 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
-import java.util.Map;
 
 @Mapper
 public interface SystemTemplateMapper extends BaseMapper<SystemTemplateModel> {
 
-    @Select("SELECT td.templatedetails_id AS temdetailsId,templatedetails_keyword AS keyword,templatedetails_value AS keywordToValue,td.createtime,templatedetails_status AS temdetailsstatus FROM sys_temdetails td LEFT JOIN tem_temdetails tt ON td.templatedetails_id = tt.templatedetails_id WHERE tt.template_id =#{templateId} ORDER BY td.templatedetails_status DESC,td.createtime DESC")
+    @Select("SELECT td.templatedetails_id AS temdetailsId,templatedetails_keyword AS keyword,templatedetails_value AS keywordToValue,td.createtime,templatedetails_status AS temdetailsstatus " +
+            "FROM sys_temdetails td " +
+            "LEFT JOIN tem_temdetails tt " +
+            "ON td.templatedetails_id = tt.templatedetails_id " +
+            "WHERE tt.template_id =#{templateId} " +
+            "ORDER BY " +
+            "td.templatedetails_status DESC,td.createtime DESC")
     IPage<SystemTemDetailsModel> selectTemDetailsPage(Page page, String templateId);
 
 
     @Select("SELECT td.templatedetails_id AS temdetailsId,templatedetails_keyword AS keyword,templatedetails_value AS keywordToValue,td.createtime,templatedetails_status AS temdetailsstatus FROM sys_temdetails td LEFT JOIN tem_temdetails tt ON td.templatedetails_id = tt.templatedetails_id WHERE tt.template_id =#{templateId} ORDER BY td.templatedetails_status DESC,td.createtime DESC")
     List<SystemTemDetailsModel> selectTemDetails(String templateId);
-
-    @Select("SELECT * FROM sys_template WHERE  template_id =#{templateId}")
-    IPage<SystemTemplateModel> findTemById(Page page, int templateId);
-
-    @Select("SELECT template_id AS templateid , template_name AS templatename , FROM sys_template ")
-    Map selectTemNameAndSize();
 
 
 }

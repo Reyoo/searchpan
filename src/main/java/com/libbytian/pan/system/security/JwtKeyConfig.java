@@ -1,10 +1,15 @@
 package com.libbytian.pan.system.security;
 
 
+import com.alibaba.fastjson.JSON;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.jwt.Jwt;
+import org.springframework.security.jwt.JwtHelper;
 import org.springframework.security.jwt.crypto.sign.RsaSigner;
 import org.springframework.security.jwt.crypto.sign.RsaVerifier;
+
+import java.util.HashMap;
 
 /**
  * @author niXueChao
@@ -62,7 +67,7 @@ public class JwtKeyConfig {
     public RsaVerifier getVerifier() {
         return new RsaVerifier(PRIVATE_KEY);
     }
-}
+//}
 
 //    public static void main(String[] args) {
 //        JwtKeyConfig jwtKeyConfig = new JwtKeyConfig();
@@ -76,4 +81,4 @@ public class JwtKeyConfig {
 //        System.out.println(decode.getClaims());
 //        System.out.println(decode1.getClaims());
 //    }
-//}
+}

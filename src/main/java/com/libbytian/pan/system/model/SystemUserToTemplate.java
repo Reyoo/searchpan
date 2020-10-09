@@ -39,7 +39,7 @@ public class SystemUserToTemplate extends Model<SystemUserToTemplate> {
 
 
     @TableField("user_template_status")
-    private String userTemplateStatus;
+    private Boolean userTemplateStatus;
 
     @Override
     protected Serializable pkVal() {

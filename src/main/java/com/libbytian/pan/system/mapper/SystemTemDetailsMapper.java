@@ -15,17 +15,4 @@ import java.time.LocalDateTime;
 public interface SystemTemDetailsMapper extends BaseMapper<SystemTemDetailsModel> {
 
 
-//     @Insert("INSERT INTO sys_temdetails (templatedetails_keyword  ,templatedetails_value  ,createtime  ,templatedetails_status) VALUES(#{keyword},#{keywordToValue},#{localDateTime},0)")
-//     int  addTemDetails(String keyword , String keywordToValue , LocalDateTime localDateTime);
-
-
-//     @Insert("INSERT INTO sys_temdetails (templatedetails_keyword  ,templatedetails_value  ,createtime  ,templatedetails_status) VALUES(#{keyword},#{keywordToValue},#{localDateTime},0)")
-//     @Options(useGeneratedKeys = true, keyProperty = "user.temdetailsId")
-//     Integer  addTemDetails(String keyword , String keywordToValue , LocalDateTime localDateTime,SystemTemDetailsModel user);
-
-     @Insert("INSERT INTO sys_temdetails (templatedetails_id,templatedetails_keyword  ,templatedetails_value  ,createtime  ,templatedetails_status) VALUES(#{uuid},#{keyword},#{keywordToValue},#{localDateTime},0)")
-     @Options(useGeneratedKeys = true, keyProperty = "systemTemDetailsModel.temdetailsId")
-     Integer  addTemDetails(String uuid , String keyword , String keywordToValue , LocalDateTime localDateTime,SystemTemDetailsModel systemTemDetailsModel);
-
-
 }
