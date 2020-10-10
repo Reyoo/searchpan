@@ -2,7 +2,7 @@ package com.libbytian.pan.system.security.provider;
 
 import com.alibaba.fastjson.JSONObject;
 import com.libbytian.pan.system.security.model.ResultExceptionModel;
-import com.libbytian.pan.system.security.token.JwtLoginToken;
+import com.libbytian.pan.system.security.filter.JwtLoginToken;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.*;
 import org.springframework.security.core.Authentication;

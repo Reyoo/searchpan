@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.*;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.io.Serializable;
 
@@ -46,6 +47,10 @@ public class SystemUserToRole extends Model<SystemUserToRole> {
 
     @TableField("user_role_status")
     private String userRoleStatus;
+
+    @TableField(exist = false)
+    @Value("false")
+    private boolean checked;
 
     @Override
     protected Serializable pkVal() {

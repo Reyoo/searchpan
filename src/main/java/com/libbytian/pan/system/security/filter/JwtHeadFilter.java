@@ -1,10 +1,8 @@
 package com.libbytian.pan.system.security.filter;
 
-import com.alibaba.druid.util.StringUtils;
 import com.alibaba.fastjson.JSON;
 import com.libbytian.pan.system.exception.ImageCodeException;
-import com.libbytian.pan.system.security.token.JwtLoginToken;
-import com.libbytian.pan.system.security.token.JwtUser;
+import com.libbytian.pan.system.security.provider.JwtUser;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -17,7 +15,6 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -33,8 +30,11 @@ public class JwtHeadFilter extends OncePerRequestFilter {
     @Autowired
     RedisTemplate redisTemplate;
 
+
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+
 
         String token = request.getHeader("Authorization");
         if (token==null || token.isEmpty()){

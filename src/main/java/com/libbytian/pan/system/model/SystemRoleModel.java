@@ -7,6 +7,8 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.bind.DefaultValue;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -56,6 +58,10 @@ public class SystemRoleModel extends Model<SystemRoleModel> {
 
     @TableField("createtime")
     private LocalDateTime createtime;
+
+    @TableField(exist = false)
+    @Value("false")
+    private boolean isChecked;
 
     @Override
     protected Serializable pkVal() {

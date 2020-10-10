@@ -2,7 +2,7 @@ package com.libbytian.pan.system.security.filter;
 
 import com.alibaba.druid.util.StringUtils;
 import com.libbytian.pan.system.exception.ImageCodeException;
-import com.libbytian.pan.system.security.token.JwtLoginToken;
+import com.libbytian.pan.system.util.PanHttpUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -44,9 +44,10 @@ public class JwtLoginFilter extends AbstractAuthenticationProcessingFilter {
            /**
             * 验证码
             */
-           checkImageCode(request);
+//           checkImageCode(request);
 
-//           String realIp = PanHttpUtil.getIpAddress(request);
+           String realIp = PanHttpUtil.getIpAddress(request);
+           System.out.println(request.getSession().getId());
            //创建未认证的凭证(etAuthenticated(false)),注意此时凭证中的主体principal为用户名
            JwtLoginToken jwtLoginToken = new JwtLoginToken(userName, password);
 
@@ -56,7 +57,8 @@ public class JwtLoginFilter extends AbstractAuthenticationProcessingFilter {
            //AuthenticationManager获取受支持的AuthenticationProvider(这里也就是JwtAuthenticationProvider),
            //生成已认证的凭证,此时凭证中的主体为userDetails
            //放到redis 中设置过期时间
-           Authentication authenticatedToken = this.getAuthenticationManager().authenticate(jwtLoginToken);
+
+           Authentication authenticatedToken = this.getAuthenticationManager(). authenticate(jwtLoginToken);
            log.info(authenticatedToken.toString());
            return authenticatedToken;
 
