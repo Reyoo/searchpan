@@ -1,11 +1,11 @@
-package com.libbytian.pan.system.security.token;
+package com.libbytian.pan.system.security.provider;
 
 import com.alibaba.fastjson.JSONObject;
 import com.libbytian.pan.system.model.SystemRoleModel;
 import com.libbytian.pan.system.model.SystemUserModel;
 import com.libbytian.pan.system.security.model.CustomRole;
 import com.libbytian.pan.system.security.model.ResultExceptionModel;
-import com.libbytian.pan.system.security.token.JwtUser;
+import com.libbytian.pan.system.security.provider.JwtUser;
 import com.libbytian.pan.system.service.ISystemRoleService;
 import com.libbytian.pan.system.service.ISystemUserService;
 import lombok.extern.slf4j.Slf4j;

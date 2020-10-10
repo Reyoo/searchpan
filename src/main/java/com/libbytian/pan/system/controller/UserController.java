@@ -1,14 +1,13 @@
 package com.libbytian.pan.system.controller;
 
 import cn.hutool.core.lang.UUID;
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.libbytian.pan.system.common.AjaxResult;
-import com.libbytian.pan.system.model.SystemTemplateModel;
-import com.libbytian.pan.system.model.SystemUserModel;
-import com.libbytian.pan.system.model.SystemUserToRole;
-import com.libbytian.pan.system.model.SystemUserToTemplate;
+import com.libbytian.pan.system.model.*;
 import com.libbytian.pan.system.service.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 
@@ -32,6 +32,7 @@ public class UserController {
     private final ISystemUserToTemplateService iSystemUserToTemplateService;
     private final ISystemTmplToTmplDetailsService iSystemTmplToTmplDetailsService;
     private final ISystemTemplateService iSystemTemplateService;
+    private final ISystemRoleService iSystemRoleService;
 
 
     /**
@@ -98,14 +99,30 @@ public class UserController {
      * @param user
      * @return
      */
-    @RequestMapping(value = "/geturole", method = RequestMethod.GET)
+    @RequestMapping(value = "/geturole", method = RequestMethod.POST)
     public AjaxResult finduserRole(@RequestBody SystemUserModel user) {
 
         try {
 
             List<SystemUserToRole> systemUserToRoles = iSystemUserToRoleService.getUserRoleByuserID(user.getUserId());
+            if(systemUserToRoles.size()<=0){
+                List<SystemRoleModel> systemRoleModelsAll = iSystemRoleService.list();
+                return AjaxResult.success(systemRoleModelsAll);
+            }
+
             List<String> roleIds = systemUserToRoles.stream().map(SystemUserToRole::getRoleId).collect(Collectors.toList());
-            return AjaxResult.success(roleIds);
+            List<SystemRoleModel> systemRoleModelList = iSystemRoleService.listByIds(roleIds);
+            systemRoleModelList.forEach(role -> role.setChecked(true));
+            List<SystemRoleModel> systemRoleModelsAll = iSystemRoleService.list();
+            //id为两个列表相同属性，取出A的list中的id
+            List<String> roleIdList =systemRoleModelList.stream().map(SystemRoleModel::getRoleId).collect(Collectors.toList());
+            //B列表去除A列表已有的数据
+            systemRoleModelsAll =systemRoleModelsAll.stream().filter(SystemRoleModel ->!roleIdList.contains(SystemRoleModel.getRoleId())).collect(Collectors.toList());
+
+            systemRoleModelsAll.addAll(systemRoleModelList);
+
+
+            return AjaxResult.success(systemRoleModelsAll);
         } catch (Exception e) {
             return AjaxResult.error(e.getMessage());
         }
@@ -118,12 +135,26 @@ public class UserController {
      * @param systemUserToRole
      * @return
      */
-    @RequestMapping(value = "/addusertorole", method = RequestMethod.POST)
-    public AjaxResult finduserRole(@RequestBody List<SystemUserToRole> systemUserToRole) {
+    @RequestMapping(value = "/updaterole", method = RequestMethod.PATCH)
+    public AjaxResult updateuserRole(@RequestBody SystemUserToRole systemUserToRole) {
+
 
         try {
-            iSystemUserToRoleService.removeByIds(systemUserToRole.stream().map(SystemUserToRole::getUserToRoleId).collect(Collectors.toList()));
-            return AjaxResult.success(iSystemUserToRoleService.saveBatch(systemUserToRole));
+            if(systemUserToRole!=null){
+                if(systemUserToRole.isChecked()){
+                    //更新
+                    return  AjaxResult.success(iSystemUserToRoleService.save(systemUserToRole));
+                }else{
+                    //删除
+                    QueryWrapper<SystemUserToRole> queryWrapper = new QueryWrapper<>();
+
+                    queryWrapper.eq("user_id", systemUserToRole.getUserId());
+                    queryWrapper.eq("role_id", systemUserToRole.getRoleId());
+                    return AjaxResult.success(iSystemUserToRoleService.remove(queryWrapper));
+                }
+            }
+            return AjaxResult.error("修改失败");
+
         } catch (Exception e) {
             return AjaxResult.error(e.getMessage());
         }

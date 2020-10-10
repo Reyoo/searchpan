@@ -1,12 +1,12 @@
 package com.libbytian.pan.system.controller;
 
 import cn.hutool.core.util.StrUtil;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.libbytian.pan.system.common.AjaxResult;
-import com.libbytian.pan.system.model.SystemRoleModel;
-import com.libbytian.pan.system.model.SystemRoleToPermission;
-import com.libbytian.pan.system.model.SystemUserToRole;
+import com.libbytian.pan.system.model.*;
+import com.libbytian.pan.system.service.IPermissionService;
 import com.libbytian.pan.system.service.IRoleService;
 import com.libbytian.pan.system.service.IRoleToPermissionService;
 import lombok.RequiredArgsConstructor;
@@ -20,10 +20,12 @@ import java.util.stream.Collectors;
 @RestController
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 @RequestMapping("/role")
-public class RoleController {
+public class
+RoleController {
 
     private final IRoleService iRoleService;
     private final IRoleToPermissionService iRoleToPermissionService;
+    private final IPermissionService iPermissionService;
 
 
     /**
@@ -133,42 +135,73 @@ public class RoleController {
     }
 
 
-    /**
-     * 获取角色对应权限
-     * @param role
-     * @return
-     */
-    @RequestMapping(value = "/getroletopermission",method = RequestMethod.GET)
-    public AjaxResult findrolePermission(@RequestBody SystemRoleModel role) {
+
+    @RequestMapping(value = "/getauth", method = RequestMethod.POST)
+    public AjaxResult finduserRole(@RequestBody SystemRoleModel systemRoleModel) {
 
         try {
+            QueryWrapper queryWrapper = new QueryWrapper();
+            queryWrapper.eq("role_id",systemRoleModel.getRoleId());
+            //获取到角色管理权限的id集合
+            List<SystemRoleToPermission> systemRoleToPermissionList = iRoleToPermissionService.list(queryWrapper);
 
-             List<SystemRoleToPermission> systemRoleToPermissions =  iRoleToPermissionService.getRolePermissionByroleID(role.getRoleId());
-             List<String> permissionIds  = systemRoleToPermissions.stream().map(SystemRoleToPermission::getPermissionId).collect(Collectors.toList());
+            if(systemRoleToPermissionList.size()<=0){
+                List<SystemPermissionModel> systemRoleToPermissions = iPermissionService.list();
+                return AjaxResult.success(systemRoleToPermissions);
+            }
 
-            return AjaxResult.success(permissionIds);
+
+            List<String> permissionId = systemRoleToPermissionList.stream().map(SystemRoleToPermission::getPermissionId).collect(Collectors.toList());
+            List<SystemPermissionModel> systemRoleModelListAll = iPermissionService.listByIds(permissionId);
+            systemRoleModelListAll.forEach(permissionModel -> permissionModel.setChecked(true));
+
+
+            List<SystemPermissionModel> systemPermissionModelList = iPermissionService.list();
+            //id为两个列表相同属性，取出A的list中的id
+            List<String> permissionIdList =systemRoleModelListAll.stream().map(SystemPermissionModel::getPermissionId).collect(Collectors.toList());
+            //B列表去除A列表已有的数据
+            systemPermissionModelList =systemPermissionModelList.stream().filter(SystemRoleToPermission ->!permissionIdList.contains(SystemRoleToPermission.getPermissionId())).collect(Collectors.toList());
+            systemPermissionModelList.addAll(systemRoleModelListAll);
+
+            return AjaxResult.success(systemPermissionModelList);
         } catch (Exception e) {
             return AjaxResult.error(e.getMessage());
         }
-
     }
 
 
+
+
     /**
-     * 更新角色权限
+     * 更新角色权限表表
+     *
      * @param systemRoleToPermission
      * @return
      */
-    @RequestMapping(value = "/addroletopermission",method = RequestMethod.POST)
-    public AjaxResult findrolePermission(@RequestBody  List<SystemRoleToPermission>  systemRoleToPermission) {
+    @RequestMapping(value = "/updateauth", method = RequestMethod.PATCH)
+    public AjaxResult updateuserRole(@RequestBody SystemRoleToPermission systemRoleToPermission) {
+
 
         try {
-            iRoleToPermissionService.removeByIds(systemRoleToPermission.stream().map(SystemRoleToPermission::getPermissionId).collect(Collectors.toList()));
-            return AjaxResult.success(iRoleToPermissionService.saveBatch(systemRoleToPermission));
+            if(systemRoleToPermission!=null){
+                if(systemRoleToPermission.isChecked()){
+                    //更新
+                    return  AjaxResult.success(iRoleToPermissionService.save(systemRoleToPermission));
+                }else{
+                    //删除
+                    QueryWrapper<SystemRoleToPermission> queryWrapper = new QueryWrapper<>();
+                    queryWrapper.eq("role_id", systemRoleToPermission.getRoleId());
+                    queryWrapper.eq("permission_id", systemRoleToPermission.getPermissionId());
+                    return AjaxResult.success(iRoleToPermissionService.remove(queryWrapper));
+                }
+            }
+            return AjaxResult.error("修改失败");
+
         } catch (Exception e) {
             return AjaxResult.error(e.getMessage());
         }
     }
+
 
 
 

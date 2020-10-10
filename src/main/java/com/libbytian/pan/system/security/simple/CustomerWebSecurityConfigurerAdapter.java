@@ -8,7 +8,7 @@ import com.libbytian.pan.system.security.handle.LoginFailureHandler;
 import com.libbytian.pan.system.security.handle.LoginSuccessHandler;
 import com.libbytian.pan.system.security.point.CustomAuthenticationEntryPoint;
 import com.libbytian.pan.system.security.provider.JwtAuthenticationProvider;
-import com.libbytian.pan.system.security.token.JwtUserDetailServiceImpl;
+import com.libbytian.pan.system.security.provider.JwtUserDetailServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,8 +27,9 @@ import org.springframework.web.filter.CorsFilter;
 
 
 /**
- * @author niXueChao
- * @date 2019/4/2 22:58.
+ * @description： 登录配置
+ * @Author : SunQi
+ * @Date: 2020年10月9日
  */
 @Configuration
 public class CustomerWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapter {

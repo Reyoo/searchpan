@@ -9,6 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.io.Serializable;
 
@@ -45,6 +46,11 @@ public class SystemRoleToPermission extends Model<SystemRoleToPermission> {
      */
     @TableField("role_permission_status")
     private Integer rolepermissionstatus;
+
+
+    @TableField(exist = false)
+    @Value("false")
+    private boolean checked;
 
 
     @Override
