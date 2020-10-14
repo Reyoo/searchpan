@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.libbytian.pan.system.mapper.SystemTemplateMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.libbytian.pan.system.model.SystemTemplateModel">
+        <id column="template_id" property="templateid" />
+        <result column="template_name" property="templatename" />
+        <result column="template_createtime" property="templatecreatetime" />
+        <result column="template_lastupdate" property="templatelastupdate" />
+        <result column="template_status" property="templatestatus" />
+
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+         t.template_id AS templateid,
+         t.template_name AS templatename,
+         t.template_createtime AS templatecreatetime,
+         t.template_lastupdate AS templatelastupdate,
+         t.template_status AS templatestatus
+    </sql>
+
+
+    <!-- 根据用户信息查询用户启用状态的模板list-->
+    <select id="findTemplateModelByUser" parameterType="com.libbytian.pan.system.model.SystemUserModel" resultType="com.libbytian.pan.system.model.SystemTemplateModel">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM sys_template  t
+        LEFT JOIN user_template ut
+        ON t.template_id =ut.template_id
+        LEFT JOIN sys_user s
+        ON ut.user_id = s.user_id
+        <trim prefix="where" prefixOverrides="and|">
+            <if test="userId != null and userId != ''">
+               AND s.user_id= #{userId}
+            </if>
+            <if test="username != null and username != ''">
+                AND s.user_name =#{username}
+            </if>
+        </trim>
+
+    </select>
+
+
+</mapper>

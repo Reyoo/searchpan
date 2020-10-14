@@ -5,8 +5,10 @@ import com.libbytian.pan.system.model.SystemTemDetailsModel;
 import com.libbytian.pan.system.model.SystemTemplateModel;
 import com.libbytian.pan.system.model.SystemUserModel;
 import com.libbytian.pan.system.service.ISystemTemplateService;
+
 import com.libbytian.pan.system.service.ISystemUserService;
 import com.libbytian.pan.wechat.model.MovieNameAndUrlModel;
+import com.libbytian.pan.wechat.service.AsyncSearchCachedServiceImpl;
 import com.libbytian.pan.wechat.service.NormalPageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -20,12 +22,17 @@ import org.dom4j.*;
 import org.dom4j.io.SAXReader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.task.AsyncTaskExecutor;
+import org.springframework.core.task.TaskExecutor;
+import org.springframework.data.redis.cache.RedisCacheConfiguration;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.ByteArrayInputStream;
 import java.time.Duration;
 import java.time.LocalTime;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -43,20 +50,19 @@ public class WxPortalController {
     private final WxMpMessageRouter messageRouter;
 
     private final ISystemTemplateService systemTemplateService;
-    private final com.libbytian.pan.system.service.ISystemUserService ISystemUserService;
+
+    private final ISystemUserService iSystemUserService;
+
+    private final RedisTemplate redisTemplate;
+
+    private final AsyncSearchCachedServiceImpl asyncSearchCachedService;
 
     final Base64.Decoder decoder = Base64.getDecoder();
     final Base64.Encoder encoder = Base64.getEncoder();
 
 
-
-     @Autowired
-     NormalPageService normalPageService;
 //
-    @Value("${user.unread.weiduyingdan}")
-    String unreadUrl;
-    @Value("${user.lxxh.aidianying}")
-    String lxxhUrl;
+
 
     /**
      * 与微信做认证通信 通过认证后调用其他接口
@@ -80,27 +86,24 @@ public class WxPortalController {
         log.info("\n接收到来自微信服务器的认证消息：[{}, {}, {}, {}]", signature,
                 timestamp, nonce, echostr);
         if (StringUtils.isAnyBlank(signature, timestamp, nonce, echostr)) {
-
+            return "非法请求";
         }
 
+        try {
+            String username =  new String(decoder.decode(verification), "UTF-8");
+            if(iSystemUserService.selectByName(username)<=0){
+                return "无此接口认证权限，请联系管理员！";
+            }
 
-
-//
-//        if(!"c3VucWklM0ExMjM0NTY3OA==".equals(verification)){
-//            throw new IllegalArgumentException("weifu，请核实!");
-//        }
-        /**
-         * 加参数验证动态形成url
-         */
-
-
+        }catch (Exception e){
+            return "接口权限认证错误，请联系管理员！";
+        }
         /**
          * 如果限制appid 则为私有
          */
 //        if (!this.wxService.switchover(appid)) {
 //            throw new IllegalArgumentException(String.format("未找到对应appid=[%s]的配置，请核实！", appid));
 //        }
-
 
         if (wxService.checkSignature(timestamp, nonce, signature)) {
             return echostr;
@@ -129,26 +132,17 @@ public class WxPortalController {
 //        }
 
 
-
-//        ---------------------------------------------------------------------------------
-
         //解析传入的username,拿到user,查询对应模板
         String username =  new String(decoder.decode(verification), "UTF-8");
-        SystemUserModel user = ISystemUserService.findByUsername(username);
-        List<SystemTemplateModel> systemTemplateModels =  ISystemUserService.findTemplateById(username);
 
-        for(SystemTemplateModel systemTemplateModel :systemTemplateModels ){
-            System.out.println("===========================");
-            System.out.println(systemTemplateModel.getTemplatestatus());
-            System.out.println("===========================");
-        }
-
+        /**
+         * 获取用户名绑定的模板
+         */
+        SystemUserModel systemUserModel = new SystemUserModel();
+        systemUserModel.setUsername(username);
+        List<SystemTemplateModel> systemTemplateModels = systemTemplateService.getTemplateModelByUser(systemUserModel);
 
         List<SystemTemplateModel> systemTemplateModelListstatusOn = systemTemplateModels.stream().filter(systemTemplateModel -> systemTemplateModel.getTemplatestatus().equals(Boolean.TRUE)).collect(Collectors.toList());
-
-
-
-
 
         //通过模板ID，查询对应的模板详情，取出关键词，头部广告，底部广告
         List<SystemTemDetailsModel> systemdetails = systemTemplateService.findTemDetails(systemTemplateModelListstatusOn.get(0).getTemplateid());
@@ -157,64 +151,38 @@ public class WxPortalController {
         SystemTemDetailsModel lastmodel = new SystemTemDetailsModel();
 
         for (SystemTemDetailsModel model : systemdetails) {
-            if (model.getKeyword().equals("头部广告")){
+            if (model.getKeyword().contains("头部广告")){
                 headmodel.setKeywordToValue(model.getKeywordToValue());
             }
-            if (model.getKeyword().equals("底部广告")){
+            if (model.getKeyword().contains("底部广告")){
                 lastmodel.setKeywordToValue(model.getKeywordToValue());
             }
         }
 
-//      ---------------------------------------------------------------------------------
-
         String out = null;
         try {
-
 
         if (!wxService.checkSignature(timestamp, nonce, signature)) {
             throw new IllegalArgumentException("非法请求，可能属于伪造的请求！");
         }
 
-
         if (encType == null) {
             // 明文传输的消息
             WxMpXmlMessage inMessage = WxMpXmlMessage.fromXml(requestBody);
+
+            //异步缓存到redis
+            String searchWord = inMessage.getContent().trim();
+            asyncSearchCachedService.SearchWord(searchWord);
+
             WxMpXmlOutMessage outMessage = this.route(inMessage);
             if (outMessage == null) {
                 return "";
             }
-
-
-            List<MovieNameAndUrlModel> realMovieList = new ArrayList();
-//            List<MovieNameAndUrlModel> movieNameAndUrls =(List<MovieNameAndUrlModel>) normalPageService.getNormalUrl(unreadUrl+"/?s="+inMessage.getContent()).get("data");
-
-            LocalTime begin = LocalTime.now();
-//            movieNameAndUrls.stream().forEach( movieNameAndUrl ->
-//                    realMovieList.add(normalPageService.getMoviePanUrl(movieNameAndUrl)));
-//            List<MovieNameAndUrlModel> movieNameAndUrls1 =(List<MovieNameAndUrlModel>) normalPageService.getNormalUrl(lxxhUrl+"/?s="+inMessage.getContent()).get("data");
-//            movieNameAndUrls1.stream().forEach( movieNameAndUrl ->
-//                    realMovieList.add(normalPageService.getMoviePanUrl2(movieNameAndUrl)));
-            LocalTime end = LocalTime.now();
-            Duration duration = Duration.between(begin, end);
-            System.out.println("Duration: " + duration);
             StringBuffer stringBuffer = new StringBuffer();
-//            realMovieList.stream().forEach(innerMovie -> {
-//                stringBuffer.append("电影名 :" )
-//                        .append(innerMovie.getMovieName())
-//                        .append("<a href=\\\"http://www.baidu.com/signin.html?openid=\" + openid + \"\\\">登录/注册</a>\"")
 
-//                        .append("\n")
-//                .append("百度网盘 : ")
-//                .append(innerMovie.getWangPanUrl())
-//                .append("\n")
-//                .append(innerMovie.getWangPanPassword())
-//                        .append("\n")
-//                        .append("----->分隔符<-----");
-//            } );
 
             // 准备数据并解析。
             byte[] bytes = requestBody.getBytes("UTF-8");
-
 
             //1.创建Reader对象
             SAXReader reader = new SAXReader();
@@ -232,7 +200,6 @@ public class WxPortalController {
                     List<Node> attributes = stu.content();
                     searchName = attributes.get(0).getText();
                 }
-
             }
 
             /**
@@ -252,20 +219,14 @@ public class WxPortalController {
             stringBuffer.append("\r\n");
             stringBuffer.append(lastmodel.getKeywordToValue());
 
-
-
-
             outMessage = WxMpXmlOutTextMessage.TEXT()
                     .toUser(inMessage.getFromUser())
                     .fromUser(inMessage.getToUser())
                     .content(stringBuffer.toString()).build();
 
-
-//            System.out.println("==============");
-//            System.out.println(outMessage.toString());
-//            System.out.println("==============");
             out = outMessage.toXml();
             System.out.println(out);
+
         } else if ("aes".equalsIgnoreCase(encType)) {
             // aes加密的消息
             WxMpXmlMessage inMessage = WxMpXmlMessage.fromEncryptedXml(requestBody, wxService.getWxMpConfigStorage(),
@@ -275,7 +236,6 @@ public class WxPortalController {
             if (outMessage == null) {
                 return "";
             }
-
             out = outMessage.toEncryptedXml(wxService.getWxMpConfigStorage());
         }
         }catch (Exception e){
@@ -284,6 +244,8 @@ public class WxPortalController {
 
         log.debug("\n组装回复信息：{}", out);
         return out;
+
+
     }
 
 

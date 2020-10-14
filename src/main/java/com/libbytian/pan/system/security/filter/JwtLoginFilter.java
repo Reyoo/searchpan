@@ -2,7 +2,7 @@ package com.libbytian.pan.system.security.filter;
 
 import com.alibaba.druid.util.StringUtils;
 import com.libbytian.pan.system.exception.ImageCodeException;
-import com.libbytian.pan.system.util.PanHttpUtil;
+import com.libbytian.pan.system.security.token.JwtLoginToken;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -51,7 +51,7 @@ public class JwtLoginFilter extends AbstractAuthenticationProcessingFilter {
            //创建未认证的凭证(etAuthenticated(false)),注意此时凭证中的主体principal为用户名
            JwtLoginToken jwtLoginToken = new JwtLoginToken(userName, password);
 
-           //将认证详情(ip,sessionId)写到凭证
+
            jwtLoginToken.setDetails(new WebAuthenticationDetails(request));
            log.info(jwtLoginToken.toString());
            //AuthenticationManager获取受支持的AuthenticationProvider(这里也就是JwtAuthenticationProvider),
