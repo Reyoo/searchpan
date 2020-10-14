@@ -55,6 +55,18 @@ public class SystemPermissionModel {
     @TableField("createtime")
     private LocalDateTime createtime;
 
+    /**
+     * 虚拟字段， 查询开始时间
+     */
+    @TableField(exist = false)
+    private LocalDateTime starttime;
+
+    /**
+     * 虚拟字段， 查询结束时间
+     */
+    @TableField(exist = false)
+    private LocalDateTime endtime;
+
 
 
     @TableField(exist = false)

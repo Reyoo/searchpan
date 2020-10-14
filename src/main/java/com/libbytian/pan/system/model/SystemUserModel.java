@@ -9,6 +9,7 @@ import lombok.*;
 
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 /**
@@ -63,6 +64,21 @@ public class SystemUserModel extends Model<SystemUserModel>   {
      */
     @TableField("status")
     private boolean status;
+
+
+
+
+    /**
+     * 虚拟字段 查询开始时间
+     */
+    @TableField(exist = false)
+    private LocalDate starttime;
+
+    /**
+     * 虚拟字段 查询结束时间
+     */
+    @TableField(exist = false)
+    private LocalDate endtime;
 
 
 

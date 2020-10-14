@@ -146,17 +146,22 @@ public class SystemUserServiceImpl extends ServiceImpl<SystemUserMapper, SystemU
                 queryWrapper.eq("user_name",systemUserModel.getUsername());
             }
             if(systemUserModel.getMobile() != null){
-                queryWrapper.eq("user_mobile",systemUserModel.getUserId());
+                queryWrapper.eq("user_mobile",systemUserModel.getMobile());
             }
             if(systemUserModel.getLastLoginTime() != null){
-                queryWrapper.eq("user_last_login_time",systemUserModel.getUserId());
+                queryWrapper.eq("user_last_login_time",systemUserModel.getLastLoginTime());
             }
             if(systemUserModel.getCreateTime() != null){
-                queryWrapper.eq("createtime",systemUserModel.getUserId());
+                queryWrapper.eq("createtime",systemUserModel.getCreateTime());
             }
             if(systemUserModel.isStatus()){
                 queryWrapper.eq("status",systemUserModel.isStatus());
             }
+            if(systemUserModel.getStarttime() != null && systemUserModel.getEndtime() != null){
+                queryWrapper.ge("createtime",systemUserModel.getStarttime());
+                queryWrapper.le("createtime",systemUserModel.getEndtime());
+            }
+
         }
         queryWrapper.orderByDesc("createtime");
 

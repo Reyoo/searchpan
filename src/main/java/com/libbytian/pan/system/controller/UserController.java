@@ -36,7 +36,7 @@ public class UserController {
 
 
     /**
-     * 条件查询
+     * 条件查询 用户信息
      *
      * @param page
      * @param limit

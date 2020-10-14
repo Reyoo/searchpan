@@ -9,10 +9,13 @@ import com.libbytian.pan.system.model.*;
 import com.libbytian.pan.system.service.IPermissionService;
 import com.libbytian.pan.system.service.IRoleService;
 import com.libbytian.pan.system.service.IRoleToPermissionService;
+import com.libbytian.pan.system.service.ISystemUserToRoleService;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -25,6 +28,7 @@ RoleController {
 
     private final IRoleService iRoleService;
     private final IRoleToPermissionService iRoleToPermissionService;
+    private final ISystemUserToRoleService iSystemUserToRoleService;
     private final IPermissionService iPermissionService;
 
 
@@ -67,6 +71,30 @@ RoleController {
 
         try {
             IPage<SystemRoleModel> result = iRoleService.findRoleById(page, roleId);
+
+            return AjaxResult.success(result);
+        } catch (Exception e) {
+            return AjaxResult.error(e.getMessage());
+        }
+    }
+
+
+    /**
+     * 查询角色信息
+     *
+     * @param start
+     * @param limit
+     * @param systemRoleModel
+     * @return
+     */
+    @RequestMapping(value = "/findrolebymodel", method = RequestMethod.POST)
+    public AjaxResult findRole(@RequestParam(defaultValue = "1") int start, @RequestParam(defaultValue = "10") int limit, @RequestBody(required = false) SystemRoleModel systemRoleModel) {
+
+        Page<SystemRoleModel> page = new Page<>(start, limit);
+
+        try {
+
+            IPage<SystemRoleModel> result = iRoleService.findRole(page,systemRoleModel);
 
             return AjaxResult.success(result);
         } catch (Exception e) {
@@ -127,6 +155,20 @@ RoleController {
             if(StrUtil.isBlank(roleId)){
                 return  AjaxResult.error("字段不能为空");
             }
+            if("1".equals(roleId) || "2".equals(roleId) || "3".equals(roleId)){
+                return AjaxResult.error("该角色不可删除");
+            }
+            //查询用户角色表,判断角色是否绑定用户
+
+            QueryWrapper queryWrapper = new QueryWrapper();
+
+            queryWrapper.eq("role_id",roleId);
+            int count = iSystemUserToRoleService.list(queryWrapper).size();
+
+            if(count>0){
+                return  AjaxResult.error("该角色已绑定用户，不可删除");
+            }
+
             iRoleService.dropRole(roleId);
             return AjaxResult.success();
         } catch (Exception e) {

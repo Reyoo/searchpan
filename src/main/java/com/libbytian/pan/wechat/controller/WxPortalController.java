@@ -50,7 +50,7 @@ public class WxPortalController {
 
 
 
-     @Autowired
+    @Autowired
      NormalPageService normalPageService;
 //
     @Value("${user.unread.weiduyingdan}")

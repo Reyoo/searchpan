@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
 
@@ -37,14 +38,14 @@ public class SystemRoleModel extends Model<SystemRoleModel> {
     @TableId(value = "role_id")
     private String roleId;
     /**
-     * 用户编号
+     * 角色字符
      */
     @TableField("role_name")
     private String roleName;
 
 
     /**
-     * 角色状态
+     * 角色名称
      */
     @TableField("show_name")
     private String showName;
@@ -62,6 +63,14 @@ public class SystemRoleModel extends Model<SystemRoleModel> {
     @TableField(exist = false)
     @Value("false")
     private boolean isChecked;
+
+    @TableField(exist = false)
+    @Value("false")
+    private LocalDateTime starttime;
+
+    @TableField(exist = false)
+    @Value("false")
+    private LocalDateTime endtime;
 
     @Override
     protected Serializable pkVal() {

@@ -29,6 +29,7 @@ public class RoleServiceImpl extends ServiceImpl<SystemRoleMapper, SystemRoleMod
 
         /**
          * 这里systemusermodel 不做空判断 。getusername 空指针  null.getUsername
+         * 查询时间段，starttime，endtime为虚拟字段
          */
         if(systemRoleModel != null){
             if(systemRoleModel.getRoleName() != null){
@@ -38,10 +39,21 @@ public class RoleServiceImpl extends ServiceImpl<SystemRoleMapper, SystemRoleMod
             if(systemRoleModel.getShowName() != null){
                 queryWrapper.eq("show_name",systemRoleModel.getShowName());
             }
+
+            if(systemRoleModel.getCreatetime() != null){
+                queryWrapper.eq("createtime",systemRoleModel.getCreatetime());
+            }
+
+            if(systemRoleModel.getStarttime() != null && systemRoleModel.getEndtime() != null){
+                queryWrapper.ge("createtime",systemRoleModel.getStarttime());
+                queryWrapper.le("createtime",systemRoleModel.getEndtime());
+            }
+
         }
         queryWrapper.orderByDesc("createtime");
 
         return roleMapper.selectPage(page,queryWrapper);
+
     }
 
     @Override

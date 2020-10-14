@@ -37,6 +37,13 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, SystemP
             if(systemPermissionModel.getPermissionComment() != null){
                 queryWrapper.eq("permission_comment",systemPermissionModel.getPermissionComment());
             }
+            if (systemPermissionModel.getCreatetime() != null){
+                queryWrapper.eq("createtime",systemPermissionModel.getCreatetime());
+            }
+            if(systemPermissionModel.getStarttime() != null && systemPermissionModel.getEndtime() != null){
+                queryWrapper.ge("createtime",systemPermissionModel.getStarttime());
+                queryWrapper.le("createtime",systemPermissionModel.getEndtime());
+            }
         }
         queryWrapper.orderByDesc("createtime");
 
