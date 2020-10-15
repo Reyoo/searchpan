@@ -71,14 +71,8 @@ public class JwtLoginFilter extends AbstractAuthenticationProcessingFilter {
             */
 //           checkImageCode(request);
 
-           /**
-            * 验证是否为付费用户且权限未过期
-            */
-//            if (isVip(userName) == false){
-//                throw new Exception("请续费或升级到付费用户");
-//            }
-            isVip(userName);
 
+            isVip(userName);
 
 
            String realIp = PanHttpUtil.getIpAddress(request);

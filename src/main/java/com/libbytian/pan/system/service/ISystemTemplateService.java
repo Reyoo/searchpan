@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.libbytian.pan.system.model.SystemTemDetailsModel;
 import com.libbytian.pan.system.model.SystemTemplateModel;
+import com.libbytian.pan.system.model.SystemUserModel;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,7 +20,8 @@ public interface ISystemTemplateService extends IService<SystemTemplateModel> {
 
      List<SystemTemDetailsModel> findTemDetails(String templateId) throws Exception;
 
-     IPage<SystemTemplateModel> findTemById(Page page,SystemTemplateModel systemTemDetailsModel) throws Exception;
+     List<SystemTemplateModel> getTemplateModelByUser(SystemUserModel systemUserModel) throws Exception;
+
 
      Map findTemNameAndSize();
 
