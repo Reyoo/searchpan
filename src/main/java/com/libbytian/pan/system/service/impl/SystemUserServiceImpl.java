@@ -10,11 +10,13 @@ import com.libbytian.pan.system.mapper.SystemUserMapper;
 import com.libbytian.pan.system.model.*;
 import com.libbytian.pan.system.service.*;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 /**
@@ -113,7 +115,25 @@ public class SystemUserServiceImpl extends ServiceImpl<SystemUserMapper, SystemU
         if(user.getUsername().isEmpty()){
             throw new Exception("用户名不能为空");
         }
-        user.setLastLoginTime(LocalDateTime.now());
+
+        LocalDateTime actTime = systemUserMapper.findActTime(user.getUsername());
+
+    //如果有传入续费时长，则更新到期时间
+        if(user.getActrange() != null && user.getActrange() > 0) {
+            //获取当前时间
+            LocalDateTime nowtime = LocalDateTime.now();
+
+            //已过期，到期时间在当前时间之前
+            if(actTime == null || actTime.isBefore(nowtime)) {
+                nowtime = nowtime.plus(user.getActrange(), ChronoUnit.MONTHS);
+            } else {
+                nowtime = actTime.plus(user.getActrange(), ChronoUnit.MONTHS);
+            }
+            //更新到期时间
+            user.setActtime(nowtime);
+        }
+
+
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         String encode = encoder.encode(user.getPassword());
         SystemUserModel olduser = systemUserMapper.selectUserByUsername(user.getUsername());

@@ -53,4 +53,9 @@ public interface SystemRoleMapper extends BaseMapper<SystemRoleModel> {
     @Select("select role_id AS roleId , role_name AS roleName, role_status AS roleStatus from sys_role where role_name = #{0}")
     SystemRoleModel selectRoleByRolename(String roleName);
 
+
+    @Select("SELECT r.role_id AS roleId FROM sys_role r LEFT JOIN sys_user_role ur ON r.role_id = ur.role_id LEFT JOIN " +
+            "sys_user u ON ur.user_id = u.user_id WHERE u.user_name =#{username}")
+    String[] getRoleIdByUsername(String username);
+
 }

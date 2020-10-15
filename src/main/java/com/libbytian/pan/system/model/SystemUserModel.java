@@ -65,7 +65,17 @@ public class SystemUserModel extends Model<SystemUserModel>   {
     @TableField("status")
     private boolean status;
 
+    /**
+     * 激活到期时间
+     */
+    @TableField("act_time")
+    private LocalDateTime acttime;
 
+    /**
+     * 激活时长
+     */
+    @TableField("act_range")
+    private Integer actrange;
 
 
     /**

@@ -24,4 +24,6 @@ public interface ISystemRoleService extends IService<SystemRoleModel> {
 
     List<SystemRoleModel> getRoleByUserName(String username) throws Exception;
 
+    String[] getRoleIdByUsername(String username);
+
 }

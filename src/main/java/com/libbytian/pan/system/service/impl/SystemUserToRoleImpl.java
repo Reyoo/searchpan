@@ -22,4 +22,7 @@ public class SystemUserToRoleImpl extends ServiceImpl<SystemUserToRoleMapper, Sy
     public List<SystemUserToRole> getUserRoleByuserID(String userId) throws Exception{
         return userToRoleMapper.selectUserByUserid(userId);
     }
+
+
+
 }

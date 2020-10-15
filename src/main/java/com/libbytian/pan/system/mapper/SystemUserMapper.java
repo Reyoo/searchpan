@@ -10,6 +10,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -33,6 +34,10 @@ public interface SystemUserMapper extends BaseMapper<SystemUserModel> {
 
     @Select("SELECT t.template_id AS templateid , template_name AS templatename , template_createtime AS templatecreatetime , template_lastupdate AS templatelastupdate , template_status AS templatestatus FROM sys_template t LEFT JOIN user_template ut ON t.template_id = ut.template_id LEFT JOIN sys_user u ON ut.user_id = u.user_id WHERE u.user_name = #{username}")
     List<SystemTemplateModel> findTemplateById(String username);
+
+
+    @Select("SELECT act_time AS acttime FROM sys_user WHERE user_name = #{username}")
+    LocalDateTime findActTime(String username);
 
 
 }
