@@ -6,6 +6,10 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+/**
+ * 该工具类用作在执行DispatcherServlet前注入bean
+ * 例 systemUserMapper = SpringContextUtil.getBean("systemUserMapper");
+ */
 @Configuration
 public class SpringContextUtil implements ApplicationContextAware {
 

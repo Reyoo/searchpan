@@ -8,8 +8,6 @@
         <result column="user_id" property="userId" />
         <result column="role_id" property="roleId" />
         <result column="user_role_status" property="userRoleStatus" />
-
-
     </resultMap>
 
     <!-- 通用查询结果列 -->

@@ -21,7 +21,7 @@ server:
 spring:
   redis:
     host: 123.57.130.90
-    port:
+    port: 36379
     password:
     # redis client配置，使用lettuce
     lettuce:

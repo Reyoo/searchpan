@@ -8,6 +8,7 @@ import com.libbytian.pan.system.service.ISystemRoleService;
 import com.libbytian.pan.system.service.ISystemUserService;
 import com.libbytian.pan.system.util.PanHttpUtil;
 import com.libbytian.pan.system.util.SpringContextUtil;
+import com.libbytian.pan.system.util.UserIdentity;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -45,6 +46,9 @@ public class JwtLoginFilter extends AbstractAuthenticationProcessingFilter {
 
 
 
+
+
+
     /**
      * 设置登录的url 请求方式
      */
@@ -60,19 +64,21 @@ public class JwtLoginFilter extends AbstractAuthenticationProcessingFilter {
            String userName = request.getParameter("username");
            String password = request.getParameter("password");
 
+
            systemUserMapper = SpringContextUtil.getBean("systemUserMapper");
            systemRoleMapper = SpringContextUtil.getBean("systemRoleMapper");
 
 //           iSystemRoleService = SpringContextUtil.getBean("iSystemRoleService");
-
 
            /**
             * 验证码
             */
 //           checkImageCode(request);
 
-
-            isVip(userName);
+           /**
+            * 登录用户身份及过期验证
+            */
+           isVip(userName);
 
 
            String realIp = PanHttpUtil.getIpAddress(request);
@@ -145,7 +151,7 @@ public class JwtLoginFilter extends AbstractAuthenticationProcessingFilter {
 
         //查询用户是否为付费用户
 
-//      // String[] userToRoleId = iSystemRoleService.getRoleIdByUsername(username);
+//      String[] userToRoleId = iSystemRoleService.getRoleIdByUsername(username);
 
         String[] userToRoleId = systemRoleMapper.getRoleIdByUsername(username);
 

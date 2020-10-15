@@ -7,9 +7,8 @@ import com.libbytian.pan.system.model.SystemUserModel;
 import com.libbytian.pan.system.service.ISystemTemplateService;
 
 import com.libbytian.pan.system.service.ISystemUserService;
-import com.libbytian.pan.wechat.model.MovieNameAndUrlModel;
+import com.libbytian.pan.system.util.UserIdentity;
 import com.libbytian.pan.wechat.service.AsyncSearchCachedServiceImpl;
-import com.libbytian.pan.wechat.service.NormalPageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import me.chanjar.weixin.mp.api.WxMpMessageRouter;
@@ -21,18 +20,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.dom4j.*;
 import org.dom4j.io.SAXReader;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.task.AsyncTaskExecutor;
-import org.springframework.core.task.TaskExecutor;
-import org.springframework.data.redis.cache.RedisCacheConfiguration;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.ByteArrayInputStream;
-import java.time.Duration;
-import java.time.LocalTime;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -56,6 +48,7 @@ public class WxPortalController {
     private final RedisTemplate redisTemplate;
 
     private final AsyncSearchCachedServiceImpl asyncSearchCachedService;
+
 
     final Base64.Decoder decoder = Base64.getDecoder();
     final Base64.Encoder encoder = Base64.getEncoder();
@@ -94,6 +87,8 @@ public class WxPortalController {
             if(iSystemUserService.selectByName(username)<=0){
                 return "无此接口认证权限，请联系管理员！";
             }
+            UserIdentity userIdentity = new UserIdentity();
+            userIdentity.isVip(username);
 
         }catch (Exception e){
             return "接口权限认证错误，请联系管理员！";
@@ -109,6 +104,10 @@ public class WxPortalController {
             return echostr;
         }
         return "非法请求";
+
+
+
+
     }
 
 
@@ -270,7 +269,7 @@ public class WxPortalController {
     public String getURL(@RequestParam String username){
 
         String encodeusername = encoder.encodeToString(username .getBytes());
-        return "http://kwwaws.natappfree.cc"+"/wechat/portal/"+encodeusername;
+        return "http://6pqpkg.natappfree.cc"+"/wechat/portal/"+encodeusername;
 
     }
 
