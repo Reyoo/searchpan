@@ -139,10 +139,10 @@ public class WxPortalController {
          */
         SystemUserModel systemUserModel = new SystemUserModel();
         systemUserModel.setUsername(username);
+        //获取用户模板
         List<SystemTemplateModel> systemTemplateModels = systemTemplateService.getTemplateModelByUser(systemUserModel);
-
+        //获取启用状态的模板 (状态为True)  前端需要控制只能有一个 启用状态下的模板。
         List<SystemTemplateModel> systemTemplateModelListstatusOn = systemTemplateModels.stream().filter(systemTemplateModel -> systemTemplateModel.getTemplatestatus().equals(Boolean.TRUE)).collect(Collectors.toList());
-
         //通过模板ID，查询对应的模板详情，取出关键词，头部广告，底部广告
         List<SystemTemDetailsModel> systemdetails = systemTemplateService.findTemDetails(systemTemplateModelListstatusOn.get(0).getTemplateid());
 
