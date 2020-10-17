@@ -22,11 +22,11 @@ import java.util.List;
  * @since 2018-05-03
  */
 @Mapper
-@Repository
 public interface SystemUserMapper extends BaseMapper<SystemUserModel> {
 
     @Select("SELECT user_id as userId,user_name as username,user_mobile as mobile,user_password as password,user_last_login_time AS lastLoginTime,createTime AS createTime,status AS status FROM sys_user WHERE user_name = #{0}")
     SystemUserModel selectUserByUsername(String username);
+
 
 
     @Select("SELECT COUNT(*) FROM sys_user WHERE user_name = #{username} ")
@@ -36,8 +36,12 @@ public interface SystemUserMapper extends BaseMapper<SystemUserModel> {
     List<SystemTemplateModel> findTemplateById(String username);
 
 
-    @Select("SELECT act_time AS acttime FROM sys_user WHERE user_name = #{username}")
+    @Select("SELECT act_time AS actTime FROM sys_user WHERE user_name = #{username}")
     LocalDateTime findActTime(String username);
 
+    /**
+     * QiSun
+     */
+    SystemUserModel selectOneUserModel(SystemUserModel systemUserModel);
 
 }

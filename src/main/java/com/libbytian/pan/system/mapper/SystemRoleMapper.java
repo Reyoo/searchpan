@@ -58,4 +58,6 @@ public interface SystemRoleMapper extends BaseMapper<SystemRoleModel> {
             "sys_user u ON ur.user_id = u.user_id WHERE u.user_name =#{username}")
     String[] getRoleIdByUsername(String username);
 
+    List<SystemRoleModel> selectUserRoleByUser(SystemUserModel systemUserModel);
+
 }

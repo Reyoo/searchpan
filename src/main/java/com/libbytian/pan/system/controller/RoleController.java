@@ -11,6 +11,7 @@ import com.libbytian.pan.system.service.IRoleService;
 import com.libbytian.pan.system.service.IRoleToPermissionService;
 import com.libbytian.pan.system.service.ISystemUserToRoleService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -23,8 +24,8 @@ import java.util.stream.Collectors;
 @RestController
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 @RequestMapping("/role")
-public class
-RoleController {
+@Slf4j
+public class RoleController {
 
     private final IRoleService iRoleService;
     private final IRoleToPermissionService iRoleToPermissionService;
@@ -51,6 +52,7 @@ RoleController {
                 return  AjaxResult.success(iRoleService.list());
             }
         } catch (Exception e) {
+            log.error(e.getMessage());
             return AjaxResult.error(e.getMessage());
         }
 
@@ -74,6 +76,7 @@ RoleController {
 
             return AjaxResult.success(result);
         } catch (Exception e) {
+            log.error(e.getMessage());
             return AjaxResult.error(e.getMessage());
         }
     }
@@ -98,6 +101,7 @@ RoleController {
 
             return AjaxResult.success(result);
         } catch (Exception e) {
+            log.error(e.getMessage());
             return AjaxResult.error(e.getMessage());
         }
     }
@@ -116,7 +120,7 @@ RoleController {
             iRoleService.save(role);
             return AjaxResult.success();
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getMessage());
             return AjaxResult.error(e.getMessage());
         }
 

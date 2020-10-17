@@ -6,18 +6,46 @@
     <resultMap id="BaseResultMap" type="com.libbytian.pan.system.model.SystemRoleModel">
         <id column="role_id" property="roleId" />
         <result column="role_name" property="roleName" />
+        <result column="show_name" property="showName" />
         <result column="role_status" property="roleStatus" />
+        <result column="createtime" property="createtime" />
 
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        role_id AS roleId,
-         role_name AS roleName,
-         role_status AS roleStatus
+         r.role_id AS roleId,
+         r.role_name AS roleName,
+         r.show_name AS showName,
+         r.role_status AS roleStatus,
+         r.createtime AS createtime
     </sql>
 
 
+
+    <!-- 根据用户信息查询用户启用状态的模板list-->
+    <select id="selectUserRoleByUser" parameterType="com.libbytian.pan.system.model.SystemRoleModel" resultType="com.libbytian.pan.system.model.SystemRoleModel">
+        SELECT
+        <include refid="Base_Column_List"/>
+
+        FROM
+        sys_role r
+        LEFT JOIN sys_user_role d
+        ON r.role_id  = d.role_id
+        LEFT JOIN sys_user u
+        ON d.user_id = u.user_id
+        <trim prefix="where" prefixOverrides="and|">
+            <if test="userId != null and userId != ''">
+                AND u.user_id= #{userId}
+            </if>
+            <if test="username != null and username != ''">
+                AND u.user_name =#{username}
+            </if>
+            <if test="status != null and status != ''">
+                AND u.status =#{status}
+            </if>
+        </trim>
+    </select>
 
 
 </mapper>

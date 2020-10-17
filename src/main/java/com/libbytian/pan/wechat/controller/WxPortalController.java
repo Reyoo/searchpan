@@ -2,12 +2,10 @@ package com.libbytian.pan.wechat.controller;
 
 
 import com.libbytian.pan.system.model.SystemTemDetailsModel;
-import com.libbytian.pan.system.model.SystemTemplateModel;
 import com.libbytian.pan.system.model.SystemUserModel;
-import com.libbytian.pan.system.service.ISystemTemplateService;
+import com.libbytian.pan.system.service.ISystemTemDetailsService;
 
 import com.libbytian.pan.system.service.ISystemUserService;
-import com.libbytian.pan.system.util.UserIdentity;
 import com.libbytian.pan.wechat.service.AsyncSearchCachedServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -19,13 +17,11 @@ import me.chanjar.weixin.mp.bean.message.WxMpXmlOutTextMessage;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.*;
 import org.dom4j.io.SAXReader;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
+
 import org.springframework.web.bind.annotation.*;
 
 import java.io.ByteArrayInputStream;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * @author sun7127
@@ -41,11 +37,9 @@ public class WxPortalController {
     private final WxMpService wxService;
     private final WxMpMessageRouter messageRouter;
 
-    private final ISystemTemplateService systemTemplateService;
+    private final ISystemTemDetailsService iSystemTemDetailsService;
 
     private final ISystemUserService iSystemUserService;
-
-    private final RedisTemplate redisTemplate;
 
     private final AsyncSearchCachedServiceImpl asyncSearchCachedService;
 
@@ -84,14 +78,12 @@ public class WxPortalController {
 
         try {
             String username =  new String(decoder.decode(verification), "UTF-8");
-            if(iSystemUserService.selectByName(username)<=0){
-                return "无此接口认证权限，请联系管理员！";
-            }
-            UserIdentity userIdentity = new UserIdentity();
-            userIdentity.isVip(username);
+            SystemUserModel systemUserModel = new SystemUserModel();
+            systemUserModel.setUsername(username);
+            iSystemUserService.checkUserStatus(systemUserModel);
 
         }catch (Exception e){
-            return "接口权限认证错误，请联系管理员！";
+            return e.getMessage();
         }
         /**
          * 如果限制appid 则为私有
@@ -139,16 +131,11 @@ public class WxPortalController {
          */
         SystemUserModel systemUserModel = new SystemUserModel();
         systemUserModel.setUsername(username);
-        //获取用户模板
-        List<SystemTemplateModel> systemTemplateModels = systemTemplateService.getTemplateModelByUser(systemUserModel);
-        //获取启用状态的模板 (状态为True)  前端需要控制只能有一个 启用状态下的模板。
-        List<SystemTemplateModel> systemTemplateModelListstatusOn = systemTemplateModels.stream().filter(systemTemplateModel -> systemTemplateModel.getTemplatestatus().equals(Boolean.TRUE)).collect(Collectors.toList());
-        //通过模板ID，查询对应的模板详情，取出关键词，头部广告，底部广告
-        List<SystemTemDetailsModel> systemdetails = systemTemplateService.findTemDetails(systemTemplateModelListstatusOn.get(0).getTemplateid());
+//        //获取用户模板 启用状态
+        List<SystemTemDetailsModel> systemdetails = iSystemTemDetailsService.getTemDetailsWithUser(systemUserModel);
 
         SystemTemDetailsModel headmodel = new SystemTemDetailsModel();
         SystemTemDetailsModel lastmodel = new SystemTemDetailsModel();
-
         for (SystemTemDetailsModel model : systemdetails) {
             if (model.getKeyword().contains("头部广告")){
                 headmodel.setKeywordToValue(model.getKeywordToValue());
@@ -168,21 +155,16 @@ public class WxPortalController {
         if (encType == null) {
             // 明文传输的消息
             WxMpXmlMessage inMessage = WxMpXmlMessage.fromXml(requestBody);
-
             //异步缓存到redis
             String searchWord = inMessage.getContent().trim();
-            asyncSearchCachedService.SearchWord(searchWord);
-
+            asyncSearchCachedService.searchWord(searchWord);
             WxMpXmlOutMessage outMessage = this.route(inMessage);
             if (outMessage == null) {
                 return "";
             }
             StringBuffer stringBuffer = new StringBuffer();
-
-
             // 准备数据并解析。
             byte[] bytes = requestBody.getBytes("UTF-8");
-
             //1.创建Reader对象
             SAXReader reader = new SAXReader();
             //2.加载xml
@@ -190,7 +172,6 @@ public class WxPortalController {
             //3.获取根节点
             Element rootElement = document.getRootElement();
             Iterator iterator = rootElement.elementIterator();
-
             String searchName = "";
 
             while (iterator.hasNext()) {

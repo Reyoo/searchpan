@@ -1,6 +1,5 @@
 package com.libbytian.pan.system.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -11,10 +10,12 @@ import com.libbytian.pan.system.model.SystemUserModel;
 import com.libbytian.pan.system.service.ISystemTemplateService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
@@ -35,13 +36,30 @@ public class SystemTemplateServiceImpl extends ServiceImpl<SystemTemplateMapper,
      * @throws Exception
      */
     @Override
+    @Cacheable(value = "userTemplateDetail" ,key = "#templateId")
     public List<SystemTemDetailsModel> findTemDetails(String templateId) throws Exception {
         return systemTemplateMapper.selectTemDetails(templateId);
     }
 
+    /**
+     * 引入缓存机制 ，该接口待测试
+     * 这个地方应该加一个业务代码 即 当更新用户模板信息启用状态时，清除 userTemplate 缓存
+     * 否则会有bug 产生
+     * @param systemUserModel
+     * @param inUsed
+     * @return
+     * @throws Exception
+     */
     @Override
-    public List<SystemTemplateModel> getTemplateModelByUser(SystemUserModel systemUserModel) throws Exception {
-        return null;
+    @Cacheable(value = "userTemplate",key = "#systemUserModel.username" ,condition = "#inUsed")
+    public List<SystemTemplateModel> getTemplateModelByUser(SystemUserModel systemUserModel,Boolean inUsed) throws Exception {
+        List<SystemTemplateModel> systemTemplateModels =  systemTemplateMapper.findTemplateModelByUser(systemUserModel);
+        if(inUsed){
+            List<SystemTemplateModel> systemTemplateModelListstatusOn = systemTemplateModels.stream().filter(systemTemplateModel -> systemTemplateModel.getTemplatestatus().equals(Boolean.TRUE)).collect(Collectors.toList());
+            return systemTemplateModelListstatusOn;
+        }else{
+            return systemTemplateModels;
+        }
     }
 
 //    @Override
@@ -71,8 +89,5 @@ public class SystemTemplateServiceImpl extends ServiceImpl<SystemTemplateMapper,
 //
 //    }
 
-    @Override
-    public Map findTemNameAndSize() {
-        return null;
-    }
+
 }

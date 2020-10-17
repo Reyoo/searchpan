@@ -6,6 +6,7 @@ import com.libbytian.pan.system.common.AjaxResult;
 import com.libbytian.pan.system.model.SystemPermissionModel;
 import com.libbytian.pan.system.service.IPermissionService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.*;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 @RequestMapping("/per")
+@Slf4j
 public class PermissionController {
 
     private final IPermissionService iPermissionService;
@@ -33,6 +35,7 @@ public class PermissionController {
             IPage<SystemPermissionModel> result = iPermissionService.findPermission(systemPermissionModelPage, systemPermissionModel);
             return AjaxResult.success(result);
         } catch (Exception e) {
+            log.error(e.getMessage());
             return AjaxResult.error(e.getMessage());
         }
     }
@@ -50,6 +53,7 @@ public class PermissionController {
             iPermissionService.updateById( systemPermissionModel);
             return AjaxResult.success();
         } catch (Exception e) {
+            log.error(e.getMessage());
             return AjaxResult.error(e.getMessage());
         }
 
@@ -89,6 +93,7 @@ public class PermissionController {
                 return AjaxResult.error();
             }
         } catch (Exception e) {
+            log.error(e.getMessage());
             return AjaxResult.error(e.getMessage());
         }
     }

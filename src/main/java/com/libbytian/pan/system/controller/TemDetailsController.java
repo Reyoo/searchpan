@@ -51,7 +51,6 @@ public class TemDetailsController {
             IPage<SystemTemDetailsModel> result = iSystemTemplateService.findTemDetailsPage(findpage, templateId);
             return AjaxResult.success(result);
         } catch (Exception e) {
-            e.printStackTrace();
             log.error(e.getMessage());
             return AjaxResult.error(e.getMessage());
         }
@@ -75,6 +74,7 @@ public class TemDetailsController {
                 return AjaxResult.error("添加失败！");
             }
         } catch (Exception e) {
+            log.error(e.getMessage());
             return AjaxResult.error(e.getMessage());
         }
     }
@@ -98,6 +98,7 @@ public class TemDetailsController {
                 return AjaxResult.error("修改失败！");
             }
         } catch (Exception e) {
+            log.error(e.getMessage());
             return AjaxResult.error(e.getMessage());
         }
     }
@@ -116,6 +117,7 @@ public class TemDetailsController {
                 return AjaxResult.success("删除失败");
             }
         } catch (Exception e) {
+            log.error(e.getMessage());
             return AjaxResult.error(e.getMessage());
         }
     }
@@ -136,6 +138,7 @@ public class TemDetailsController {
             iSystemTemDetailsService.exportExceltoDb(multipartFile.getOriginalFilename(),multipartFile.getInputStream(),templateId);
             return AjaxResult.success();
         }catch (Exception e){
+            log.error(e.getMessage());
             return AjaxResult.error(e.getMessage());
         }
     }
@@ -152,6 +155,7 @@ public class TemDetailsController {
         try {
             iSystemTemDetailsService.exportTemDetails(httpServletRequest, httpServletResponse, templateId);
         }catch (Exception e){
+            log.error(e.getMessage());
             e.printStackTrace();
         }
     }
@@ -180,7 +184,7 @@ public class TemDetailsController {
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getMessage());
             return AjaxResult.error("无效URL");
         }
     }

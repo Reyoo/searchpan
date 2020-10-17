@@ -7,8 +7,7 @@ import com.libbytian.pan.system.mapper.SystemRoleMapper;
 import com.libbytian.pan.system.mapper.SystemUserMapper;
 import com.libbytian.pan.system.service.ISystemRoleService;
 import com.libbytian.pan.system.service.ISystemUserService;
-import com.libbytian.pan.system.util.SpringContextUtil;
-import com.libbytian.pan.system.util.UserIdentity;
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -18,6 +17,8 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.stereotype.Component;
+
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -34,17 +35,6 @@ public class JwtLoginFilter extends AbstractAuthenticationProcessingFilter {
 
     @Autowired
     RedisTemplate redisTemplate;
-
-    @Autowired
-    private SystemUserMapper systemUserMapper;
-
-    @Autowired
-    private SystemRoleMapper systemRoleMapper;
-
-    @Autowired
-    private ISystemRoleService iSystemRoleService;
-
-
 
 
 
@@ -65,20 +55,14 @@ public class JwtLoginFilter extends AbstractAuthenticationProcessingFilter {
            String password = request.getParameter("password");
 
 
-           systemUserMapper = SpringContextUtil.getBean("systemUserMapper");
-           systemRoleMapper = SpringContextUtil.getBean("systemRoleMapper");
-
+//           systemUserMapper = SpringContextUtil.getBean("systemUserMapper");
+//           systemRoleMapper = SpringContextUtil.getBean("systemRoleMapper");
 //           iSystemRoleService = SpringContextUtil.getBean("iSystemRoleService");
 
            /**
             * 验证码
             */
 //           checkImageCode(request);
-
-           /**
-            * 登录用户身份及过期验证
-            */
-           isVip(userName);
 
 
            String realIp = PanHttpUtil.getIpAddress(request);
@@ -146,28 +130,28 @@ public class JwtLoginFilter extends AbstractAuthenticationProcessingFilter {
      * @param username
      * @return
      */
-    private void isVip(String username) throws Exception {
-
-
-        //查询用户是否为付费用户
-
-//      String[] userToRoleId = iSystemRoleService.getRoleIdByUsername(username);
-
-        String[] userToRoleId = systemRoleMapper.getRoleIdByUsername(username);
-
-        //查询用户权限到期时间
-        LocalDateTime actTime = systemUserMapper.findActTime(username);
-
-        //判断用户是否为付费用户
-        if( !Arrays.asList(userToRoleId).contains("3")){
-                throw new Exception("请升级到付费用户");
-        }
-
-        //判断付费用户是否到期
-        if (actTime.isBefore(LocalDateTime.now())){
-            throw new Exception("你的付费时长已过期，请续费使用");
-        }
-
-    }
+//    private void isVip(String username) throws Exception {
+//
+//
+//        //查询用户是否为付费用户
+//
+////      String[] userToRoleId = iSystemRoleService.getRoleIdByUsername(username);
+//
+//        String[] userToRoleId = systemRoleMapper.getRoleIdByUsername(username);
+//
+//        //查询用户权限到期时间
+//        LocalDateTime actTime = systemUserMapper.findActTime(username);
+//
+//        //判断用户是否为付费用户
+//        if( !Arrays.asList(userToRoleId).contains("3")){
+//                throw new Exception("请升级到付费用户");
+//        }
+//
+//        //判断付费用户是否到期
+//        if (actTime.isBefore(LocalDateTime.now())){
+//            throw new Exception("你的付费时长已过期，请续费使用");
+//        }
+//
+//    }
 
 }

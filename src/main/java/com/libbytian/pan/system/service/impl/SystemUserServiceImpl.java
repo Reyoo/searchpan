@@ -10,18 +10,19 @@ import com.libbytian.pan.system.mapper.SystemUserMapper;
 import com.libbytian.pan.system.model.*;
 import com.libbytian.pan.system.service.*;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.StringUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.Arrays;
 import java.util.List;
 
 /**
  * <p>
- *  服务实现类
+ * 服务实现类
  * </p>
  *
  * @author liugh123
@@ -34,7 +35,7 @@ public class SystemUserServiceImpl extends ServiceImpl<SystemUserMapper, SystemU
 
     private final ISystemUserToRoleService userToRoleService;
 
-    private final SystemUserMapper systemUserMapper ;
+    private final SystemUserMapper systemUserMapper;
 
     private final ISystemRoleService systemRoleService;
 
@@ -43,20 +44,20 @@ public class SystemUserServiceImpl extends ServiceImpl<SystemUserMapper, SystemU
     private final ISystemTemplateService systemTemplateService;
 
 
-
     @Override
-    public SystemUserModel getUserByUserName(String username)   {
+    public SystemUserModel getUserByUserName(String username) {
         return systemUserMapper.selectUserByUsername(username);
     }
 
     /**
      * 设置所有通过注册的用户均为普通用户，用户权限变更需要在管理端进行配置
+     *
      * @param user
      * @return`
      */
 
     @Override
-    public SystemUserModel register(SystemUserModel user)  throws Exception{
+    public SystemUserModel register(SystemUserModel user) throws Exception {
         user.setStatus(true);
         user.setCreateTime(LocalDateTime.now());
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
@@ -76,11 +77,11 @@ public class SystemUserServiceImpl extends ServiceImpl<SystemUserMapper, SystemU
         SystemRoleModel systemRoleModel = systemRoleService.getRoleByRolename("ROLE_NORMAL");
 
         if (result) {
-            SystemUserToRole userToRole  = SystemUserToRole.builder().userId(user.getUserId()).roleId(systemRoleModel.getRoleId()).build();
+            SystemUserToRole userToRole = SystemUserToRole.builder().userId(user.getUserId()).roleId(systemRoleModel.getRoleId()).build();
             userToRoleService.save(userToRole);
-          //新增模板,存入模板表 sys_template
+            //新增模板,存入模板表 sys_template
             String uuid = UUID.randomUUID().toString();
-            SystemTemplateModel template =  new SystemTemplateModel();
+            SystemTemplateModel template = new SystemTemplateModel();
             template.setTemplateid(uuid);
             template.setTemplatename("模板1");
             template.setTemplatecreatetime(LocalDateTime.now());
@@ -88,7 +89,7 @@ public class SystemUserServiceImpl extends ServiceImpl<SystemUserMapper, SystemU
             systemTemplateService.save(template);
 
             //模板ID绑定用户ID
-            SystemUserToTemplate userToTemplate  = SystemUserToTemplate.builder().userId(user.getUserId()).templateId(uuid).userTemplateStatus(true).build();
+            SystemUserToTemplate userToTemplate = SystemUserToTemplate.builder().userId(user.getUserId()).templateId(uuid).userTemplateStatus(true).build();
             userToTemplateService.save(userToTemplate);
         }
         return user;
@@ -96,6 +97,7 @@ public class SystemUserServiceImpl extends ServiceImpl<SystemUserMapper, SystemU
 
     /**
      * 查询用户是否存在
+     *
      * @param username
      * @return
      */
@@ -112,39 +114,37 @@ public class SystemUserServiceImpl extends ServiceImpl<SystemUserMapper, SystemU
     @Override
     public SystemUserModel updateUser(SystemUserModel user) throws Exception {
 
-        if(user.getUsername().isEmpty()){
+        if (user.getUsername().isEmpty()) {
             throw new Exception("用户名不能为空");
         }
 
         LocalDateTime actTime = systemUserMapper.findActTime(user.getUsername());
 
-    //如果有传入续费时长，则更新到期时间
-        if(user.getActrange() != null && user.getActrange() > 0) {
+        //如果有传入续费时长，则更新到期时间
+        if (user.getActrange() != null && user.getActrange() > 0) {
             //获取当前时间
             LocalDateTime nowtime = LocalDateTime.now();
 
             //已过期，到期时间在当前时间之前
-            if(actTime == null || actTime.isBefore(nowtime)) {
+            if (actTime == null || actTime.isBefore(nowtime)) {
                 nowtime = nowtime.plus(user.getActrange(), ChronoUnit.MONTHS);
             } else {
                 nowtime = actTime.plus(user.getActrange(), ChronoUnit.MONTHS);
             }
             //更新到期时间
-            user.setActtime(nowtime);
+            user.setActTime(nowtime);
         }
-
 
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         String encode = encoder.encode(user.getPassword());
         SystemUserModel olduser = systemUserMapper.selectUserByUsername(user.getUsername());
-        user.setUserId( olduser.getUserId());
+        user.setUserId(olduser.getUserId());
         user.setPassword(encode);
         boolean result = this.saveOrUpdate(user);
-        if(result){
-            SystemUserToRole userToRole =  SystemUserToRole.builder().userId(user.getUserId()).roleId("ROLE_NORMAL").build();
+        if (result) {
+            SystemUserToRole userToRole = SystemUserToRole.builder().userId(user.getUserId()).roleId("ROLE_NORMAL").build();
             userToRoleService.save(userToRole);
         }
-
         return user;
     }
 
@@ -157,35 +157,35 @@ public class SystemUserServiceImpl extends ServiceImpl<SystemUserMapper, SystemU
         /**
          * 这里systemusermodel 不做空判断 。getusername 空指针  null.getUsername
          */
-        if(systemUserModel != null){
+        if (systemUserModel != null) {
 
-            if(systemUserModel.getUserId() != null){
-                queryWrapper.eq("user_id",systemUserModel.getUserId());
+            if (systemUserModel.getUserId() != null) {
+                queryWrapper.eq("user_id", systemUserModel.getUserId());
             }
-            if(systemUserModel.getUsername() != null){
-                queryWrapper.eq("user_name",systemUserModel.getUsername());
+            if (systemUserModel.getUsername() != null) {
+                queryWrapper.eq("user_name", systemUserModel.getUsername());
             }
-            if(systemUserModel.getMobile() != null){
-                queryWrapper.eq("user_mobile",systemUserModel.getMobile());
+            if (systemUserModel.getMobile() != null) {
+                queryWrapper.eq("user_mobile", systemUserModel.getMobile());
             }
-            if(systemUserModel.getLastLoginTime() != null){
-                queryWrapper.eq("user_last_login_time",systemUserModel.getLastLoginTime());
+            if (systemUserModel.getLastLoginTime() != null) {
+                queryWrapper.eq("user_last_login_time", systemUserModel.getLastLoginTime());
             }
-            if(systemUserModel.getCreateTime() != null){
-                queryWrapper.eq("createtime",systemUserModel.getCreateTime());
+            if (systemUserModel.getCreateTime() != null) {
+                queryWrapper.eq("createtime", systemUserModel.getCreateTime());
             }
-            if(systemUserModel.isStatus()){
-                queryWrapper.eq("status",systemUserModel.isStatus());
+            if (systemUserModel.isStatus()) {
+                queryWrapper.eq("status", systemUserModel.isStatus());
             }
-            if(systemUserModel.getStarttime() != null && systemUserModel.getEndtime() != null){
-                queryWrapper.ge("createtime",systemUserModel.getStarttime());
-                queryWrapper.le("createtime",systemUserModel.getEndtime());
+            if (systemUserModel.getStarttime() != null && systemUserModel.getEndtime() != null) {
+                queryWrapper.ge("createtime", systemUserModel.getStarttime());
+                queryWrapper.le("createtime", systemUserModel.getEndtime());
             }
 
         }
         queryWrapper.orderByDesc("createtime");
 
-        return systemUserMapper.selectPage(page,queryWrapper);
+        return systemUserMapper.selectPage(page, queryWrapper);
 
     }
 
@@ -197,10 +197,43 @@ public class SystemUserServiceImpl extends ServiceImpl<SystemUserMapper, SystemU
 
     @Override
     public List<SystemTemplateModel> findTemplateById(String username) {
-
         return systemUserMapper.findTemplateById(username);
     }
 
+
+    /**
+     * 校验用户状态， 启用状态，付费用户，是否存在
+     *
+     * @param
+     * @return
+     */
+    @Override
+    public boolean checkUserStatus(SystemUserModel user) throws Exception {
+
+        // 判断该用户是否存在
+        // 如果存在 ，判断该用户付费剩余时长
+        SystemUserModel systemUserModel = systemUserMapper.selectOneUserModel(user);
+        if (systemUserModel == null) {
+            throw new Exception("该用户不存在");
+        }
+
+        List<SystemRoleModel> systemRoleModels = systemRoleService.getRoleInfoByUser(user);
+
+        //如果不包含付费用户
+        for (SystemRoleModel systemRoleModel : systemRoleModels) {
+            // 如果是付费用户 则判断付费是否过期
+            if (systemRoleModel.getRoleName().contains("ROLE_PAYUSER")) {
+                LocalDateTime actTime = systemUserModel.getActTime();
+                if (actTime.isBefore(LocalDateTime.now())) {
+                    throw new Exception("您的付费时长已过期，请续费使用！");
+                }else{
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
 
 
 }

@@ -4,6 +4,7 @@ package com.libbytian.pan.system.service.impl;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.libbytian.pan.system.mapper.SystemRoleMapper;
 import com.libbytian.pan.system.model.SystemRoleModel;
+import com.libbytian.pan.system.model.SystemUserModel;
 import com.libbytian.pan.system.service.ISystemRoleService;
 
 import lombok.RequiredArgsConstructor;
@@ -40,6 +41,14 @@ public class SystemRoleImpl extends ServiceImpl<SystemRoleMapper, SystemRoleMode
     }
 
 
-
+    /**
+     * 根据用户信息获取用户角色信息
+     * @param systemUserModel
+     * @return
+     */
+    @Override
+    public List<SystemRoleModel> getRoleInfoByUser(SystemUserModel systemUserModel) {
+        return systemRoleMapper.selectUserRoleByUser(systemUserModel);
+    }
 }
 

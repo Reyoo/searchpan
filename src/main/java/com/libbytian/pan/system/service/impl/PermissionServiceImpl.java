@@ -59,7 +59,6 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, SystemP
        String permissionComment = body.getPermissionComment();
        String permissionId = body.getPermissionId();
 
-
         return permissionMapper.update(permissionUrl,permissionComment,permissionId);
     }
 

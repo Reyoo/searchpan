@@ -46,7 +46,7 @@ public class AsyncSearchCachedServiceImpl {
      * @return
      */
     @Async
-    public List<MovieNameAndUrlModel> SearchWord(String searchText){
+    public List<MovieNameAndUrlModel> searchWord(String searchText){
         try {
 
             //先从redis 中根据 搜索影片名 有结果直接返回

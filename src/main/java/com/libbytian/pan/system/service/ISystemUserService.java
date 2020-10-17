@@ -55,4 +55,13 @@ public interface ISystemUserService extends IService<SystemUserModel> {
 
     SystemUserModel findByUsername(String username) throws Exception;
 
+
+    /**
+     * 用户校验
+     * @param user
+     * @return
+     * @throws Exception
+     */
+    boolean checkUserStatus(SystemUserModel user) throws Exception;
+
 }

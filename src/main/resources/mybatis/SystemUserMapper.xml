@@ -1,75 +1,53 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.libbytian.pan.system.mapper.UserMapper">
+<mapper namespace="com.libbytian.pan.system.mapper.SystemUserMapper">
 
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.libbytian.pan.system.model.SystemUserModel">
-        <id column="userid" property="userId"/>
+        <id column="user_id" property="userId"/>
         <result column="user_name" property="username"/>
         <result column="user_mobile" property="mobile"/>
         <result column="user_password" property="password"/>
         <result column="user_last_login_time" property="lastLoginTime"/>
         <result column="createTime" property="createTime"/>
         <result column="status" property="status"/>
-
+        <result column="act_time" property="actTime"/>
+        <result column="act_range" property="actrange"/>
     </resultMap>
 
-<!--    &lt;!&ndash; 通用查询结果列 &ndash;&gt;
+
+    <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-         userid AS userId,
-         user_name AS username,
-         user_mobile AS mobile ,
-         user_password AS password,
-         user_last_login_time AS lastLoginTime,
-         createTime,
-         status
-    </sql>-->
-<!--    selectUser-->
+         u.user_id AS userId,
+         u.user_name AS username,
+         u.user_mobile AS mobile,
+         u.user_password AS password,
+         u.user_last_login_time AS lastLoginTime,
+         u.createTime AS createTime,
+         u.status AS status,
+         u.act_time AS actTime,
+         u.act_range AS actrange
+    </sql>
 
-    <!-- set 元素可以用于动态包含需要更新的列，忽略其它不更新的列 -->
-<!--    <update id="updateUser" parameterType="com.libbytian.pan.system.model.SystemUserModel" >-->
-<!--        update sys_user-->
-<!--        <set>-->
-<!--            <if test="password != null">user_password=#{user.password},</if>-->
-<!--            <if test="lastLoginTime != null">user_last_login_time=#{user.lastLoginTime},</if>-->
-<!--            <if test="mobile != null">tel=#{user.mobile}</if>-->
-<!--        </set>-->
-<!--        where user_name=#{user.username}-->
-<!--    </update>-->
 
-<!--    <select id="selectUser" parameterType="Map" resultType="com.libbytian.pan.system.model.SystemUserModel">-->
-<!--        select * from sys_user-->
-<!--            <where>-->
-<!--            <if test="user.username != null and user.username != '' ">-->
-<!--                user_name = #{user.username}-->
-<!--            </if>-->
-<!--            </where>-->
-<!--    </select>-->
+    <!-- 根据用户信息查询用户启用状态的模板list-->
+    <select id="selectOneUserModel" parameterType="com.libbytian.pan.system.model.SystemUserModel" resultType="com.libbytian.pan.system.model.SystemUserModel">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        sys_user u
+        <trim prefix="where" prefixOverrides="and|">
+            <if test="userId != null and userId != ''">
+                AND u.user_id= #{userId}
+            </if>
+            <if test="username != null and username != ''">
+                AND u.user_name =#{username}
+            </if>
+            <if test="status != null and status != ''">
+                AND u.status =#{status}
+            </if>
 
-<!--    where-->
-<!--    <if test="userId != null">-->
-<!--        and user_id = #{user.userId}-->
-<!--    </if>-->
-<!--    <if test="user_name != null">-->
-<!--        and user_name = #{user.username}-->
-<!--    </if>-->
-<!--    <if test="user_mobile != null">-->
-<!--        and user_mobile = #{user.mobile}-->
-<!--    </if>-->
-<!--    <if test="user_password != null">-->
-<!--        and user_password = #{user.password}-->
-<!--    </if>-->
-<!--    <if test="user_last_login_time != null">-->
-<!--        and user_last_login_time = #{user.lastLoginTime}-->
-<!--    </if>-->
-<!--    <if test="createtime != null">-->
-<!--        and createtime = #{user.createTime}-->
-<!--    </if>-->
-<!--    <if test="status != null">-->
-<!--        and status = #{user.status}-->
-<!--    </if>-->
-<!--    <if test="start!=null and limit!=null">-->
-<!--        limit #{page.start},#{page.limit}-->
-<!--    </if>-->
+        </trim>
+    </select>
 
 </mapper>

@@ -2,6 +2,7 @@ package com.libbytian.pan.system.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.libbytian.pan.system.model.SystemRoleModel;
+import com.libbytian.pan.system.model.SystemUserModel;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,5 +26,8 @@ public interface ISystemRoleService extends IService<SystemRoleModel> {
     List<SystemRoleModel> getRoleByUserName(String username) throws Exception;
 
     String[] getRoleIdByUsername(String username);
+
+    List<SystemRoleModel> getRoleInfoByUser(SystemUserModel systemUserModel);
+
 
 }

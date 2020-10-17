@@ -20,10 +20,7 @@ public interface ISystemTemplateService extends IService<SystemTemplateModel> {
 
      List<SystemTemDetailsModel> findTemDetails(String templateId) throws Exception;
 
-     List<SystemTemplateModel> getTemplateModelByUser(SystemUserModel systemUserModel) throws Exception;
-
-
-     Map findTemNameAndSize();
+     List<SystemTemplateModel> getTemplateModelByUser(SystemUserModel systemUserModel,Boolean inUsed) throws Exception;
 
 
 }

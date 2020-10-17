@@ -1,4 +1,4 @@
-package com.libbytian.pan.system.security.simple;
+package com.libbytian.pan.system.security;
 
 import com.libbytian.pan.system.model.SystemPermissionModel;
 import com.libbytian.pan.system.service.ISystemPermissionService;
@@ -51,6 +51,7 @@ public class AccessDecisionService {
          * 付费用户放过。完成项目后应该消掉
          */
         whiteList.add("/wechat/**");
+        whiteList.add("/fantasy/**");
 
         for (String url : whiteList) {
             if (antPathMatcher.match(url, request.getRequestURI())) {
