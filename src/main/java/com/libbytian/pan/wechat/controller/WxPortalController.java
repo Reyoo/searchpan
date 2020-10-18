@@ -98,7 +98,7 @@ public class WxPortalController {
             userIdentity.isVip(systemUserModel);
 
         }catch (Exception e){
-            return "接口权限认证错误，请联系管理员！";
+            return e.getMessage();
         }
         /**
          * 如果限制appid 则为私有
@@ -178,21 +178,16 @@ public class WxPortalController {
         if (encType == null) {
             // 明文传输的消息
             WxMpXmlMessage inMessage = WxMpXmlMessage.fromXml(requestBody);
-
             //异步缓存到redis
             String searchWord = inMessage.getContent().trim();
-            asyncSearchCachedService.SearchWord(searchWord);
-
+            asyncSearchCachedService.searchWord(searchWord);
             WxMpXmlOutMessage outMessage = this.route(inMessage);
             if (outMessage == null) {
                 return "";
             }
             StringBuffer stringBuffer = new StringBuffer();
-
-
             // 准备数据并解析。
             byte[] bytes = requestBody.getBytes("UTF-8");
-
             //1.创建Reader对象
             SAXReader reader = new SAXReader();
             //2.加载xml
@@ -200,7 +195,6 @@ public class WxPortalController {
             //3.获取根节点
             Element rootElement = document.getRootElement();
             Iterator iterator = rootElement.elementIterator();
-
             String searchName = "";
 
             while (iterator.hasNext()) {
@@ -279,7 +273,7 @@ public class WxPortalController {
     public String getURL(@RequestParam String username){
 
         String encodeusername = encoder.encodeToString(username .getBytes());
-        return "http://gwa9kz.natappfree.cc"+"/wechat/portal/"+encodeusername;
+        return "http://6pqpkg.natappfree.cc"+"/wechat/portal/"+encodeusername;
 
     }
 

@@ -38,4 +38,7 @@ public interface ISystemRoleService extends IService<SystemRoleModel> {
     boolean checkEmail(String roleName) throws Exception;
 
 
+    List<SystemRoleModel> getRoleInfoByUser(SystemUserModel systemUserModel);
+
+
 }

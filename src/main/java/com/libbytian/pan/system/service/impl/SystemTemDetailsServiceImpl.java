@@ -9,6 +9,7 @@ import com.libbytian.pan.system.mapper.SystemTemDetailsMapper;
 import com.libbytian.pan.system.model.SystemTemDetailsModel;
 import com.libbytian.pan.system.model.SystemTemToTemdetail;
 import com.libbytian.pan.system.model.SystemTemplateModel;
+import com.libbytian.pan.system.model.SystemUserModel;
 import com.libbytian.pan.system.service.ISystemTemDetailsService;
 import com.libbytian.pan.system.service.ISystemTemplateService;
 import com.libbytian.pan.system.service.ISystemTmplToTmplDetailsService;
@@ -19,6 +20,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
@@ -40,7 +42,6 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class SystemTemDetailsServiceImpl extends ServiceImpl<SystemTemDetailsMapper, SystemTemDetailsModel> implements ISystemTemDetailsService {
-
 
 
     private final SystemTemDetailsMapper systemTemDetailsMapper;
@@ -227,7 +228,6 @@ public class SystemTemDetailsServiceImpl extends ServiceImpl<SystemTemDetailsMap
     }
 
 
-
     /**
      *@Author zxl
      *@Description 发送响应流方法
@@ -250,6 +250,24 @@ public class SystemTemDetailsServiceImpl extends ServiceImpl<SystemTemDetailsMap
         } catch (Exception ex) {
             ex.printStackTrace();
         }
+    }
+
+
+    /**
+     * 根据用户信息获取 启用状态的模板详细List
+     *
+     * @param systemUserModel
+     */
+    @Override
+    @Cacheable(value = "userTemplateDetail",key = "#systemUserModel.username")
+    public List<SystemTemDetailsModel> getTemDetailsWithUser(SystemUserModel systemUserModel) throws Exception {
+        List<SystemTemDetailsModel> systemTemDetailsModels = new ArrayList<>();
+        try {
+            systemTemDetailsModels = systemTemDetailsMapper.findTemDetailsByUser(systemUserModel);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return systemTemDetailsModels;
     }
 
 }

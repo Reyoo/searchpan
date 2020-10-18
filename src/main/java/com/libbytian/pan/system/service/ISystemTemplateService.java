@@ -19,7 +19,7 @@ public interface ISystemTemplateService extends IService<SystemTemplateModel> {
 
      List<SystemTemplateModel> listTemplatelByUser(SystemUserModel systemUserModel) throws Exception;
 
-
+     List<SystemTemplateModel> getTemplateModelByUser(SystemUserModel systemUserModel,Boolean inUsed) throws Exception;
 
 
 }

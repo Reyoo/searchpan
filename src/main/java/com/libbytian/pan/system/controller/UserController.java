@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 @RequestMapping("/user")
+@Slf4j
 public class UserController {
 
     private final ISystemUserService iSystemUserService;
@@ -48,7 +49,7 @@ public class UserController {
             IPage<SystemUserModel> result = iSystemUserService.findConditionByPage(findpage, user);
             return AjaxResult.success(result);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getMessage());
             return AjaxResult.error(e.getMessage());
         }
 
@@ -137,6 +138,7 @@ public class UserController {
 
             return AjaxResult.success(systemRoleModelsAll);
         } catch (Exception e) {
+            log.error(e.getMessage());
             return AjaxResult.error(e.getMessage());
         }
     }
@@ -169,6 +171,7 @@ public class UserController {
             return AjaxResult.error("修改失败");
 
         } catch (Exception e) {
+            log.error(e.getMessage());
             return AjaxResult.error(e.getMessage());
         }
     }
@@ -231,6 +234,7 @@ public class UserController {
             return AjaxResult.success();
 
         } catch (Exception e) {
+            log.error(e.getMessage());
             return AjaxResult.error(e.getMessage());
         }
     }

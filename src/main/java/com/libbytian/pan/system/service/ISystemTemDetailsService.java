@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.libbytian.pan.system.model.SystemTemDetailsModel;
 import com.libbytian.pan.system.model.SystemTemplateModel;
+import com.libbytian.pan.system.model.SystemUserModel;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -28,6 +29,12 @@ public interface ISystemTemDetailsService extends IService<SystemTemDetailsModel
 
 
      void exportTemDetails(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, @RequestParam String templateId)  throws Exception;
+
+
+    /**
+     * 根据用户信息获取 启用状态的模板详细List
+     */
+    List<SystemTemDetailsModel> getTemDetailsWithUser (SystemUserModel systemUserModel) throws Exception;
 
 
 }

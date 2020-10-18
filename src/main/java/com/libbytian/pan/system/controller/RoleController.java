@@ -8,9 +8,11 @@ import com.libbytian.pan.system.common.AjaxResult;
 import com.libbytian.pan.system.model.*;
 import com.libbytian.pan.system.service.*;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -111,7 +113,7 @@ RoleController {
             iSystemRoleService.save(role);
             return AjaxResult.success();
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getMessage());
             return AjaxResult.error(e.getMessage());
         }
 

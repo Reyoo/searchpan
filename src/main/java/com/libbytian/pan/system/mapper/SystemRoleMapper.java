@@ -29,4 +29,6 @@ public interface SystemRoleMapper extends BaseMapper<SystemRoleModel> {
 
 
 
+    List<SystemRoleModel> selectUserRoleByUser(SystemUserModel systemUserModel);
+
 }

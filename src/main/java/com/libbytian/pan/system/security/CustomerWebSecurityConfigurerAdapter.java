@@ -1,4 +1,4 @@
-package com.libbytian.pan.system.security.simple;
+package com.libbytian.pan.system.security;
 
 
 import com.libbytian.pan.system.security.filter.JwtHeadFilter;

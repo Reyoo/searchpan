@@ -120,6 +120,14 @@ public class SystemRoleImpl extends ServiceImpl<SystemRoleMapper, SystemRoleMode
     }
 
 
-
+    /**
+     * 根据用户信息获取用户角色信息
+     * @param systemUserModel
+     * @return
+     */
+    @Override
+    public List<SystemRoleModel> getRoleInfoByUser(SystemUserModel systemUserModel) {
+        return systemRoleMapper.selectUserRoleByUser(systemUserModel);
+    }
 }
 

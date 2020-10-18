@@ -63,4 +63,13 @@ public interface ISystemUserService extends IService<SystemUserModel> {
 
 
 
+
+    /**
+     * 用户校验
+     * @param user
+     * @return
+     * @throws Exception
+     */
+    boolean checkUserStatus(SystemUserModel user) throws Exception;
+
 }

@@ -4,6 +4,7 @@ import com.libbytian.pan.system.common.AjaxResult;
 import com.libbytian.pan.system.model.SystemUserModel;
 import com.libbytian.pan.system.service.ISystemUserService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,7 +16,7 @@ import java.util.List;
  */
 @RestController
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-
+@Slf4j
 public class LoginController {
 
     private final ISystemUserService iSystemUserService;
@@ -52,6 +53,7 @@ public class LoginController {
             iSystemUserService.register(systemUserModel);
             return AjaxResult.success();
         } catch (Exception e) {
+            log.error(e.getMessage());
             return AjaxResult.error(e.getMessage());
         }
     }

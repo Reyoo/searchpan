@@ -93,6 +93,7 @@ public class TemplateController {
             }
             return AjaxResult.success();
         } catch (Exception e) {
+            log.error(e.getMessage());
             return AjaxResult.error(e.getMessage());
         }
     }
@@ -114,6 +115,7 @@ public class TemplateController {
             }
            return AjaxResult.error();
         } catch (Exception e) {
+            log.error(e.getMessage());
             return AjaxResult.error(e.getMessage());
         }
     }

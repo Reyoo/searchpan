@@ -5,6 +5,10 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import lombok.*;
 
 
@@ -55,12 +59,16 @@ public class SystemUserModel extends Model<SystemUserModel>   {
      * 最后修改时间
      */
     @TableField("user_last_login_time")
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
     private LocalDateTime lastLoginTime;
 
     /**
      * 创建时间
      */
     @TableField("createtime")
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
     private LocalDateTime createTime;
 
 
@@ -74,7 +82,9 @@ public class SystemUserModel extends Model<SystemUserModel>   {
      * 激活到期时间
      */
     @TableField("act_time")
-    private LocalDateTime acttime;
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    private LocalDateTime actTime;
 
     /**
      * 激活时长
@@ -88,6 +98,8 @@ public class SystemUserModel extends Model<SystemUserModel>   {
      */
     @TableField(exist = false)
     private LocalDate starttime;
+
+
 
     /**
      * 虚拟字段 查询结束时间

@@ -8,8 +8,12 @@ package com.libbytian.pan.system.config;
 
 import com.alibaba.fastjson.support.spring.FastJsonRedisSerializer;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.jsontype.impl.LaissezFaireSubTypeValidator;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CachingConfigurerSupport;
 import org.springframework.cache.annotation.EnableCaching;
@@ -65,14 +69,29 @@ public class RedisConfig extends CachingConfigurerSupport
     {
         RedisTemplate<Object,Object> redisTemplate = new RedisTemplate<Object, Object>();
         redisTemplate.setConnectionFactory(factory);
-        FastJsonRedisSerializer<Object> fastJsonRedisSerializer = new FastJsonRedisSerializer<>(Object.class);
-        /*设置value值的序列化*/
-        redisTemplate.setValueSerializer(fastJsonRedisSerializer);
-        redisTemplate.setHashValueSerializer(fastJsonRedisSerializer);
+//        FastJsonRedisSerializer<Object> fastJsonRedisSerializer = new FastJsonRedisSerializer<>(Object.class);
+//        /*设置value值的序列化*/
+//        redisTemplate.setValueSerializer(fastJsonRedisSerializer);
+//        redisTemplate.setHashValueSerializer(fastJsonRedisSerializer);
+
+        Jackson2JsonRedisSerializer<Object> j2jrs = new Jackson2JsonRedisSerializer<>(Object.class);
+        ObjectMapper om = new ObjectMapper();
+        om.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY);
+        // 解决jackson2无法反序列化LocalDateTime的问题
+        om.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        om.registerModule(new JavaTimeModule());
+        om.activateDefaultTyping(LaissezFaireSubTypeValidator.instance ,ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY);
+
+        j2jrs.setObjectMapper(om);
+        // 序列化 value 时使用此序列化方法
+        redisTemplate.setValueSerializer(j2jrs);
+        redisTemplate.setHashValueSerializer(j2jrs);
+
+
         /*设置key的序列化*/
         redisTemplate.setKeySerializer(new StringRedisSerializer());
         redisTemplate.setHashKeySerializer(new StringRedisSerializer());
-        redisTemplate.setDefaultSerializer(fastJsonRedisSerializer);
+        redisTemplate.setDefaultSerializer(j2jrs);
         redisTemplate.afterPropertiesSet();
         return redisTemplate;
     }
@@ -86,7 +105,8 @@ public class RedisConfig extends CachingConfigurerSupport
         //解决查询缓存转换异常的问题
         ObjectMapper om = new ObjectMapper();
         om.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY);
-        om.enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL);
+        om.activateDefaultTyping(LaissezFaireSubTypeValidator.instance ,ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY);
+//        om.enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL);
         jackson2JsonRedisSerializer.setObjectMapper(om);
 
         // 配置序列化（解决乱码的问题）
