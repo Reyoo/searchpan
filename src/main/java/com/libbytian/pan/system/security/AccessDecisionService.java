@@ -65,7 +65,6 @@ public class AccessDecisionService {
         }
 
         UserDetails user = (UserDetails) auth.getPrincipal();
-///        String userName = user.getUsername();
         SystemUserModel userModel = new SystemUserModel();
         userModel.setUsername(user.getUsername());
 

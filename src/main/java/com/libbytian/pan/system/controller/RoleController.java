@@ -8,6 +8,7 @@ import com.libbytian.pan.system.common.AjaxResult;
 import com.libbytian.pan.system.model.*;
 import com.libbytian.pan.system.service.*;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -20,12 +21,13 @@ import java.util.stream.Collectors;
 @RestController
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 @RequestMapping("/role")
+@Slf4j
 public class
 RoleController {
 
     private final IRoleToPermissionService iRoleToPermissionService;
     private final ISystemUserToRoleService iSystemUserToRoleService;
-    private final IPermissionService iPermissionService;
+    private final ISystemPermissionService iPermissionService;
     private final ISystemRoleService iSystemRoleService;
 
 

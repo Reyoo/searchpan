@@ -10,7 +10,7 @@
         <result column="user_password" property="password"/>
         <result column="user_last_login_time" property="lastLoginTime"/>
         <result column="createTime" property="createTime"/>
-        <result column="act_time" property="acttime"/>
+        <result column="act_time" property="actTime"/>
         <result column="act_range" property="actrange"/>
     </resultMap>
 
@@ -24,7 +24,7 @@
          user_last_login_time AS lastLoginTime,
          createTime,
          status,
-         act_time AS acttime,
+         act_time AS actTime,
          act_range AS actrange
     </sql>
 
@@ -53,8 +53,8 @@
             <if test="status != null and status != ''">
                 AND u.status =#{status}
             </if>
-            <if test="acttime != null and acttime != ''">
-                AND u.act_time =#{acttime}
+            <if test="actTime != null and actTime != ''">
+                AND u.act_time =#{actTime}
             </if>
             <if test="actrange != null and actrange != ''">
                 AND u.act_range =#{actrange}
@@ -87,8 +87,8 @@
             <if test="status != null and status != ''">
                 AND u.status =#{status}
             </if>
-            <if test="acttime != null and acttime != ''">
-                AND u.act_time =#{acttime}
+            <if test="actTime != null and actTime != ''">
+                AND u.act_time =#{actTime}
             </if>
             <if test="actrange != null and actrange != ''">
                 AND u.act_range =#{actrange}

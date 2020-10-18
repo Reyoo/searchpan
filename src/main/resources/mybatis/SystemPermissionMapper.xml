@@ -13,11 +13,11 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-         permission_id AS permissionId,
-         permission_url AS permissionUrl,
-         permission_comment AS permissionComment,
-         permission_status AS permissionstatus,
-         createtime AS createtime
+         p.permission_id AS permissionId,
+         p.permission_url AS permissionUrl,
+         p.permission_comment AS permissionComment,
+         p.permission_status AS permissionstatus,
+         p.createtime AS createtime
     </sql>
 
     <select id="listPermissionByUser" parameterType="com.libbytian.pan.system.model.SystemTemplateModel" resultType="com.libbytian.pan.system.model.SystemPermissionModel">
@@ -25,7 +25,7 @@
         <include refid="Base_Column_List"/>
         FROM sys_permission p
         LEFT JOIN role_permission r ON  p.permission_id = r.permission_id
-        LEFT JOIN  sys_user_role ur ON r.role_id = ur.role_id
+        LEFT JOIN sys_user_role ur ON r.role_id = ur.role_id
         LEFT JOIN sys_user u ON ur.user_id = u.user_id
         <trim prefix="where" prefixOverrides="and|">
             <if test="userId != null and userId != ''">
@@ -46,8 +46,8 @@
             <if test="status != null and status != ''">
                 AND u.status =#{status}
             </if>
-            <if test="acttime != null and acttime != ''">
-                AND u.act_time =#{acttime}
+            <if test="actTime != null and actTime != ''">
+                AND u.act_time =#{actTime}
             </if>
             <if test="actrange != null and actrange != ''">
                 AND u.act_range =#{actrange}

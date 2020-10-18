@@ -1,5 +1,6 @@
 package com.libbytian.pan.system.controller;
 
+import cn.hutool.core.lang.UUID;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.server.HttpServerRequest;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -10,8 +11,10 @@ import com.libbytian.pan.system.common.AjaxResult;
 import com.libbytian.pan.system.model.SystemTemDetailsModel;
 import com.libbytian.pan.system.model.SystemTemplateModel;
 import com.libbytian.pan.system.model.SystemUserModel;
+import com.libbytian.pan.system.model.SystemUserToTemplate;
 import com.libbytian.pan.system.service.ISystemTemplateService;
 import com.libbytian.pan.system.service.ISystemTmplToTmplDetailsService;
+import com.libbytian.pan.system.service.ISystemUserService;
 import com.libbytian.pan.system.service.ISystemUserToTemplateService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,6 +34,7 @@ import java.util.List;
 public class TemplateController {
 
     private final ISystemTemplateService iSystemTemplateService;
+    private final ISystemUserService iSystemUserService;
     private final ISystemTmplToTmplDetailsService iSystemTmplToTmplDetailsService;
     private final ISystemUserToTemplateService iSystemUserToTemplateService;
 
@@ -73,19 +78,19 @@ public class TemplateController {
 
     /**
      * 删除模板
-     * @param systemTemplateModel
+     * @param tempid
      * @return
      */
-    @RequestMapping(value = "/drop", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/drop/{tempid}", method = RequestMethod.DELETE)
     @Transactional
-    public AjaxResult removeTemplate( @RequestBody(required = true) SystemTemplateModel systemTemplateModel) {
+    public AjaxResult removeTemplate( @PathVariable(value = "tempid") String tempid){
 
         try {
             QueryWrapper queryWrapper = new QueryWrapper();
-            queryWrapper.eq("template_id", systemTemplateModel.getTemplateid());
+            queryWrapper.eq("template_id",tempid);
 //            1. 删除用户模板关联表中用
             iSystemUserToTemplateService.remove(queryWrapper);
-            boolean isRemove = iSystemTemplateService.removeById(systemTemplateModel.getTemplateid());
+            boolean isRemove = iSystemTemplateService.removeById(tempid);
             // 2. 删除模板
             // 3. 删除模板详细
             if(isRemove){
@@ -100,6 +105,32 @@ public class TemplateController {
 
 
     /**
+     * 获取用户所有的模板
+     *
+     * @return
+     */
+    @RequestMapping(value = "getuser", method = RequestMethod.GET)
+    public AjaxResult getuserTemplate(HttpServletRequest httpServletRequest) {
+
+        try {
+            SystemUserModel systemUserModel = new SystemUserModel();
+            systemUserModel.setUsername(httpServletRequest.getRemoteUser());
+            List<SystemTemplateModel> result = iSystemTemplateService.listTemplatelByUser(systemUserModel);
+            List<SystemTemplateModel> oldResult = new ArrayList<>();
+            for (SystemTemplateModel systemTemplateModel : result) {
+                QueryWrapper queryWrapper = new QueryWrapper();
+                queryWrapper.eq("template_id", systemTemplateModel.getTemplateid());
+                systemTemplateModel.setDetialsize(iSystemTmplToTmplDetailsService.count(queryWrapper));
+                oldResult.add(systemTemplateModel);
+            }
+            return AjaxResult.success(oldResult);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return AjaxResult.error(e.getMessage());
+        }
+    }
+
+    /**
      * 更新模板模板
      * @param systemTemplateModel
      * @return
@@ -109,6 +140,9 @@ public class TemplateController {
     public AjaxResult updateTemplate(@RequestBody(required = true) SystemTemplateModel systemTemplateModel) {
 
         try {
+            if(StrUtil.isBlank(systemTemplateModel.getTemplateid())){
+                return AjaxResult.error("不能为空");
+            }
             boolean isupdate = iSystemTemplateService.updateById(systemTemplateModel);
             if(isupdate){
                 return AjaxResult.success();
@@ -122,27 +156,64 @@ public class TemplateController {
 
 
 
+//    /**
+//     * 获取用户所有的模板
+//     *
+//     * @return
+//     */
+//    @RequestMapping(value = "getusertemplate", method = RequestMethod.POST)
+//    public AjaxResult getuserTemplate(@RequestBody SystemUserModel systemUserModel) {
+//
+//        try {
+//            List<SystemTemplateModel> result = iSystemTemplateService.listTemplatelByUser(systemUserModel);
+//            List<SystemTemplateModel> oldResult = new ArrayList<>();
+//            for (SystemTemplateModel systemTemplateModel : result) {
+//                QueryWrapper queryWrapper = new QueryWrapper();
+//                queryWrapper.eq("template_id", systemTemplateModel.getTemplateid());
+//                systemTemplateModel.setDetialsize(iSystemTmplToTmplDetailsService.count(queryWrapper));
+//                oldResult.add(systemTemplateModel);
+//            }
+//            return AjaxResult.success(oldResult);
+//        } catch (Exception e) {
+//            return AjaxResult.error(e.getMessage());
+//        }
+//    }
+
+
     /**
-     * 获取用户所有的模板
+     * 新增用户模板表
      *
+     * @param
      * @return
      */
-    @RequestMapping(value = "getusertemplate", method = RequestMethod.POST)
-    public AjaxResult getuserTemplate(@RequestBody SystemUserModel systemUserModel) {
+    @RequestMapping(value = "/addtouser", method = RequestMethod.POST)
+    @Transactional
+    public AjaxResult finduserTemplate(HttpServletRequest httpRequest, @RequestBody(required = true) SystemTemplateModel systemTemplateModel) {
 
         try {
-            List<SystemTemplateModel> result = iSystemTemplateService.listTemplatelByUser(systemUserModel);
-            List<SystemTemplateModel> oldResult = new ArrayList<>();
-            for (SystemTemplateModel systemTemplateModel : result) {
-                QueryWrapper queryWrapper = new QueryWrapper();
-                queryWrapper.eq("template_id", systemTemplateModel.getTemplateid());
-                systemTemplateModel.setDetialsize(iSystemTmplToTmplDetailsService.count(queryWrapper));
-                oldResult.add(systemTemplateModel);
-            }
-            return AjaxResult.success(oldResult);
+            String uuid = UUID.randomUUID().toString();
+            systemTemplateModel.setTemplateid(uuid);
+            systemTemplateModel.setTemplatecreatetime(LocalDateTime.now());
+            iSystemTemplateService.save(systemTemplateModel);
+
+            /**
+             * 插入模板 后  用户绑定 用户模板表
+             */
+            String username = httpRequest.getRemoteUser();
+            SystemUserModel userModel = new SystemUserModel();
+            userModel.setUsername(username);
+            SystemUserModel systemUserModel = iSystemUserService.getUser(userModel);
+
+            SystemUserToTemplate systemUserToTemplate = new SystemUserToTemplate();
+            systemUserToTemplate.setUserId(systemUserModel.getUserId());
+            systemUserToTemplate.setTemplateId(uuid);
+            systemUserToTemplate.setUserTemplateStatus(true);
+            iSystemUserToTemplateService.save(systemUserToTemplate);
+            return AjaxResult.success();
+
         } catch (Exception e) {
+            log.error(e.getMessage());
             return AjaxResult.error(e.getMessage());
         }
     }
-
 }

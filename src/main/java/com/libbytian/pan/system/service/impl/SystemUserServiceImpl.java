@@ -52,14 +52,17 @@ public class SystemUserServiceImpl extends ServiceImpl<SystemUserMapper, SystemU
         return systemUserMapper.listUsers(systemUserModel);
     }
 
+
+
     /**
      * 设置所有通过注册的用户均为普通用户，用户权限变更需要在管理端进行配置
+     *
      * @param user
      * @return`
      */
 
     @Override
-    public SystemUserModel register(SystemUserModel user)  throws Exception{
+    public SystemUserModel register(SystemUserModel user) throws Exception {
         user.setStatus(true);
         user.setCreateTime(LocalDateTime.now());
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
@@ -118,7 +121,7 @@ public class SystemUserServiceImpl extends ServiceImpl<SystemUserMapper, SystemU
             throw new Exception("用户名不能为空");
         }
 
-        LocalDateTime actTime = systemUserMapper.getUser(user).getActtime();
+        LocalDateTime actTime = systemUserMapper.getUser(user).getActTime();
 
     //如果有传入续费时长，则更新到期时间
         if(user.getActrange() != null && user.getActrange() > 0) {
@@ -132,7 +135,7 @@ public class SystemUserServiceImpl extends ServiceImpl<SystemUserMapper, SystemU
                 nowtime = actTime.plus(user.getActrange(), ChronoUnit.MONTHS);
             }
             //更新到期时间
-            user.setActtime(nowtime);
+            user.setActTime(nowtime);
         }
 
 
@@ -191,7 +194,38 @@ public class SystemUserServiceImpl extends ServiceImpl<SystemUserMapper, SystemU
 
     }
 
+    /**
+     * 校验用户状态， 启用状态，付费用户，是否存在
+     *
+     * @param
+     * @return
+     */
+    @Override
+    public boolean checkUserStatus(SystemUserModel user) throws Exception {
 
+        // 判断该用户是否存在
+        // 如果存在 ，判断该用户付费剩余时长
+        SystemUserModel systemUserModel = systemUserMapper.selectOneUserModel(user);
+        if (systemUserModel == null) {
+            throw new Exception("该用户不存在");
+        }
 
+        List<SystemRoleModel> systemRoleModels = systemRoleService.getRoleInfoByUser(user);
+
+        //如果不包含付费用户
+        for (SystemRoleModel systemRoleModel : systemRoleModels) {
+            // 如果是付费用户 则判断付费是否过期
+            if (systemRoleModel.getRoleName().contains("ROLE_PAYUSER")) {
+                LocalDateTime actTime = systemUserModel.getActTime();
+                if (actTime.isBefore(LocalDateTime.now())) {
+                    throw new Exception("你的付费时长已过期，请续费使用");
+                }else{
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
 
 }

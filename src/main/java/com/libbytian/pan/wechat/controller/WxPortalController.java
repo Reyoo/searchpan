@@ -1,6 +1,5 @@
 package com.libbytian.pan.wechat.controller;
 
-
 import com.libbytian.pan.system.model.SystemTemDetailsModel;
 import com.libbytian.pan.system.model.SystemTemplateModel;
 import com.libbytian.pan.system.model.SystemUserModel;
@@ -8,7 +7,6 @@ import com.libbytian.pan.system.service.ISystemTemDetailsService;
 import com.libbytian.pan.system.service.ISystemTemplateService;
 
 import com.libbytian.pan.system.service.ISystemUserService;
-import com.libbytian.pan.system.util.UserIdentity;
 import com.libbytian.pan.wechat.service.AsyncSearchCachedServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -89,13 +87,11 @@ public class WxPortalController {
 
             SystemUserModel systemUserModel = new SystemUserModel();
             systemUserModel.setUsername(username);
-
+            iSystemUserService.checkUserStatus(systemUserModel);
             if(iSystemUserService.getUser(systemUserModel) == null){
                 return "无此接口认证权限，请联系管理员！";
             }
 
-            UserIdentity userIdentity = new UserIdentity();
-            userIdentity.isVip(systemUserModel);
 
         }catch (Exception e){
             return e.getMessage();

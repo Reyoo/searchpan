@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.libbytian.pan.system.model.SystemTemDetailsModel;
 import com.libbytian.pan.system.model.SystemTemplateModel;
+import com.libbytian.pan.system.model.SystemUserModel;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Options;
@@ -27,6 +28,8 @@ public interface SystemTemDetailsMapper extends BaseMapper<SystemTemDetailsModel
 
 
     List<SystemTemDetailsModel> getTemDetails(SystemTemplateModel systemTemplateModel);
+
+    List<SystemTemDetailsModel> findTemDetailsByUser(SystemUserModel systemUserModel);
 
 
 }

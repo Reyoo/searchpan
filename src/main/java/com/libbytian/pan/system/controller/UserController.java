@@ -8,12 +8,14 @@ import com.libbytian.pan.system.common.AjaxResult;
 import com.libbytian.pan.system.model.*;
 import com.libbytian.pan.system.service.*;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -179,65 +181,30 @@ public class UserController {
 
 
 
-    /**
-     * 更新用户模板表
-     *
-     * @param systemUserToTemplates
-     * @return
-     */
-    @RequestMapping(value = "/addusertotemplate", method = RequestMethod.POST)
-    public AjaxResult finduserTemplate(@RequestBody List<SystemUserToTemplate> systemUserToTemplates) {
+//    /**
+//     * 更新用户模板表
+//     *
+//     * @param systemUserToTemplates
+//     * @return
+//     */
+//    @RequestMapping(value = "/freshusertemp", method = RequestMethod.POST)
+//    public AjaxResult finduserTemplate(@RequestBody List<SystemUserToTemplate> systemUserToTemplates) {
+//
+//        //临时设置，更新用户模板表时把status默认设为0,如sun7有更好的实现，可删除
+//        for (SystemUserToTemplate userToTemplate : systemUserToTemplates) {
+//            userToTemplate.setUserTemplateStatus(false);
+//        }
+//        try {
+//            iSystemUserToTemplateService.removeByIds(systemUserToTemplates.stream().map(SystemUserToTemplate::getUserTotemplateId).collect(Collectors.toList()));
+//            return AjaxResult.success(iSystemUserToTemplateService.saveBatch(systemUserToTemplates));
+//
+//        } catch (Exception e) {
+//            return AjaxResult.error(e.getMessage());
+//        }
+//    }
 
-        //临时设置，更新用户模板表时把status默认设为0,如sun7有更好的实现，可删除
-        for (SystemUserToTemplate userToTemplate : systemUserToTemplates) {
-            userToTemplate.setUserTemplateStatus(false);
-        }
-        try {
-            iSystemUserToTemplateService.removeByIds(systemUserToTemplates.stream().map(SystemUserToTemplate::getUserTotemplateId).collect(Collectors.toList()));
-            return AjaxResult.success(iSystemUserToTemplateService.saveBatch(systemUserToTemplates));
-
-        } catch (Exception e) {
-            return AjaxResult.error(e.getMessage());
-        }
-    }
 
 
-    /**
-     * 新增用户模板表
-     *
-     * @param
-     * @return
-     */
-    @RequestMapping(value = "/addtemplatetouser", method = RequestMethod.POST)
-    @Transactional
-    public AjaxResult finduserTemplate(HttpServletRequest httpRequest, @RequestBody(required = true) SystemTemplateModel systemTemplateModel) {
-
-        try {
-            String uuid = UUID.randomUUID().toString();
-            systemTemplateModel.setTemplateid(uuid);
-            systemTemplateModel.setTemplatecreatetime(LocalDateTime.now());
-            iSystemTemplateService.save(systemTemplateModel);
-
-            /**
-             * 插入模板 后  用户绑定 用户模板表
-             */
-            String username = httpRequest.getRemoteUser();
-            SystemUserModel userModel = new SystemUserModel();
-            userModel.setUsername(username);
-            SystemUserModel systemUserModel = iSystemUserService.getUser(userModel);
-
-            SystemUserToTemplate systemUserToTemplate = new SystemUserToTemplate();
-            systemUserToTemplate.setUserId(systemUserModel.getUserId());
-            systemUserToTemplate.setTemplateId(uuid);
-            systemUserToTemplate.setUserTemplateStatus(true);
-            iSystemUserToTemplateService.save(systemUserToTemplate);
-            return AjaxResult.success();
-
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            return AjaxResult.error(e.getMessage());
-        }
-    }
 
 
 }

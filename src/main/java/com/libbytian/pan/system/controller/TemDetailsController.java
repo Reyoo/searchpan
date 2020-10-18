@@ -1,5 +1,6 @@
 package com.libbytian.pan.system.controller;
 
+import cn.hutool.core.lang.UUID;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.core.util.URLUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -13,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -33,8 +35,6 @@ import java.util.regex.Matcher;
 public class TemDetailsController {
 
     private final ISystemTemDetailsService iSystemTemDetailsService;
-    private final ISystemTemplateService iSystemTemplateService;
-
 
 
     /**
@@ -43,7 +43,7 @@ public class TemDetailsController {
      * @param limit
      * @return
      */
-    @RequestMapping(value = "/gettempwithid", method = RequestMethod.GET)
+    @RequestMapping(value = "/getTempWithId", method = RequestMethod.GET)
     public AjaxResult findTemDetails(@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int limit, @RequestParam String templateId) {
 
         Page<SystemTemDetailsModel> findpage = new Page<>(page, limit);
@@ -108,8 +108,8 @@ public class TemDetailsController {
      * @param
      * @return
      */
-    @RequestMapping(value = "/removeTemDetails", method = RequestMethod.DELETE)
-    public AjaxResult deleteTemDetails(@RequestParam String temdetailsId) {
+    @RequestMapping(value = "/removeTemDetails/{temdetailsId}", method = RequestMethod.DELETE)
+    public AjaxResult deleteTemDetails(@PathVariable(value ="temdetailsId" ) String temdetailsId) {
         try {
             if(iSystemTemDetailsService.removeById(temdetailsId)){
                 return AjaxResult.success("删除成功");
@@ -126,20 +126,20 @@ public class TemDetailsController {
     /**
      * 导入excel入库并绑定模板ID
      * @param multipartFile
-     * @param templateId
      * @return
      */
     @RequestMapping(value = "/excelimport", method = RequestMethod.POST)
-    public AjaxResult addTemDetails(@RequestBody MultipartFile multipartFile,@RequestParam String templateId) {
+    public AjaxResult addTemDetails( @RequestParam("file")  MultipartFile multipartFile) {
         try {
             if(multipartFile.isEmpty()){
                 return AjaxResult.error("上传失败，请选择文件");
             }
+            String templateId = UUID.fastUUID().toString();
             iSystemTemDetailsService.exportExceltoDb(multipartFile.getOriginalFilename(),multipartFile.getInputStream(),templateId);
             return AjaxResult.success();
         }catch (Exception e){
             log.error(e.getMessage());
-            return AjaxResult.error(e.getMessage());
+            return AjaxResult.error("上传失败，请选择文件");
         }
     }
 
