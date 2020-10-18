@@ -1,6 +1,7 @@
 package com.libbytian.pan.system.security.simple;
 
 import com.libbytian.pan.system.model.SystemPermissionModel;
+import com.libbytian.pan.system.model.SystemUserModel;
 import com.libbytian.pan.system.service.ISystemPermissionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
@@ -63,9 +64,13 @@ public class AccessDecisionService {
         }
 
         UserDetails user = (UserDetails) auth.getPrincipal();
-        String userName = user.getUsername();
+///        String userName = user.getUsername();
+        SystemUserModel userModel = new SystemUserModel();
+        userModel.setUsername(user.getUsername());
+
         //根据用户名查出能访问哪些url, urls=findUrlByUserName()
-        List<String> urls = queryUrlByUserName(userName);
+//        List<String> urls = queryUrlByUserName(userName);
+        List<String> urls = queryUrlByUser(userModel);
         for (String url : urls) {
             if (antPathMatcher.match(url, request.getRequestURI())) {
                 return true;
@@ -76,15 +81,15 @@ public class AccessDecisionService {
 
     /**
      * 数据库查询用户权限
-     * @param userName
+     * @param systemUserModel
      * @return
      */
-    private List<String> queryUrlByUserName(String userName) {
+    private List<String> queryUrlByUser(SystemUserModel systemUserModel) {
         try {
             /**
              * 根据用户获取权限entry
              */
-            List<SystemPermissionModel> systemPermissionModelList = iSystemPermissionService.getPermissionByUsername(userName);
+            List<SystemPermissionModel> systemPermissionModelList = iSystemPermissionService.listPermissionByUser(systemUserModel);
             /**
              * 重排序获取url
              */

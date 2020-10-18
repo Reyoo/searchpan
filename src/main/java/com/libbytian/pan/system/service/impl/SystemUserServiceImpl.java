@@ -10,7 +10,6 @@ import com.libbytian.pan.system.mapper.SystemUserMapper;
 import com.libbytian.pan.system.model.*;
 import com.libbytian.pan.system.service.*;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -43,10 +42,14 @@ public class SystemUserServiceImpl extends ServiceImpl<SystemUserMapper, SystemU
     private final ISystemTemplateService systemTemplateService;
 
 
+    @Override
+    public SystemUserModel getUser(SystemUserModel systemUserModel) {
+        return systemUserMapper.getUser(systemUserModel);
+    }
 
     @Override
-    public SystemUserModel getUserByUserName(String username)   {
-        return systemUserMapper.selectUserByUsername(username);
+    public List<SystemUserModel> listUsers(SystemUserModel systemUserModel) {
+        return systemUserMapper.listUsers(systemUserModel);
     }
 
     /**
@@ -73,10 +76,14 @@ public class SystemUserServiceImpl extends ServiceImpl<SystemUserMapper, SystemU
          * 3. 拿着 默认模板id=1 绑定用户id
          */
 
-        SystemRoleModel systemRoleModel = systemRoleService.getRoleByRolename("ROLE_NORMAL");
+
+        SystemRoleModel systemRoleModel = new SystemRoleModel();
+        systemRoleModel.setRoleName("ROLE_NORMAL");
+
+        SystemRoleModel roleModel = systemRoleService.getRoles(systemRoleModel);
 
         if (result) {
-            SystemUserToRole userToRole  = SystemUserToRole.builder().userId(user.getUserId()).roleId(systemRoleModel.getRoleId()).build();
+            SystemUserToRole userToRole  = SystemUserToRole.builder().userId(user.getUserId()).roleId(roleModel.getRoleId()).build();
             userToRoleService.save(userToRole);
           //新增模板,存入模板表 sys_template
             String uuid = UUID.randomUUID().toString();
@@ -94,17 +101,12 @@ public class SystemUserServiceImpl extends ServiceImpl<SystemUserMapper, SystemU
         return user;
     }
 
-    /**
-     * 查询用户是否存在
-     * @param username
-     * @return
-     */
+
+
     @Override
-    public int selectByName(String username) throws Exception {
+    public void removeUserAll(SystemUserModel user) {
 
-        int count = systemUserMapper.selectByName(username);
-
-        return count;
+        systemUserMapper.removeUserAll(user);
 
     }
 
@@ -116,7 +118,7 @@ public class SystemUserServiceImpl extends ServiceImpl<SystemUserMapper, SystemU
             throw new Exception("用户名不能为空");
         }
 
-        LocalDateTime actTime = systemUserMapper.findActTime(user.getUsername());
+        LocalDateTime actTime = systemUserMapper.getUser(user).getActtime();
 
     //如果有传入续费时长，则更新到期时间
         if(user.getActrange() != null && user.getActrange() > 0) {
@@ -136,7 +138,7 @@ public class SystemUserServiceImpl extends ServiceImpl<SystemUserMapper, SystemU
 
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         String encode = encoder.encode(user.getPassword());
-        SystemUserModel olduser = systemUserMapper.selectUserByUsername(user.getUsername());
+        SystemUserModel olduser = systemUserMapper.getUser(user);
         user.setUserId( olduser.getUserId());
         user.setPassword(encode);
         boolean result = this.saveOrUpdate(user);
@@ -189,17 +191,6 @@ public class SystemUserServiceImpl extends ServiceImpl<SystemUserMapper, SystemU
 
     }
 
-    @Override
-    public SystemUserModel findByUsername(String username) throws Exception {
-        return systemUserMapper.selectUserByUsername(username);
-    }
-
-
-    @Override
-    public List<SystemTemplateModel> findTemplateById(String username) {
-
-        return systemUserMapper.findTemplateById(username);
-    }
 
 
 

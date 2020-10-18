@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.libbytian.pan.system.mapper.UserMapper">
+<mapper namespace="com.libbytian.pan.system.mapper.SystemUserMapper">
 
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.libbytian.pan.system.model.SystemUserModel">
@@ -10,21 +10,94 @@
         <result column="user_password" property="password"/>
         <result column="user_last_login_time" property="lastLoginTime"/>
         <result column="createTime" property="createTime"/>
-        <result column="status" property="status"/>
-
+        <result column="act_time" property="acttime"/>
+        <result column="act_range" property="actrange"/>
     </resultMap>
 
-<!--    &lt;!&ndash; 通用查询结果列 &ndash;&gt;
+
+    <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-         userid AS userId,
+         user_id AS userId,
          user_name AS username,
          user_mobile AS mobile ,
          user_password AS password,
          user_last_login_time AS lastLoginTime,
          createTime,
-         status
-    </sql>-->
-<!--    selectUser-->
+         status,
+         act_time AS acttime,
+         act_range AS actrange
+    </sql>
+
+
+    <select id="getUser" parameterType="com.libbytian.pan.system.model.SystemUserModel"
+            resultType="com.libbytian.pan.system.model.SystemUserModel">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM sys_user u
+        <trim prefix="where" prefixOverrides="and|">
+            <if test="userId != null and userId != ''">
+                AND u.user_id= #{userId}
+            </if>
+            <if test="username != null and username != ''">
+                AND u.user_name =#{username}
+            </if>
+            <if test="mobile != null and mobile != ''">
+                AND u.user_mobile =#{mobile}
+            </if>
+            <if test="lastLoginTime != null and lastLoginTime != ''">
+                AND u.user_last_login_time =#{lastLoginTime}
+            </if>
+            <if test="createTime != null and createTime != ''">
+                AND u.createTime =#{createTime}
+            </if>
+            <if test="status != null and status != ''">
+                AND u.status =#{status}
+            </if>
+            <if test="acttime != null and acttime != ''">
+                AND u.act_time =#{acttime}
+            </if>
+            <if test="actrange != null and actrange != ''">
+                AND u.act_range =#{actrange}
+            </if>
+        </trim>
+
+    </select>
+
+    <select id="listUsers" parameterType="com.libbytian.pan.system.model.SystemUserModel"
+            resultType="com.libbytian.pan.system.model.SystemUserModel">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM sys_user u
+        <trim prefix="where" prefixOverrides="and|">
+            <if test="userId != null and userId != ''">
+                AND u.user_id= #{userId}
+            </if>
+            <if test="username != null and username != ''">
+                AND u.user_name =#{username}
+            </if>
+            <if test="mobile != null and mobile != ''">
+                AND u.user_mobile =#{mobile}
+            </if>
+            <if test="lastLoginTime != null and lastLoginTime != ''">
+                AND u.user_last_login_time =#{lastLoginTime}
+            </if>
+            <if test="createTime != null and createTime != ''">
+                AND u.createTime =#{createTime}
+            </if>
+            <if test="status != null and status != ''">
+                AND u.status =#{status}
+            </if>
+            <if test="acttime != null and acttime != ''">
+                AND u.act_time =#{acttime}
+            </if>
+            <if test="actrange != null and actrange != ''">
+                AND u.act_range =#{actrange}
+            </if>
+        </trim>
+
+    </select>
+
+    
 
     <!-- set 元素可以用于动态包含需要更新的列，忽略其它不更新的列 -->
 <!--    <update id="updateUser" parameterType="com.libbytian.pan.system.model.SystemUserModel" >-->

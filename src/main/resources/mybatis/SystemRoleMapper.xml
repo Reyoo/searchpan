@@ -12,11 +12,108 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        role_id AS roleId,
-         role_name AS roleName,
-         role_status AS roleStatus
+         r.role_id AS roleId,
+         r.role_name AS roleName,
+         r.show_name AS showName,
+         r.role_status AS roleStatus,
+         r.createtime AS createTime
     </sql>
 
+
+
+
+    <select id="getRoles" parameterType="com.libbytian.pan.system.model.SystemRoleModel"
+            resultType="com.libbytian.pan.system.model.SystemRoleModel">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM sys_role r
+        <trim prefix="where" prefixOverrides="and|">
+            <if test="roleId != null and userId != ''">
+                AND r.role_id= #{roleId}
+            </if>
+            <if test="roleName != null and username != ''">
+                AND r.role_name =#{roleName}
+            </if>
+            <if test="showName != null and mobile != ''">
+                AND r.show_name =#{showName}
+            </if>
+            <if test="roleStatus != null and lastLoginTime != ''">
+                AND r.role_status =#{roleStatus}
+            </if>
+            <if test="createTime != null and createTime != ''">
+                AND r.createtime =#{createTime}
+            </if>
+
+        </trim>
+
+    </select>
+
+
+    <select id="getRolesPage" parameterType="com.libbytian.pan.system.model.SystemRoleModel"
+            resultType="com.libbytian.pan.system.model.SystemRoleModel">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM sys_role r
+        <trim prefix="where" prefixOverrides="and|">
+            <if test="roleId != null and userId != ''">
+                AND r.role_id= #{roleId}
+            </if>
+            <if test="roleName != null and username != ''">
+                AND r.role_name =#{roleName}
+            </if>
+            <if test="showName != null and mobile != ''">
+                AND r.show_name =#{showName}
+            </if>
+            <if test="roleStatus != null and lastLoginTime != ''">
+                AND r.role_status =#{roleStatus}
+            </if>
+            <if test="createTime != null and createTime != ''">
+                AND r.createtime =#{createTime}
+            </if>
+
+        </trim>
+
+    </select>
+
+
+
+
+
+    <select id="listRolesByUser" parameterType="com.libbytian.pan.system.model.SystemUserModel"
+            resultType="com.libbytian.pan.system.model.SystemRoleModel">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM sys_role r
+        LEFT JOIN sys_user_role ur ON r.role_id = ur.role_id
+        LEFT JOIN sys_user u ON ur.user_id = u.user_id
+        <trim prefix="where" prefixOverrides="and|">
+            <if test="userId != null and userId != ''">
+                AND u.user_id= #{userId}
+            </if>
+            <if test="username != null and username != ''">
+                AND u.user_name =#{username}
+            </if>
+            <if test="mobile != null and mobile != ''">
+                AND u.user_mobile =#{mobile}
+            </if>
+            <if test="lastLoginTime != null and lastLoginTime != ''">
+                AND u.user_last_login_time =#{lastLoginTime}
+            </if>
+            <if test="createTime != null and createTime != ''">
+                AND u.createTime =#{createTime}
+            </if>
+            <if test="status != null and status != ''">
+                AND u.status =#{status}
+            </if>
+            <if test="acttime != null and acttime != ''">
+                AND u.act_time =#{acttime}
+            </if>
+            <if test="actrange != null and actrange != ''">
+                AND u.act_range =#{actrange}
+            </if>
+        </trim>
+
+    </select>
 
 
 

@@ -13,10 +13,9 @@ public interface SystemUserToTemplateMapper extends BaseMapper<SystemUserToTempl
 
 
     /**
-     * 不知道有啥用，先写着看，随时可删除
+     * 通过用户ID查询绑定模板信息，看起来没啥用，感觉可删除
      * @param userId
      * @return
      */
-    @Select("select user_template_id AS userTotemplateId ,user_id,role_id, user_template_status from user_template where user_id = #{0}")
-    List<SystemUserToRole> selectUserByUserid(String userId);
+    List<SystemUserToTemplate> listUserByUserid(String userId);
 }

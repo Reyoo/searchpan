@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.libbytian.pan.system.common.AjaxResult;
 import com.libbytian.pan.system.model.SystemPermissionModel;
-import com.libbytian.pan.system.service.IPermissionService;
+import com.libbytian.pan.system.service.ISystemPermissionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
@@ -15,8 +15,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/per")
 public class PermissionController {
 
-    private final IPermissionService iPermissionService;
-
+    private final ISystemPermissionService iSystemPermissionService;
 
     /**
      * 分页查询
@@ -30,7 +29,7 @@ public class PermissionController {
 
         Page<SystemPermissionModel> systemPermissionModelPage = new Page<>(page, limit);
         try {
-            IPage<SystemPermissionModel> result = iPermissionService.findPermission(systemPermissionModelPage, systemPermissionModel);
+            IPage<SystemPermissionModel> result = iSystemPermissionService.findPermission(systemPermissionModelPage, systemPermissionModel);
             return AjaxResult.success(result);
         } catch (Exception e) {
             return AjaxResult.error(e.getMessage());
@@ -47,7 +46,7 @@ public class PermissionController {
     public AjaxResult putPermission(@RequestBody SystemPermissionModel systemPermissionModel) {
 
         try {
-            iPermissionService.updateById( systemPermissionModel);
+            iSystemPermissionService.updateById( systemPermissionModel);
             return AjaxResult.success();
         } catch (Exception e) {
             return AjaxResult.error(e.getMessage());
@@ -56,15 +55,14 @@ public class PermissionController {
     }
 
     /**
-     * 删除
-     *
+     * 通过权限ID删除对应字段
      * @param permissionId
      * @return
      */
     @RequestMapping(value = "/dropper/{permissionId}", method = RequestMethod.DELETE)
     public AjaxResult dropPermission(@PathVariable  @NonNull String permissionId) {
         try {
-            iPermissionService.dropPermission(permissionId);
+            iSystemPermissionService.removeById(permissionId);
             return AjaxResult.success();
         } catch (Exception e) {
             return AjaxResult.error(e.getMessage());
@@ -72,9 +70,10 @@ public class PermissionController {
 
     }
 
+
+
     /**
-     * 添加
-     *
+     * 添加权限
      * @param permission
      * @return
      */
@@ -82,7 +81,7 @@ public class PermissionController {
     public AjaxResult addPermission(@RequestBody SystemPermissionModel permission) {
 
         try {
-            int result = iPermissionService.addPermission(permission);
+            int result = iSystemPermissionService.savePermission(permission);
             if (result == 1) {
                 return AjaxResult.success();
             } else {

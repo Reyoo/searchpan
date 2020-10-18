@@ -2,6 +2,8 @@ package com.libbytian.pan.system.security.filter;
 
 import com.alibaba.druid.util.StringUtils;
 import com.libbytian.pan.system.exception.ImageCodeException;
+import com.libbytian.pan.system.model.SystemRoleModel;
+import com.libbytian.pan.system.model.SystemUserModel;
 import com.libbytian.pan.system.util.PanHttpUtil;
 import com.libbytian.pan.system.mapper.SystemRoleMapper;
 import com.libbytian.pan.system.mapper.SystemUserMapper;
@@ -23,6 +25,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * @author niXueChao
@@ -43,10 +46,6 @@ public class JwtLoginFilter extends AbstractAuthenticationProcessingFilter {
 
     @Autowired
     private ISystemRoleService iSystemRoleService;
-
-
-
-
 
 
     /**
@@ -78,7 +77,8 @@ public class JwtLoginFilter extends AbstractAuthenticationProcessingFilter {
            /**
             * 登录用户身份及过期验证
             */
-           isVip(userName);
+           SystemUserModel systemUserModel = new SystemUserModel();
+           isVip(systemUserModel);
 
 
            String realIp = PanHttpUtil.getIpAddress(request);
@@ -143,30 +143,35 @@ public class JwtLoginFilter extends AbstractAuthenticationProcessingFilter {
 
     /**
      * 判断是否为付费用户并且仍在付费使用期
-     * @param username
+     * @param systemUserModel
      * @return
      */
-    private void isVip(String username) throws Exception {
+    private void isVip(SystemUserModel systemUserModel) throws Exception {
 
 
-        //查询用户是否为付费用户
-
-//      String[] userToRoleId = iSystemRoleService.getRoleIdByUsername(username);
-
-        String[] userToRoleId = systemRoleMapper.getRoleIdByUsername(username);
+        //查询用户
+        List<SystemRoleModel> roleModel = systemRoleMapper.listRolesByUser(systemUserModel);
 
         //查询用户权限到期时间
-        LocalDateTime actTime = systemUserMapper.findActTime(username);
+        LocalDateTime actTime = systemUserMapper.getUser(systemUserModel).getActtime();
 
-        //判断用户是否为付费用户
-        if( !Arrays.asList(userToRoleId).contains("3")){
+
+        //判断是否为管理员
+        if (!roleModel.stream().filter(role->String.valueOf(role.getRoleName()).equals("ROLE_ADMIN")).findAny().isPresent()){
+
+            //判断是否为付费用户
+            if (!roleModel.stream().filter(role->String.valueOf(role.getRoleName()).equals("ROLE_PAYUSER")).findAny().isPresent()){
                 throw new Exception("请升级到付费用户");
+            }
+
+            //判断付费用户是否到期
+            if (actTime.isBefore(LocalDateTime.now())){
+                throw new Exception("你的付费时长已过期，请续费使用");
+            }
         }
 
-        //判断付费用户是否到期
-        if (actTime.isBefore(LocalDateTime.now())){
-            throw new Exception("你的付费时长已过期，请续费使用");
-        }
+
+
 
     }
 

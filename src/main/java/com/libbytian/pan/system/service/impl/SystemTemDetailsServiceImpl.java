@@ -2,6 +2,8 @@ package com.libbytian.pan.system.service.impl;
 
 import cn.hutool.core.lang.UUID;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.libbytian.pan.system.mapper.SystemTemDetailsMapper;
 import com.libbytian.pan.system.model.SystemTemDetailsModel;
@@ -44,6 +46,24 @@ public class SystemTemDetailsServiceImpl extends ServiceImpl<SystemTemDetailsMap
     private final SystemTemDetailsMapper systemTemDetailsMapper;
     private final ISystemTmplToTmplDetailsService iSystemTmplToTmplDetailsService;
     private final ISystemTemplateService iSystemTemplateService;
+
+
+    @Override
+    public IPage<SystemTemDetailsModel> findTemDetailsPage(Page page, String templateId) throws Exception {
+        return systemTemDetailsMapper.selectTemDetailsPage(page,templateId);
+    }
+
+    /**
+     * 不分页查询
+     * @param
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public List<SystemTemDetailsModel> getTemDetails(SystemTemplateModel systemTemplateModel) throws Exception {
+        return systemTemDetailsMapper.getTemDetails(systemTemplateModel);
+    }
+
 
 
     /**

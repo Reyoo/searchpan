@@ -1,6 +1,7 @@
 package com.libbytian.pan.system.security.provider;
 
 import com.alibaba.fastjson.JSONObject;
+import com.libbytian.pan.system.model.SystemUserModel;
 import com.libbytian.pan.system.security.model.ResultExceptionModel;
 import com.libbytian.pan.system.security.filter.JwtLoginToken;
 import lombok.extern.slf4j.Slf4j;
@@ -36,6 +37,10 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         String userName= authentication.getName();
+
+        SystemUserModel systemUserModel = new SystemUserModel();
+        systemUserModel.setUsername(userName);
+
 
         log.info("用户输入用户名为： ---->"  + authentication.getName());
         log.info("用户输入密码为： ---->"  + authentication.getCredentials());

@@ -16,14 +16,10 @@ import java.util.Map;
 public interface ISystemTemplateService extends IService<SystemTemplateModel> {
 
 
-     IPage<SystemTemDetailsModel> findTemDetailsPage(Page page,String templateId) throws Exception;
 
-     List<SystemTemDetailsModel> findTemDetails(String templateId) throws Exception;
-
-     List<SystemTemplateModel> getTemplateModelByUser(SystemUserModel systemUserModel) throws Exception;
+     List<SystemTemplateModel> listTemplatelByUser(SystemUserModel systemUserModel) throws Exception;
 
 
-     Map findTemNameAndSize();
 
 
 }

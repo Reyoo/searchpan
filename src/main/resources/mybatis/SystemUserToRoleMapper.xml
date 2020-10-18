@@ -12,11 +12,24 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id AS userToRoleId,
+         id AS userToRoleId,
          user_id AS userId,
          role_id AS roleId,
          user_role_status AS userRoleStatus
     </sql>
+
+
+    <select id="selectUserByUserid" parameterType="com.libbytian.pan.system.model.SystemUserToRole" resultType="com.libbytian.pan.system.model.SystemUserToRole">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM sys_user_role
+        <trim prefix="where" prefixOverrides="and|">
+        <if test="userId != null and userId != ''">
+        AND u.user_id= #{userId}
+        </if>
+        </trim>
+
+    </select>
 
 
 

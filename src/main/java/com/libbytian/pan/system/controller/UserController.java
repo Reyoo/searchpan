@@ -1,9 +1,7 @@
 package com.libbytian.pan.system.controller;
 
 import cn.hutool.core.lang.UUID;
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.libbytian.pan.system.common.AjaxResult;
@@ -18,7 +16,6 @@ import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 
@@ -67,8 +64,24 @@ public class UserController {
     @RequestMapping(value = "/delete/{id}", method = RequestMethod.DELETE)
     public AjaxResult deleteUser(@PathVariable String id) {
 
+
+        /**
+         * 未完成
+         * 多表删除用户ID数据
+         */
         try {
+            //删除用户
             iSystemUserService.removeById(id);
+            //删除用户绑定的角色
+            QueryWrapper queryRole =  new QueryWrapper<>();
+            queryRole.eq("user_id",id);
+            iSystemUserToRoleService.remove(queryRole);
+            //删除用户绑定的模板
+            QueryWrapper queryTem = new QueryWrapper<>();
+            queryTem.eq("user_id",id);
+            iSystemUserToTemplateService.remove(queryTem);
+
+
             return AjaxResult.success();
         } catch (Exception e) {
             return AjaxResult.error(e.getMessage());
@@ -94,7 +107,7 @@ public class UserController {
 
 
     /**
-     * 获取用户角色
+/     * 获取用户角色
      *
      * @param user
      * @return
@@ -161,28 +174,6 @@ public class UserController {
     }
 
 
-    /**
-     * 获取用户所有的模板
-     *
-     * @return
-     */
-    @RequestMapping(value = "getusertemplate", method = RequestMethod.GET)
-    public AjaxResult getuserTemplate(@RequestParam String username) {
-
-        try {
-            List<SystemTemplateModel> result = iSystemUserService.findTemplateById(username);
-            List<SystemTemplateModel> oldResult = new ArrayList<>();
-            for (SystemTemplateModel systemTemplateModel : result) {
-                QueryWrapper queryWrapper = new QueryWrapper();
-                queryWrapper.eq("template_id", systemTemplateModel.getTemplateid());
-                systemTemplateModel.setDetialsize(iSystemTmplToTmplDetailsService.count(queryWrapper));
-                oldResult.add(systemTemplateModel);
-            }
-            return AjaxResult.success(oldResult);
-        } catch (Exception e) {
-            return AjaxResult.error(e.getMessage());
-        }
-    }
 
 
     /**
@@ -221,14 +212,17 @@ public class UserController {
         try {
             String uuid = UUID.randomUUID().toString();
             systemTemplateModel.setTemplateid(uuid);
-            iSystemTemplateService.save(systemTemplateModel);
             systemTemplateModel.setTemplatecreatetime(LocalDateTime.now());
+            iSystemTemplateService.save(systemTemplateModel);
 
             /**
              * 插入模板 后  用户绑定 用户模板表
              */
-            String user = httpRequest.getRemoteUser();
-            SystemUserModel systemUserModel = iSystemUserService.findByUsername(user);
+            String username = httpRequest.getRemoteUser();
+            SystemUserModel userModel = new SystemUserModel();
+            userModel.setUsername(username);
+            SystemUserModel systemUserModel = iSystemUserService.getUser(userModel);
+
             SystemUserToTemplate systemUserToTemplate = new SystemUserToTemplate();
             systemUserToTemplate.setUserId(systemUserModel.getUserId());
             systemUserToTemplate.setTemplateId(uuid);

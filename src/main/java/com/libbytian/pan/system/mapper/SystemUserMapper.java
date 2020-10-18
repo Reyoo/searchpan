@@ -25,19 +25,15 @@ import java.util.List;
 @Repository
 public interface SystemUserMapper extends BaseMapper<SystemUserModel> {
 
-    @Select("SELECT user_id as userId,user_name as username,user_mobile as mobile,user_password as password,user_last_login_time AS lastLoginTime,createTime AS createTime,status AS status FROM sys_user WHERE user_name = #{0}")
-    SystemUserModel selectUserByUsername(String username);
+
+    SystemUserModel getUser(SystemUserModel systemUserModel);
+
+    List<SystemUserModel> listUsers(SystemUserModel systemUserModel);
 
 
-    @Select("SELECT COUNT(*) FROM sys_user WHERE user_name = #{username} ")
-    int selectByName(String username);
 
-    @Select("SELECT t.template_id AS templateid , template_name AS templatename , template_createtime AS templatecreatetime , template_lastupdate AS templatelastupdate , template_status AS templatestatus FROM sys_template t LEFT JOIN user_template ut ON t.template_id = ut.template_id LEFT JOIN sys_user u ON ut.user_id = u.user_id WHERE u.user_name = #{username}")
-    List<SystemTemplateModel> findTemplateById(String username);
-
-
-    @Select("SELECT act_time AS acttime FROM sys_user WHERE user_name = #{username}")
-    LocalDateTime findActTime(String username);
+    @Delete("DELETE u,ur,ut FROM sys_user u LEFT JOIN sys_user_role ur ON u.user_id = ur.user_id LEFT JOIN user_template ut ON u.user_id = ut.user_id WHERE u.user_id = '60'")
+    void removeUserAll(SystemUserModel user);
 
 
 }

@@ -15,7 +15,7 @@ import java.util.List;
 @Mapper
 public interface SystemUserToRoleMapper extends BaseMapper<SystemUserToRole> {
 
-    @Select("select id AS userToRoleId ,user_id,role_id, user_role_status from sys_user_role where user_id = #{0}")
+
     List<SystemUserToRole> selectUserByUserid(String userId);
 
 

@@ -4,6 +4,7 @@ package com.libbytian.pan.wechat.controller;
 import com.libbytian.pan.system.model.SystemTemDetailsModel;
 import com.libbytian.pan.system.model.SystemTemplateModel;
 import com.libbytian.pan.system.model.SystemUserModel;
+import com.libbytian.pan.system.service.ISystemTemDetailsService;
 import com.libbytian.pan.system.service.ISystemTemplateService;
 
 import com.libbytian.pan.system.service.ISystemUserService;
@@ -19,7 +20,6 @@ import me.chanjar.weixin.mp.bean.message.WxMpXmlOutTextMessage;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.*;
 import org.dom4j.io.SAXReader;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
@@ -42,6 +42,8 @@ public class WxPortalController {
     private final WxMpMessageRouter messageRouter;
 
     private final ISystemTemplateService systemTemplateService;
+
+    private final ISystemTemDetailsService iSystemTemDetailsService;
 
     private final ISystemUserService iSystemUserService;
 
@@ -84,11 +86,16 @@ public class WxPortalController {
 
         try {
             String username =  new String(decoder.decode(verification), "UTF-8");
-            if(iSystemUserService.selectByName(username)<=0){
+
+            SystemUserModel systemUserModel = new SystemUserModel();
+            systemUserModel.setUsername(username);
+
+            if(iSystemUserService.getUser(systemUserModel) == null){
                 return "无此接口认证权限，请联系管理员！";
             }
+
             UserIdentity userIdentity = new UserIdentity();
-            userIdentity.isVip(username);
+            userIdentity.isVip(systemUserModel);
 
         }catch (Exception e){
             return "接口权限认证错误，请联系管理员！";
@@ -140,11 +147,14 @@ public class WxPortalController {
         SystemUserModel systemUserModel = new SystemUserModel();
         systemUserModel.setUsername(username);
         //获取用户模板
-        List<SystemTemplateModel> systemTemplateModels = systemTemplateService.getTemplateModelByUser(systemUserModel);
+        List<SystemTemplateModel> systemTemplateModels = systemTemplateService.listTemplatelByUser(systemUserModel);
         //获取启用状态的模板 (状态为True)  前端需要控制只能有一个 启用状态下的模板。
         List<SystemTemplateModel> systemTemplateModelListstatusOn = systemTemplateModels.stream().filter(systemTemplateModel -> systemTemplateModel.getTemplatestatus().equals(Boolean.TRUE)).collect(Collectors.toList());
         //通过模板ID，查询对应的模板详情，取出关键词，头部广告，底部广告
-        List<SystemTemDetailsModel> systemdetails = systemTemplateService.findTemDetails(systemTemplateModelListstatusOn.get(0).getTemplateid());
+        SystemTemplateModel templateModel = new SystemTemplateModel();
+        templateModel.setTemplatestatus(systemTemplateModelListstatusOn.get(0).getTemplatestatus());
+
+        List<SystemTemDetailsModel> systemdetails = iSystemTemDetailsService.getTemDetails(templateModel);
 
         SystemTemDetailsModel headmodel = new SystemTemDetailsModel();
         SystemTemDetailsModel lastmodel = new SystemTemDetailsModel();
@@ -269,7 +279,7 @@ public class WxPortalController {
     public String getURL(@RequestParam String username){
 
         String encodeusername = encoder.encodeToString(username .getBytes());
-        return "http://6pqpkg.natappfree.cc"+"/wechat/portal/"+encodeusername;
+        return "http://gwa9kz.natappfree.cc"+"/wechat/portal/"+encodeusername;
 
     }
 

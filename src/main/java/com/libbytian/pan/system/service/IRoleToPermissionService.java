@@ -11,5 +11,5 @@ import java.util.List;
 @Transactional(propagation = Propagation.REQUIRES_NEW)
 public interface IRoleToPermissionService extends IService<SystemRoleToPermission> {
 
-    List<SystemRoleToPermission> getRolePermissionByroleID(String roleId) throws Exception;
+
 }

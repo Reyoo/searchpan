@@ -9,7 +9,6 @@
         <result column="template_createtime" property="templatecreatetime" />
         <result column="template_lastupdate" property="templatelastupdate" />
         <result column="template_status" property="templatestatus" />
-
     </resultMap>
 
     <!-- 通用查询结果列 -->
@@ -23,7 +22,7 @@
 
 
     <!-- 根据用户信息查询用户启用状态的模板list-->
-    <select id="findTemplateModelByUser" parameterType="com.libbytian.pan.system.model.SystemUserModel" resultType="com.libbytian.pan.system.model.SystemTemplateModel">
+    <select id="listTemplatelByUser" parameterType="com.libbytian.pan.system.model.SystemUserModel" resultType="com.libbytian.pan.system.model.SystemTemplateModel">
         SELECT
         <include refid="Base_Column_List"/>
         FROM sys_template  t

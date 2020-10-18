@@ -48,7 +48,7 @@ public class TemDetailsController {
 
         Page<SystemTemDetailsModel> findpage = new Page<>(page, limit);
         try {
-            IPage<SystemTemDetailsModel> result = iSystemTemplateService.findTemDetailsPage(findpage, templateId);
+            IPage<SystemTemDetailsModel> result = iSystemTemDetailsService.findTemDetailsPage(findpage, templateId);
             return AjaxResult.success(result);
         } catch (Exception e) {
             e.printStackTrace();

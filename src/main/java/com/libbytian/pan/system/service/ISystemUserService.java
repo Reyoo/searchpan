@@ -23,13 +23,21 @@ import java.util.List;
 @Transactional(propagation = Propagation.REQUIRES_NEW)
 public interface ISystemUserService extends IService<SystemUserModel> {
 
-    /**
-     * 根据用户名查询用户
-     * @param username 用户名
-     * @return 用户
-     */
-    SystemUserModel getUserByUserName(String username) ;
 
+
+    /**
+     * 查询 返回单个用户信息
+     * @param systemUserModel
+     * @return
+     */
+    SystemUserModel getUser(SystemUserModel systemUserModel) ;
+
+    /**
+     * 查询 返回多个用户信息
+     * @param systemUserModel
+     * @return
+     */
+    List<SystemUserModel> listUsers(SystemUserModel systemUserModel) ;
 
     /**
      * 注册用户
@@ -38,12 +46,14 @@ public interface ISystemUserService extends IService<SystemUserModel> {
      */
     SystemUserModel register(SystemUserModel user ) throws Exception;
 
+
+
     /**
-     * 查询用户是否存在
-     * @param username
-     * @return
+     * 删除用户时，同时删除权限关联表，模板关联表中数据
+     * @param user
      */
-    int selectByName(String username) throws Exception;
+    void removeUserAll(SystemUserModel user);
+
 
 
     SystemUserModel updateUser(SystemUserModel user) throws Exception;
@@ -51,8 +61,6 @@ public interface ISystemUserService extends IService<SystemUserModel> {
     IPage<SystemUserModel> findConditionByPage(Page<SystemUserModel> page, SystemUserModel user) throws Exception;
 
 
-    List<SystemTemplateModel> findTemplateById(String username);
 
-    SystemUserModel findByUsername(String username) throws Exception;
 
 }

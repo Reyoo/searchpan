@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.libbytian.pan.system.mapper.SystemUserToTemplateMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.libbytian.pan.system.model.SystemUserToTemplate">
+        <id column="user_template_id" property="userTotemplateId" />
+        <result column="user_id" property="userId" />
+        <result column="template_id" property="templateId" />
+        <result column="user_template_status" property="userTemplateStatus" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+         user_template_id AS userTotemplateId,
+         user_id AS userId,
+         template_id AS templateId,
+         user_template_status AS userTemplateStatus
+    </sql>
+
+
+    <select id="listUserByUserid" parameterType="com.libbytian.pan.system.model.SystemUserToTemplate" resultType="com.libbytian.pan.system.model.SystemUserToTemplate">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM user_template
+        <trim prefix="where" prefixOverrides="and|">
+            <if test="userId != null and userId != ''">
+                AND u.user_id= #{userId}
+            </if>
+        </trim>
+
+    </select>
+
+
+
+
+</mapper>

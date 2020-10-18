@@ -51,7 +51,7 @@ public class AsyncSearchCachedServiceImpl {
 
             //先从redis 中根据 搜索影片名 有结果直接返回
             List<MovieNameAndUrlModel> realMovieList = new ArrayList();
-////            if(redisTemplate.opsForList().size(searchText)>0){
+//            if(redisTemplate.opsForList().size(searchText)>0){
 //                realMovieList = (List<MovieNameAndUrlModel>) redisTemplate.opsForList().rightPop(searchText);
 //            }else {
 

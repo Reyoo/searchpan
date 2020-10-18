@@ -16,8 +16,5 @@ public class RoleToPermissionServiceImpl extends ServiceImpl<SystemRoleToPermiss
 
     private final SystemRoleToPermissionMapper systemRoleToPermissionMapper;
 
-    @Override
-    public List<SystemRoleToPermission> getRolePermissionByroleID(String roleId) throws Exception {
-        return systemRoleToPermissionMapper.selectPermissionByRoleid(roleId);
-    }
+
 }

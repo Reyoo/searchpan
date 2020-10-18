@@ -34,10 +34,15 @@ public class SystemUserModel extends Model<SystemUserModel>   {
     @TableId("user_id")
     private String userId;
 
-
+    /**
+     * 用户名
+     */
     @TableField("user_name")
     private String username;
 
+    /**
+     * 用户手机号
+     */
     @TableField("user_mobile")
     private String mobile;
     /**

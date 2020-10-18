@@ -1,7 +1,10 @@
 package com.libbytian.pan.system.service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.libbytian.pan.system.model.SystemRoleModel;
+import com.libbytian.pan.system.model.SystemUserModel;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -11,19 +14,28 @@ import java.util.List;
 @Transactional(propagation = Propagation.REQUIRES_NEW)
 public interface ISystemRoleService extends IService<SystemRoleModel> {
 
+
+
     /**
-     * 后期改成xml  改用 if null 标签形式 简化代码
-     * @param userId
+     * 通过user查询role
+     * @param user
      * @return
      */
-    List<SystemRoleModel> getRolenameByUserId(String userId)  ;
+    List<SystemRoleModel> listRolesByUser(SystemUserModel user);
 
 
-    SystemRoleModel getRoleByRolename(String rolename) throws Exception;
+    SystemRoleModel getRoles(SystemRoleModel systemRoleModel);
+
+    IPage<SystemRoleModel> getRolesPage(Page page , SystemRoleModel systemRoleModel);
 
 
-    List<SystemRoleModel> getRoleByUserName(String username) throws Exception;
+    IPage<SystemRoleModel> findRoleById(Page<SystemRoleModel> page , String roleId) throws Exception;
+    IPage<SystemRoleModel> findRole(Page<SystemRoleModel> page , SystemRoleModel systemRoleModel) throws Exception;
 
-    String[] getRoleIdByUsername(String username);
+    int dropRole(String roleId) throws Exception;
+
+
+    boolean checkEmail(String roleName) throws Exception;
+
 
 }

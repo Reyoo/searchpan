@@ -9,6 +9,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.libbytian.pan.system.common.AjaxResult;
 import com.libbytian.pan.system.model.SystemTemDetailsModel;
 import com.libbytian.pan.system.model.SystemTemplateModel;
+import com.libbytian.pan.system.model.SystemUserModel;
 import com.libbytian.pan.system.service.ISystemTemplateService;
 import com.libbytian.pan.system.service.ISystemTmplToTmplDetailsService;
 import com.libbytian.pan.system.service.ISystemUserToTemplateService;
@@ -19,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.List;
 
 @RequestMapping("/template")
@@ -66,17 +68,6 @@ public class TemplateController {
         }
     }
 
-    /**
-     * 查询显示所有模板及其SIZE
-     * @return
-     */
-    @RequestMapping(value = "/findTemNameAndSize",method = RequestMethod.GET)
-    public AjaxResult findTemNameAndSize(){
-
-
-
-        return AjaxResult.success();
-    }
 
 
 
@@ -122,6 +113,31 @@ public class TemplateController {
                 return AjaxResult.success();
             }
            return AjaxResult.error();
+        } catch (Exception e) {
+            return AjaxResult.error(e.getMessage());
+        }
+    }
+
+
+
+    /**
+     * 获取用户所有的模板
+     *
+     * @return
+     */
+    @RequestMapping(value = "getusertemplate", method = RequestMethod.POST)
+    public AjaxResult getuserTemplate(@RequestBody SystemUserModel systemUserModel) {
+
+        try {
+            List<SystemTemplateModel> result = iSystemTemplateService.listTemplatelByUser(systemUserModel);
+            List<SystemTemplateModel> oldResult = new ArrayList<>();
+            for (SystemTemplateModel systemTemplateModel : result) {
+                QueryWrapper queryWrapper = new QueryWrapper();
+                queryWrapper.eq("template_id", systemTemplateModel.getTemplateid());
+                systemTemplateModel.setDetialsize(iSystemTmplToTmplDetailsService.count(queryWrapper));
+                oldResult.add(systemTemplateModel);
+            }
+            return AjaxResult.success(oldResult);
         } catch (Exception e) {
             return AjaxResult.error(e.getMessage());
         }

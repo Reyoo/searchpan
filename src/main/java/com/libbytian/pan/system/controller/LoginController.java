@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 /**
  * @author qisun
  * @date 2019/4/2 23:34.
@@ -16,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 public class LoginController {
 
-    private final ISystemUserService ISystemUserService;
+    private final ISystemUserService iSystemUserService;
 
 
     /**
@@ -30,23 +32,24 @@ public class LoginController {
 
 
 
-
-
     /**
      * 注册新用户
      *
-     * @param user
+     * @param systemUserModel
      * @return
      */
     @RequestMapping(path = "/login/register", method = RequestMethod.POST)
-    public AjaxResult loginRegister(@RequestBody SystemUserModel user) {
+    public AjaxResult loginRegister(@RequestBody SystemUserModel systemUserModel) {
         try {
-            int count = ISystemUserService.selectByName(user.getUsername());
 
-            if (count > 0) {
-                return AjaxResult.error("该用户已存在,不可添加");
-            }
-            ISystemUserService.register(user);
+          SystemUserModel user = iSystemUserService.getUser(systemUserModel);
+
+           if (user != null){
+
+               return AjaxResult.error("该用户已存在,不可添加");
+           }
+
+            iSystemUserService.register(systemUserModel);
             return AjaxResult.success();
         } catch (Exception e) {
             return AjaxResult.error(e.getMessage());
