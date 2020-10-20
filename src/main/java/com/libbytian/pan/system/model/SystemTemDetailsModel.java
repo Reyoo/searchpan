@@ -58,10 +58,10 @@ public class SystemTemDetailsModel extends Model<SystemTemDetailsModel> {
     private LocalDateTime createtime;
 
     /**
-     * 排序状态 默认0 ，1 置顶
+     * 排序状态 默认flase ，true 置顶
      */
     @TableField("templatedetails_status")
-    private Integer temdetailsstatus;
+    private Boolean temdetailsstatus;
 
 
     /**
@@ -69,6 +69,13 @@ public class SystemTemDetailsModel extends Model<SystemTemDetailsModel> {
      */
     @TableField("show_order")
     private Integer showOrder;
+
+
+    /**
+     * 模板Id
+     */
+    @TableField(exist = false)
+    private String templateId;
 
 
 

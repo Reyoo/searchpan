@@ -62,4 +62,20 @@
 
     </select>
 
+    <!-- 查询所有模板、根据条件查询模板list-->
+    <select id="listTemplatelObjects" parameterType="com.libbytian.pan.system.model.SystemTemplateModel" resultType="com.libbytian.pan.system.model.SystemTemplateModel">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM sys_template t
+        <trim prefix="where" prefixOverrides="and|">
+            <if test="templateid != null and templateid != ''">
+                AND t.template_id= #{templateid}
+            </if>
+            <if test="templatename != null and templatename != ''">
+                AND t.template_name =#{templatename}
+            </if>
+        </trim>
+
+    </select>
+
 </mapper>

@@ -2,13 +2,8 @@ package com.libbytian.pan.system.controller;
 
 import cn.hutool.core.lang.UUID;
 import cn.hutool.core.util.StrUtil;
-import cn.hutool.http.server.HttpServerRequest;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.libbytian.pan.system.common.AjaxResult;
-import com.libbytian.pan.system.model.SystemTemDetailsModel;
 import com.libbytian.pan.system.model.SystemTemplateModel;
 import com.libbytian.pan.system.model.SystemUserModel;
 import com.libbytian.pan.system.model.SystemUserToTemplate;
@@ -48,36 +43,23 @@ public class TemplateController {
      */
 
     @RequestMapping(value = "/findtemplate", method = RequestMethod.POST)
-    public AjaxResult findAllTemplate(@RequestBody(required = false) SystemTemplateModel systemTemplateModel) {
+    public AjaxResult findAllTemplate(@RequestBody(required = false) SystemTemplateModel systemTemplateModel) throws Exception {
 
         try {
-            QueryWrapper<SystemTemplateModel> wrapper = new QueryWrapper();
-            List<SystemTemplateModel> systemTemplateModels = null;
-            if (systemTemplateModel == null) {
-                systemTemplateModels = iSystemTemplateService.list();
-            } else {
-
-                if (StrUtil.isNotBlank(systemTemplateModel.getTemplateid())) {
-                    wrapper.eq("template_id", systemTemplateModel.getTemplateid());
-                }
-                if (StrUtil.isNotBlank(systemTemplateModel.getTemplatename())) {
-                    wrapper.eq("template_name", systemTemplateModel.getTemplatename());
-                }
-
-                systemTemplateModels = iSystemTemplateService.list(wrapper);
-            }
-
-            return AjaxResult.success(systemTemplateModels);
+            List<SystemTemplateModel> result = iSystemTemplateService.listTemplatelObjects(systemTemplateModel);
+            return AjaxResult.success(result);
         } catch (Exception e) {
             return AjaxResult.error(e.getMessage());
         }
+
     }
 
 
 
 
     /**
-     * 删除模板
+     * 删除用户模板
+     * 同时删除 用户模板表、模板表、模板详情表、详情表中对应数据
      * @param tempid
      * @return
      */
@@ -86,16 +68,9 @@ public class TemplateController {
     public AjaxResult removeTemplate( @PathVariable(value = "tempid") String tempid){
 
         try {
-            QueryWrapper queryWrapper = new QueryWrapper();
-            queryWrapper.eq("template_id",tempid);
-//            1. 删除用户模板关联表中用
-            iSystemUserToTemplateService.remove(queryWrapper);
-            boolean isRemove = iSystemTemplateService.removeById(tempid);
-            // 2. 删除模板
-            // 3. 删除模板详细
-            if(isRemove){
-                iSystemTmplToTmplDetailsService.remove(queryWrapper);
-            }
+
+            iSystemUserToTemplateService.removieTemplateIdAll(tempid);
+
             return AjaxResult.success();
         } catch (Exception e) {
             log.error(e.getMessage());
@@ -154,30 +129,6 @@ public class TemplateController {
         }
     }
 
-
-
-//    /**
-//     * 获取用户所有的模板
-//     *
-//     * @return
-//     */
-//    @RequestMapping(value = "getusertemplate", method = RequestMethod.POST)
-//    public AjaxResult getuserTemplate(@RequestBody SystemUserModel systemUserModel) {
-//
-//        try {
-//            List<SystemTemplateModel> result = iSystemTemplateService.listTemplatelByUser(systemUserModel);
-//            List<SystemTemplateModel> oldResult = new ArrayList<>();
-//            for (SystemTemplateModel systemTemplateModel : result) {
-//                QueryWrapper queryWrapper = new QueryWrapper();
-//                queryWrapper.eq("template_id", systemTemplateModel.getTemplateid());
-//                systemTemplateModel.setDetialsize(iSystemTmplToTmplDetailsService.count(queryWrapper));
-//                oldResult.add(systemTemplateModel);
-//            }
-//            return AjaxResult.success(oldResult);
-//        } catch (Exception e) {
-//            return AjaxResult.error(e.getMessage());
-//        }
-//    }
 
 
     /**

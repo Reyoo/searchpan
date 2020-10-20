@@ -19,18 +19,36 @@
     </sql>
 
 
-    <select id="selectUserByUserid" parameterType="com.libbytian.pan.system.model.SystemUserToRole" resultType="com.libbytian.pan.system.model.SystemUserToRole">
+    <select id="selectUserToRoleObject" parameterType="com.libbytian.pan.system.model.SystemUserToRole" resultType="com.libbytian.pan.system.model.SystemUserToRole">
         SELECT
         <include refid="Base_Column_List"/>
         FROM sys_user_role
         <trim prefix="where" prefixOverrides="and|">
         <if test="userId != null and userId != ''">
-        AND u.user_id= #{userId}
+                AND user_id= #{userId}
         </if>
+         <if test="roleId != null and roleId != ''">
+                AND role_id= #{roleId}
+         </if>
+
         </trim>
 
     </select>
 
+    <delete id="deleteUserToRoleObject" parameterType="com.libbytian.pan.system.model.SystemUserToRole">
+        DELETE
+        FROM sys_user_role
+        <trim prefix="WHERE(" prefixOverrides="and|">
+            <if test="userId != null and userId != ''">
+                AND user_id= #{userId}
+            </if>
+            <if test="roleId != null and roleId != ''">
+                AND role_id= #{roleId}
+            </if>)
+        </trim>
+
+
+    </delete>
 
 
 

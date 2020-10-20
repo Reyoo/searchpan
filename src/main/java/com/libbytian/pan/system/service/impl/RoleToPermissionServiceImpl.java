@@ -17,4 +17,14 @@ public class RoleToPermissionServiceImpl extends ServiceImpl<SystemRoleToPermiss
     private final SystemRoleToPermissionMapper systemRoleToPermissionMapper;
 
 
+    @Override
+    public int removeRoleToPermission(SystemRoleToPermission systemRoleToPermission) {
+
+      return systemRoleToPermissionMapper.deleteRoleToPermission(systemRoleToPermission);
+    }
+
+    @Override
+    public List<SystemRoleToPermission> listRoleToPermissionObjects(SystemRoleToPermission systemRoleToPermission) {
+        return systemRoleToPermissionMapper.listRoleToPermissionObjects(systemRoleToPermission);
+    }
 }

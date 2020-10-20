@@ -22,4 +22,7 @@ public interface ISystemTemplateService extends IService<SystemTemplateModel> {
      List<SystemTemplateModel> getTemplateModelByUser(SystemUserModel systemUserModel,Boolean inUsed) throws Exception;
 
 
+     List<SystemTemplateModel> listTemplatelObjects(SystemTemplateModel systemTemplateModel) throws Exception;
+
+
 }

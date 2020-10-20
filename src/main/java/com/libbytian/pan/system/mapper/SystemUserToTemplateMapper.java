@@ -18,4 +18,13 @@ public interface SystemUserToTemplateMapper extends BaseMapper<SystemUserToTempl
      * @return
      */
     List<SystemUserToTemplate> listUserByUserid(String userId);
+
+
+    /**
+     * 删除用户下的模板
+     * 同时删除 用户模板表、模板表、模板详情表、详情表中对应数据
+     * @param temped
+     * @return
+     */
+    int deleteTemplateIdAll(String temped);
 }

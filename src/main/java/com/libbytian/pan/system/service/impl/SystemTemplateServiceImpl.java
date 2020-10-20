@@ -50,5 +50,10 @@ public class SystemTemplateServiceImpl extends ServiceImpl<SystemTemplateMapper,
         }
     }
 
+    @Override
+    public List<SystemTemplateModel> listTemplatelObjects(SystemTemplateModel systemTemplateModel) throws Exception {
+        return systemTemplateMapper.listTemplatelObjects(systemTemplateModel);
+    }
+
 
 }

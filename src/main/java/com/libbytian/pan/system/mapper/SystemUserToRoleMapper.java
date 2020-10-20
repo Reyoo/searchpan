@@ -2,6 +2,7 @@ package com.libbytian.pan.system.mapper;
 
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.libbytian.pan.system.model.SystemRoleToPermission;
 import com.libbytian.pan.system.model.SystemUserModel;
 import com.libbytian.pan.system.model.SystemUserToRole;
 import org.apache.ibatis.annotations.Mapper;
@@ -16,7 +17,11 @@ import java.util.List;
 public interface SystemUserToRoleMapper extends BaseMapper<SystemUserToRole> {
 
 
-    List<SystemUserToRole> selectUserByUserid(String userId);
+    List<SystemUserToRole> selectUserToRoleObject(SystemUserToRole systemUserToRole);
+
+
+
+    int deleteUserToRoleObject(SystemUserToRole systemUserToRole);
 
 
 }

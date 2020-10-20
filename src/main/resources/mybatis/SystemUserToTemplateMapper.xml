@@ -31,6 +31,21 @@
 
     </select>
 
+    <!--删除用户下的模板，同时删除 用户模板表、模板表、模板详情表、详情表中对应数据-->
+    <delete id="deleteTemplateIdAll" parameterType="String" >
+        DELETE ut,t,tt,d
+        FROM user_template ut
+        LEFT JOIN sys_template t  ON ut.template_id = t.template_id
+        LEFT JOIN tem_temdetails tt ON t.template_id = tt.template_id
+        LEFT JOIN sys_temdetails d ON tt.templatedetails_id = d.templatedetails_id
+        <trim prefix="where" prefixOverrides="and|">
+            <if test="templateId != null and templateId != ''">
+                AND ut.template_id= #{templateId}
+            </if>
+        </trim>
+
+    </delete>
+
 
 
 

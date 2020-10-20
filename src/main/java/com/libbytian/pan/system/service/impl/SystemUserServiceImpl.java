@@ -205,7 +205,7 @@ public class SystemUserServiceImpl extends ServiceImpl<SystemUserMapper, SystemU
 
         // 判断该用户是否存在
         // 如果存在 ，判断该用户付费剩余时长
-        SystemUserModel systemUserModel = systemUserMapper.selectOneUserModel(user);
+        SystemUserModel systemUserModel = systemUserMapper.getUser(user);
         if (systemUserModel == null) {
             throw new Exception("该用户不存在");
         }

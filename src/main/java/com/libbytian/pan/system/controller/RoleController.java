@@ -1,7 +1,6 @@
 package com.libbytian.pan.system.controller;
 
 import cn.hutool.core.util.StrUtil;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.libbytian.pan.system.common.AjaxResult;
@@ -9,7 +8,6 @@ import com.libbytian.pan.system.model.*;
 import com.libbytian.pan.system.service.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,8 +20,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 @RequestMapping("/role")
 @Slf4j
-public class
-RoleController {
+public class RoleController {
 
     private final IRoleToPermissionService iRoleToPermissionService;
     private final ISystemUserToRoleService iSystemUserToRoleService;
@@ -104,7 +101,6 @@ RoleController {
 
     /**
      * 新增角色
-     *
      * @param role
      * @return
      */
@@ -142,33 +138,31 @@ RoleController {
     }
 
     /**
+     * HS
      * 根据角色ID删除角色
-     *
-     * @param roleId
+     * @param role 必传（roleId，roleName）
      * @return
      */
-    @RequestMapping(value = "/droprole/{roleId}", method = RequestMethod.DELETE)
-    public AjaxResult dropRole(@PathVariable String roleId) {
+    @RequestMapping(value = "/droprole", method = RequestMethod.DELETE)
+    public AjaxResult dropRole(@RequestBody SystemRoleModel role) {
 
         try {
-            if(StrUtil.isBlank(roleId)){
+            if(StrUtil.isBlank(role.getRoleId())){
                 return  AjaxResult.error("字段不能为空");
             }
-            if("1".equals(roleId) || "2".equals(roleId) || "3".equals(roleId)){
-                return AjaxResult.error("该角色不可删除");
+            if ("ROLE_ADMIN".equals(role.getRoleName()) || "ROLE_NORMAL".equals(role.getRoleName()) || "ROLE_PAYUSER".equals(role.getRoleName())) {
+                return AjaxResult.error("该用户权限不允许修改");
             }
             //查询用户角色表,判断角色是否绑定用户
-
-            QueryWrapper queryWrapper = new QueryWrapper();
-
-            queryWrapper.eq("role_id",roleId);
-            int count = iSystemUserToRoleService.list(queryWrapper).size();
+            SystemUserToRole systemUserToRole = new SystemUserToRole();
+            systemUserToRole.setRoleId(role.getRoleId());
+            int count = iSystemUserToRoleService.getUserToRoleObject(systemUserToRole).size();
 
             if(count>0){
                 return  AjaxResult.error("该角色已绑定用户，不可删除");
             }
 
-            iSystemRoleService.dropRole(roleId);
+            iSystemRoleService.dropRole(role.getRoleId());
             return AjaxResult.success();
         } catch (Exception e) {
             return AjaxResult.error(e.getMessage());
@@ -176,15 +170,19 @@ RoleController {
     }
 
 
-
+    /**
+     * 查询角色下绑定的权限
+     * @param systemRoleModel
+     * @return
+     */
     @RequestMapping(value = "/getauth", method = RequestMethod.POST)
     public AjaxResult finduserRole(@RequestBody SystemRoleModel systemRoleModel) {
 
         try {
-            QueryWrapper queryWrapper = new QueryWrapper();
-            queryWrapper.eq("role_id",systemRoleModel.getRoleId());
+            SystemRoleToPermission systemRoleToPermission = new SystemRoleToPermission();
+            systemRoleToPermission.setRoleId(systemRoleModel.getRoleId());
             //获取到角色管理权限的id集合
-            List<SystemRoleToPermission> systemRoleToPermissionList = iRoleToPermissionService.list(queryWrapper);
+            List<SystemRoleToPermission> systemRoleToPermissionList = iRoleToPermissionService.listRoleToPermissionObjects(systemRoleToPermission);
 
             if(systemRoleToPermissionList.size()<=0){
                 List<SystemPermissionModel> systemRoleToPermissions = iPermissionService.list();
@@ -212,16 +210,14 @@ RoleController {
 
 
 
-
     /**
-     * 更新角色权限表表
+     * 更新角色权限表
      *
      * @param systemRoleToPermission
      * @return
      */
     @RequestMapping(value = "/updateauth", method = RequestMethod.PATCH)
     public AjaxResult updateuserRole(@RequestBody SystemRoleToPermission systemRoleToPermission) {
-
 
         try {
             if(systemRoleToPermission!=null){
@@ -230,10 +226,7 @@ RoleController {
                     return  AjaxResult.success(iRoleToPermissionService.save(systemRoleToPermission));
                 }else{
                     //删除
-                    QueryWrapper<SystemRoleToPermission> queryWrapper = new QueryWrapper<>();
-                    queryWrapper.eq("role_id", systemRoleToPermission.getRoleId());
-                    queryWrapper.eq("permission_id", systemRoleToPermission.getPermissionId());
-                    return AjaxResult.success(iRoleToPermissionService.remove(queryWrapper));
+                    return AjaxResult.success(iRoleToPermissionService.removeRoleToPermission(systemRoleToPermission));
                 }
             }
             return AjaxResult.error("修改失败");

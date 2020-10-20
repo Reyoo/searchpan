@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.libbytian.pan.system.mapper.SystemRoleToPermissionMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.libbytian.pan.system.model.SystemRoleToPermission">
+        <id column="role_permission_id" property="rolepermissionId" />
+        <result column="role_id" property="roleId" />
+        <result column="permission_id" property="permissionId" />
+        <result column="role_permission_status" property="rolepermissionstatus" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+         role_permission_id AS rolepermissionId,
+         role_id AS roleId,
+         permission_id AS permissionId,
+         role_permission_status AS rolepermissionstatus
+    </sql>
+
+
+
+    <select id="listRoleToPermissionObjects" parameterType="com.libbytian.pan.system.model.SystemRoleToPermission" resultType="com.libbytian.pan.system.model.SystemRoleToPermission">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM role_permission
+        <trim prefix="where" prefixOverrides="and|">
+            <if test="rolepermissionId != null and rolepermissionId != ''">
+                AND role_permission_id= #{rolepermissionId}
+            </if>
+            <if test="roleId != null and roleId != ''">
+                AND role_id =#{roleId}
+            </if>
+            <if test="permissionId != null and permissionId != ''">
+                AND permission_id =#{permissionId}
+            </if>
+            <if test="rolepermissionstatus != null and rolepermissionstatus != ''">
+                AND r.role_permission_status =#{rolepermissionstatus}
+            </if>
+
+        </trim>
+
+    </select>
+
+    <delete id="deleteRoleToPermission" parameterType="com.libbytian.pan.system.model.SystemRoleToPermission">
+        DELETE
+        FROM role_permission
+        <trim prefix="WHERE(" prefixOverrides="and|">
+            <if test="roleId != null and roleId != ''">
+                AND role_id= #{roleId}
+            </if>
+            <if test="permissionId != null and permissionId != ''">
+                AND permission_id= #{permissionId}
+            </if>)
+        </trim>
+
+
+    </delete>
+
+
+
+
+</mapper>

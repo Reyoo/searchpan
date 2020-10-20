@@ -20,5 +20,7 @@ public interface SystemTemplateMapper extends BaseMapper<SystemTemplateModel> {
 
     List<SystemTemplateModel> findTemplateModelByUser(SystemUserModel systemUserModel);
 
+    List<SystemTemplateModel> listTemplatelObjects(SystemTemplateModel systemTemplateModel);
+
 
 }

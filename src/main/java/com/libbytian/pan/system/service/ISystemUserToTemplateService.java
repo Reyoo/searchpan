@@ -11,4 +11,6 @@ import java.util.List;
 @Transactional(propagation = Propagation.REQUIRES_NEW)
 public interface ISystemUserToTemplateService extends IService<SystemUserToTemplate> {
 
+    int removieTemplateIdAll(String tempid);
+
 }

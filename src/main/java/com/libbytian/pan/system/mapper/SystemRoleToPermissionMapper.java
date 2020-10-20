@@ -10,5 +10,9 @@ import java.util.List;
 @Mapper
 public interface SystemRoleToPermissionMapper extends BaseMapper<SystemRoleToPermission> {
 
+    int deleteRoleToPermission(SystemRoleToPermission systemRoleToPermission);
+
+    List<SystemRoleToPermission> listRoleToPermissionObjects(SystemRoleToPermission systemRoleToPermission);
+
 
 }

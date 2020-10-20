@@ -132,7 +132,7 @@ public class SystemTemDetailsServiceImpl extends ServiceImpl<SystemTemDetailsMap
                     systemTemDetailsModel.setCreatetime(time);
                 }
                 if(entry.getKey().equals("isTop")){
-                    systemTemDetailsModel.setTemdetailsstatus(Integer.valueOf(entry.getValue()));
+                    systemTemDetailsModel.setTemdetailsstatus(Boolean.valueOf(entry.getValue()));
                 }
             }
 
@@ -160,7 +160,7 @@ public class SystemTemDetailsServiceImpl extends ServiceImpl<SystemTemDetailsMap
 
         systemTemDetailsModel.setCreatetime(LocalDateTime.now());
         systemTemDetailsModel.setTemdetailsId(UUID.randomUUID().toString());
-        systemTemDetailsModel.setTemdetailsstatus(0);
+        systemTemDetailsModel.setTemdetailsstatus(false);
 
         //插入模板详情表
         int result = systemTemDetailsMapper.insert(systemTemDetailsModel);

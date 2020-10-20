@@ -15,4 +15,12 @@ import java.util.List;
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class SystemUserToTemplateServiceImpl extends ServiceImpl<SystemUserToTemplateMapper, SystemUserToTemplate> implements ISystemUserToTemplateService {
 
+
+    private final SystemUserToTemplateMapper systemUserToTemplateMapper;
+
+
+    @Override
+    public int removieTemplateIdAll(String tempid) {
+        return systemUserToTemplateMapper.deleteTemplateIdAll(tempid);
+    }
 }

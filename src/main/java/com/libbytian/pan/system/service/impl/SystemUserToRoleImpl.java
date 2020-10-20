@@ -18,11 +18,14 @@ public class SystemUserToRoleImpl extends ServiceImpl<SystemUserToRoleMapper, Sy
 
     private final SystemUserToRoleMapper userToRoleMapper ;
 
+
     @Override
-    public List<SystemUserToRole> getUserRoleByuserID(String userId) throws Exception{
-        return userToRoleMapper.selectUserByUserid(userId);
+    public List<SystemUserToRole> getUserToRoleObject(SystemUserToRole systemUserToRole) throws Exception {
+        return userToRoleMapper.selectUserToRoleObject(systemUserToRole);
     }
 
-
-
+    @Override
+    public int removeUserToRoleObject(SystemUserToRole systemUserToRole) {
+        return userToRoleMapper.deleteUserToRoleObject(systemUserToRole);
+    }
 }

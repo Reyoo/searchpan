@@ -1,26 +1,19 @@
 package com.libbytian.pan.system.controller;
 
-import cn.hutool.core.lang.UUID;
 import cn.hutool.core.util.StrUtil;
-import cn.hutool.core.util.URLUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.libbytian.pan.system.common.AjaxResult;
 import com.libbytian.pan.system.model.SystemTemDetailsModel;
 import com.libbytian.pan.system.service.ISystemTemDetailsService;
-import com.libbytian.pan.system.service.ISystemTemplateService;
 import com.libbytian.pan.system.util.CheckStrContainUrlUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.xml.bind.Element;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -60,14 +53,13 @@ public class TemDetailsController {
     /**
      * 添加关键字及对应回复
      * @param systemTemDetailsModel 传入 key，value
-     * @param templateId  存入的模板
      * @return
      */
-    @RequestMapping(value = "/add/{templateId}", method = RequestMethod.POST)
-    public AjaxResult addTemDetails( @PathVariable String templateId,@RequestBody SystemTemDetailsModel systemTemDetailsModel) {
+    @RequestMapping(value = "/add", method = RequestMethod.POST)
+    public AjaxResult addTemDetails(@RequestBody SystemTemDetailsModel systemTemDetailsModel) {
 
         try {
-            int result = iSystemTemDetailsService.addTemDetails(systemTemDetailsModel, templateId);
+            int result = iSystemTemDetailsService.addTemDetails(systemTemDetailsModel, systemTemDetailsModel.getTemplateId());
             if (result == 1) {
                 return AjaxResult.success();
             } else {
@@ -108,10 +100,10 @@ public class TemDetailsController {
      * @param
      * @return
      */
-    @RequestMapping(value = "/removeTemDetails/{temdetailsId}", method = RequestMethod.DELETE)
-    public AjaxResult deleteTemDetails(@PathVariable(value ="temdetailsId" ) String temdetailsId) {
+    @RequestMapping(value = "/removeTemDetails", method = RequestMethod.DELETE)
+    public AjaxResult deleteTemDetails(@RequestBody List<String>  temdetailsId) {
         try {
-            if(iSystemTemDetailsService.removeById(temdetailsId)){
+            if(iSystemTemDetailsService.removeByIds(temdetailsId)){
                 return AjaxResult.success("删除成功");
             }else {
                 return AjaxResult.success("删除失败");
@@ -123,18 +115,18 @@ public class TemDetailsController {
     }
 
 
+
     /**
      * 导入excel入库并绑定模板ID
      * @param multipartFile
      * @return
      */
     @RequestMapping(value = "/excelimport", method = RequestMethod.POST)
-    public AjaxResult addTemDetails( @RequestParam("file")  MultipartFile multipartFile) {
+    public AjaxResult addTemDetails( @RequestParam("file")  MultipartFile multipartFile ,@RequestParam String templateId) {
         try {
             if(multipartFile.isEmpty()){
                 return AjaxResult.error("上传失败，请选择文件");
             }
-            String templateId = UUID.fastUUID().toString();
             iSystemTemDetailsService.exportExceltoDb(multipartFile.getOriginalFilename(),multipartFile.getInputStream(),templateId);
             return AjaxResult.success();
         }catch (Exception e){

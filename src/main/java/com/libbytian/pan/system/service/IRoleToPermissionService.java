@@ -11,5 +11,8 @@ import java.util.List;
 @Transactional(propagation = Propagation.REQUIRES_NEW)
 public interface IRoleToPermissionService extends IService<SystemRoleToPermission> {
 
+     int removeRoleToPermission(SystemRoleToPermission systemRoleToPermission);
+
+     List<SystemRoleToPermission> listRoleToPermissionObjects(SystemRoleToPermission systemRoleToPermission);
 
 }

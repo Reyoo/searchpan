@@ -29,7 +29,7 @@ public class SystemRoleToPermission extends Model<SystemRoleToPermission> {
     private Integer rolepermissionId;
 
     /**
-     * 橘色编号
+     * 角色编号
      */
     @TableField("role_id")
     private String roleId;

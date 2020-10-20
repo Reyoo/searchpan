@@ -54,8 +54,6 @@ public class WxPortalController {
     final Base64.Encoder encoder = Base64.getEncoder();
 
 
-//
-
 
     /**
      * 与微信做认证通信 通过认证后调用其他接口
@@ -107,9 +105,6 @@ public class WxPortalController {
             return echostr;
         }
         return "非法请求";
-
-
-
 
     }
 

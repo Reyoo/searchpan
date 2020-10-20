@@ -97,5 +97,40 @@
 
     </select>
 
+    <delete id="removeUserAll" parameterType="com.libbytian.pan.system.model.SystemUserModel">
+        DELETE u,ur,ut
+        FROM sys_user u
+        LEFT JOIN sys_user_role ur ON u.user_id = ur.user_id
+        LEFT JOIN user_template ut ON u.user_id = ut.user_id
+        <trim prefix="where" prefixOverrides="and|">
+            <if test="userId != null and userId != ''">
+                AND u.user_id= #{userId}
+            </if>
+            <if test="username != null and username != ''">
+                AND u.user_name =#{username}
+            </if>
+            <if test="mobile != null and mobile != ''">
+                AND u.user_mobile =#{mobile}
+            </if>
+            <if test="lastLoginTime != null and lastLoginTime != ''">
+                AND u.user_last_login_time =#{lastLoginTime}
+            </if>
+            <if test="createTime != null and createTime != ''">
+                AND u.createTime =#{createTime}
+            </if>
+            <if test="status != null and status != ''">
+                AND u.status =#{status}
+            </if>
+            <if test="actTime != null and actTime != ''">
+                AND u.act_time =#{actTime}
+            </if>
+            <if test="actrange != null and actrange != ''">
+                AND u.act_range =#{actrange}
+            </if>
+        </trim>
+
+
+    </delete>
+
 
 </mapper>

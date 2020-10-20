@@ -1,6 +1,5 @@
 package com.libbytian.pan.system.controller;
 
-import cn.hutool.core.lang.UUID;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -10,17 +9,14 @@ import com.libbytian.pan.system.service.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
-
-import javax.servlet.http.HttpServletRequest;
-import java.time.LocalDateTime;
-
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 
+/**
+ * @author yingzi
+ */
 @RestController
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 @RequestMapping("/user")
@@ -29,9 +25,6 @@ public class UserController {
 
     private final ISystemUserService iSystemUserService;
     private final ISystemUserToRoleService iSystemUserToRoleService;
-    private final ISystemUserToTemplateService iSystemUserToTemplateService;
-    private final ISystemTmplToTmplDetailsService iSystemTmplToTmplDetailsService;
-    private final ISystemTemplateService iSystemTemplateService;
     private final ISystemRoleService iSystemRoleService;
 
 
@@ -59,32 +52,19 @@ public class UserController {
 
 
     /**
+     * HS
      * 删除用户
-     *
-     * @param id
+     * @param systemUserModel
+     * 多表删除用户ID数据
+     * 同时删除用户绑定角色
+     * 同时删除用户绑定模板
      * @return
      */
-    @RequestMapping(value = "/delete/{id}", method = RequestMethod.DELETE)
-    public AjaxResult deleteUser(@PathVariable String id) {
+    @RequestMapping(value = "/delete", method = RequestMethod.DELETE)
+    public AjaxResult deleteUser(@RequestBody SystemUserModel systemUserModel) {
 
-
-        /**
-         * 未完成
-         * 多表删除用户ID数据
-         */
         try {
-            //删除用户
-            iSystemUserService.removeById(id);
-            //删除用户绑定的角色
-            QueryWrapper queryRole =  new QueryWrapper<>();
-            queryRole.eq("user_id",id);
-            iSystemUserToRoleService.remove(queryRole);
-            //删除用户绑定的模板
-            QueryWrapper queryTem = new QueryWrapper<>();
-            queryTem.eq("user_id",id);
-            iSystemUserToTemplateService.remove(queryTem);
-
-
+            iSystemUserService.removeUserAll(systemUserModel);
             return AjaxResult.success();
         } catch (Exception e) {
             return AjaxResult.error(e.getMessage());
@@ -109,18 +89,17 @@ public class UserController {
     }
 
 
-    /**
-/     * 获取用户角色
-     *
-     * @param user
-     * @return
-     */
+
+
+
     @RequestMapping(value = "/geturole", method = RequestMethod.POST)
     public AjaxResult finduserRole(@RequestBody SystemUserModel user) {
 
         try {
 
-            List<SystemUserToRole> systemUserToRoles = iSystemUserToRoleService.getUserRoleByuserID(user.getUserId());
+            SystemUserToRole systemUserToRole =  new SystemUserToRole();
+            systemUserToRole.setUserId(user.getUserId());
+            List<SystemUserToRole> systemUserToRoles = iSystemUserToRoleService.getUserToRoleObject(systemUserToRole);
             if(systemUserToRoles.size()<=0){
                 List<SystemRoleModel> systemRoleModelsAll = iSystemRoleService.list();
                 return AjaxResult.success(systemRoleModelsAll);
@@ -137,7 +116,6 @@ public class UserController {
 
             systemRoleModelsAll.addAll(systemRoleModelList);
 
-
             return AjaxResult.success(systemRoleModelsAll);
         } catch (Exception e) {
             log.error(e.getMessage());
@@ -148,13 +126,12 @@ public class UserController {
 
     /**
      * 更新用户角色表
-     *
+     * 传入 userId,roleId,checked(true or false)
      * @param systemUserToRole
      * @return
      */
     @RequestMapping(value = "/updaterole", method = RequestMethod.PATCH)
     public AjaxResult updateuserRole(@RequestBody SystemUserToRole systemUserToRole) {
-
 
         try {
             if(systemUserToRole!=null){
@@ -163,11 +140,7 @@ public class UserController {
                     return  AjaxResult.success(iSystemUserToRoleService.save(systemUserToRole));
                 }else{
                     //删除
-                    QueryWrapper<SystemUserToRole> queryWrapper = new QueryWrapper<>();
-
-                    queryWrapper.eq("user_id", systemUserToRole.getUserId());
-                    queryWrapper.eq("role_id", systemUserToRole.getRoleId());
-                    return AjaxResult.success(iSystemUserToRoleService.remove(queryWrapper));
+                    return AjaxResult.success(iSystemUserToRoleService.removeUserToRoleObject(systemUserToRole));
                 }
             }
             return AjaxResult.error("修改失败");

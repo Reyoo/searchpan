@@ -28,8 +28,8 @@ public interface ISystemRoleService extends IService<SystemRoleModel> {
 
     IPage<SystemRoleModel> getRolesPage(Page page , SystemRoleModel systemRoleModel);
 
-
     IPage<SystemRoleModel> findRoleById(Page<SystemRoleModel> page , String roleId) throws Exception;
+
     IPage<SystemRoleModel> findRole(Page<SystemRoleModel> page , SystemRoleModel systemRoleModel) throws Exception;
 
     int dropRole(String roleId) throws Exception;
