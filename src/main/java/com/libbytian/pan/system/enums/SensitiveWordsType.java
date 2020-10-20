@@ -1,5 +1,8 @@
 package com.libbytian.pan.system.enums;
 
+import com.baomidou.mybatisplus.annotation.IEnum;
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 /**
  * 过滤敏感词类型
  * @author hoojo
@@ -11,7 +14,8 @@ package com.libbytian.pan.system.enums;
  * @email hoojo_@126.com
  * @version 1.0
  */
-public enum SensitiveWordsType {
+@JsonFormat(shape = JsonFormat.Shape.OBJECT)
+public enum SensitiveWordsType implements IEnum<Integer> {
 	/** 色情 */
 	PORNO(1, "色情"), 
 	/** 政治 */
@@ -29,21 +33,15 @@ public enum SensitiveWordsType {
 
 	private int code;
 	private String name;
-	
+
+
 	SensitiveWordsType(int code, String name) {
 		this.code = code;
 		this.name = name;
 	}
 
-	public Integer getCode() {
-		return code;
-	}
-
-	public String getName() {
-		return name;
-	}
-	
-	public String getEnumName() {
-		return this.name();
+	@Override
+	public Integer getValue() {
+		return this.code;
 	}
 }

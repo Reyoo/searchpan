@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.libbytian.pan.system.common.AjaxResult;
 import com.libbytian.pan.system.model.SystemTemDetailsModel;
+import com.libbytian.pan.system.service.ISensitiveWordService;
 import com.libbytian.pan.system.service.ISystemTemDetailsService;
 import com.libbytian.pan.system.service.ISystemTemplateService;
 import com.libbytian.pan.system.util.CheckStrContainUrlUtil;
@@ -36,6 +37,7 @@ public class TemDetailsController {
 
     private final ISystemTemDetailsService iSystemTemDetailsService;
 
+    private final ISensitiveWordService iSensitiveWordService;
 
     /**
      * 根据模板ID查询模板详情
@@ -67,6 +69,11 @@ public class TemDetailsController {
     public AjaxResult addTemDetails( @PathVariable String templateId,@RequestBody SystemTemDetailsModel systemTemDetailsModel) {
 
         try {
+
+            if(iSensitiveWordService.isContaintSensitiveWord(systemTemDetailsModel.getKeyword())){
+                return AjaxResult.error("包含敏感词请重新填写");
+            }
+
             int result = iSystemTemDetailsService.addTemDetails(systemTemDetailsModel, templateId);
             if (result == 1) {
                 return AjaxResult.success();
