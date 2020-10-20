@@ -5,7 +5,7 @@ import com.libbytian.pan.system.mapper.SensitiveWordMapper;
 import com.libbytian.pan.system.model.SystemTemDetailsModel;
 import com.libbytian.pan.system.service.ISensitiveWordService;
 import com.libbytian.pan.system.util.sensitive.SensitiveWordEngine;
-import com.libbytian.pan.system.util.sensitive.SensitiveWordInit;
+import com.libbytian.pan.system.config.SensitiveWordInit;
 import com.libbytian.pan.system.model.SensitiveWordModel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,6 +33,7 @@ public class SensitiveWordService  extends ServiceImpl<SensitiveWordMapper, Sens
 
     private final SensitiveWordMapper sensitiveWordMapper;
 
+
     /**
      * @Description: 是否包含敏感词
      * @author lc
@@ -43,16 +44,11 @@ public class SensitiveWordService  extends ServiceImpl<SensitiveWordMapper, Sens
         Map<String, Object> paramMap = new HashMap<String, Object>();
         Boolean boo = false;
         try {
-//            paramMap.put("valid", PublicEnum.YES.getCode());
-//            paramMap.put("type", PublicEnum.N.getCode());
-            // 从数据库中获取敏感词对象集合
-            List<SensitiveWordModel> list = this.list();
-            // 初始化敏感词库对象
-            SensitiveWordInit sensitiveWordInit = new SensitiveWordInit();
+
             // 构建敏感词库
-            final Map sensitiveWordMap = sensitiveWordInit.initKeyWord(list);
+
             // 传入SensitivewordEngine类中的敏感词库
-            SensitiveWordEngine.sensitiveWordMap = sensitiveWordMap;
+            SensitiveWordEngine.sensitiveWordMap =  SensitiveWordInit.sensitiveWordMap;
             boo = SensitiveWordEngine.isContaintSensitiveWord(message, 2);
         } catch (Exception e) {
             log.error("[通用短信请求]是否包含敏感词验证异常！{}", e.getMessage());
@@ -71,15 +67,12 @@ public class SensitiveWordService  extends ServiceImpl<SensitiveWordMapper, Sens
         Set<String> sensitiveWordList = null;
         try {
 //            paramMap.put("valid", PublicEnum.YES.getCode());
-//            paramMap.put("type", PublicEnum.N.getCode());
+//            paramMap.put("type", PublicEnum.N.getCode())
             // 从数据库中获取敏感词对象集合
-            List<SensitiveWordModel> list = this.list();
             // 初始化敏感词库对象
-            SensitiveWordInit sensitiveWordInit = new SensitiveWordInit();
             // 构建敏感词库
-            Map sensitiveWordMap = sensitiveWordInit.initKeyWord(list);
             // 传入SensitivewordEngine类中的敏感词库
-            SensitiveWordEngine.sensitiveWordMap = sensitiveWordMap;
+            SensitiveWordEngine.sensitiveWordMap =  SensitiveWordInit.sensitiveWordMap;
             sensitiveWordList = SensitiveWordEngine.getSensitiveWord(systemTemDetailsModel.getKeyword(), 2);
 
             log.info("[通用短信请求]获取敏感词内容, 敏感词为: {}", sensitiveWordList);
