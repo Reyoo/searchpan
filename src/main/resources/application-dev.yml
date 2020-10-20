@@ -21,8 +21,8 @@ server:
 spring:
   redis:
     host: 123.57.130.90
-    port: 36379
-    password: 123qwe!@#
+    port:
+    password:
     # redis client配置，使用lettuce
     lettuce:
       pool:
@@ -39,8 +39,8 @@ spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://123.57.130.90:33306/sunqitest?useUnicode=true&characterEncoding=utf-8&serverTimezone=Hongkong
-    username: root
-    password: 123qwe!@#
+    username:
+    password:
     type: com.alibaba.druid.pool.DruidDataSource
     filters: stat
     maxActive: 5
@@ -77,6 +77,8 @@ logging:
     com.vicente.vicentedemo: debug
 # mybatis-plus相关配置
 mybatis-plus:
+  # 支持统配符 * 或者 ; 分割
+  typeEnumsPackage: com.libbytian.pan.system.enums
   # xml扫描，多个目录用逗号或者分号分隔（告诉 Mapper 所对应的 XML 文件位置）
   mapper-locations: classpath:mybatis/*.xml
   # 以下配置均有默认值,可以不设置

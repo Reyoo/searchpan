@@ -1,19 +1,27 @@
 package com.libbytian.pan.system.controller;
 
+import cn.hutool.core.lang.UUID;
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.core.util.URLUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.libbytian.pan.system.common.AjaxResult;
 import com.libbytian.pan.system.model.SystemTemDetailsModel;
+import com.libbytian.pan.system.service.ISensitiveWordService;
 import com.libbytian.pan.system.service.ISystemTemDetailsService;
+import com.libbytian.pan.system.service.ISystemTemplateService;
 import com.libbytian.pan.system.util.CheckStrContainUrlUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.bind.Element;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -29,6 +37,7 @@ public class TemDetailsController {
 
     private final ISystemTemDetailsService iSystemTemDetailsService;
 
+    private final ISensitiveWordService iSensitiveWordService;
 
     /**
      * 根据模板ID查询模板详情
@@ -53,12 +62,18 @@ public class TemDetailsController {
     /**
      * 添加关键字及对应回复
      * @param systemTemDetailsModel 传入 key，value
+     * @param templateId  存入的模板
      * @return
      */
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     public AjaxResult addTemDetails(@RequestBody SystemTemDetailsModel systemTemDetailsModel) {
 
         try {
+
+            if(iSensitiveWordService.isContaintSensitiveWord(systemTemDetailsModel.getKeyword())){
+                return AjaxResult.error("包含敏感词请重新填写");
+            }
+
             int result = iSystemTemDetailsService.addTemDetails(systemTemDetailsModel, systemTemDetailsModel.getTemplateId());
             if (result == 1) {
                 return AjaxResult.success();
@@ -113,7 +128,6 @@ public class TemDetailsController {
             return AjaxResult.error(e.getMessage());
         }
     }
-
 
 
     /**
