@@ -228,4 +228,9 @@ public class SystemUserServiceImpl extends ServiceImpl<SystemUserMapper, SystemU
         return false;
     }
 
+    @Override
+    public SystemUserModel getUserByUerToTemplate(String templateId) {
+        return systemUserMapper.getUserByUerToTemplate(templateId);
+    }
+
 }

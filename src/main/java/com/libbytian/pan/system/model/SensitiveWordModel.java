@@ -15,6 +15,7 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 
 /**
@@ -51,7 +52,7 @@ public class SensitiveWordModel implements Serializable{
 	@TableField("createTime")
 	@JsonDeserialize(using = LocalDateTimeDeserializer.class)
 	@JsonSerialize(using = LocalDateTimeSerializer.class)
-	private LocalDate createTime;
+	private LocalDateTime createTime;
 	/** 更新人 */
 	@TableField("updater")
 	private String updater;

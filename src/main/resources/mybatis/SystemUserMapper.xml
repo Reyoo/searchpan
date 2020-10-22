@@ -17,7 +17,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-         user_id AS userId,
+         u.user_id AS userId,
          user_name AS username,
          user_mobile AS mobile ,
          user_password AS password,
@@ -94,6 +94,17 @@
                 AND u.act_range =#{actrange}
             </if>
         </trim>
+
+    </select>
+
+    <select id="getUserByUerToTemplate" parameterType="String"
+            resultType="com.libbytian.pan.system.model.SystemUserModel">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM sys_user u
+        LEFT JOIN user_template ut ON u.user_id = ut.user_id
+        WHERE
+        ut.template_id =#{templateId}
 
     </select>
 

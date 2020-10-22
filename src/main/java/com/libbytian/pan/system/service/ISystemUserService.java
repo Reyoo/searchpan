@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.libbytian.pan.system.model.SystemTemplateModel;
 import com.libbytian.pan.system.model.SystemUserModel;
+import com.libbytian.pan.system.model.SystemUserToTemplate;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -67,5 +68,13 @@ public interface ISystemUserService extends IService<SystemUserModel> {
      * @throws Exception
      */
     boolean checkUserStatus(SystemUserModel user) throws Exception;
+
+
+    /**
+     * 根据模板ID查询用户
+     * @param templateId
+     * @return
+     */
+    SystemUserModel getUserByUerToTemplate(String templateId);
 
 }

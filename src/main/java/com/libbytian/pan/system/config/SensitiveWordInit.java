@@ -4,7 +4,7 @@ package com.libbytian.pan.system.config;
 import java.util.*;
 
 import com.libbytian.pan.system.model.SensitiveWordModel;
-import com.libbytian.pan.system.service.ISensitiveWordService;
+import com.libbytian.pan.system.service.ISystemSensitiveWordService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -27,7 +27,7 @@ public class SensitiveWordInit {
 
 
     @Autowired
-    ISensitiveWordService iSensitiveWordService;
+    ISystemSensitiveWordService iSystemSensitiveWordService;
 
 
     /**
@@ -45,7 +45,7 @@ public class SensitiveWordInit {
         try {
             // 从敏感词集合对象中取出敏感词并封装到Set集合中
             Set<String> keyWordSet = new HashSet<String>();
-            for (SensitiveWordModel s : iSensitiveWordService.list()) {
+            for (SensitiveWordModel s : iSystemSensitiveWordService.list()) {
                 keyWordSet.add(s.getWord().trim());
             }
             // 将敏感词库加入到HashMap中

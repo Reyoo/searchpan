@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.libbytian.pan.system.mapper.SensitiveWordMapper">
+
+
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id,word,type,creator,createTime,updater,updateTime
+    </sql>
+
+    <select id="listSensitiveWordObjects" parameterType="com.libbytian.pan.system.model.SystemTemplateModel" resultType="com.libbytian.pan.system.model.SensitiveWordModel">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM sys_sensitive
+        <trim prefix="where" prefixOverrides="and|">
+            <if test="id != null and id != ''">
+                AND id= #{id}
+            </if>
+            <if test="word != null and word != ''">
+                AND word =#{word}
+            </if>
+            <if test="type != null and type != ''">
+                AND type =#{type}
+            </if>
+            <if test="creator != null and creator != ''">
+                AND creator =#{creator}
+            </if>
+            <if test="createTime != null and createTime != ''">
+                AND createTime =#{createTime}
+            </if>
+            <if test="updater != null and updater != ''">
+                AND updater =#{updater}
+            </if>
+            <if test="updateTime != null and updateTime != ''">
+                AND updateTime =#{updateTime}
+            </if>
+        
+        </trim>
+
+    </select>
+
+    <insert id="insertPermission" parameterType="com.libbytian.pan.system.model.SystemUserToRole" >
+         INSERT INTO sys_permission
+         (permission_url,permission_comment,permission_status,createtime)
+         VALUES
+         (#{permissionUrl},#{permissionComment},0,#{createtime})
+
+    </insert>
+
+
+</mapper>

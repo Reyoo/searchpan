@@ -6,6 +6,8 @@ import com.libbytian.pan.system.model.SensitiveWordModel;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.InputStream;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -18,14 +20,14 @@ import java.util.Set;
  * @Version: 1.0
  */
 @Transactional(propagation = Propagation.REQUIRES_NEW)
-public interface ISensitiveWordService extends IService<SensitiveWordModel> {
+public interface ISystemSensitiveWordService extends IService<SensitiveWordModel> {
 
      /**
       *  是否包含敏感词
-      * @param message
+      * @param systemTemDetailsModel
       * @return
       */
-     Boolean isContaintSensitiveWord(String message);
+     Boolean isContaintSensitiveWord(SystemTemDetailsModel systemTemDetailsModel);
 
      /**
       * 获取敏感词内容
@@ -33,5 +35,18 @@ public interface ISensitiveWordService extends IService<SensitiveWordModel> {
       * @return
       */
      Set<String> getSensitiveWord(SystemTemDetailsModel systemTemDetailsModel);
+
+
+     List<SensitiveWordModel> listSensitiveWordObjects(SensitiveWordModel sensitiveWordModel);
+
+
+     /**
+      * 敏感词导入数据库
+      * @param filename
+      * @param inputStream
+      * @return
+      * @throws Exception
+      */
+     int exportExceltoDb(String filename, InputStream inputStream) throws Exception;
 
 }
