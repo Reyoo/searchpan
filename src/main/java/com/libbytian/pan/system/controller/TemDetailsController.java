@@ -62,6 +62,26 @@ public class TemDetailsController {
 
 
     /**
+     * hs
+     * 输入key 或者 value 查询模板ID下模板详情
+     * 必传字段 templateid
+     * 未分页
+     * @param systemTemDetailsModel
+     * @return
+     */
+    @RequestMapping(value = "listTemDetailsObjectsByWord" , method = RequestMethod.POST)
+    public AjaxResult listTemDetailsObjectsByWord(@RequestBody SystemTemDetailsModel systemTemDetailsModel){
+
+        try {
+            List<SystemTemDetailsModel> result = iSystemTemDetailsService.listTemDetailsObjectsByWord(systemTemDetailsModel);
+            return  AjaxResult.success(result);
+        } catch (Exception e) {
+            return AjaxResult.error(e.getMessage());
+        }
+    }
+
+
+    /**
      * 添加关键字及对应回复
      * @param systemTemDetailsModel
      * 传入 keyword，keywordToValue,templateId(存入的模板)
@@ -73,16 +93,6 @@ public class TemDetailsController {
         try {
 
             if(iSystemSensitiveWordService.isContaintSensitiveWord(systemTemDetailsModel)){
-//            if(iSystemSensitiveWordService.isContaintSensitiveWord(systemTemDetailsModel.getKeyword(),systemTemDetailsModel.getTemdetailsId())){
-
-//                //敏感词存入
-//                SystemRecordSensitiveModel record = new SystemRecordSensitiveModel();
-//                record.setRecordSaveTime(LocalDateTime.now());
-//                record.setRecordWord(systemTemDetailsModel.getKeyword());
-//                //通过templateId查询到username
-//                record.setRecordUsername(iSystemUserService.getUserByUerToTemplate(systemTemDetailsModel.getTemplateId()).getUsername());
-//
-//                iSystemRecordSensitiveService.save(record);
 
                 return AjaxResult.error("包含敏感词请重新填写");
             }

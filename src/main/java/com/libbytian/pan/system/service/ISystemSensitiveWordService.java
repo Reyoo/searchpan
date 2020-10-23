@@ -49,4 +49,10 @@ public interface ISystemSensitiveWordService extends IService<SensitiveWordModel
       */
      int exportExceltoDb(String filename, InputStream inputStream) throws Exception;
 
+
+     /**
+      * 敏感词去重
+      */
+     int removeRepeat();
+
 }

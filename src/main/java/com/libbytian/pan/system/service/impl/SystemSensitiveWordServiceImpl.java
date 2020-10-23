@@ -174,21 +174,16 @@ public class SystemSensitiveWordServiceImpl extends ServiceImpl<SensitiveWordMap
         }
 
 
+
         //遍历解析出来的list
         for (Map<String,String> map : list) {
+
             SensitiveWordModel sensitiveWordModel = new SensitiveWordModel();
 
-            Map nowMap = SensitiveWordInit.sensitiveWordMap;
+            boolean boo = false;
 
-            if(nowMap.containsKey(sensitiveWordModel.getWord())){
-                System.out.println("进来了");
-                continue;
-            }
-
-//            if (this.list().contains(sensitiveWordModel.getWord())){
-//                System.out.println("测试二");
-//                continue;
-//            }
+            // 传入SensitivewordEngine类中的敏感词库
+            SensitiveWordEngine.sensitiveWordMap =  SensitiveWordInit.sensitiveWordMap;
 
 
                 for (Map.Entry<String,String> entry : map.entrySet()) {
@@ -196,8 +191,8 @@ public class SystemSensitiveWordServiceImpl extends ServiceImpl<SensitiveWordMap
 
                     if(entry.getKey().equals("SENSITIVEWORDS")){
 
-
                         sensitiveWordModel.setWord(entry.getValue());
+
                     }
                     if(entry.getKey().equals("SENSITIVETYPE")){
 
@@ -228,16 +223,20 @@ public class SystemSensitiveWordServiceImpl extends ServiceImpl<SensitiveWordMap
 
                     }
 
-
-
-
             }
 
 
+            if(sensitiveWordModel.getWord() != null){
+                boo = SensitiveWordEngine.isContaintSensitiveWord(sensitiveWordModel.getWord(), 2);
+                if (boo){
+                    continue;
+                }
 
+            }
 
             sensitiveWordModel.setCreateTime(LocalDateTime.now());
             sensitiveWordModel.setCreator("admin");
+
 
             systemTemDetailsModelList.add(sensitiveWordModel);
         }
@@ -245,6 +244,11 @@ public class SystemSensitiveWordServiceImpl extends ServiceImpl<SensitiveWordMap
         this.saveBatch(systemTemDetailsModelList);
 
         return 0;
+    }
+
+    @Override
+    public int removeRepeat() {
+      return  sensitiveWordMapper.removeRepeat();
     }
 
 }

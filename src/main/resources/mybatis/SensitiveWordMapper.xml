@@ -48,5 +48,13 @@
 
     </insert>
 
+    <delete id="removeRepeat" >
+        DELETE FROM sys_sensitive
+        WHERE
+        word IN (SELECT t.word FROM(SELECT word FROM sys_sensitive GROUP BY word HAVING COUNT(word)>1 ) t )
+        AND
+        id NOT IN (SELECT dt.minid FROM (SELECT MIN(id) AS minid FROM sys_sensitive GROUP BY word HAVING COUNT(word)>1) dt )
+    </delete>
+
 
 </mapper>

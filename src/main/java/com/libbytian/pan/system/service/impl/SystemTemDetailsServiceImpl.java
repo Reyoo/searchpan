@@ -30,10 +30,7 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -118,7 +115,6 @@ public class SystemTemDetailsServiceImpl extends ServiceImpl<SystemTemDetailsMap
         //遍历解析出来的list
         for (Map<String,String> map : list) {
             SystemTemDetailsModel systemTemDetailsModel = new SystemTemDetailsModel();
-
             for (Map.Entry<String,String> entry : map.entrySet()) {
                 if(entry.getKey().equals("question")){
                     systemTemDetailsModel.setKeyword(entry.getValue());
@@ -268,6 +264,54 @@ public class SystemTemDetailsServiceImpl extends ServiceImpl<SystemTemDetailsMap
             e.printStackTrace();
         }
         return systemTemDetailsModels;
+    }
+
+    @Override
+    public List<SystemTemDetailsModel> listTemDetailsObjectsByWord(SystemTemDetailsModel systemTemDetailsModel) {
+        return systemTemDetailsMapper.listTemDetailsObjectsByWord(systemTemDetailsModel);
+    }
+
+    @Override
+    public void defaultSave() {
+
+        //新增模板设置默认关键字
+        List<SystemTemDetailsModel> detailist = new ArrayList<>();
+
+        SystemTemDetailsModel detailsModel = new SystemTemDetailsModel();
+
+        detailsModel.setKeyword("首次关注");
+        detailsModel.setKeywordToValue("首次关注回复内容");
+        detailist.add(detailsModel);
+        detailsModel.setKeyword("维护时间");
+        detailsModel.setKeywordToValue("设置维护时间");
+        detailist.add(detailsModel);
+        detailsModel.setKeyword("维护内容");
+        detailsModel.setKeywordToValue("维护时间内回复内容");
+        detailist.add(detailsModel);
+        detailsModel.setKeyword("头部广告");
+        detailsModel.setKeywordToValue("微信回复头部广告");
+        detailist.add(detailsModel);
+        detailsModel.setKeyword("底部广告");
+        detailsModel.setKeywordToValue("微信回复底部广告");
+        detailist.add(detailsModel);
+        detailsModel.setKeyword("隐藏资源");
+        detailsModel.setKeywordToValue("隐藏资源名称");
+        detailist.add(detailsModel);
+        detailsModel.setKeyword("隐藏回复");
+        detailsModel.setKeywordToValue("隐藏资源后返回给粉丝内容");
+        detailist.add(detailsModel);
+        detailsModel.setKeyword("头部提示web");
+        detailsModel.setKeywordToValue("web页面头部提示内容");
+        detailist.add(detailsModel);
+        detailsModel.setKeyword("底部提示web");
+        detailsModel.setKeywordToValue("web页面底部提示内容");
+        detailist.add(detailsModel);
+
+        Iterator<SystemTemDetailsModel> iterator = detailist.iterator();
+        if (iterator.hasNext()){
+            systemTemDetailsMapper.insert(iterator.next());
+        }
+
     }
 
 }

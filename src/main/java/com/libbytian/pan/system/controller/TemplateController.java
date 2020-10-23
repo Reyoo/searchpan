@@ -4,13 +4,11 @@ import cn.hutool.core.lang.UUID;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.libbytian.pan.system.common.AjaxResult;
+import com.libbytian.pan.system.model.SystemTemDetailsModel;
 import com.libbytian.pan.system.model.SystemTemplateModel;
 import com.libbytian.pan.system.model.SystemUserModel;
 import com.libbytian.pan.system.model.SystemUserToTemplate;
-import com.libbytian.pan.system.service.ISystemTemplateService;
-import com.libbytian.pan.system.service.ISystemTmplToTmplDetailsService;
-import com.libbytian.pan.system.service.ISystemUserService;
-import com.libbytian.pan.system.service.ISystemUserToTemplateService;
+import com.libbytian.pan.system.service.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +30,8 @@ public class TemplateController {
     private final ISystemUserService iSystemUserService;
     private final ISystemTmplToTmplDetailsService iSystemTmplToTmplDetailsService;
     private final ISystemUserToTemplateService iSystemUserToTemplateService;
+
+    private final ISystemTemDetailsService iSystemTemDetailsService;
 
 
 
@@ -59,6 +59,7 @@ public class TemplateController {
 
     /**
      * 删除用户模板
+     * hs
      * 同时删除 用户模板表、模板表、模板详情表、详情表中对应数据
      * @param tempid
      * @return
@@ -133,7 +134,8 @@ public class TemplateController {
 
     /**
      * 新增用户模板表
-     *
+     * hs
+     * 新增模板设置默认关键字
      * @param
      * @return
      */
@@ -160,6 +162,11 @@ public class TemplateController {
             systemUserToTemplate.setTemplateId(uuid);
             systemUserToTemplate.setUserTemplateStatus(true);
             iSystemUserToTemplateService.save(systemUserToTemplate);
+
+            //新增模板设置默认关键字
+            iSystemTemDetailsService.defaultSave();
+
+
             return AjaxResult.success();
 
         } catch (Exception e) {

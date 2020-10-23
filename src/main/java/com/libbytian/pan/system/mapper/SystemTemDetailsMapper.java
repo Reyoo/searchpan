@@ -31,5 +31,9 @@ public interface SystemTemDetailsMapper extends BaseMapper<SystemTemDetailsModel
 
     List<SystemTemDetailsModel> findTemDetailsByUser(SystemUserModel systemUserModel);
 
+    List<SystemTemDetailsModel> listTemDetailsObjectsByWord(SystemTemDetailsModel systemTemDetailsModel);
+
+
+
 
 }

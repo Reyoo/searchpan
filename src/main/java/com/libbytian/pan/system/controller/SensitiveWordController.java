@@ -103,4 +103,20 @@ public class SensitiveWordController {
             return AjaxResult.error("上传失败，请选择文件");
         }
     }
+
+
+    /**
+     * 数据库敏感词去重
+     * @return
+     */
+    @RequestMapping(value = "/removeRepeat" , method = RequestMethod.DELETE)
+    public AjaxResult removeRepeat(){
+
+        try {
+            return AjaxResult.success(iSystemSensitiveWordService.removeRepeat());
+        } catch (Exception e) {
+            return AjaxResult.error(e.getMessage());
+        }
+
+    }
 }

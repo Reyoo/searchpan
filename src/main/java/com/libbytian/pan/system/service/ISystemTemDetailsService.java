@@ -37,4 +37,12 @@ public interface ISystemTemDetailsService extends IService<SystemTemDetailsModel
     List<SystemTemDetailsModel> getTemDetailsWithUser (SystemUserModel systemUserModel) throws Exception;
 
 
+    List<SystemTemDetailsModel> listTemDetailsObjectsByWord(SystemTemDetailsModel systemTemDetailsModel);
+
+    void  defaultSave();
+
+
+
+
+
 }

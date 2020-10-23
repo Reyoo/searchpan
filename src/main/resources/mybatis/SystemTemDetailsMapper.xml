@@ -78,4 +78,28 @@
 
 
 
+
+    <!--用户输入模板详情 关键字  查询模板详情-->
+    <select id="listTemDetailsObjectsByWord" parameterType="com.libbytian.pan.system.model.SystemTemDetailsModel" resultType="com.libbytian.pan.system.model.SystemTemDetailsModel">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM sys_temdetails d
+        LEFT JOIN tem_temdetails tt ON d.templatedetails_id = tt.templatedetails_id
+        <trim prefix="where" prefixOverrides="and|">
+            <if test="keyword != null and keyword != ''">
+                AND d.templatedetails_keyword =#{keyword}
+            </if>
+            <if test="keywordToValue != null and keywordToValue != ''">
+                AND d.templatedetails_value =#{keywordToValue}
+            </if>
+            <if test="templateId != null and templateId != ''">
+                AND tt.template_id =#{templateId}
+            </if>
+            ORDER BY d.createtime
+        </trim>
+
+    </select>
+
+
+
 </mapper>

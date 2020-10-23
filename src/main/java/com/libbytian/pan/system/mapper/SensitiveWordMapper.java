@@ -21,4 +21,6 @@ public interface SensitiveWordMapper extends BaseMapper<SensitiveWordModel> {
 
     List<SensitiveWordModel> listSensitiveWordObjects(SensitiveWordModel sensitiveWordModel);
 
+    int removeRepeat();
+
 }
