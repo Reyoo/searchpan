@@ -15,7 +15,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Base64;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -57,13 +59,30 @@ public class MoviePageShowController {
 //            List<SystemTemDetailsModel> systemdetails = systemTemplateService.findTemDetails(systemTemplateModels.get(0).getTemplateid());
 
             List<SystemTemDetailsModel> systemdetails = iSystemTemDetailsService.getTemDetailsWithUser(systemUserModel);
+            Map map = new HashMap();
 
-            List<SystemTemDetailsModel> headAndTialDetail = systemdetails.stream().
-                    filter(systemTemdetailsModel -> "头部提示web".equals(systemTemdetailsModel.getKeyword())
-                            || "底部提示web".equals(systemTemdetailsModel.getKeyword())).collect(Collectors.toList());
+            for(SystemTemDetailsModel systemTemDetailsModel : systemdetails){
 
-            if (headAndTialDetail.size() > 0) {
-                return AjaxResult.success(headAndTialDetail);
+                if(systemTemDetailsModel.getKeyword().equals("头部提示web")){
+                    systemTemDetailsModel.setKeyword("0");
+                    map.put("head",systemTemDetailsModel);
+                }
+                if(systemTemDetailsModel.getKeyword().equals("底部提示web")){
+                    systemTemDetailsModel.setKeyword("1");
+                    map.put("foot",systemTemDetailsModel);
+                }
+            }
+
+//            List<SystemTemDetailsModel> headAndTialDetail = systemdetails.stream().
+//                    filter(systemTemdetailsModel -> "头部提示web".equals(systemTemdetailsModel.getKeyword())
+//                            || "底部提示web".equals(systemTemdetailsModel.getKeyword())).collect(Collectors.toList());
+
+
+
+
+
+            if (map.size() > 0) {
+                return AjaxResult.success(map);
             } else {
                 return AjaxResult.success();
             }
@@ -94,6 +113,7 @@ public class MoviePageShowController {
             List<SystemTemDetailsModel> memberList = systemdetails.stream().
                     filter(systemTemdetailsModel -> searchName.equals(systemTemdetailsModel.getKeyword())).collect(Collectors.toList());
 
+
             if (memberList.size() > 0) {
                 return AjaxResult.success(memberList);
             } else {
@@ -118,12 +138,15 @@ public class MoviePageShowController {
             String username = new String(decoder.decode(fishEncryption), "UTF-8");
             // 调用验证用户名是否合法
             List<MovieNameAndUrlModel> movieNameAndUrlModels = asyncSearchCachedService.searchWord(searchName.trim());
-            if (movieNameAndUrlModels.size() > 0) {
+
+
+            if (movieNameAndUrlModels!=null && movieNameAndUrlModels.size() > 0) {
                 return AjaxResult.success(movieNameAndUrlModels);
             } else {
                 return AjaxResult.success();
             }
         } catch (Exception e) {
+            e.printStackTrace();
             return AjaxResult.error();
         }
     }

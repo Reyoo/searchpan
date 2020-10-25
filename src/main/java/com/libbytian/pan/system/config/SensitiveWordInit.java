@@ -95,9 +95,9 @@ public class SensitiveWordInit {
                 if (i == key.length() - 1) {
                     nowMap.put("isEnd", "1");
                 }
-                log.warn("封装敏感词库过程：" + sensitiveWordMap);
+//                log.warn("封装敏感词库过程：" + sensitiveWordMap);
             }
-            log.warn("查看敏感词库数据:" + sensitiveWordMap);
+//            log.warn("查看敏感词库数据:" + sensitiveWordMap);
         }
     }
 }

@@ -1,11 +1,13 @@
 package com.libbytian.pan.wechat.service;
 
 import com.libbytian.pan.wechat.model.MovieNameAndUrlModel;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
@@ -13,6 +15,7 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * @ProjectName: pansearch
@@ -23,15 +26,16 @@ import java.util.concurrent.TimeUnit;
  * @Date: 2020/10/14 16:34
  * @Version: 1.0
  */
-@Service
+@Component
 @Slf4j
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class AsyncSearchCachedServiceImpl {
 
-    @Autowired
-    RedisTemplate redisTemplate;
 
-    @Autowired
-    NormalPageService normalPageService;
+    private final  RedisTemplate redisTemplate;
+
+
+    private final  NormalPageService normalPageService;
 
     @Value("${user.unread.weiduyingdan}")
     String unreadUrl;
@@ -45,40 +49,40 @@ public class AsyncSearchCachedServiceImpl {
      *
      * @return
      */
-    @Async
+//    @Async
     public List<MovieNameAndUrlModel> searchWord(String searchText){
         try {
 
             //先从redis 中根据 搜索影片名 有结果直接返回
             List<MovieNameAndUrlModel> realMovieList = new ArrayList();
-//            if(redisTemplate.opsForList().size(searchText)>0){
-//                realMovieList = (List<MovieNameAndUrlModel>) redisTemplate.opsForList().rightPop(searchText);
-//            }else {
-
-               LocalTime begin = LocalTime.now();
+            List<MovieNameAndUrlModel>  findList = (List<MovieNameAndUrlModel>)redisTemplate.opsForValue().get(searchText);
+            if(findList!=null && findList.size()>0 ){
+                return findList;
+            }else{
+                LocalTime begin = LocalTime.now();
                 //查询第一个链接
                 List<MovieNameAndUrlModel> innerMovieList = new ArrayList();
-                List<MovieNameAndUrlModel> movieNameAndUrls =(List<MovieNameAndUrlModel>) normalPageService.getNormalUrl(unreadUrl+"/?s="+searchText).get("data");
+                List<MovieNameAndUrlModel> movieNameAndUrls = (List<MovieNameAndUrlModel>) normalPageService.getNormalUrl(unreadUrl + "/?s=" + searchText).get("data");
 
-                movieNameAndUrls.stream().forEach( movieNameAndUrl ->
+                movieNameAndUrls.stream().forEach(movieNameAndUrl ->
                         innerMovieList.add(normalPageService.getMoviePanUrl(movieNameAndUrl)));
 
                 //查询第二个链接
-                List<MovieNameAndUrlModel> movieNameAndUrls1 =(List<MovieNameAndUrlModel>) normalPageService.getNormalUrl(lxxhUrl+"/?s="+searchText).get("data");
-                movieNameAndUrls1.stream().forEach( movieNameAndUrl ->
+                List<MovieNameAndUrlModel> movieNameAndUrls1 = (List<MovieNameAndUrlModel>) normalPageService.getNormalUrl(lxxhUrl + "/?s=" + searchText).get("data");
+                movieNameAndUrls1.stream().forEach(movieNameAndUrl ->
                         innerMovieList.add(normalPageService.getMoviePanUrl2(movieNameAndUrl)));
 
                 realMovieList = innerMovieList;
                 //没有结果第一次先去查询
                 //redisTemplate.opsForList().rightPushAll(inMessage.getContent(), realMovieList);
-                redisTemplate.opsForValue().set(searchText,realMovieList,60 * 24 * 7 , TimeUnit.MINUTES);
+                redisTemplate.opsForValue().set(searchText, realMovieList, 60 * 24 * 7, TimeUnit.MINUTES);
 
                 LocalTime end = LocalTime.now();
                 Duration duration = Duration.between(begin, end);
                 log.info("Duration: " + duration);
 
-//            }
-            return realMovieList;
+                return realMovieList;
+            }
         }catch (Exception e){
             e.printStackTrace();
         }

@@ -31,7 +31,7 @@
         LEFT JOIN sys_template t ON tt.template_id = t.template_id
         <trim prefix="where" prefixOverrides="and|">
             <if test="templateid != null and templateid != ''">
-                AND t.template_id =#{templateId}
+                AND t.template_id =#{templateid}
             </if>
             <if test="templatename != null and templatename != ''">
                 AND t.template_name =#{templatename}

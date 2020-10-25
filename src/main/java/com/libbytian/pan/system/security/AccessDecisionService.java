@@ -43,6 +43,7 @@ public class AccessDecisionService {
          * 注册接口放过
          */
         whiteList.add("/login/register");
+        whiteList.add("/details/**");
         /**
          * 验证码接口放过
          */

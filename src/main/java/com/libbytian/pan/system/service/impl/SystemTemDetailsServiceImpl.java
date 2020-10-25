@@ -192,10 +192,11 @@ public class SystemTemDetailsServiceImpl extends ServiceImpl<SystemTemDetailsMap
         //excel标题
         String title[] = {"id","question","answer","userid","date_time","isTop"};
         //excel文件名
-        String fileName = "学生信息表"+System.currentTimeMillis()+".xls";
+
         SystemTemplateModel systemTemplateModel = iSystemTemplateService.getById(templateId);
          //sheet名
-        String sheetName = systemTemplateModel.getTemplatename();
+        String  sheetName = systemTemplateModel.getTemplatename();
+        String fileName = sheetName + ".xls";
         DateTimeFormatter pattern = DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm:ss");
         String[][] content=new String[systemTemDetailsModelList.size()][title.length];
         for (int i = 0; i < systemTemDetailsModelList.size(); i++) {
