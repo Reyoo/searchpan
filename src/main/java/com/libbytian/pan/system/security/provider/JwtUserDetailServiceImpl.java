@@ -69,7 +69,7 @@ public class JwtUserDetailServiceImpl implements UserDetailsService {
             throw new UsernameNotFoundException(JSONObject.toJSONString(new ResultExceptionModel("该用户名不存在!",0,"")));
 
         }
-        System.out.println(systemUserModel.getPassword());
+
         List<SystemRoleModel> roles = iSystemRoleService.listRolesByUser(systemUserModel);
         log.info("用户:{}开始查询对应的角色." , username);
         for (SystemRoleModel systemRoleModel: roles ) {

@@ -54,18 +54,20 @@ public class JwtLoginFilter extends AbstractAuthenticationProcessingFilter {
            String userName = request.getParameter("username");
            String password = request.getParameter("password");
 
+           if (userName == null) {
+               userName = "";
+           }
 
+           if (password == null) {
+               password = "";
+           }
+           userName = userName.trim();
 
-
-//           iSystemRoleService = SpringContextUtil.getBean("iSystemRoleService");
 
            /**
             * 验证码
             */
 //           checkImageCode(request);
-
-
-
            /**
             * 登录用户身份及过期验证
             */
@@ -90,7 +92,7 @@ public class JwtLoginFilter extends AbstractAuthenticationProcessingFilter {
            return authenticatedToken;
 
        }catch (Exception e){
-           e.printStackTrace();
+           log.error(e.getMessage());
            throw new BadCredentialsException(e.getMessage());
        }
     }
