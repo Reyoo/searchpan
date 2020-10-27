@@ -109,9 +109,13 @@ public class SystemUserModel extends Model<SystemUserModel>   {
 
 
 
-
     @TableField(exist = false)
     private String token;
+
+    @TableField(exist = false)
+    private Integer rememberMe;
+
+
 
 
     @Override

@@ -3,7 +3,7 @@ package com.libbytian.pan.system.security.handle;
 /**
  * @author: QiSun
  * @date: 2020-09-29
- * @Description:
+ * @description:没有访问权限
  */
 import java.io.IOException;
 

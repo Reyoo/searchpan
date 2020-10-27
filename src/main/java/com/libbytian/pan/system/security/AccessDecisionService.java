@@ -65,9 +65,9 @@ public class AccessDecisionService {
             return false;
         }
 
-        UserDetails user = (UserDetails) auth.getPrincipal();
+        String username =  (String)auth.getPrincipal();
         SystemUserModel userModel = new SystemUserModel();
-        userModel.setUsername(user.getUsername());
+        userModel.setUsername(username.trim());
 
         //根据用户名查出能访问哪些url, urls=findUrlByUserName()
 //        List<String> urls = queryUrlByUserName(userName);

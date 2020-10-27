@@ -80,4 +80,16 @@ public class JwtUser implements UserDetails {
     public void setAuthorities(List<GrantedAuthority> authorities) {
         this.authorities = authorities;
     }
+
+    @Override
+    public String toString() {
+        return "JwtUser{" +
+                "username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", authorities=" + authorities +
+                '}';
+    }
+
+
+
 }

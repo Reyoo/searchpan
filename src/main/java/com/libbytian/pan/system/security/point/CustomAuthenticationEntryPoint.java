@@ -3,7 +3,7 @@ package com.libbytian.pan.system.security.point;
 /**
  * @author: QiSun
  * @date: 2020-09-29
- * @Description:
+ * @description:没有携带token或者token无效
  */
 
 import java.io.IOException;

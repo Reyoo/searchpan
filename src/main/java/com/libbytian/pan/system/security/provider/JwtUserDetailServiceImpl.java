@@ -17,6 +17,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 
@@ -78,14 +79,6 @@ public class JwtUserDetailServiceImpl implements UserDetailsService {
         return new JwtUser(username,systemUserModel.getPassword(),authorities);
     }
 
-
-//        UserDetails userDetails = null;
-//        if ("admin".equals(username)) {
-//            return new JwtUser("admin", passwordEncoder.encode("123456"));
-//        }
-//        if ("user".equals(username)) {
-//            return new JwtUser("user", passwordEncoder.encode("123456"));
-//        }
 
 
 }
