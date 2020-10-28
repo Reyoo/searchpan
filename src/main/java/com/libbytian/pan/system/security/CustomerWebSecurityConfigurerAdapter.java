@@ -2,20 +2,21 @@ package com.libbytian.pan.system.security;
 
 
 import com.libbytian.pan.system.security.filter.JWTAuthenticationFilter;
-import com.libbytian.pan.system.security.filter.JWTAuthorizationFilter;
+import com.libbytian.pan.system.security.filter.ValidateCodeFilter;
 import com.libbytian.pan.system.security.handle.LoginAccessDeineHandler;
 import com.libbytian.pan.system.security.point.CustomAuthenticationEntryPoint;
 import com.libbytian.pan.system.security.provider.JwtUserDetailServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.jwt.crypto.sign.RsaVerifier;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
@@ -35,8 +36,22 @@ public class CustomerWebSecurityConfigurerAdapter extends WebSecurityConfigurerA
     @Autowired
     private JwtUserDetailServiceImpl jwtUserDetailService;
 
+
+    @Autowired
+    RedisTemplate redisTemplate;
+
+
+    @Autowired
+    ValidateCodeFilter validateCodeFilter;
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+
+
+        validateCodeFilter.setredisTemplate(redisTemplate);
+
+        JWTAuthenticationFilter jwtAuthenticationFilter = new JWTAuthenticationFilter();
+        jwtAuthenticationFilter.setAuthenticationManager(this.authenticationManagerBean());
 
 
         http
@@ -46,9 +61,10 @@ public class CustomerWebSecurityConfigurerAdapter extends WebSecurityConfigurerA
                 .and()
 
                 //自定义验证
-//                .authenticationProvider(provider)
-                .addFilter(new JWTAuthenticationFilter(authenticationManager()))
-                .addFilter(new JWTAuthorizationFilter(authenticationManager()))
+
+                .addFilterAfter(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(validateCodeFilter, JWTAuthenticationFilter.class)
+//                .addFilter(new JWTAuthenticationFilter(authenticationManager()))
 
 
                 //异常处理

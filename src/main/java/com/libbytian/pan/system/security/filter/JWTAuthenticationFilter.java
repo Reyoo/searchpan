@@ -3,24 +3,35 @@ package com.libbytian.pan.system.security.filter;
 
 import com.alibaba.fastjson.JSON;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.libbytian.pan.system.exception.ImageCodeException;
 import com.libbytian.pan.system.model.SystemUserModel;
 import com.libbytian.pan.system.security.model.AuthenticationSuccessModel;
 import com.libbytian.pan.system.security.provider.JwtUser;
 import com.libbytian.pan.system.util.JwtTokenUtils;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
+import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.WebAuthenticationDetails;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -33,14 +44,14 @@ import java.util.Set;
  */
 
 @Slf4j
-public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
-    private ThreadLocal<Integer> rememberMe = new ThreadLocal<>();
-    private AuthenticationManager authenticationManager;
+public class JWTAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
 
-    public JWTAuthenticationFilter(AuthenticationManager authenticationManager) {
-        this.authenticationManager = authenticationManager;
-        super.setFilterProcessesUrl("/login/signin");
+    private ThreadLocal<Integer> threadLocal = new ThreadLocal<>();
+
+
+    public JWTAuthenticationFilter() {
+        super(new AntPathRequestMatcher("/login/signin", "POST"));
     }
 
     @Override
@@ -49,12 +60,19 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
         // 从输入流中获取到登录的信息
         try {
-            SystemUserModel systemUserModel = new ObjectMapper().readValue(request.getInputStream(), SystemUserModel.class);
-            rememberMe.set(systemUserModel.getRememberMe() == null ? 0 : systemUserModel.getRememberMe());
-            return authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(systemUserModel.getUsername(), systemUserModel.getPassword(), new ArrayList<>())
-            );
-        } catch (IOException e) {
+
+            String userName = request.getParameter("username");
+            String password = request.getParameter("password");
+            String rememberMeStat = request.getParameter("rememberMe");
+            UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(userName, password);
+            usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetails(request));
+            threadLocal.set(rememberMeStat == null ? 0 : Integer.valueOf(rememberMeStat));
+            Authentication authenticatedToken = this.getAuthenticationManager().authenticate(usernamePasswordAuthenticationToken);
+            return authenticatedToken;
+
+
+
+        } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
@@ -80,20 +98,18 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
         JwtUser jwtUser = (JwtUser) authentication.getPrincipal();
         System.out.println("jwtUser:" + jwtUser.toString());
-        boolean isRemember = rememberMe.get() == 1;
+        boolean isRemember = threadLocal.get() == 1;
 
         Set<String> roles = AuthorityUtils.authorityListToSet(authentication.getAuthorities());
         //签发token
         String token = JwtTokenUtils.createToken(jwtUser.getUsername(), roles, isRemember);
         AuthenticationSuccessModel authenticationSuccessModel = new AuthenticationSuccessModel();
         authenticationSuccessModel.setUsername(authentication.getName());
-        authenticationSuccessModel.setToken(token);
+        authenticationSuccessModel.setToken(JwtTokenUtils.TOKEN_PREFIX + token);
+        authenticationSuccessModel.setStatus(200);
         if (roles.contains("ROLE_ADMIN")){
-
             //登录到系统管理
             authenticationSuccessModel.setRoute("index/userManagement");
-            authenticationSuccessModel.setToken(token);
-            authenticationSuccessModel.setStatus(200);
             response.getWriter().write(JSON.toJSONString(authenticationSuccessModel));
         }
 
@@ -101,11 +117,8 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
          * 付费用户
          */
         if (roles.contains("ROLE_PAYUSER")){
-
             //登录到cms管理
             authenticationSuccessModel.setRoute("mainManagement");
-            authenticationSuccessModel.setToken(token);
-            authenticationSuccessModel.setStatus(200);
             response.getWriter().write(JSON.toJSONString(authenticationSuccessModel));
         }
 
@@ -118,4 +131,7 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
         response.getWriter().write("authentication failed, reason: " + failed.getMessage());
     }
+
+
+
 }

@@ -49,6 +49,7 @@ public class SysCaptchaController  {
     public ModelAndView getKaptchaImage(HttpServletRequest request, HttpServletResponse response) {
         ServletOutputStream out = null;
         try {
+            /*禁止缓存*/
             response.setDateHeader("Expires", 0);
             response.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
             response.addHeader("Cache-Control", "post-check=0, pre-check=0");
@@ -71,9 +72,8 @@ public class SysCaptchaController  {
             }
 
             String uuid = UUID.fastUUID().toString();
-            System.out.println(uuid);
-            System.out.println(code);
-            redisTemplate.opsForValue().set(uuid,code,1, TimeUnit.MINUTES);
+
+            redisTemplate.opsForValue().set(uuid,code,10, TimeUnit.MINUTES);
             Cookie cookie = new Cookie("captcha",uuid);
             /*key写入cookie，验证时获取*/
             response.addCookie(cookie);
