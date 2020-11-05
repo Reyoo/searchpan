@@ -44,6 +44,7 @@ public class AccessDecisionService {
          */
         whiteList.add("/login/register");
         whiteList.add("/details/**");
+        whiteList.add("/favicon.ico");
         /**
          * 验证码接口放过
          */

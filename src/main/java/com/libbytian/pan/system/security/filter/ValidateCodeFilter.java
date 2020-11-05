@@ -82,7 +82,7 @@ public class ValidateCodeFilter extends OncePerRequestFilter implements Initiali
                     httpServletResponse.setContentType("application/json; charset=utf-8");
                     httpServletResponse.setStatus(HttpServletResponse.SC_FORBIDDEN);
                     String reason = "统一处理，原因：" + e.getMessage();
-                    httpServletResponse.getWriter().write(new ObjectMapper().writeValueAsString(reason));
+                    httpServletResponse.getWriter().write(new ObjectMapper().writeValueAsString(AjaxResult.error(reason)));
                     httpServletResponse.getWriter().flush();
                     return;
                 }
@@ -110,14 +110,8 @@ public class ValidateCodeFilter extends OncePerRequestFilter implements Initiali
      */
     private void checkImageCode(HttpServletRequest httpServletRequest) {
         /*从cookie取值*/
-        Cookie[] cookies = httpServletRequest.getCookies();
-        String uuid = "";
-        for (Cookie cookie : cookies) {
-            String cookieName = cookie.getName();
-            if ("captcha".equals(cookieName)) {
-                uuid = cookie.getValue();
-            }
-        }
+        String uuid = httpServletRequest.getParameter("captcha");
+
         String redisImageCode = (String) redisTemplate.opsForValue().get(uuid);
         /*获取图片验证码与redis验证*/
         String imageCode = httpServletRequest.getParameter("imageCode");

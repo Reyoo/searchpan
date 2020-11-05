@@ -26,7 +26,7 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
                          AuthenticationException authException) throws IOException, ServletException {
         response.setCharacterEncoding("utf-8");
         response.setContentType("text/javascript;charset=utf-8");
-        response.getWriter().print(JSONObject.toJSONString(AjaxResult.error("没有访问权限!")));
+        response.getWriter().print(JSONObject.toJSONString(AjaxResult.error("请检查验证码")));
     }
 
 }

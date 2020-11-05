@@ -1,9 +1,12 @@
 package com.libbytian.pan.system.controller;
 
+import cn.hutool.core.codec.Base64;
+import cn.hutool.core.io.FastByteArrayOutputStream;
 import cn.hutool.core.lang.UUID;
 import com.google.code.kaptcha.Constants;
 import com.google.code.kaptcha.Producer;
 
+import com.libbytian.pan.system.common.AjaxResult;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +14,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.annotation.Resource;
@@ -21,6 +25,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -28,7 +34,7 @@ import java.util.concurrent.TimeUnit;
  * @author SunQi
  */
 
-@Controller
+@RestController
 @RequestMapping("/captcha")
 @Slf4j
 public class SysCaptchaController  {
@@ -46,18 +52,16 @@ public class SysCaptchaController  {
      * 验证码生成
      */
     @GetMapping(value = "/captchaImage")
-    public ModelAndView getKaptchaImage(HttpServletRequest request, HttpServletResponse response) {
+    public AjaxResult getKaptchaImage(HttpServletRequest request, HttpServletResponse response) {
+        System.out.println("in endpoint ");
         ServletOutputStream out = null;
         try {
-            /*禁止缓存*/
-            response.setDateHeader("Expires", 0);
-            response.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
-            response.addHeader("Cache-Control", "post-check=0, pre-check=0");
-            response.setHeader("Pragma", "no-cache");
-            response.setContentType("image/jpeg");
+            ArrayList typeList = new ArrayList();
+            typeList.add("math");
+            typeList.add("char");
 
-            String type = request.getParameter("type");
-            type = "math";
+            int index = (int) (Math.random() * typeList.size());
+            String type= (String)typeList.get(index);
             String capStr;
             String code = null;
             BufferedImage bufferedImage = null;
@@ -74,24 +78,28 @@ public class SysCaptchaController  {
             String uuid = UUID.fastUUID().toString();
 
             redisTemplate.opsForValue().set(uuid,code,10, TimeUnit.MINUTES);
-            Cookie cookie = new Cookie("captcha",uuid);
-            /*key写入cookie，验证时获取*/
-            response.addCookie(cookie);
-            out = response.getOutputStream();
-            ImageIO.write(bufferedImage, "jpg", out);
-            out.flush();
+
+
+            // 转换流信息写出
+            FastByteArrayOutputStream os = new FastByteArrayOutputStream();
+            try
+            {
+                ImageIO.write(bufferedImage, "jpg", os);
+            }
+            catch (IOException e)
+            {
+                return AjaxResult.error(e.getMessage());
+            }
+
+            AjaxResult ajax = AjaxResult.success();
+            ajax.put("captcha", uuid);
+            ajax.put("img", Base64.encode(os.toByteArray()));
+            return ajax;
+
 
         } catch (Exception e) {
             log.error("验证码生成异常!", e);
-        } finally {
-            try {
-                if (out != null) {
-                    out.close();
-                }
-            } catch (IOException e) {
-                log.error("验证码生成异常!", e);
-            }
         }
-        return null;
+        return AjaxResult.error();
     }
 }

@@ -213,12 +213,12 @@
             <groupId>com.github.penggle</groupId>
             <artifactId>kaptcha</artifactId>
             <version>2.3.2</version>
-            <exclusions>
+<!--            <exclusions>
                 <exclusion>
                     <artifactId>javax.servlet-api</artifactId>
                     <groupId>javax.servlet</groupId>
                 </exclusion>
-            </exclusions>
+            </exclusions>-->
         </dependency>
 
 
