@@ -204,7 +204,7 @@ public class WxPortalController {
             stringBuffer.append(headmodel.getKeywordToValue());
             stringBuffer.append("\r\n");
             stringBuffer.append("\r\n");
-            stringBuffer.append("<a href =\"https://search.douban.com/movie/subject_search?search_text=");
+            stringBuffer.append("<a href =\"http://51.findfish.top/movie/subject_search?search_text=");
             stringBuffer.append(searchName);
             stringBuffer.append("\">[");
             stringBuffer.append(searchName);

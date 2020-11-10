@@ -80,8 +80,8 @@ public class ValidateCodeFilter extends OncePerRequestFilter implements Initiali
                 } catch (ImageCodeException e) {
                     httpServletResponse.setCharacterEncoding("UTF-8");
                     httpServletResponse.setContentType("application/json; charset=utf-8");
-                    httpServletResponse.setStatus(HttpServletResponse.SC_FORBIDDEN);
-                    String reason = "统一处理，原因：" + e.getMessage();
+                    httpServletResponse.setStatus(HttpServletResponse.SC_OK);
+                    String reason =  e.getMessage();
                     httpServletResponse.getWriter().write(new ObjectMapper().writeValueAsString(AjaxResult.error(reason)));
                     httpServletResponse.getWriter().flush();
                     return;
