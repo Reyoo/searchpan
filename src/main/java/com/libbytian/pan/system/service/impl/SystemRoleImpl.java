@@ -1,5 +1,6 @@
 package com.libbytian.pan.system.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -42,36 +43,36 @@ public class SystemRoleImpl extends ServiceImpl<SystemRoleMapper, SystemRoleMode
     @Override
     public IPage<SystemRoleModel> findRole(Page<SystemRoleModel> page, SystemRoleModel systemRoleModel) throws Exception {
 
-//        QueryWrapper queryWrapper = new QueryWrapper();
-//
-//        /**
-//         * 这里systemusermodel 不做空判断 。getusername 空指针  null.getUsername
-//         * 查询时间段，starttime，endtime为虚拟字段
-//         */
-//        if(systemRoleModel != null){
-//            if(systemRoleModel.getRoleName() != null){
-//                queryWrapper.eq("role_name",systemRoleModel.getRoleName());
-//            }
-//
-//            if(systemRoleModel.getShowName() != null){
-//                queryWrapper.eq("show_name",systemRoleModel.getShowName());
-//            }
-//
-//            if(systemRoleModel.getCreateTime() != null){
-//                queryWrapper.eq("createtime",systemRoleModel.getCreateTime());
-//            }
-//
-//            if(systemRoleModel.getStarttime() != null && systemRoleModel.getEndtime() != null){
-//                queryWrapper.ge("createtime",systemRoleModel.getStarttime());
-//                queryWrapper.le("createtime",systemRoleModel.getEndtime());
-//            }
-//
-//        }
-//        queryWrapper.orderByDesc("createtime");
-//
-//        return systemRoleMapper.selectPage(page,queryWrapper);
+        QueryWrapper queryWrapper = new QueryWrapper();
 
-        return systemRoleMapper.getRolesPage(page,systemRoleModel);
+        /**
+         * 这里systemusermodel 不做空判断 。getusername 空指针  null.getUsername
+         * 查询时间段，starttime，endtime为虚拟字段
+         */
+        if(systemRoleModel != null){
+            if(systemRoleModel.getRoleName() != null){
+                queryWrapper.eq("role_name",systemRoleModel.getRoleName());
+            }
+
+            if(systemRoleModel.getShowName() != null){
+                queryWrapper.eq("show_name",systemRoleModel.getShowName());
+            }
+
+            if(systemRoleModel.getCreateTime() != null){
+                queryWrapper.eq("createtime",systemRoleModel.getCreateTime());
+            }
+
+            if(systemRoleModel.getStarttime() != null && systemRoleModel.getEndtime() != null){
+                queryWrapper.ge("createtime",systemRoleModel.getStarttime());
+                queryWrapper.le("createtime",systemRoleModel.getEndtime());
+            }
+
+        }
+        queryWrapper.orderByDesc("createtime");
+
+        return systemRoleMapper.selectPage(page,queryWrapper);
+
+//        return systemRoleMapper.getRolesPage(page,systemRoleModel);
 
     }
 
@@ -79,12 +80,11 @@ public class SystemRoleImpl extends ServiceImpl<SystemRoleMapper, SystemRoleMode
     @Override
     public IPage<SystemRoleModel> findRoleById(Page<SystemRoleModel> page, String roleId) throws Exception  {
 
-///        IPage<SystemRoleModel> result = systemRoleMapper.selectRoleById(page,roleId);
-//        IPage<SystemRoleModel> result = systemRoleMapper.selectRoleById(page,roleId);
+        IPage<SystemRoleModel> result = systemRoleMapper.selectRoleById(page,roleId);
         SystemRoleModel systemRoleModel = new SystemRoleModel();
         systemRoleModel.setRoleId(roleId);
 
-        IPage<SystemRoleModel> result = systemRoleMapper.getRolesPage(page,systemRoleModel);
+///        IPage<SystemRoleModel> result = systemRoleMapper.getRolesPage(page,systemRoleModel);
 
         return result;
     }

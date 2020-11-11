@@ -45,7 +45,7 @@ public class PermissionController {
      * @param systemPermissionModel
      * @return
      */
-    @RequestMapping(value = "/updateper", method = RequestMethod.PUT)
+    @RequestMapping(value = "/updateper", method = RequestMethod.PATCH)
     public AjaxResult putPermission(@RequestBody SystemPermissionModel systemPermissionModel) {
 
         try {

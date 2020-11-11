@@ -273,44 +273,92 @@ public class SystemTemDetailsServiceImpl extends ServiceImpl<SystemTemDetailsMap
     }
 
     @Override
-    public void defaultSave() {
+    public void defaultSave(String templateId) {
+        //待优化
 
         //新增模板设置默认关键字
         List<SystemTemDetailsModel> detailist = new ArrayList<>();
 
-        SystemTemDetailsModel detailsModel = new SystemTemDetailsModel();
+        SystemTemDetailsModel focus = new SystemTemDetailsModel();
+        SystemTemDetailsModel sleepStart = new SystemTemDetailsModel();
+        SystemTemDetailsModel sleepEnd = new SystemTemDetailsModel();
+        SystemTemDetailsModel sleepDetails = new SystemTemDetailsModel();
+        SystemTemDetailsModel headAdvert = new SystemTemDetailsModel();
+        SystemTemDetailsModel endAdvert = new SystemTemDetailsModel();
+        SystemTemDetailsModel hideResource = new SystemTemDetailsModel();
+        SystemTemDetailsModel hideReply = new SystemTemDetailsModel();
+        SystemTemDetailsModel headWeb = new SystemTemDetailsModel();
+        SystemTemDetailsModel endWeb = new SystemTemDetailsModel();
 
-        detailsModel.setKeyword("首次关注");
-        detailsModel.setKeywordToValue("首次关注回复内容");
-        detailist.add(detailsModel);
-        detailsModel.setKeyword("维护时间");
-        detailsModel.setKeywordToValue("设置维护时间");
-        detailist.add(detailsModel);
-        detailsModel.setKeyword("维护内容");
-        detailsModel.setKeywordToValue("维护时间内回复内容");
-        detailist.add(detailsModel);
-        detailsModel.setKeyword("头部广告");
-        detailsModel.setKeywordToValue("微信回复头部广告");
-        detailist.add(detailsModel);
-        detailsModel.setKeyword("底部广告");
-        detailsModel.setKeywordToValue("微信回复底部广告");
-        detailist.add(detailsModel);
-        detailsModel.setKeyword("隐藏资源");
-        detailsModel.setKeywordToValue("隐藏资源名称");
-        detailist.add(detailsModel);
-        detailsModel.setKeyword("隐藏回复");
-        detailsModel.setKeywordToValue("隐藏资源后返回给粉丝内容");
-        detailist.add(detailsModel);
-        detailsModel.setKeyword("头部提示web");
-        detailsModel.setKeywordToValue("web页面头部提示内容");
-        detailist.add(detailsModel);
-        detailsModel.setKeyword("底部提示web");
-        detailsModel.setKeywordToValue("web页面底部提示内容");
-        detailist.add(detailsModel);
+        focus.setKeyword("首次关注");
+        focus.setKeywordToValue("首次关注回复内容");
+        focus.setShowOrder(1);
 
-        Iterator<SystemTemDetailsModel> iterator = detailist.iterator();
-        if (iterator.hasNext()){
-            systemTemDetailsMapper.insert(iterator.next());
+        sleepStart.setKeyword("开始维护");
+        sleepStart.setKeywordToValue("设置维护开始时间");
+        sleepStart.setShowOrder(2);
+
+        sleepEnd.setKeyword("结束维护");
+        sleepEnd.setKeywordToValue("设置维护结束时间");
+        sleepEnd.setShowOrder(3);
+
+        sleepDetails.setKeyword("维护内容");
+        sleepDetails.setKeywordToValue("维护时间内回复内容");
+        sleepDetails.setShowOrder(4);
+
+        headAdvert.setKeyword("头部广告");
+        headAdvert.setKeywordToValue("微信回复头部广告（可设置开关）");
+        headAdvert.setShowOrder(5);
+
+        endAdvert.setKeyword("底部广告");
+        endAdvert.setKeywordToValue("微信回复底部广告（可设置开关）");
+        endAdvert.setShowOrder(6);
+
+        hideResource.setKeyword("隐藏资源");
+        hideResource.setKeywordToValue("隐藏资源名称");
+        hideResource.setShowOrder(7);
+
+        hideReply.setKeyword("隐藏回复");
+        hideReply.setKeywordToValue("隐藏资源后返回给粉丝内容");
+        hideReply.setShowOrder(8);
+
+        headWeb.setKeyword("头部提示web");
+        headWeb.setKeywordToValue("web页面头部提示内容");
+        headWeb.setShowOrder(9);
+
+        endWeb.setKeyword("底部提示web");
+        endWeb.setKeywordToValue("web页面底部提示内容");
+        endWeb.setShowOrder(10);
+
+        detailist.add(focus);
+        detailist.add(sleepStart);
+        detailist.add(sleepEnd);
+        detailist.add(sleepDetails);
+        detailist.add(headAdvert);
+        detailist.add(endAdvert);
+        detailist.add(hideResource);
+        detailist.add(hideReply);
+        detailist.add(headWeb);
+        detailist.add(endWeb);
+
+
+
+        for (int i = 0; i < detailist.size(); i++) {
+
+
+            SystemTemDetailsModel details = detailist.get(i);
+
+            details.setTemdetailsId(UUID.randomUUID().toString());
+            details.setCreatetime(LocalDateTime.now());
+
+            systemTemDetailsMapper.insert(details);
+
+
+            //用户模板绑定模板详情
+            SystemTemToTemdetail temToTemdetail = SystemTemToTemdetail.builder().templateid(templateId).templatedetailsid(details.getTemdetailsId()).build();
+            iSystemTmplToTmplDetailsService.save(temToTemdetail);
+
+
         }
 
     }

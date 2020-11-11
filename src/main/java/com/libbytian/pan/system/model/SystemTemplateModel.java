@@ -52,7 +52,7 @@ public class SystemTemplateModel extends Model<SystemTemplateModel> {
     private LocalDateTime templatelastupdate;
 
     /**
-     * 状态值 0正常，-1删除
+     * 状态值 true启动，false禁用
      */
     @TableField(value = "template_status")
     private Boolean templatestatus;

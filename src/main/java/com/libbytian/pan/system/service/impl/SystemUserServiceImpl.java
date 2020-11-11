@@ -41,6 +41,8 @@ public class SystemUserServiceImpl extends ServiceImpl<SystemUserMapper, SystemU
 
     private final ISystemTemplateService systemTemplateService;
 
+    private final ISystemTemDetailsService iSystemTemDetailsService;
+
 
     @Override
     public SystemUserModel getUser(SystemUserModel systemUserModel) {
@@ -89,17 +91,20 @@ public class SystemUserServiceImpl extends ServiceImpl<SystemUserMapper, SystemU
             SystemUserToRole userToRole  = SystemUserToRole.builder().userId(user.getUserId()).roleId(roleModel.getRoleId()).build();
             userToRoleService.save(userToRole);
           //新增模板,存入模板表 sys_template
-            String uuid = UUID.randomUUID().toString();
+            String templateId = UUID.randomUUID().toString();
             SystemTemplateModel template =  new SystemTemplateModel();
-            template.setTemplateid(uuid);
+            template.setTemplateid(templateId);
             template.setTemplatename("模板1");
             template.setTemplatecreatetime(LocalDateTime.now());
             template.setTemplatestatus(true);
             systemTemplateService.save(template);
 
             //模板ID绑定用户ID
-            SystemUserToTemplate userToTemplate = SystemUserToTemplate.builder().userId(user.getUserId()).templateId(uuid).userTemplateStatus(true).build();
+            SystemUserToTemplate userToTemplate = SystemUserToTemplate.builder().userId(user.getUserId()).templateId(templateId).userTemplateStatus(true).build();
             userToTemplateService.save(userToTemplate);
+
+            //注册时,在默认模板ID对应模板详情下存入默认关键词
+            iSystemTemDetailsService.defaultSave(templateId);
         }
         return user;
     }
@@ -120,28 +125,38 @@ public class SystemUserServiceImpl extends ServiceImpl<SystemUserMapper, SystemU
         if(user.getUsername().isEmpty()){
             throw new Exception("用户名不能为空");
         }
+        if(user.getActTime() != null){
+            LocalDateTime actTime = systemUserMapper.getUser(user).getActTime();
 
-        LocalDateTime actTime = systemUserMapper.getUser(user).getActTime();
+            //如果有传入续费时长，则更新到期时间
+            if(user.getActrange() != null && user.getActrange() > 0) {
+                //获取当前时间
+                LocalDateTime nowtime = LocalDateTime.now();
 
-    //如果有传入续费时长，则更新到期时间
-        if(user.getActrange() != null && user.getActrange() > 0) {
-            //获取当前时间
-            LocalDateTime nowtime = LocalDateTime.now();
-
-            //已过期，到期时间在当前时间之前
-            if(actTime == null || actTime.isBefore(nowtime)) {
-                nowtime = nowtime.plus(user.getActrange(), ChronoUnit.MONTHS);
-            } else {
-                nowtime = actTime.plus(user.getActrange(), ChronoUnit.MONTHS);
+                //已过期，到期时间在当前时间之前
+                if(actTime == null || actTime.isBefore(nowtime)) {
+                    nowtime = nowtime.plus(user.getActrange(), ChronoUnit.MONTHS);
+                } else {
+                    nowtime = actTime.plus(user.getActrange(), ChronoUnit.MONTHS);
+                }
+                //更新到期时间
+                user.setActTime(nowtime);
             }
-            //更新到期时间
-            user.setActTime(nowtime);
         }
 
 
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         String encode = encoder.encode(user.getPassword());
-        SystemUserModel olduser = systemUserMapper.getUser(user);
+
+        /**
+         * hs
+         * 新建个对象，拿对象的用户名去查,不带入传入的mobile(因传入的mobile数据库可能没有，会造成查询userID为null)
+         */
+        SystemUserModel userModel = new SystemUserModel();
+        userModel.setUsername(user.getUsername());
+
+        SystemUserModel olduser = systemUserMapper.getUser(userModel);
+//        SystemUserModel olduser = systemUserMapper.getUser(user);
         user.setUserId( olduser.getUserId());
         user.setPassword(encode);
         boolean result = this.saveOrUpdate(user);

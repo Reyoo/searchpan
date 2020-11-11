@@ -1,6 +1,7 @@
 package com.libbytian.pan.wechat.controller;
 
 import com.libbytian.pan.system.model.SystemTemDetailsModel;
+import com.libbytian.pan.system.model.SystemTemToTemdetail;
 import com.libbytian.pan.system.model.SystemTemplateModel;
 import com.libbytian.pan.system.model.SystemUserModel;
 import com.libbytian.pan.system.service.ISystemTemDetailsService;
@@ -22,6 +23,8 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.ByteArrayInputStream;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -147,15 +150,43 @@ public class WxPortalController {
 
         List<SystemTemDetailsModel> systemdetails = iSystemTemDetailsService.getTemDetails(templateModel);
 
-        SystemTemDetailsModel headmodel = new SystemTemDetailsModel();
-        SystemTemDetailsModel lastmodel = new SystemTemDetailsModel();
+        //头部广告
+        SystemTemDetailsModel headModel = new SystemTemDetailsModel();
+        //底部广告
+        SystemTemDetailsModel lastModel = new SystemTemDetailsModel();
+        //隐藏资源
+        SystemTemDetailsModel hidden = new SystemTemDetailsModel();
+        //隐藏内容
+        SystemTemDetailsModel hiddenDetais = new SystemTemDetailsModel();
+        //维护开始时间
+        SystemTemDetailsModel sleepStart = new SystemTemDetailsModel();
+        //维护结束时间
+        SystemTemDetailsModel sleepEnd = new SystemTemDetailsModel();
+        //维护内容
+        SystemTemDetailsModel sleepDetais = new SystemTemDetailsModel();
+
 
         for (SystemTemDetailsModel model : systemdetails) {
-            if (model.getKeyword().contains("头部广告")){
-                headmodel.setKeywordToValue(model.getKeywordToValue());
+            if ("头部广告".equals(model.getKeyword())){
+                headModel.setKeywordToValue(model.getKeywordToValue());
             }
-            if (model.getKeyword().contains("底部广告")){
-                lastmodel.setKeywordToValue(model.getKeywordToValue());
+            if ("底部广告".equals(model.getKeyword())){
+                lastModel.setKeywordToValue(model.getKeywordToValue());
+            }
+            if ("隐藏资源".equals(model.getKeyword())){
+                hidden.setKeywordToValue(model.getKeywordToValue());
+            }
+            if ("隐藏回复".equals(model.getKeyword())){
+                hiddenDetais.setKeywordToValue(model.getKeywordToValue());
+            }
+            if ("开始维护".equals(model.getKeyword())){
+                sleepStart.setKeywordToValue(model.getKeywordToValue());
+            }
+            if ("结束维护".equals(model.getKeyword())){
+                sleepEnd.setKeywordToValue(model.getKeywordToValue());
+            }
+            if ("维护内容".equals(model.getKeyword())){
+                sleepDetais.setKeywordToValue(model.getKeywordToValue());
             }
         }
 
@@ -198,10 +229,12 @@ public class WxPortalController {
 
             /**
              * 响应内容
-             * 关键字 头部广告 headmodel.getKeywordToValue()
-             * 关键字 底部广告 lastmodel.getKeywordToValue()
+             * 关键字 头部广告 headModel.getKeywordToValue()
+             * 关键字 底部广告 lastModel.getKeywordToValue()
              */
-            stringBuffer.append(headmodel.getKeywordToValue());
+            if (headModel != null){
+                stringBuffer.append(headModel.getKeywordToValue());
+            }
             stringBuffer.append("\r\n");
             stringBuffer.append("\r\n");
             stringBuffer.append("<a href =\"http://findfish.top/#/mobileView?searchname=");
@@ -215,7 +248,67 @@ public class WxPortalController {
             stringBuffer.append("]关键词已获取，点击查看是否找到该内容</a>");
             stringBuffer.append("\r\n");
             stringBuffer.append("\r\n");
-            stringBuffer.append(lastmodel.getKeywordToValue());
+
+            if (lastModel != null){
+                stringBuffer.append(lastModel.getKeywordToValue());
+            }
+
+
+            /**
+             * 关键词 隐藏判断
+             */
+            //隐藏的片名以空格分隔，获取隐藏片名的数组
+            String[] str = hidden.getKeywordToValue().split(" ");
+
+            for (String s : str) {
+                //判断传入的 片名 是否在隐藏资源中
+                if (s.equals(searchWord)){
+                    stringBuffer.setLength(0);
+                    stringBuffer.append(hiddenDetais.getKeywordToValue());
+                    break;
+
+                }
+            }
+
+
+            /**
+             * 关键词 维护判断
+             */
+            //维护时间
+
+            String start = sleepStart.getKeywordToValue();
+            String end = sleepEnd.getKeywordToValue();
+            SimpleDateFormat df = new SimpleDateFormat("HH:mm");
+            Date dateStart = df.parse(start);
+            Date dateEnd = df.parse(end);
+            //当前时间
+            Date now =  df.parse(df.format(new Date()));
+
+            Calendar nowTime = Calendar.getInstance();
+            nowTime.setTime(now);
+
+            Calendar beginTime = Calendar.getInstance();
+            beginTime.setTime(dateStart);
+
+            Calendar endTime = Calendar.getInstance();
+            endTime.setTime(dateEnd);
+
+            //如果开始时间 > 结束时间，跨天 给结束时间加一天
+            if (beginTime.after(endTime)){
+                endTime.add(Calendar.DAY_OF_MONTH, 1);
+            }
+
+            //如果当前时间在维护期内，返回维护内容
+            if(nowTime.after(beginTime) && nowTime.before(endTime)){
+                stringBuffer.setLength(0);
+                stringBuffer.append(sleepDetais.getKeywordToValue());
+            }
+
+
+
+
+
+
 
             outMessage = WxMpXmlOutTextMessage.TEXT()
                     .toUser(inMessage.getFromUser())
@@ -271,6 +364,21 @@ public class WxPortalController {
         return "http://6pqpkg.natappfree.cc"+"/wechat/portal/"+encodeusername;
 
     }
+
+
+    /**
+     * 公众号秘钥功能 暂未实现
+     * @return
+     */
+    @RequestMapping(value = "random",method = RequestMethod.GET)
+    public int getRandom(){
+
+        int number =  (int)((Math.random()*9+1)*100000);
+
+        return number;
+
+    }
+
 
 
 }

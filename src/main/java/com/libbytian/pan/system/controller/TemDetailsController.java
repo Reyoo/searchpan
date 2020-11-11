@@ -13,6 +13,7 @@ import com.libbytian.pan.system.service.ISystemUserService;
 import com.libbytian.pan.system.util.CheckStrContainUrlUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -155,11 +156,18 @@ public class TemDetailsController {
 
     /**
      * 导入excel入库并绑定模板ID
+     * 未完成，如果导入数据有关键字，更新关键字。
      * @param multipartFile
      * @return
      */
     @RequestMapping(value = "/excelimport", method = RequestMethod.POST)
     public AjaxResult addTemDetails( @RequestParam("file")  MultipartFile multipartFile ,@RequestParam String templateId) {
+
+        //判断当前是否存在模板，如果没有模板不允许导入    HS
+        if (StringUtils.isBlank(templateId)){
+            return AjaxResult.error("导入文件前需有模板,请先创建模板");
+        }
+
         try {
             if(multipartFile.isEmpty()){
                 return AjaxResult.error("上传失败，请选择文件");

@@ -39,7 +39,7 @@ public interface ISystemTemDetailsService extends IService<SystemTemDetailsModel
 
     List<SystemTemDetailsModel> listTemDetailsObjectsByWord(SystemTemDetailsModel systemTemDetailsModel);
 
-    void  defaultSave();
+    void  defaultSave(String templateId);
 
 
 

@@ -144,8 +144,8 @@ public class TemplateController {
     public AjaxResult finduserTemplate(HttpServletRequest httpRequest, @RequestBody(required = true) SystemTemplateModel systemTemplateModel) {
 
         try {
-            String uuid = UUID.randomUUID().toString();
-            systemTemplateModel.setTemplateid(uuid);
+            String templateId = UUID.randomUUID().toString();
+            systemTemplateModel.setTemplateid(templateId);
             systemTemplateModel.setTemplatecreatetime(LocalDateTime.now());
             iSystemTemplateService.save(systemTemplateModel);
 
@@ -159,12 +159,12 @@ public class TemplateController {
 
             SystemUserToTemplate systemUserToTemplate = new SystemUserToTemplate();
             systemUserToTemplate.setUserId(systemUserModel.getUserId());
-            systemUserToTemplate.setTemplateId(uuid);
+            systemUserToTemplate.setTemplateId(templateId);
             systemUserToTemplate.setUserTemplateStatus(true);
             iSystemUserToTemplateService.save(systemUserToTemplate);
 
             //新增模板设置默认关键字
-            iSystemTemDetailsService.defaultSave();
+            iSystemTemDetailsService.defaultSave(templateId);
 
 
             return AjaxResult.success();
