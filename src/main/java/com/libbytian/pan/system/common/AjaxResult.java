@@ -32,10 +32,19 @@ public class AjaxResult extends HashMap<String, Object> {
          * 警告
          */
         WARN(301),
+
+
+        /**
+         * 错误
+         */
+        TOKENMISS(-99),
         /**
          * 错误
          */
         ERROR(500);
+
+
+
         private final int value;
 
         Type(int value) {

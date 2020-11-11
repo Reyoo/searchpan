@@ -49,7 +49,7 @@ public class AsyncSearchCachedServiceImpl {
      *
      * @return
      */
-//    @Async
+    @Async
     public List<MovieNameAndUrlModel> searchWord(String searchText){
         try {
 

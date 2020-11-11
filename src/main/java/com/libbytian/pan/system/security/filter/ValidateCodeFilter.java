@@ -60,44 +60,47 @@ public class ValidateCodeFilter extends OncePerRequestFilter implements Initiali
 
     @Override
     protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain) throws ServletException, IOException {
-        httpServletResponse.setContentType("application/json;charset=utf-8");
-        boolean action = false;
-        String requestURI = httpServletRequest.getRequestURI();
-        String tokenHeader = httpServletRequest.getHeader(JwtTokenUtils.TOKEN_HEADER);
+        try {
+            httpServletResponse.setContentType("application/json;charset=utf-8");
+            boolean action = false;
+            String requestURI = httpServletRequest.getRequestURI();
+            String tokenHeader = httpServletRequest.getHeader(JwtTokenUtils.TOKEN_HEADER);
 
-        // 如果请求头中没有Authorization信息则直接放行了
-        if (tokenHeader == null || !tokenHeader.startsWith(JwtTokenUtils.TOKEN_PREFIX)) {
-            for (String url : urls) {
-                if (antPathMatcher.match(url, httpServletRequest.getRequestURI())) {
-                    action = true;
-                    break;
+            // 如果请求头中没有Authorization信息则直接放行了
+            if (tokenHeader == null || !tokenHeader.startsWith(JwtTokenUtils.TOKEN_PREFIX)) {
+                for (String url : urls) {
+                    if (antPathMatcher.match(url, httpServletRequest.getRequestURI())) {
+                        action = true;
+                        break;
+                    }
                 }
-            }
-            if (action) {
-                try {
+                if (action) {
                     /*图片验证码是否正确*/
                     checkImageCode(httpServletRequest);
-                } catch (ImageCodeException e) {
-                    httpServletResponse.setCharacterEncoding("UTF-8");
-                    httpServletResponse.setContentType("application/json; charset=utf-8");
-                    httpServletResponse.setStatus(HttpServletResponse.SC_OK);
-                    String reason =  e.getMessage();
-                    httpServletResponse.getWriter().write(new ObjectMapper().writeValueAsString(AjaxResult.error(reason)));
-                    httpServletResponse.getWriter().flush();
-                    return;
                 }
+                filterChain.doFilter(httpServletRequest, httpServletResponse);
+                return;
             }
-
-            filterChain.doFilter(httpServletRequest, httpServletResponse);
+            SecurityContextHolder.getContext().setAuthentication(getAuthentication(tokenHeader));
+        }catch (TokenIsExpiredException e){
+            logger.error(e.getMessage());
+            httpServletResponse.setCharacterEncoding("UTF-8");
+            httpServletResponse.setContentType("application/json; charset=utf-8");
+            httpServletResponse.setStatus(HttpServletResponse.SC_OK);
+            String reason =  e.getMessage();
+            httpServletResponse.getWriter().write(new ObjectMapper().writeValueAsString(new AjaxResult(AjaxResult.Type.TOKENMISS,reason)));
+            httpServletResponse.getWriter().flush();
+            return;
+        }catch (Exception e){
+            logger.error(e.getMessage());
+            httpServletResponse.setCharacterEncoding("UTF-8");
+            httpServletResponse.setContentType("application/json; charset=utf-8");
+            httpServletResponse.setStatus(HttpServletResponse.SC_OK);
+            String reason =  e.getMessage();
+            httpServletResponse.getWriter().write(new ObjectMapper().writeValueAsString(AjaxResult.error(reason)));
+            httpServletResponse.getWriter().flush();
             return;
         }
-
-        try {
-            SecurityContextHolder.getContext().setAuthentication(getAuthentication(tokenHeader));
-        } catch (TokenIsExpiredException e) {
-               e.printStackTrace();
-        }
-
         filterChain.doFilter(httpServletRequest, httpServletResponse);
     }
 
@@ -138,7 +141,7 @@ public class ValidateCodeFilter extends OncePerRequestFilter implements Initiali
         String token = tokenHeader.replace(JwtTokenUtils.TOKEN_PREFIX, "");
         boolean expiration = JwtTokenUtils.isExpiration(token);
         if (expiration) {
-            throw new TokenIsExpiredException("token超时了");
+            throw new TokenIsExpiredException("token失效,请重新登录");
         } else {
             String username = JwtTokenUtils.getUsername(token);
             List roles = JwtTokenUtils.getUserRole(token);

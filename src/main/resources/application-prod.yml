@@ -21,8 +21,8 @@ server:
 spring:
   redis:
     host: 123.57.130.90
-    port:
-    password:
+    port: 36379
+    password: 123qwe!@#
     # redis client配置，使用lettuce
     lettuce:
       pool:
@@ -39,8 +39,8 @@ spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://127.0.0.1:33306/findfish?useUnicode=true&characterEncoding=utf-8&serverTimezone=Hongkong
-    username:
-    password:
+    username: root
+    password: libbytian123QWE!@#
     type: com.alibaba.druid.pool.DruidDataSource
     filters: stat
     maxActive: 5
@@ -65,6 +65,7 @@ spring:
   messages:
     encoding: UTF-8
     basename: message/messages_zh
+  level: debug
 #  # 定位模板的目录,给返回的页面添加后缀名
 #  thymeleaf:
 #    prefix: classpath:/templates/

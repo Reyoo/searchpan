@@ -204,8 +204,12 @@ public class WxPortalController {
             stringBuffer.append(headmodel.getKeywordToValue());
             stringBuffer.append("\r\n");
             stringBuffer.append("\r\n");
-            stringBuffer.append("<a href =\"http://51.findfish.top/movie/subject_search?search_text=");
+            stringBuffer.append("<a href =\"http://findfish.top/#/mobileView?searchname=");
             stringBuffer.append(searchName);
+
+            stringBuffer.append("&verification=");
+            stringBuffer.append(verification);
+            stringBuffer.append("&type=mobile");
             stringBuffer.append("\">[");
             stringBuffer.append(searchName);
             stringBuffer.append("]关键词已获取，点击查看是否找到该内容</a>");

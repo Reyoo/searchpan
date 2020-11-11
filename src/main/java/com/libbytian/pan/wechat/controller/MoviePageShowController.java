@@ -132,7 +132,7 @@ public class MoviePageShowController {
      * @return
      * @Description: 根据加密内容 返回待查询list
      */
-    @RequestMapping(path = "/movie/{fishEncryption}/{searchName}", method = RequestMethod.GET)
+        @RequestMapping(path = "/movie/{fishEncryption}/{searchName}", method = RequestMethod.GET)
     public AjaxResult getMovieList(@PathVariable String fishEncryption, @PathVariable String searchName) {
         try {
             String username = new String(decoder.decode(fishEncryption), "UTF-8");
