@@ -7,7 +7,7 @@ import org.apache.ibatis.annotations.Mapper;
 /**
  * 项目名: pan
  * 文件名: SystemRecordSensitiveMapper
- * 创建者: HS
+ * 创建者: HuangS
  * 创建时间:2020/10/21 15:40
  * 描述: TODO
  */

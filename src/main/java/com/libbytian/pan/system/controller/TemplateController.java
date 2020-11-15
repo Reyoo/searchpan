@@ -59,7 +59,7 @@ public class TemplateController {
 
     /**
      * 删除用户模板
-     * hs
+     * HuangS
      * 同时删除 用户模板表、模板表、模板详情表、详情表中对应数据
      * @param tempid
      * @return
@@ -134,7 +134,7 @@ public class TemplateController {
 
     /**
      * 新增用户模板表
-     * hs
+     * HuangS
      * 新增模板设置默认关键字
      * @param
      * @return

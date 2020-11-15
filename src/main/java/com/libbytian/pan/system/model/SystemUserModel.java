@@ -92,6 +92,12 @@ public class SystemUserModel extends Model<SystemUserModel>   {
     @TableField("act_range")
     private Integer actrange;
 
+    /**
+     * 用户付费状态（0：白嫖用户 ，1：付费用户）
+     */
+    @TableField("user_flag")
+    private  boolean userFlag;
+
 
     /**
      * 虚拟字段 查询开始时间

@@ -70,6 +70,7 @@ public class SystemUserServiceImpl extends ServiceImpl<SystemUserMapper, SystemU
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         String encode = encoder.encode(user.getPassword());
         user.setPassword(encode);
+        user.setActTime(LocalDateTime.now());
         boolean result = this.save(user);
         /**
          * 新用户赋权限为 ROLE_NORMAL
@@ -85,16 +86,30 @@ public class SystemUserServiceImpl extends ServiceImpl<SystemUserMapper, SystemU
         SystemRoleModel systemRoleModel = new SystemRoleModel();
         systemRoleModel.setRoleName("ROLE_NORMAL");
 
+
         SystemRoleModel roleModel = systemRoleService.getRoles(systemRoleModel);
 
         if (result) {
             SystemUserToRole userToRole  = SystemUserToRole.builder().userId(user.getUserId()).roleId(roleModel.getRoleId()).build();
             userToRoleService.save(userToRole);
-          //新增模板,存入模板表 sys_template
+
+
+            /**
+             * HuangS
+             * 11.12-优化
+             * 注册时不为用户新建模板，直接绑定默认展示模板"1"
+             * 付费后删除绑定模板"1"，并允许用户新建模板
+             */
+//            //模板ID绑定用户ID
+//            SystemUserToTemplate userToTemplate = SystemUserToTemplate.builder().userId(user.getUserId()).templateId("1").userTemplateStatus(true).build();
+//            userToTemplateService.save(userToTemplate);
+
+
+            //          //新增模板,存入模板表 sys_template
             String templateId = UUID.randomUUID().toString();
             SystemTemplateModel template =  new SystemTemplateModel();
             template.setTemplateid(templateId);
-            template.setTemplatename("模板1");
+            template.setTemplatename("默认模板");
             template.setTemplatecreatetime(LocalDateTime.now());
             template.setTemplatestatus(true);
             systemTemplateService.save(template);
@@ -149,7 +164,7 @@ public class SystemUserServiceImpl extends ServiceImpl<SystemUserMapper, SystemU
         String encode = encoder.encode(user.getPassword());
 
         /**
-         * hs
+         * HuangS
          * 新建个对象，拿对象的用户名去查,不带入传入的mobile(因传入的mobile数据库可能没有，会造成查询userID为null)
          */
         SystemUserModel userModel = new SystemUserModel();

@@ -63,7 +63,7 @@ public class TemDetailsController {
 
 
     /**
-     * hs
+     * HuangS
      * 输入key 或者 value 查询模板ID下模板详情
      * 必传字段 templateid
      * 未分页
@@ -163,7 +163,7 @@ public class TemDetailsController {
     @RequestMapping(value = "/excelimport", method = RequestMethod.POST)
     public AjaxResult addTemDetails( @RequestParam("file")  MultipartFile multipartFile ,@RequestParam String templateId) {
 
-        //判断当前是否存在模板，如果没有模板不允许导入    HS
+        //判断当前是否存在模板，如果没有模板不允许导入    HuangS
         if (StringUtils.isBlank(templateId)){
             return AjaxResult.error("导入文件前需有模板,请先创建模板");
         }

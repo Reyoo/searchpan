@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 /**
  * 项目名: pan
  * 文件名: SystemRecordSensitiveModel
- * 创建者: HS
+ * 创建者: HuangS
  * 创建时间:2020/10/21 1:00
  * 描述: TODO
  */

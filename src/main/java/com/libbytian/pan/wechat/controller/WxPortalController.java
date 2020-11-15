@@ -164,6 +164,10 @@ public class WxPortalController {
         SystemTemDetailsModel sleepEnd = new SystemTemDetailsModel();
         //维护内容
         SystemTemDetailsModel sleepDetais = new SystemTemDetailsModel();
+        //秘钥
+        SystemTemDetailsModel secretKey = new SystemTemDetailsModel();
+        //秘钥回复
+        SystemTemDetailsModel secretValue = new SystemTemDetailsModel();
 
 
         for (SystemTemDetailsModel model : systemdetails) {
@@ -187,6 +191,12 @@ public class WxPortalController {
             }
             if ("维护内容".equals(model.getKeyword())){
                 sleepDetais.setKeywordToValue(model.getKeywordToValue());
+            }
+            if ("秘钥内容".equals(model.getKeyword())){
+                secretKey.setKeywordToValue(model.getKeywordToValue());
+            }
+            if ("秘钥回复".equals(model.getKeyword())){
+                secretValue.setKeywordToValue(model.getKeywordToValue());
             }
         }
 
@@ -217,15 +227,32 @@ public class WxPortalController {
             //3.获取根节点
             Element rootElement = document.getRootElement();
             Iterator iterator = rootElement.elementIterator();
+            String searchContent = "";
             String searchName = "";
+
+//            String searchName = "";
+            //未使用秘钥
+//            while (iterator.hasNext()) {
+//                Element stu = (Element) iterator.next();
+//                if (stu.getName().equals("Content")) {
+//                    List<Node> attributes = stu.content();
+//                    searchName = attributes.get(0).getText();
+//
+//                }
+//            }
 
             while (iterator.hasNext()) {
                 Element stu = (Element) iterator.next();
                 if (stu.getName().equals("Content")) {
                     List<Node> attributes = stu.content();
-                    searchName = attributes.get(0).getText();
+                    searchContent = attributes.get(0).getText();
+                    //传入秘钥+" "+片名，然后截取
+                    int idx = searchContent.lastIndexOf(" ");
+                    searchName = searchContent.substring(idx+1);
+
                 }
             }
+
 
             /**
              * 响应内容
@@ -304,8 +331,16 @@ public class WxPortalController {
                 stringBuffer.append(sleepDetais.getKeywordToValue());
             }
 
-
-
+            /**
+             * HuangS  11.15
+             * 关键词 判断秘钥
+             * 最简单实现
+             * 判断传入的关键词中是否包含秘钥
+             */
+            if(!searchContent.contains(secretKey.getKeywordToValue())){
+                stringBuffer.setLength(0);
+                stringBuffer.append(secretValue.getKeywordToValue());
+            }
 
 
 
@@ -361,7 +396,7 @@ public class WxPortalController {
     public String getURL(@RequestParam String username){
 
         String encodeusername = encoder.encodeToString(username .getBytes());
-        return "http://6pqpkg.natappfree.cc"+"/wechat/portal/"+encodeusername;
+        return "http://i86s6q.natappfree.cc"+"/wechat/portal/"+encodeusername;
 
     }
 

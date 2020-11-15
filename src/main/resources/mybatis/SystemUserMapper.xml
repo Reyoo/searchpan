@@ -12,6 +12,7 @@
         <result column="createTime" property="createTime"/>
         <result column="act_time" property="actTime"/>
         <result column="act_range" property="actrange"/>
+        <result column="user_flag" property="userFlag"/>
     </resultMap>
 
 
@@ -25,7 +26,8 @@
          createTime,
          status,
          act_time AS actTime,
-         act_range AS actrange
+         act_range AS actrange,
+         user_flag AS userFlag
     </sql>
 
 
@@ -58,6 +60,9 @@
             </if>
             <if test="actrange != null and actrange != ''">
                 AND u.act_range =#{actrange}
+            </if>
+            <if test="userFlag != null and userFlag != ''">
+                AND u.user_flag =#{userFlag}
             </if>
         </trim>
 
@@ -92,6 +97,9 @@
             </if>
             <if test="actrange != null and actrange != ''">
                 AND u.act_range =#{actrange}
+            </if>
+            <if test="userFlag != null and userFlag != ''">
+                AND u.user_flag =#{userFlag}
             </if>
         </trim>
 
@@ -137,6 +145,9 @@
             </if>
             <if test="actrange != null and actrange != ''">
                 AND u.act_range =#{actrange}
+            </if>
+            <if test="userFlag != null and userFlag != ''">
+                AND u.user_flag =#{userFlag}
             </if>
         </trim>
 

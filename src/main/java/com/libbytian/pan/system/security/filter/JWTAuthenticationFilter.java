@@ -122,6 +122,17 @@ public class JWTAuthenticationFilter extends AbstractAuthenticationProcessingFil
             response.getWriter().write(JSON.toJSONString(authenticationSuccessModel));
         }
 
+        /**
+         * 未付费用户 HuangS
+         */
+        if (roles.contains("ROLE_NORMAL")){
+            //登录到cms管理
+            authenticationSuccessModel.setRoute("mainManagement");
+            //移除token值
+            authenticationSuccessModel.setToken(null);
+            response.getWriter().write(JSON.toJSONString(authenticationSuccessModel));
+        }
+
 
 
         response.setHeader("token", JwtTokenUtils.TOKEN_PREFIX + token);

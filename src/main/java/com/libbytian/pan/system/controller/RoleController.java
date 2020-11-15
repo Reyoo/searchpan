@@ -138,7 +138,7 @@ public class RoleController {
     }
 
     /**
-     * HS
+     * HuangS
      * 根据角色ID删除角色
      * @param role 必传（roleId，roleName）
      * @return

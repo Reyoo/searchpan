@@ -289,17 +289,19 @@ public class SystemTemDetailsServiceImpl extends ServiceImpl<SystemTemDetailsMap
         SystemTemDetailsModel hideReply = new SystemTemDetailsModel();
         SystemTemDetailsModel headWeb = new SystemTemDetailsModel();
         SystemTemDetailsModel endWeb = new SystemTemDetailsModel();
+        SystemTemDetailsModel secretKey = new SystemTemDetailsModel();
+        SystemTemDetailsModel secretValue = new SystemTemDetailsModel();
 
         focus.setKeyword("首次关注");
         focus.setKeywordToValue("首次关注回复内容");
         focus.setShowOrder(1);
 
         sleepStart.setKeyword("开始维护");
-        sleepStart.setKeywordToValue("设置维护开始时间");
+        sleepStart.setKeywordToValue("10:00");
         sleepStart.setShowOrder(2);
 
         sleepEnd.setKeyword("结束维护");
-        sleepEnd.setKeywordToValue("设置维护结束时间");
+        sleepEnd.setKeywordToValue("18:00");
         sleepEnd.setShowOrder(3);
 
         sleepDetails.setKeyword("维护内容");
@@ -330,6 +332,14 @@ public class SystemTemDetailsServiceImpl extends ServiceImpl<SystemTemDetailsMap
         endWeb.setKeywordToValue("web页面底部提示内容");
         endWeb.setShowOrder(10);
 
+        secretKey.setKeyword("秘钥内容");
+        secretKey.setKeywordToValue("123456");
+        secretKey.setShowOrder(11);
+
+        secretValue.setKeyword("秘钥回复");
+        secretKey.setKeywordToValue("自定义秘钥回复");
+        secretKey.setShowOrder(12);
+
         detailist.add(focus);
         detailist.add(sleepStart);
         detailist.add(sleepEnd);
@@ -340,6 +350,8 @@ public class SystemTemDetailsServiceImpl extends ServiceImpl<SystemTemDetailsMap
         detailist.add(hideReply);
         detailist.add(headWeb);
         detailist.add(endWeb);
+        detailist.add(secretKey);
+        detailist.add(secretValue);
 
 
 

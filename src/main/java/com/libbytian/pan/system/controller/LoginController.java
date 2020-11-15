@@ -49,7 +49,7 @@ public class LoginController {
     public AjaxResult loginRegister(@RequestBody SystemUserModel systemUserModel) {
         try {
 
-            //HS 2020.11.11
+            //HuangS 2020.11.11
             //查询用户是否存在，只判断用户名,不传入密码
             SystemUserModel userModel = new SystemUserModel();
             userModel.setUsername(systemUserModel.getUsername());
