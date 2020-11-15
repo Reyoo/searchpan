@@ -25,6 +25,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.time.Duration;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -53,7 +56,9 @@ public class SysCaptchaController  {
      */
     @GetMapping(value = "/captchaImage")
     public AjaxResult getKaptchaImage(HttpServletRequest request, HttpServletResponse response) {
-        System.out.println("in endpoint ");
+
+        log.info("begin captcha/captchaImage ");
+        LocalDateTime now = LocalDateTime.now();
         ServletOutputStream out = null;
         try {
             ArrayList typeList = new ArrayList();
@@ -94,6 +99,8 @@ public class SysCaptchaController  {
             AjaxResult ajax = AjaxResult.success();
             ajax.put("captcha", uuid);
             ajax.put("img", Base64.encode(os.toByteArray()));
+            LocalDateTime end = LocalDateTime.now();
+            System.out.println("以毫秒计的时间差：" + Duration.between(now, end).toMillis());
             return ajax;
 
 
