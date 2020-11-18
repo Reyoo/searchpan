@@ -65,6 +65,7 @@ public class SystemUserServiceImpl extends ServiceImpl<SystemUserMapper, SystemU
 
     @Override
     public SystemUserModel register(SystemUserModel user) throws Exception {
+        if(user.isStatus())
         user.setStatus(true);
         user.setCreateTime(LocalDateTime.now());
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
@@ -197,10 +198,10 @@ public class SystemUserServiceImpl extends ServiceImpl<SystemUserMapper, SystemU
             if(systemUserModel.getUserId() != null){
                 queryWrapper.eq("user_id",systemUserModel.getUserId());
             }
-            if(systemUserModel.getUsername() != null){
+            if(systemUserModel.getUsername() != null&& !systemUserModel.getUsername().equals("")){
                 queryWrapper.eq("user_name",systemUserModel.getUsername());
             }
-            if(systemUserModel.getMobile() != null){
+            if(systemUserModel.getMobile() != null && !"".equals(systemUserModel.getMobile())){
                 queryWrapper.eq("user_mobile",systemUserModel.getMobile());
             }
             if(systemUserModel.getLastLoginTime() != null){
@@ -209,9 +210,10 @@ public class SystemUserServiceImpl extends ServiceImpl<SystemUserMapper, SystemU
             if(systemUserModel.getCreateTime() != null){
                 queryWrapper.eq("createtime",systemUserModel.getCreateTime());
             }
-            if(systemUserModel.isStatus()){
-                queryWrapper.eq("status",systemUserModel.isStatus());
-            }
+            System.out.println(String.valueOf(systemUserModel.isStatus()));
+
+            queryWrapper.eq("status",systemUserModel.isStatus());
+
             if(systemUserModel.getStarttime() != null && systemUserModel.getEndtime() != null){
                 queryWrapper.ge("createtime",systemUserModel.getStarttime());
                 queryWrapper.le("createtime",systemUserModel.getEndtime());

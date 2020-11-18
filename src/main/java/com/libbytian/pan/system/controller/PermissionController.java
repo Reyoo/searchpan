@@ -60,13 +60,13 @@ public class PermissionController {
 
     /**
      * 通过权限ID删除对应字段
-     * @param permissionId
+     * @param
      * @return
      */
-    @RequestMapping(value = "/dropper/{permissionId}", method = RequestMethod.DELETE)
-    public AjaxResult dropPermission(@PathVariable  @NonNull String permissionId) {
+    @RequestMapping(value = "/dropper", method = RequestMethod.DELETE)
+    public AjaxResult dropPermission(@RequestBody SystemPermissionModel systemPermissionModel) {
         try {
-            iSystemPermissionService.removeById(permissionId);
+            iSystemPermissionService.removeById(systemPermissionModel.getPermissionId());
             return AjaxResult.success();
         } catch (Exception e) {
             return AjaxResult.error(e.getMessage());

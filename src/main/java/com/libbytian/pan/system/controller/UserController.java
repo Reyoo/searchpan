@@ -65,9 +65,9 @@ public class UserController {
 
         try {
             iSystemUserService.removeUserAll(systemUserModel);
-            return AjaxResult.success();
+            return AjaxResult.success("delete success");
         } catch (Exception e) {
-            return AjaxResult.error(e.getMessage());
+            return AjaxResult.error("delete error");
         }
     }
 
