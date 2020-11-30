@@ -146,7 +146,9 @@ public class WxPortalController {
         List<SystemTemplateModel> systemTemplateModelListstatusOn = systemTemplateModels.stream().filter(systemTemplateModel -> systemTemplateModel.getTemplatestatus().equals(Boolean.TRUE)).collect(Collectors.toList());
         //通过模板ID，查询对应的模板详情，取出关键词，头部广告，底部广告
         SystemTemplateModel templateModel = new SystemTemplateModel();
-        templateModel.setTemplatestatus(systemTemplateModelListstatusOn.get(0).getTemplatestatus());
+//        templateModel.setTemplatestatus(systemTemplateModelListstatusOn.get(0).getTemplatestatus());
+        templateModel.setTemplateid(systemTemplateModelListstatusOn.get(0).getTemplateid());
+
 
         List<SystemTemDetailsModel> systemdetails = iSystemTemDetailsService.getTemDetails(templateModel);
 
@@ -284,16 +286,18 @@ public class WxPortalController {
             /**
              * 关键词 隐藏判断
              */
-            //隐藏的片名以空格分隔，获取隐藏片名的数组
-            String[] str = hidden.getKeywordToValue().split(" ");
+            if (hidden != null) {
+                //隐藏的片名以空格分隔，获取隐藏片名的数组
+                String[] str = hidden.getKeywordToValue().split(" ");
 
-            for (String s : str) {
-                //判断传入的 片名 是否在隐藏资源中
-                if (s.equals(searchWord)){
-                    stringBuffer.setLength(0);
-                    stringBuffer.append(hiddenDetais.getKeywordToValue());
-                    break;
+                for (String s : str) {
+                    //判断传入的 片名 是否在隐藏资源中
+                    if (s.equals(searchWord)) {
+                        stringBuffer.setLength(0);
+                        stringBuffer.append(hiddenDetais.getKeywordToValue());
+                        break;
 
+                    }
                 }
             }
 
@@ -302,33 +306,37 @@ public class WxPortalController {
              * 关键词 维护判断
              */
             //维护时间
-
             String start = sleepStart.getKeywordToValue();
             String end = sleepEnd.getKeywordToValue();
-            SimpleDateFormat df = new SimpleDateFormat("HH:mm");
-            Date dateStart = df.parse(start);
-            Date dateEnd = df.parse(end);
-            //当前时间
-            Date now =  df.parse(df.format(new Date()));
 
-            Calendar nowTime = Calendar.getInstance();
-            nowTime.setTime(now);
+            if (StringUtils.isNotBlank(start) && StringUtils.isNotBlank(end)) {
 
-            Calendar beginTime = Calendar.getInstance();
-            beginTime.setTime(dateStart);
+                SimpleDateFormat df = new SimpleDateFormat("HH:mm");
+                Date dateStart = df.parse(start);
+                Date dateEnd = df.parse(end);
+                //当前时间
+                Date now = df.parse(df.format(new Date()));
 
-            Calendar endTime = Calendar.getInstance();
-            endTime.setTime(dateEnd);
+                Calendar nowTime = Calendar.getInstance();
+                nowTime.setTime(now);
 
-            //如果开始时间 > 结束时间，跨天 给结束时间加一天
-            if (beginTime.after(endTime)){
-                endTime.add(Calendar.DAY_OF_MONTH, 1);
-            }
+                Calendar beginTime = Calendar.getInstance();
+                beginTime.setTime(dateStart);
 
-            //如果当前时间在维护期内，返回维护内容
-            if(nowTime.after(beginTime) && nowTime.before(endTime)){
-                stringBuffer.setLength(0);
-                stringBuffer.append(sleepDetais.getKeywordToValue());
+                Calendar endTime = Calendar.getInstance();
+                endTime.setTime(dateEnd);
+
+                //如果开始时间 > 结束时间，跨天 给结束时间加一天
+                if (beginTime.after(endTime)) {
+                    endTime.add(Calendar.DAY_OF_MONTH, 1);
+                }
+
+                //如果当前时间在维护期内，返回维护内容
+                if (nowTime.after(beginTime) && nowTime.before(endTime)) {
+                    stringBuffer.setLength(0);
+                    stringBuffer.append(sleepDetais.getKeywordToValue());
+                }
+
             }
 
             /**
@@ -337,12 +345,15 @@ public class WxPortalController {
              * 最简单实现
              * 判断传入的关键词中是否包含秘钥
              */
-            if(!searchContent.contains(secretKey.getKeywordToValue())){
-                stringBuffer.setLength(0);
-                stringBuffer.append(secretValue.getKeywordToValue());
+             if (StringUtils.isNotBlank(secretKey.getKeywordToValue()) && !searchContent.contains(secretKey.getKeywordToValue())){
+
+                    stringBuffer.setLength(0);
+                    if (StringUtils.isNotBlank(secretValue.getKeywordToValue())){
+                        stringBuffer.append(secretValue.getKeywordToValue());
+                    }else {
+                        stringBuffer.append(" ");
+                    }
             }
-
-
 
 
             outMessage = WxMpXmlOutTextMessage.TEXT()
@@ -396,7 +407,7 @@ public class WxPortalController {
     public String getURL(@RequestParam String username){
 
         String encodeusername = encoder.encodeToString(username .getBytes());
-        return "http://i86s6q.natappfree.cc"+"/wechat/portal/"+encodeusername;
+        return "http://6itty7.natappfree.cc"+"/wechat/portal/"+encodeusername;
 
     }
 

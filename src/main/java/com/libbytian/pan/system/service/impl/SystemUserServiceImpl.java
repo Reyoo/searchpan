@@ -65,7 +65,7 @@ public class SystemUserServiceImpl extends ServiceImpl<SystemUserMapper, SystemU
 
     @Override
     public SystemUserModel register(SystemUserModel user) throws Exception {
-        if(user.isStatus())
+//        if(user.isStatus())
         user.setStatus(true);
         user.setCreateTime(LocalDateTime.now());
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
