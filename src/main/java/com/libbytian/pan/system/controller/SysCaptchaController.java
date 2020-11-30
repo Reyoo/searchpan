@@ -81,7 +81,7 @@ public class SysCaptchaController  {
             }
 
             String uuid = UUID.fastUUID().toString();
-
+            log.info("验证码-->" + code);
             redisTemplate.opsForValue().set(uuid,code,10, TimeUnit.MINUTES);
 
 

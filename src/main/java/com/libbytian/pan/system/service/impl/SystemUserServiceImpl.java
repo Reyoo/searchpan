@@ -2,8 +2,11 @@ package com.libbytian.pan.system.service.impl;
 
 
 import cn.hutool.core.lang.UUID;
+import cn.hutool.core.util.StrUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.libbytian.pan.system.mapper.SystemUserMapper;
@@ -65,7 +68,7 @@ public class SystemUserServiceImpl extends ServiceImpl<SystemUserMapper, SystemU
 
     @Override
     public SystemUserModel register(SystemUserModel user) throws Exception {
-//        if(user.isStatus())
+
         user.setStatus(true);
         user.setCreateTime(LocalDateTime.now());
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
@@ -188,12 +191,10 @@ public class SystemUserServiceImpl extends ServiceImpl<SystemUserMapper, SystemU
     @Override
     public IPage<SystemUserModel> findConditionByPage(Page<SystemUserModel> page, SystemUserModel systemUserModel) throws Exception {
 
+
         QueryWrapper queryWrapper = new QueryWrapper();
 
-        /**
-         * 这里systemusermodel 不做空判断 。getusername 空指针  null.getUsername
-         */
-        if(systemUserModel != null){
+        if(systemUserModel!=null ){
 
             if(systemUserModel.getUserId() != null&& !systemUserModel.getUserId().equals("")){
                 queryWrapper.eq("user_id",systemUserModel.getUserId());
@@ -210,23 +211,18 @@ public class SystemUserServiceImpl extends ServiceImpl<SystemUserMapper, SystemU
             if(systemUserModel.getCreateTime() != null){
                 queryWrapper.eq("createtime",systemUserModel.getCreateTime());
             }
-            System.out.println(String.valueOf(systemUserModel.isStatus()));
-
-             if(systemUserModel!=null){
-                 queryWrapper.eq("status",systemUserModel.isStatus());
-             }
-
+//            if(StrUtil.isNotBlank(String.valueOf(systemUserModel.isStatus()))){
+//                queryWrapper.eq("status", systemUserModel.isStatus());
+//            }
 
             if(systemUserModel.getStarttime() != null && systemUserModel.getEndtime() != null){
                 queryWrapper.ge("createtime",systemUserModel.getStarttime());
                 queryWrapper.le("createtime",systemUserModel.getEndtime());
             }
-
         }
-        queryWrapper.orderByDesc("createtime");
 
-        return systemUserMapper.selectPage(page,queryWrapper);
 
+        return baseMapper.selectPage(page,queryWrapper);
     }
 
     /**

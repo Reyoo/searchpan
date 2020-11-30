@@ -1,5 +1,6 @@
 package com.libbytian.pan.system.controller;
 
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -10,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,16 +33,23 @@ public class UserController {
     /**
      * 条件查询 用户信息
      *
-     * @param page
-     * @param limit
-     * @param user  = null 则为全查询
+     * @param user = null 则为全查询
      * @return
      */
     @RequestMapping(value = "/select", method = RequestMethod.POST)
-    public AjaxResult findConditionByPage(@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int limit, @RequestBody(required = false) SystemUserModel user) {
+    public AjaxResult findConditionByPage(@RequestBody(required = false) SystemUserModel user) {
 
-        Page<SystemUserModel> findpage = new Page<>(page, limit);
+        long page = 1L;
+        long limits = 10L;
+        if(user !=null ){
+            page = user.getPage();
+            limits = user.getLimits();
+
+        }
+
+        Page<SystemUserModel> findpage = new Page<>(page, limits);
         try {
+
             IPage<SystemUserModel> result = iSystemUserService.findConditionByPage(findpage, user);
             return AjaxResult.success(result);
         } catch (Exception e) {
@@ -54,10 +63,10 @@ public class UserController {
     /**
      * HuangS
      * 删除用户
-     * @param systemUserModel
-     * 多表删除用户ID数据
-     * 同时删除用户绑定角色
-     * 同时删除用户绑定模板
+     *
+     * @param systemUserModel 多表删除用户ID数据
+     *                        同时删除用户绑定角色
+     *                        同时删除用户绑定模板
      * @return
      */
     @RequestMapping(value = "/delete", method = RequestMethod.DELETE)
@@ -89,18 +98,15 @@ public class UserController {
     }
 
 
-
-
-
     @RequestMapping(value = "/geturole", method = RequestMethod.POST)
     public AjaxResult finduserRole(@RequestBody SystemUserModel user) {
 
         try {
 
-            SystemUserToRole systemUserToRole =  new SystemUserToRole();
+            SystemUserToRole systemUserToRole = new SystemUserToRole();
             systemUserToRole.setUserId(user.getUserId());
             List<SystemUserToRole> systemUserToRoles = iSystemUserToRoleService.getUserToRoleObject(systemUserToRole);
-            if(systemUserToRoles.size()<=0){
+            if (systemUserToRoles.size() <= 0) {
                 List<SystemRoleModel> systemRoleModelsAll = iSystemRoleService.list();
                 return AjaxResult.success(systemRoleModelsAll);
             }
@@ -110,9 +116,9 @@ public class UserController {
             systemRoleModelList.forEach(role -> role.setChecked(true));
             List<SystemRoleModel> systemRoleModelsAll = iSystemRoleService.list();
             //id为两个列表相同属性，取出A的list中的id
-            List<String> roleIdList =systemRoleModelList.stream().map(SystemRoleModel::getRoleId).collect(Collectors.toList());
+            List<String> roleIdList = systemRoleModelList.stream().map(SystemRoleModel::getRoleId).collect(Collectors.toList());
             //B列表去除A列表已有的数据
-            systemRoleModelsAll =systemRoleModelsAll.stream().filter(SystemRoleModel ->!roleIdList.contains(SystemRoleModel.getRoleId())).collect(Collectors.toList());
+            systemRoleModelsAll = systemRoleModelsAll.stream().filter(SystemRoleModel -> !roleIdList.contains(SystemRoleModel.getRoleId())).collect(Collectors.toList());
 
             systemRoleModelsAll.addAll(systemRoleModelList);
 
@@ -127,6 +133,7 @@ public class UserController {
     /**
      * 更新用户角色表
      * 传入 userId,roleId,checked(true or false)
+     *
      * @param systemUserToRole
      * @return
      */
@@ -134,11 +141,11 @@ public class UserController {
     public AjaxResult updateuserRole(@RequestBody SystemUserToRole systemUserToRole) {
 
         try {
-            if(systemUserToRole!=null){
-                if(systemUserToRole.isChecked()){
+            if (systemUserToRole != null) {
+                if (systemUserToRole.isChecked()) {
                     //更新
-                    return  AjaxResult.success(iSystemUserToRoleService.save(systemUserToRole));
-                }else{
+                    return AjaxResult.success(iSystemUserToRoleService.save(systemUserToRole));
+                } else {
                     //删除
                     return AjaxResult.success(iSystemUserToRoleService.removeUserToRoleObject(systemUserToRole));
                 }
@@ -150,8 +157,6 @@ public class UserController {
             return AjaxResult.error(e.getMessage());
         }
     }
-
-
 
 
 //    /**
@@ -175,9 +180,6 @@ public class UserController {
 //            return AjaxResult.error(e.getMessage());
 //        }
 //    }
-
-
-
 
 
 }

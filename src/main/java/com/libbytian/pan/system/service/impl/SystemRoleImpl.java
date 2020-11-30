@@ -73,7 +73,6 @@ public class SystemRoleImpl extends ServiceImpl<SystemRoleMapper, SystemRoleMode
 
         return systemRoleMapper.selectPage(page,queryWrapper);
 
-//        return systemRoleMapper.getRolesPage(page,systemRoleModel);
 
     }
 

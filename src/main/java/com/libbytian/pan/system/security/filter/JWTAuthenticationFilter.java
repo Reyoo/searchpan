@@ -2,7 +2,9 @@ package com.libbytian.pan.system.security.filter;
 
 
 import com.alibaba.fastjson.JSON;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.libbytian.pan.system.common.AjaxResult;
 import com.libbytian.pan.system.exception.ImageCodeException;
 import com.libbytian.pan.system.model.SystemUserModel;
 import com.libbytian.pan.system.security.model.AuthenticationSuccessModel;
@@ -10,33 +12,27 @@ import com.libbytian.pan.system.security.provider.JwtUser;
 import com.libbytian.pan.system.util.JwtTokenUtils;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.security.authentication.AuthenticationManager;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.GrantedAuthority;
+
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
-import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
+
 
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
+
 import java.util.Set;
 
 /**
@@ -58,9 +54,6 @@ public class JWTAuthenticationFilter extends AbstractAuthenticationProcessingFil
     public Authentication attemptAuthentication(HttpServletRequest request,
                                                 HttpServletResponse response) throws AuthenticationException {
 
-        // 从输入流中获取到登录的信息
-        try {
-
             String userName = request.getParameter("username");
             String password = request.getParameter("password");
             String rememberMeStat = request.getParameter("rememberMe");
@@ -70,12 +63,6 @@ public class JWTAuthenticationFilter extends AbstractAuthenticationProcessingFil
             Authentication authenticatedToken = this.getAuthenticationManager().authenticate(usernamePasswordAuthenticationToken);
             return authenticatedToken;
 
-
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
     }
 
 

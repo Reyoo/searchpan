@@ -98,6 +98,7 @@ public class ValidateCodeFilter extends OncePerRequestFilter implements Initiali
             httpServletResponse.getWriter().flush();
             return;
         }catch (Exception e){
+            e.printStackTrace();
             logger.error(e.getMessage());
             httpServletResponse.setCharacterEncoding("UTF-8");
             httpServletResponse.setContentType("application/json; charset=utf-8");
@@ -118,7 +119,7 @@ public class ValidateCodeFilter extends OncePerRequestFilter implements Initiali
      * @date 2019/10/22
      */
     private void checkImageCode(HttpServletRequest httpServletRequest) {
-            /*从cookie取值*/
+
         String uuid = httpServletRequest.getParameter("captcha");
 
         String redisImageCode = (String) redisTemplate.opsForValue().get(uuid);

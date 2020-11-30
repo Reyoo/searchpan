@@ -1,6 +1,10 @@
 package com.libbytian.pan.system.model;
 
 
+import cn.hutool.core.util.StrUtil;
+import com.alibaba.druid.util.StringUtils;
+import com.alibaba.druid.util.Utils;
+import com.baomidou.mybatisplus.annotation.FieldStrategy;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -10,6 +14,8 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import lombok.*;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.bind.DefaultValue;
 
 
 import java.io.Serializable;
@@ -72,6 +78,8 @@ public class SystemUserModel extends Model<SystemUserModel>   {
     private LocalDateTime createTime;
 
 
+
+
     /**
      * 状态值（1：启用，2：禁用，3：删除）
      */
@@ -96,7 +104,7 @@ public class SystemUserModel extends Model<SystemUserModel>   {
      * 用户付费状态（0：白嫖用户 ，1：付费用户）
      */
     @TableField("user_flag")
-    private  boolean userFlag;
+    private boolean userFlag;
 
 
     /**
@@ -114,6 +122,20 @@ public class SystemUserModel extends Model<SystemUserModel>   {
     private LocalDate endtime;
 
 
+    /**
+     * 虚拟字段 查询结束时间
+     */
+    @TableField(exist = false )
+    @Value("1")
+    private long  page;
+
+
+    @TableField(exist = false)
+    @Value("10")
+    private  long limits;
+
+
+
 
     @TableField(exist = false)
     private String token;
@@ -123,10 +145,13 @@ public class SystemUserModel extends Model<SystemUserModel>   {
 
 
 
-
     @Override
     protected Serializable pkVal() {
         return this.userId;
     }
+
+
+
+
 
 }
