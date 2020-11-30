@@ -195,7 +195,7 @@ public class SystemUserServiceImpl extends ServiceImpl<SystemUserMapper, SystemU
          */
         if(systemUserModel != null){
 
-            if(systemUserModel.getUserId() != null){
+            if(systemUserModel.getUserId() != null&& !systemUserModel.getUserId().equals("")){
                 queryWrapper.eq("user_id",systemUserModel.getUserId());
             }
             if(systemUserModel.getUsername() != null&& !systemUserModel.getUsername().equals("")){
@@ -212,7 +212,10 @@ public class SystemUserServiceImpl extends ServiceImpl<SystemUserMapper, SystemU
             }
             System.out.println(String.valueOf(systemUserModel.isStatus()));
 
-            queryWrapper.eq("status",systemUserModel.isStatus());
+             if(systemUserModel!=null){
+                 queryWrapper.eq("status",systemUserModel.isStatus());
+             }
+
 
             if(systemUserModel.getStarttime() != null && systemUserModel.getEndtime() != null){
                 queryWrapper.ge("createtime",systemUserModel.getStarttime());
