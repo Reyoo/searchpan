@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 
 
+import java.io.ByteArrayOutputStream;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -84,7 +85,7 @@ public class SystemUserModel extends Model<SystemUserModel>   {
      * 状态值（1：启用，2：禁用，3：删除）
      */
     @TableField("status")
-    private boolean status;
+    private Boolean status;
 
     /**
      * 激活到期时间
@@ -104,7 +105,7 @@ public class SystemUserModel extends Model<SystemUserModel>   {
      * 用户付费状态（0：白嫖用户 ，1：付费用户）
      */
     @TableField("user_flag")
-    private boolean userFlag;
+    private Boolean userFlag;
 
 
     /**
@@ -122,17 +123,12 @@ public class SystemUserModel extends Model<SystemUserModel>   {
     private LocalDate endtime;
 
 
-    /**
-     * 虚拟字段 查询结束时间
-     */
     @TableField(exist = false )
-    @Value("1")
-    private long  page;
+    private Long  page;
 
 
     @TableField(exist = false)
-    @Value("10")
-    private  long limits;
+    private  Long limits;
 
 
 

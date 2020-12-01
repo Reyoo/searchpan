@@ -29,78 +29,40 @@ public class RoleController {
 
 
     /**
-     * 根据角色名，查询用户信息
-     *
-     * @param page
-     * @param limit
+     * 查询角色
      * @param systemRoleModel
      * @return
      */
-    @RequestMapping(value = "/findrole", method = RequestMethod.GET)
-    public AjaxResult findUserByRole(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int limit, @RequestParam(defaultValue = "false") boolean isall,  @RequestBody(required = false) SystemRoleModel systemRoleModel) {
-        Page<SystemRoleModel> syspage = new Page<>(page, limit);
-        try {
-            if(!isall){
-                IPage<SystemRoleModel> result = iSystemRoleService.findRole(syspage, systemRoleModel);
-                return AjaxResult.success(result);
-            }else{
-                return  AjaxResult.success(iSystemRoleService.list());
+    @RequestMapping(value = "/findrole", method = RequestMethod.POST)
+    public AjaxResult findUserByRole(@RequestBody(required = false) SystemRoleModel systemRoleModel) {
+
+        long page = 1L;
+        long limits = 10L;
+        if (systemRoleModel != null) {
+            if (systemRoleModel.getPage() != null) {
+                page = Long.valueOf(systemRoleModel.getPage());
             }
-        } catch (Exception e) {
-            return AjaxResult.error(e.getMessage());
+            if (systemRoleModel.getLimits() != null) {
+                limits = Long.valueOf(systemRoleModel.getLimits());
+            }
         }
 
-    }
-
-    /**
-     * 根据角色ID，查询角色信息
-     *
-     * @param start
-     * @param limit
-     * @param roleId
-     * @return
-     */
-    @RequestMapping(value = "/findrolebyid", method = RequestMethod.GET)
-    public AjaxResult findRoleById(@RequestParam(defaultValue = "0") int start, @RequestParam(defaultValue = "10") int limit, @RequestParam String roleId) {
-
-        Page<SystemRoleModel> page = new Page<>(start, limit);
-
-        try {
-            IPage<SystemRoleModel> result = iSystemRoleService.findRoleById(page, roleId);
-
-            return AjaxResult.success(result);
-        } catch (Exception e) {
-            return AjaxResult.error(e.getMessage());
-        }
-    }
-
-
-    /**
-     * 查询角色信息
-     *
-     * @param start
-     * @param limit
-     * @param systemRoleModel
-     * @return
-     */
-    @RequestMapping(value = "/findrolebymodel", method = RequestMethod.POST)
-    public AjaxResult findRole(@RequestParam(defaultValue = "1") int start, @RequestParam(defaultValue = "10") int limit, @RequestBody(required = false) SystemRoleModel systemRoleModel) {
-
-        Page<SystemRoleModel> page = new Page<>(start, limit);
-
+        Page<SystemRoleModel> syspage = new Page<>(page, limits);
         try {
 
-            IPage<SystemRoleModel> result = iSystemRoleService.findRole(page,systemRoleModel);
-
+            IPage<SystemRoleModel> result = iSystemRoleService.findRole(syspage, systemRoleModel);
             return AjaxResult.success(result);
+
+
         } catch (Exception e) {
             return AjaxResult.error(e.getMessage());
         }
-    }
 
+    }
 
     /**
      * 新增角色
+     *
      * @param role
      * @return
      */
@@ -140,6 +102,7 @@ public class RoleController {
     /**
      * HuangS
      * 根据角色ID删除角色
+     *
      * @param role 必传（roleId，roleName）
      * @return
      */
@@ -147,8 +110,8 @@ public class RoleController {
     public AjaxResult dropRole(@RequestBody SystemRoleModel role) {
 
         try {
-            if(StrUtil.isBlank(role.getRoleId())){
-                return  AjaxResult.error("字段不能为空");
+            if (StrUtil.isBlank(role.getRoleId())) {
+                return AjaxResult.error("字段不能为空");
             }
             if ("ROLE_ADMIN".equals(role.getRoleName()) || "ROLE_NORMAL".equals(role.getRoleName()) || "ROLE_PAYUSER".equals(role.getRoleName())) {
                 return AjaxResult.error("该用户权限不允许修改");
@@ -158,8 +121,8 @@ public class RoleController {
             systemUserToRole.setRoleId(role.getRoleId());
             int count = iSystemUserToRoleService.getUserToRoleObject(systemUserToRole).size();
 
-            if(count>0){
-                return  AjaxResult.error("该角色已绑定用户，不可删除");
+            if (count > 0) {
+                return AjaxResult.error("该角色已绑定用户，不可删除");
             }
 
             iSystemRoleService.dropRole(role.getRoleId());
@@ -172,6 +135,7 @@ public class RoleController {
 
     /**
      * 查询角色下绑定的权限
+     *
      * @param systemRoleModel
      * @return
      */
@@ -184,7 +148,7 @@ public class RoleController {
             //获取到角色管理权限的id集合
             List<SystemRoleToPermission> systemRoleToPermissionList = iRoleToPermissionService.listRoleToPermissionObjects(systemRoleToPermission);
 
-            if(systemRoleToPermissionList.size()<=0){
+            if (systemRoleToPermissionList.size() <= 0) {
                 List<SystemPermissionModel> systemRoleToPermissions = iPermissionService.list();
                 return AjaxResult.success(systemRoleToPermissions);
             }
@@ -197,9 +161,9 @@ public class RoleController {
 
             List<SystemPermissionModel> systemPermissionModelList = iPermissionService.list();
             //id为两个列表相同属性，取出A的list中的id
-            List<String> permissionIdList =systemRoleModelListAll.stream().map(SystemPermissionModel::getPermissionId).collect(Collectors.toList());
+            List<String> permissionIdList = systemRoleModelListAll.stream().map(SystemPermissionModel::getPermissionId).collect(Collectors.toList());
             //B列表去除A列表已有的数据
-            systemPermissionModelList =systemPermissionModelList.stream().filter(SystemRoleToPermission ->!permissionIdList.contains(SystemRoleToPermission.getPermissionId())).collect(Collectors.toList());
+            systemPermissionModelList = systemPermissionModelList.stream().filter(SystemRoleToPermission -> !permissionIdList.contains(SystemRoleToPermission.getPermissionId())).collect(Collectors.toList());
             systemPermissionModelList.addAll(systemRoleModelListAll);
 
             return AjaxResult.success(systemPermissionModelList);
@@ -207,7 +171,6 @@ public class RoleController {
             return AjaxResult.error(e.getMessage());
         }
     }
-
 
 
     /**
@@ -220,11 +183,11 @@ public class RoleController {
     public AjaxResult updateuserRole(@RequestBody SystemRoleToPermission systemRoleToPermission) {
 
         try {
-            if(systemRoleToPermission!=null){
-                if(systemRoleToPermission.isChecked()){
+            if (systemRoleToPermission != null) {
+                if (systemRoleToPermission.getChecked()) {
                     //更新
-                    return  AjaxResult.success(iRoleToPermissionService.save(systemRoleToPermission));
-                }else{
+                    return AjaxResult.success(iRoleToPermissionService.save(systemRoleToPermission));
+                } else {
                     //删除
                     return AjaxResult.success(iRoleToPermissionService.removeRoleToPermission(systemRoleToPermission));
                 }
@@ -235,8 +198,6 @@ public class RoleController {
             return AjaxResult.error(e.getMessage());
         }
     }
-
-
 
 
 }

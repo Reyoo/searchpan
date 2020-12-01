@@ -42,9 +42,12 @@ public class UserController {
         long page = 1L;
         long limits = 10L;
         if(user !=null ){
-            page = user.getPage();
-            limits = user.getLimits();
-
+            if(user.getPage()!=null){
+                page = Long.valueOf(user.getPage());
+            }
+            if(user.getLimits()!=null){
+                limits =Long.valueOf( user.getLimits());
+            }
         }
 
         Page<SystemUserModel> findpage = new Page<>(page, limits);
@@ -113,7 +116,7 @@ public class UserController {
 
             List<String> roleIds = systemUserToRoles.stream().map(SystemUserToRole::getRoleId).collect(Collectors.toList());
             List<SystemRoleModel> systemRoleModelList = iSystemRoleService.listByIds(roleIds);
-            systemRoleModelList.forEach(role -> role.setChecked(true));
+            systemRoleModelList.forEach(role -> role.setIsChecked(true));
             List<SystemRoleModel> systemRoleModelsAll = iSystemRoleService.list();
             //id为两个列表相同属性，取出A的list中的id
             List<String> roleIdList = systemRoleModelList.stream().map(SystemRoleModel::getRoleId).collect(Collectors.toList());
@@ -142,7 +145,7 @@ public class UserController {
 
         try {
             if (systemUserToRole != null) {
-                if (systemUserToRole.isChecked()) {
+                if (systemUserToRole.getChecked()) {
                     //更新
                     return AjaxResult.success(iSystemUserToRoleService.save(systemUserToRole));
                 } else {

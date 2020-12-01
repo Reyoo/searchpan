@@ -45,7 +45,7 @@ public class SystemPermissionModel {
      * 权限状态
      */
     @TableField("permission_status")
-    private boolean permissionstatus;
+    private Boolean permissionstatus;
 
     /**
      * 创建时间
@@ -67,5 +67,14 @@ public class SystemPermissionModel {
 
     @TableField(exist = false)
     @Value("false")
-    private boolean checked;
+    private Boolean checked;
+
+
+
+    @TableField(exist = false )
+    private Long  page;
+
+
+    @TableField(exist = false)
+    private  Long limits;
 }

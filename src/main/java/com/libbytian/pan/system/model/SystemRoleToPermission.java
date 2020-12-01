@@ -50,7 +50,7 @@ public class SystemRoleToPermission extends Model<SystemRoleToPermission> {
 
     @TableField(exist = false)
     @Value("false")
-    private boolean checked;
+    private Boolean checked;
 
 
     @Override

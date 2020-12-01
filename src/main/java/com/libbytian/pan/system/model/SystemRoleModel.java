@@ -10,6 +10,7 @@ import lombok.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 
+import java.io.ByteArrayOutputStream;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -28,7 +29,7 @@ import java.util.Date;
 @AllArgsConstructor
 @Data
 @TableName("sys_role")
-public class SystemRoleModel extends Model<SystemRoleModel> {
+public class SystemRoleModel extends Model<SystemRoleModel>   {
 
     private static final long serialVersionUID = 1L;
 
@@ -53,7 +54,7 @@ public class SystemRoleModel extends Model<SystemRoleModel> {
      * 角色状态
      */
     @TableField("role_status")
-    private boolean roleStatus;
+    private Boolean roleStatus;
 
 
 
@@ -62,7 +63,7 @@ public class SystemRoleModel extends Model<SystemRoleModel> {
 
     @TableField(exist = false)
     @Value("false")
-    private boolean isChecked;
+    private Boolean isChecked;
 
     @TableField(exist = false)
     @Value("false")
@@ -71,6 +72,16 @@ public class SystemRoleModel extends Model<SystemRoleModel> {
     @TableField(exist = false)
     @Value("false")
     private LocalDateTime endtime;
+
+
+    @TableField(exist = false )
+    private Long  page;
+
+
+    @TableField(exist = false)
+    private  Long limits;
+
+
 
     @Override
     protected Serializable pkVal() {

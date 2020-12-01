@@ -21,15 +21,25 @@ public class PermissionController {
 
     /**
      * 分页查询
-     * @param page
-     * @param limit
      * @param systemPermissionModel
      * @return
      */
-    @RequestMapping(value = "/getper", method = RequestMethod.GET)
-    public AjaxResult findPermission(@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int limit, @RequestBody(required = false) SystemPermissionModel systemPermissionModel) {
+    @RequestMapping(value = "/getper", method = RequestMethod.POST)
+    public AjaxResult findPermission(@RequestBody(required = false) SystemPermissionModel systemPermissionModel) {
 
-        Page<SystemPermissionModel> systemPermissionModelPage = new Page<>(page, limit);
+        long page = 1L;
+        long limits = 10L;
+        if (systemPermissionModel != null) {
+            if (systemPermissionModel.getPage() != null) {
+                page = Long.valueOf(systemPermissionModel.getPage());
+            }
+            if (systemPermissionModel.getLimits() != null) {
+                limits = Long.valueOf(systemPermissionModel.getLimits());
+            }
+        }
+
+
+        Page<SystemPermissionModel> systemPermissionModelPage = new Page<>(page, limits);
         try {
             IPage<SystemPermissionModel> result = iSystemPermissionService.findPermission(systemPermissionModelPage, systemPermissionModel);
             return AjaxResult.success(result);

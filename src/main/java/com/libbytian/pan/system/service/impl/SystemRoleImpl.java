@@ -66,8 +66,6 @@ public class SystemRoleImpl extends ServiceImpl<SystemRoleMapper, SystemRoleMode
                 queryWrapper.ge("createtime",systemRoleModel.getStarttime());
                 queryWrapper.le("createtime",systemRoleModel.getEndtime());
             }
-
-
         }
         queryWrapper.orderByDesc("createtime");
 

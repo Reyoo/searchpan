@@ -69,7 +69,7 @@ public class SystemUserServiceImpl extends ServiceImpl<SystemUserMapper, SystemU
     @Override
     public SystemUserModel register(SystemUserModel user) throws Exception {
 
-        user.setStatus(true);
+//        user.setStatus(true);
         user.setCreateTime(LocalDateTime.now());
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         String encode = encoder.encode(user.getPassword());
@@ -211,9 +211,12 @@ public class SystemUserServiceImpl extends ServiceImpl<SystemUserMapper, SystemU
             if(systemUserModel.getCreateTime() != null){
                 queryWrapper.eq("createtime",systemUserModel.getCreateTime());
             }
-//            if(StrUtil.isNotBlank(String.valueOf(systemUserModel.isStatus()))){
-//                queryWrapper.eq("status", systemUserModel.isStatus());
-//            }
+
+            System.out.println(systemUserModel.getStatus());
+            if(systemUserModel.getStatus()!=null){
+                queryWrapper.eq("status",systemUserModel.getStatus());
+            }
+
 
             if(systemUserModel.getStarttime() != null && systemUserModel.getEndtime() != null){
                 queryWrapper.ge("createtime",systemUserModel.getStarttime());

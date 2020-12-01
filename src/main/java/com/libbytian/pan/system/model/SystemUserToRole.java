@@ -50,7 +50,11 @@ public class SystemUserToRole extends Model<SystemUserToRole> {
 
     @TableField(exist = false)
     @Value("false")
-    private boolean checked;
+    private Boolean checked;
+
+
+
+
 
     @Override
     protected Serializable pkVal() {
