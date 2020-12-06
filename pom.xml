@@ -9,9 +9,9 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.libbytian</groupId>
-    <artifactId>pansearch</artifactId>
+    <artifactId>findfish</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>searchpan</name>
+    <name>findfish</name>
     <description>search for everything</description>
 
     <properties>

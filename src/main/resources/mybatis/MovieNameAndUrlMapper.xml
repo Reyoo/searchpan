@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.libbytian.pan.system.mapper.MovieNameAndUrlMapper">
+
+
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+            id,movie_name,movie_url,wangpan_url,wangpan_passwd
+    </sql>
+
+    <select id="selectMovieUrlByName"  resultType="com.libbytian.pan.system.model.MovieNameAndUrlModel">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM url_movie
+            WHERE  movie_name =#{movieName}
+
+    </select>
+
+
+
+    <insert id="insertMovieUrls">
+        INSERT INTO url_movie
+        (movie_name,movie_url,wangpan_url,wangpan_passwd)
+        VALUES
+        <foreach collection ="list" item="movieNameAndUrlModels" separator =",">
+            (#{movieNameAndUrlModels.movieName}, #{movieNameAndUrlModels.movieUrl},
+             #{movieNameAndUrlModels.wangPanUrl},#{movieNameAndUrlModels.wangPanPassword})
+        </foreach >
+    </insert>
+
+
+    <delete id="deleteUrlMovieUrls" parameterType="com.libbytian.pan.system.model.MovieNameAndUrlModel">
+        DELETE FROM url_movie
+        WHERE
+                movie_name  = #{movieName} AND  wangpan_url = #{wangPanUrl};
+    </delete>
+
+
+</mapper>

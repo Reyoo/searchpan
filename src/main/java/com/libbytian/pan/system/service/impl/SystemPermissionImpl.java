@@ -43,20 +43,25 @@ public class SystemPermissionImpl extends ServiceImpl<SystemPermissionMapper, Sy
          * 这里systemusermodel 不做空判断 。getusername 空指针  null.getUsername
          */
         if(systemPermissionModel != null){
-            if(systemPermissionModel.getPermissionUrl() != null){
+            if(systemPermissionModel.getPermissionUrl() != null&&!systemPermissionModel.getPermissionUrl().equals("")){
                 queryWrapper.eq("permission_url",systemPermissionModel.getPermissionUrl());
             }
 
-            if(systemPermissionModel.getPermissionComment() != null){
+            if(systemPermissionModel.getPermissionComment() != null&&!"".equals(systemPermissionModel.getPermissionComment())){
                 queryWrapper.eq("permission_comment",systemPermissionModel.getPermissionComment());
             }
             if (systemPermissionModel.getCreatetime() != null){
                 queryWrapper.eq("createtime",systemPermissionModel.getCreatetime());
             }
-            if(systemPermissionModel.getStarttime() != null && systemPermissionModel.getEndtime() != null){
-                queryWrapper.ge("createtime",systemPermissionModel.getStarttime());
-                queryWrapper.le("createtime",systemPermissionModel.getEndtime());
+
+
+            if(systemPermissionModel.getPermissionstatus() != null){
+                queryWrapper.eq("permission_status",systemPermissionModel.getPermissionstatus());
+
             }
+
+
+
         }
         queryWrapper.orderByDesc("createtime");
 

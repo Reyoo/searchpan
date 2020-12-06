@@ -65,11 +65,6 @@ public class SystemPermissionModel {
     @TableField(exist = false)
     private LocalDateTime endtime;
 
-    @TableField(exist = false)
-    @Value("false")
-    private Boolean checked;
-
-
 
     @TableField(exist = false )
     private Long  page;
@@ -77,4 +72,11 @@ public class SystemPermissionModel {
 
     @TableField(exist = false)
     private  Long limits;
+
+    @TableField(exist = false)
+    @Value("false")
+    private Boolean checked;
+
+
+
 }

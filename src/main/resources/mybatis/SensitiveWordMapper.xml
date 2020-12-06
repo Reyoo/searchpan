@@ -40,13 +40,13 @@
 
     </select>
 
-    <insert id="insertPermission" parameterType="com.libbytian.pan.system.model.SystemUserToRole" >
+<!--    <insert id="insertPermission" parameterType="com.libbytian.pan.system.model.SystemUserToRole" >
          INSERT INTO sys_permission
          (permission_url,permission_comment,permission_status,createtime)
          VALUES
          (#{permissionUrl},#{permissionComment},0,#{createtime})
 
-    </insert>
+    </insert>-->
 
     <delete id="removeRepeat" >
         DELETE FROM sys_sensitive

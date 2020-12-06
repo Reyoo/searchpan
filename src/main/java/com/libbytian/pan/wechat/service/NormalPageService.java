@@ -2,10 +2,9 @@ package com.libbytian.pan.wechat.service;
 
 
 import com.libbytian.pan.system.common.AjaxResult;
-import com.libbytian.pan.wechat.model.MovieNameAndUrlModel;
+import com.libbytian.pan.system.model.MovieNameAndUrlModel;
 import lombok.RequiredArgsConstructor;
 
-import org.jsoup.Jsoup;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;

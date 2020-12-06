@@ -102,7 +102,6 @@ public class RoleController {
     /**
      * HuangS
      * 根据角色ID删除角色
-     *
      * @param role 必传（roleId，roleName）
      * @return
      */
@@ -135,7 +134,6 @@ public class RoleController {
 
     /**
      * 查询角色下绑定的权限
-     *
      * @param systemRoleModel
      * @return
      */

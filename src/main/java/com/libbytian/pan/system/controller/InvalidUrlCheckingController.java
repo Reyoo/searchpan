@@ -1,11 +1,8 @@
 package com.libbytian.pan.system.controller;
 
 import com.libbytian.pan.system.common.AjaxResult;
-import com.libbytian.pan.system.model.SystemUserModel;
 import com.libbytian.pan.system.service.impl.InvalidUrlCheckingService;
-import com.libbytian.pan.wechat.model.MovieNameAndUrlModel;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
+import com.libbytian.pan.system.model.MovieNameAndUrlModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;

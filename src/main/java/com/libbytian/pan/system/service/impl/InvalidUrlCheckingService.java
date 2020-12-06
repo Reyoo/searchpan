@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 /**
@@ -29,7 +30,7 @@ public class InvalidUrlCheckingService {
         String title = document.title();
         //获取html中的标题
         System.out.println("title :"+title);
-        if("百度网盘-链接不存在".equals(title)||"页面不存在".equals(title)){
+        if("百度网盘-链接不存在".contains(title)||"页面不存在".contains(title)){
             return true;
         }
         return false;

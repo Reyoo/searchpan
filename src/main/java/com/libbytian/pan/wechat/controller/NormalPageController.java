@@ -3,7 +3,7 @@ package com.libbytian.pan.wechat.controller;
 
 import com.libbytian.pan.system.aop.RequestLimit;
 import com.libbytian.pan.system.common.AjaxResult;
-import com.libbytian.pan.wechat.model.MovieNameAndUrlModel;
+import com.libbytian.pan.system.model.MovieNameAndUrlModel;
 import com.libbytian.pan.wechat.service.NormalPageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;

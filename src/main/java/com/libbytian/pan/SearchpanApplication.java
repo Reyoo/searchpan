@@ -11,6 +11,8 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.HashMap;
+
 @SpringBootApplication
 @EnableCaching
 @EnableAsync
@@ -23,6 +25,7 @@ public class SearchpanApplication {
 	@Bean
 	public RestTemplate restTemplate(){
 		RestTemplate restTemplate = new RestTemplate();
+		HashMap map = new HashMap();
 		return restTemplate;
 	}
 

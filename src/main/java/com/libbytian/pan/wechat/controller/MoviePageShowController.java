@@ -4,7 +4,7 @@ import com.libbytian.pan.system.common.AjaxResult;
 import com.libbytian.pan.system.model.SystemTemDetailsModel;
 import com.libbytian.pan.system.model.SystemUserModel;
 import com.libbytian.pan.system.service.ISystemTemDetailsService;
-import com.libbytian.pan.wechat.model.MovieNameAndUrlModel;
+import com.libbytian.pan.system.model.MovieNameAndUrlModel;
 import com.libbytian.pan.wechat.service.AsyncSearchCachedServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

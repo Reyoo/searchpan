@@ -1,5 +1,6 @@
 package com.libbytian.pan.system.service.impl;
 
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -50,11 +51,12 @@ public class SystemRoleImpl extends ServiceImpl<SystemRoleMapper, SystemRoleMode
          * 查询时间段，starttime，endtime为虚拟字段
          */
         if(systemRoleModel != null){
-            if(systemRoleModel.getRoleName() != null){
+            if(StrUtil.isNotBlank(systemRoleModel.getRoleName())){
                 queryWrapper.eq("role_name",systemRoleModel.getRoleName());
             }
 
-            if(systemRoleModel.getShowName() != null){
+
+            if(StrUtil.isNotBlank(systemRoleModel.getShowName())){
                 queryWrapper.eq("show_name",systemRoleModel.getShowName());
             }
 
@@ -62,10 +64,11 @@ public class SystemRoleImpl extends ServiceImpl<SystemRoleMapper, SystemRoleMode
                 queryWrapper.eq("createtime",systemRoleModel.getCreateTime());
             }
 
-            if(systemRoleModel.getStarttime() != null && systemRoleModel.getEndtime() != null){
-                queryWrapper.ge("createtime",systemRoleModel.getStarttime());
-                queryWrapper.le("createtime",systemRoleModel.getEndtime());
+            if(systemRoleModel.getRoleStatus()!=null){
+                queryWrapper.eq("role_status",systemRoleModel.getRoleStatus());
             }
+
+
         }
         queryWrapper.orderByDesc("createtime");
 

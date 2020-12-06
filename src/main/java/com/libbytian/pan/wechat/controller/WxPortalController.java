@@ -112,6 +112,10 @@ public class WxPortalController {
     }
 
 
+
+
+
+
     @RequestMapping(path = "/{verification}" , method = RequestMethod.POST ,produces = "application/xml; charset=UTF-8")
     public String post(
             @PathVariable String verification,
@@ -134,6 +138,7 @@ public class WxPortalController {
 
         //解析传入的username,拿到user,查询对应模板
         String username =  new String(decoder.decode(verification), "UTF-8");
+
 
         /**
          * 获取用户名绑定的模板
@@ -212,9 +217,13 @@ public class WxPortalController {
         if (encType == null) {
             // 明文传输的消息
             WxMpXmlMessage inMessage = WxMpXmlMessage.fromXml(requestBody);
-            //异步缓存到redis
+
+//            异步获取一次消息
             String searchWord = inMessage.getContent().trim();
             asyncSearchCachedService.searchWord(searchWord);
+
+
+
             WxMpXmlOutMessage outMessage = this.route(inMessage);
             if (outMessage == null) {
                 return "";
