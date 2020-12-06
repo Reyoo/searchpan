@@ -132,13 +132,12 @@ public class MoviePageShowController {
      * @return
      * @Description: 根据加密内容 返回待查询list
      */
-        @RequestMapping(path = "/movie/{fishEncryption}/{searchName}", method = RequestMethod.GET)
+    @RequestMapping(path = "/movie/{fishEncryption}/{searchName}", method = RequestMethod.GET)
     public AjaxResult getMovieList(@PathVariable String fishEncryption, @PathVariable String searchName) {
         try {
             String username = new String(decoder.decode(fishEncryption), "UTF-8");
             // 调用验证用户名是否合法
             List<MovieNameAndUrlModel> movieNameAndUrlModels = asyncSearchCachedService.searchWord(searchName.trim());
-
 
             if (movieNameAndUrlModels!=null && movieNameAndUrlModels.size() > 0) {
                 return AjaxResult.success(movieNameAndUrlModels);

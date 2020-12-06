@@ -1,5 +1,7 @@
 package com.libbytian.pan.system.security.handle;
 
+import com.alibaba.fastjson.JSONObject;
+import com.libbytian.pan.system.common.AjaxResult;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 
@@ -24,8 +26,8 @@ public class LoginFailureHandler extends SimpleUrlAuthenticationFailureHandler {
      */
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
+        response.setCharacterEncoding("utf-8");
         response.setContentType("application/json;charset=UTF-8");
-
-        response.getWriter().write( exception.getMessage());
+        response.getWriter().print(JSONObject.toJSONString(AjaxResult.error("请检查用户名密码!")));
     }
 }

@@ -46,6 +46,7 @@ public class AccessDecisionService {
         whiteList.add("/details/**");
         whiteList.add("/favicon.ico");
         whiteList.add("/movie/**");
+        whiteList.add("/invalid/**");
         /**
          * 验证码接口放过
          */
