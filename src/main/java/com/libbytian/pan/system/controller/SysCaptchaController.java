@@ -65,8 +65,9 @@ public class SysCaptchaController  {
             typeList.add("math");
             typeList.add("char");
 
-            int index = (int) (Math.random() * typeList.size());
-            String type= (String)typeList.get(index);
+//            int index = (int) (Math.random() * typeList.size());
+//            String type= (String)typeList.get(index);
+            String type = "char";
             String capStr;
             String code = null;
             BufferedImage bufferedImage = null;
