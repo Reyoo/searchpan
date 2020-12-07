@@ -24,5 +24,7 @@ public interface ISystemTemplateService extends IService<SystemTemplateModel> {
 
      List<SystemTemplateModel> listTemplatelObjects(SystemTemplateModel systemTemplateModel) throws Exception;
 
+     boolean checkTemplateIsBinded(SystemUserModel systemUserModel);
+
 
 }

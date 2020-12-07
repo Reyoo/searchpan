@@ -55,5 +55,18 @@ public class SystemTemplateServiceImpl extends ServiceImpl<SystemTemplateMapper,
         return systemTemplateMapper.listTemplatelObjects(systemTemplateModel);
     }
 
+    /**
+     * 校验用户是否已经有启用状态的模板 true  有,false 没有
+     * @param systemUserModel
+     * @return
+     */
+    @Override
+    public boolean checkTemplateIsBinded(SystemUserModel systemUserModel) {
+        List<SystemTemplateModel> systemTemplateModels =  systemTemplateMapper.listTemplatelByUser(systemUserModel);
+        if(systemTemplateModels!=null&&systemTemplateModels.size()>0){
+            return Boolean.TRUE;
+        }
+        return Boolean.FALSE;
+    }
 
 }

@@ -144,28 +144,32 @@ public class TemplateController {
     public AjaxResult finduserTemplate(HttpServletRequest httpRequest, @RequestBody(required = true) SystemTemplateModel systemTemplateModel) {
 
         try {
+
+
+            String username = httpRequest.getRemoteUser();
+            SystemUserModel userModel = new SystemUserModel();
+            //校验模板
+            Boolean hasTemplateOn = iSystemTemplateService.checkTemplateIsBinded(userModel);
+
+            if(hasTemplateOn){
+                return AjaxResult.error("不允许同时启用多个模板,如需要使用该模板,请关闭启用状态模板");
+            }
+
             String templateId = UUID.randomUUID().toString();
             systemTemplateModel.setTemplateid(templateId);
             systemTemplateModel.setTemplatecreatetime(LocalDateTime.now());
             iSystemTemplateService.save(systemTemplateModel);
 
-            /**
-             * 插入模板 后  用户绑定 用户模板表
-             */
-            String username = httpRequest.getRemoteUser();
-            SystemUserModel userModel = new SystemUserModel();
+
             userModel.setUsername(username);
             SystemUserModel systemUserModel = iSystemUserService.getUser(userModel);
-
             SystemUserToTemplate systemUserToTemplate = new SystemUserToTemplate();
             systemUserToTemplate.setUserId(systemUserModel.getUserId());
             systemUserToTemplate.setTemplateId(templateId);
             systemUserToTemplate.setUserTemplateStatus(true);
             iSystemUserToTemplateService.save(systemUserToTemplate);
-
             //新增模板设置默认关键字
             iSystemTemDetailsService.defaultSave(templateId);
-
 
             return AjaxResult.success();
 

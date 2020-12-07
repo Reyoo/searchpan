@@ -150,13 +150,15 @@ public class WxPortalController {
         //获取启用状态的模板 (状态为True)  前端需要控制只能有一个 启用状态下的模板。
         List<SystemTemplateModel> systemTemplateModelListstatusOn = systemTemplateModels.stream().filter(systemTemplateModel -> systemTemplateModel.getTemplatestatus().equals(Boolean.TRUE)).collect(Collectors.toList());
         //通过模板ID，查询对应的模板详情，取出关键词，头部广告，底部广告
+
+
+
+
         SystemTemplateModel templateModel = new SystemTemplateModel();
 //        templateModel.setTemplatestatus(systemTemplateModelListstatusOn.get(0).getTemplatestatus());
         templateModel.setTemplateid(systemTemplateModelListstatusOn.get(0).getTemplateid());
 
-
         List<SystemTemDetailsModel> systemdetails = iSystemTemDetailsService.getTemDetails(templateModel);
-
         //头部广告
         SystemTemDetailsModel headModel = new SystemTemDetailsModel();
         //底部广告
@@ -221,8 +223,6 @@ public class WxPortalController {
 //            异步获取一次消息
             String searchWord = inMessage.getContent().trim();
             asyncSearchCachedService.searchWord(searchWord);
-
-
 
             WxMpXmlOutMessage outMessage = this.route(inMessage);
             if (outMessage == null) {
@@ -291,24 +291,24 @@ public class WxPortalController {
                 stringBuffer.append(lastModel.getKeywordToValue());
             }
 
-
-            /**
-             * 关键词 隐藏判断
-             */
-            if (hidden != null) {
-                //隐藏的片名以空格分隔，获取隐藏片名的数组
-                String[] str = hidden.getKeywordToValue().split(" ");
-
-                for (String s : str) {
-                    //判断传入的 片名 是否在隐藏资源中
-                    if (s.equals(searchWord)) {
-                        stringBuffer.setLength(0);
-                        stringBuffer.append(hiddenDetais.getKeywordToValue());
-                        break;
-
-                    }
-                }
-            }
+//
+//            /**
+//             * 关键词 隐藏判断
+//             */
+//            if (hidden != null) {
+//                //隐藏的片名以空格分隔，获取隐藏片名的数组
+//                String[] str = hidden.getKeywordToValue().split(" ");
+//
+//                for (String s : str) {
+//                    //判断传入的 片名 是否在隐藏资源中
+//                    if (s.equals(searchWord)) {
+//                        stringBuffer.setLength(0);
+//                        stringBuffer.append(hiddenDetais.getKeywordToValue());
+//                        break;
+//
+//                    }
+//                }
+//            }
 
 
             /**
@@ -384,7 +384,9 @@ public class WxPortalController {
             }
             out = outMessage.toEncryptedXml(wxService.getWxMpConfigStorage());
         }
-        }catch (Exception e){
+        }
+        catch (Exception e){
+            e.printStackTrace();
             return e.getMessage();
         }
 
