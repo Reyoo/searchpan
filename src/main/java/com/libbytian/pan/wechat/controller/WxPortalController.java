@@ -8,6 +8,7 @@ import com.libbytian.pan.system.service.ISystemTemDetailsService;
 import com.libbytian.pan.system.service.ISystemTemplateService;
 
 import com.libbytian.pan.system.service.ISystemUserService;
+import com.libbytian.pan.wechat.constant.TemplateKeyword;
 import com.libbytian.pan.wechat.service.AsyncSearchCachedServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -155,59 +156,59 @@ public class WxPortalController {
 
 
         SystemTemplateModel templateModel = new SystemTemplateModel();
-//        templateModel.setTemplatestatus(systemTemplateModelListstatusOn.get(0).getTemplatestatus());
-        templateModel.setTemplateid(systemTemplateModelListstatusOn.get(0).getTemplateid());
 
+        templateModel = systemTemplateModelListstatusOn.get(0);
         List<SystemTemDetailsModel> systemdetails = iSystemTemDetailsService.getTemDetails(templateModel);
         //头部广告
-        SystemTemDetailsModel headModel = new SystemTemDetailsModel();
-        //底部广告
-        SystemTemDetailsModel lastModel = new SystemTemDetailsModel();
-        //隐藏资源
-        SystemTemDetailsModel hidden = new SystemTemDetailsModel();
-        //隐藏内容
-        SystemTemDetailsModel hiddenDetais = new SystemTemDetailsModel();
-        //维护开始时间
-        SystemTemDetailsModel sleepStart = new SystemTemDetailsModel();
-        //维护结束时间
-        SystemTemDetailsModel sleepEnd = new SystemTemDetailsModel();
-        //维护内容
-        SystemTemDetailsModel sleepDetais = new SystemTemDetailsModel();
-        //秘钥
-        SystemTemDetailsModel secretKey = new SystemTemDetailsModel();
-        //秘钥回复
-        SystemTemDetailsModel secretValue = new SystemTemDetailsModel();
+//        SystemTemDetailsModel headModel = new SystemTemDetailsModel();
+//        //底部广告
+//        SystemTemDetailsModel lastModel = new SystemTemDetailsModel();
+//        //隐藏资源
+//        SystemTemDetailsModel hidden = new SystemTemDetailsModel();
+//        //隐藏内容
+//        SystemTemDetailsModel hiddenDetais = new SystemTemDetailsModel();
+//        //维护开始时间
+//        SystemTemDetailsModel sleepStart = new SystemTemDetailsModel();
+//        //维护结束时间
+//        SystemTemDetailsModel sleepEnd = new SystemTemDetailsModel();
+//        //维护内容
+//        SystemTemDetailsModel sleepDetais = new SystemTemDetailsModel();
+//        //秘钥
+//        SystemTemDetailsModel secretKey = new SystemTemDetailsModel();
+//        //秘钥回复
+//        SystemTemDetailsModel secretValue = new SystemTemDetailsModel();
 
 
-        for (SystemTemDetailsModel model : systemdetails) {
-            if ("头部广告".equals(model.getKeyword())){
-                headModel.setKeywordToValue(model.getKeywordToValue());
-            }
-            if ("底部广告".equals(model.getKeyword())){
-                lastModel.setKeywordToValue(model.getKeywordToValue());
-            }
-            if ("隐藏资源".equals(model.getKeyword())){
-                hidden.setKeywordToValue(model.getKeywordToValue());
-            }
-            if ("隐藏回复".equals(model.getKeyword())){
-                hiddenDetais.setKeywordToValue(model.getKeywordToValue());
-            }
-            if ("开始维护".equals(model.getKeyword())){
-                sleepStart.setKeywordToValue(model.getKeywordToValue());
-            }
-            if ("结束维护".equals(model.getKeyword())){
-                sleepEnd.setKeywordToValue(model.getKeywordToValue());
-            }
-            if ("维护内容".equals(model.getKeyword())){
-                sleepDetais.setKeywordToValue(model.getKeywordToValue());
-            }
-            if ("秘钥内容".equals(model.getKeyword())){
-                secretKey.setKeywordToValue(model.getKeywordToValue());
-            }
-            if ("秘钥回复".equals(model.getKeyword())){
-                secretValue.setKeywordToValue(model.getKeywordToValue());
-            }
-        }
+//        for (SystemTemDetailsModel model : systemdetails) {
+//            //头部广告
+//            if (TemplateKeyword.TOP_ADVS.equals(model.getKeyword())){
+//                headModel.setKeywordToValue(model.getKeywordToValue());
+//            }
+//            if (TemplateKeyword.TAIL_ADVS.equals(model.getKeyword())){
+//                lastModel.setKeywordToValue(model.getKeywordToValue());
+//            }
+//            if (TemplateKeyword.HIDE_RESOURCES.equals(model.getKeyword())){
+//                hidden.setKeywordToValue(model.getKeywordToValue());
+//            }
+//            if (TemplateKeyword.HIDE_REPLY.equals(model.getKeyword())){
+//                hiddenDetais.setKeywordToValue(model.getKeywordToValue());
+//            }
+//            if (TemplateKeyword.START_MAINTAIN.equals(model.getKeyword())){
+//                sleepStart.setKeywordToValue(model.getKeywordToValue());
+//            }
+//            if (TemplateKeyword.END_MAINTAIN.equals(model.getKeyword())){
+//                sleepEnd.setKeywordToValue(model.getKeywordToValue());
+//            }
+//            if (TemplateKeyword.MAINTENANCE_CONTENT.equals(model.getKeyword())){
+//                sleepDetais.setKeywordToValue(model.getKeywordToValue());
+//            }
+//            if (TemplateKeyword.SECRET_KEY_CONTENT.equals(model.getKeyword())){
+//                secretKey.setKeywordToValue(model.getKeywordToValue());
+//            }
+//            if (TemplateKeyword.SECRET_KEY_REPLY.equals(model.getKeyword())){
+//                secretValue.setKeywordToValue(model.getKeywordToValue());
+//            }
+//        }
 
         String out = null;
         try {
@@ -270,9 +271,13 @@ public class WxPortalController {
              * 关键字 头部广告 headModel.getKeywordToValue()
              * 关键字 底部广告 lastModel.getKeywordToValue()
              */
-            if (headModel != null){
-                stringBuffer.append(headModel.getKeywordToValue());
-            }
+
+//            从数据库中获取 是否有头信息 并且头部信息不为空和空串
+//            if (headModel != null){
+//                stringBuffer.append(headModel.getKeywordToValue());
+//            }
+
+
             stringBuffer.append("\r\n");
             stringBuffer.append("\r\n");
             stringBuffer.append("<a href =\"http://findfish.top/#/mobileView?searchname=");
@@ -287,9 +292,10 @@ public class WxPortalController {
             stringBuffer.append("\r\n");
             stringBuffer.append("\r\n");
 
-            if (lastModel != null){
-                stringBuffer.append(lastModel.getKeywordToValue());
-            }
+            //            从数据库中获取 是否有头信息 并且头部信息不为空和空串
+//            if (lastModel != null){
+//                stringBuffer.append(lastModel.getKeywordToValue());
+//            }
 
 //
 //            /**
@@ -315,38 +321,38 @@ public class WxPortalController {
              * 关键词 维护判断
              */
             //维护时间
-            String start = sleepStart.getKeywordToValue();
-            String end = sleepEnd.getKeywordToValue();
+//            String start = sleepStart.getKeywordToValue();
+//            String end = sleepEnd.getKeywordToValue();
 
-            if (StringUtils.isNotBlank(start) && StringUtils.isNotBlank(end)) {
-
-                SimpleDateFormat df = new SimpleDateFormat("HH:mm");
-                Date dateStart = df.parse(start);
-                Date dateEnd = df.parse(end);
-                //当前时间
-                Date now = df.parse(df.format(new Date()));
-
-                Calendar nowTime = Calendar.getInstance();
-                nowTime.setTime(now);
-
-                Calendar beginTime = Calendar.getInstance();
-                beginTime.setTime(dateStart);
-
-                Calendar endTime = Calendar.getInstance();
-                endTime.setTime(dateEnd);
-
-                //如果开始时间 > 结束时间，跨天 给结束时间加一天
-                if (beginTime.after(endTime)) {
-                    endTime.add(Calendar.DAY_OF_MONTH, 1);
-                }
-
-                //如果当前时间在维护期内，返回维护内容
-                if (nowTime.after(beginTime) && nowTime.before(endTime)) {
-                    stringBuffer.setLength(0);
-                    stringBuffer.append(sleepDetais.getKeywordToValue());
-                }
-
-            }
+//            if (StringUtils.isNotBlank(start) && StringUtils.isNotBlank(end)) {
+//
+//                SimpleDateFormat df = new SimpleDateFormat("HH:mm");
+//                Date dateStart = df.parse(start);
+//                Date dateEnd = df.parse(end);
+//                //当前时间
+//                Date now = df.parse(df.format(new Date()));
+//
+//                Calendar nowTime = Calendar.getInstance();
+//                nowTime.setTime(now);
+//
+//                Calendar beginTime = Calendar.getInstance();
+//                beginTime.setTime(dateStart);
+//
+//                Calendar endTime = Calendar.getInstance();
+//                endTime.setTime(dateEnd);
+//
+//                //如果开始时间 > 结束时间，跨天 给结束时间加一天
+//                if (beginTime.after(endTime)) {
+//                    endTime.add(Calendar.DAY_OF_MONTH, 1);
+//                }
+//
+//                //如果当前时间在维护期内，返回维护内容
+//                if (nowTime.after(beginTime) && nowTime.before(endTime)) {
+//                    stringBuffer.setLength(0);
+//                    stringBuffer.append(sleepDetais.getKeywordToValue());
+//                }
+//
+//            }
 
             /**
              * HuangS  11.15
@@ -354,15 +360,15 @@ public class WxPortalController {
              * 最简单实现
              * 判断传入的关键词中是否包含秘钥
              */
-             if (StringUtils.isNotBlank(secretKey.getKeywordToValue()) && !searchContent.contains(secretKey.getKeywordToValue())){
-
-                    stringBuffer.setLength(0);
-                    if (StringUtils.isNotBlank(secretValue.getKeywordToValue())){
-                        stringBuffer.append(secretValue.getKeywordToValue());
-                    }else {
-                        stringBuffer.append(" ");
-                    }
-            }
+//             if (StringUtils.isNotBlank(secretKey.getKeywordToValue()) && !searchContent.contains(secretKey.getKeywordToValue())){
+//
+//                    stringBuffer.setLength(0);
+//                    if (StringUtils.isNotBlank(secretValue.getKeywordToValue())){
+//                        stringBuffer.append(secretValue.getKeywordToValue());
+//                    }else {
+//                        stringBuffer.append(" ");
+//                    }
+//            }
 
 
             outMessage = WxMpXmlOutTextMessage.TEXT()

@@ -25,11 +25,7 @@ public class SearchpanApplication {
 	@Bean
 	public RestTemplate restTemplate(){
 		RestTemplate restTemplate = new RestTemplate();
-		HashMap map = new HashMap();
 		return restTemplate;
 	}
-
-
-
 
 }

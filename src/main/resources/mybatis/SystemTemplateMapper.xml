@@ -42,25 +42,6 @@
     </select>
 
 
-    <!-- 根据用户信息查询用户启用状态的模板list-->
-    <select id="findTemplateModelByUser" parameterType="com.libbytian.pan.system.model.SystemUserModel" resultType="com.libbytian.pan.system.model.SystemTemplateModel">
-        SELECT
-        <include refid="Base_Column_List"/>
-        FROM sys_template  t
-        LEFT JOIN user_template ut
-        ON t.template_id =ut.template_id
-        LEFT JOIN sys_user s
-        ON ut.user_id = s.user_id
-        <trim prefix="where" prefixOverrides="and|">
-            <if test="userId != null and userId != ''">
-                AND s.user_id= #{userId}
-            </if>
-            <if test="username != null and username != ''">
-                AND s.user_name =#{username}
-            </if>
-        </trim>
-
-    </select>
 
     <!-- 查询所有模板、根据条件查询模板list-->
     <select id="listTemplatelObjects" parameterType="com.libbytian.pan.system.model.SystemTemplateModel" resultType="com.libbytian.pan.system.model.SystemTemplateModel">

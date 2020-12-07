@@ -29,26 +29,26 @@ public class SystemTemplateServiceImpl extends ServiceImpl<SystemTemplateMapper,
         return systemTemplateMapper.listTemplatelByUser(systemUserModel);
     }
 
-    /**
-     * 引入缓存机制 ，该接口待测试
-     * 这个地方应该加一个业务代码 即 当更新用户模板信息启用状态时，清除 userTemplate 缓存
-     * 否则会有bug 产生
-     * @param systemUserModel
-     * @param inUsed
-     * @return
-     * @throws Exception
-     */
-    @Override
-    @Cacheable(value = "userTemplate",key = "#systemUserModel.username" ,condition = "#inUsed")
-    public List<SystemTemplateModel> getTemplateModelByUser(SystemUserModel systemUserModel,Boolean inUsed) throws Exception {
-        List<SystemTemplateModel> systemTemplateModels =  systemTemplateMapper.findTemplateModelByUser(systemUserModel);
-        if(inUsed){
-            List<SystemTemplateModel> systemTemplateModelListstatusOn = systemTemplateModels.stream().filter(systemTemplateModel -> systemTemplateModel.getTemplatestatus().equals(Boolean.TRUE)).collect(Collectors.toList());
-            return systemTemplateModelListstatusOn;
-        }else{
-            return systemTemplateModels;
-        }
-    }
+//    /**
+//     * 引入缓存机制 ，该接口待测试
+//     * 这个地方应该加一个业务代码 即 当更新用户模板信息启用状态时，清除 userTemplate 缓存
+//     * 否则会有bug 产生
+//     * @param systemUserModel
+//     * @param inUsed
+//     * @return
+//     * @throws Exception
+//     */
+//    @Override
+//    @Cacheable(value = "userTemplate",key = "#systemUserModel.username" ,condition = "#inUsed")
+//    public List<SystemTemplateModel> getTemplateModelByUser(SystemUserModel systemUserModel,Boolean inUsed) throws Exception {
+//        List<SystemTemplateModel> systemTemplateModels =  systemTemplateMapper.listTemplatelByUser(systemUserModel);
+//        if(inUsed){
+//            List<SystemTemplateModel> systemTemplateModelListstatusOn = systemTemplateModels.stream().filter(systemTemplateModel -> systemTemplateModel.getTemplatestatus().equals(Boolean.TRUE)).collect(Collectors.toList());
+//            return systemTemplateModelListstatusOn;
+//        }else{
+//            return systemTemplateModels;
+//        }
+//    }
 
     @Override
     public List<SystemTemplateModel> listTemplatelObjects(SystemTemplateModel systemTemplateModel) throws Exception {
