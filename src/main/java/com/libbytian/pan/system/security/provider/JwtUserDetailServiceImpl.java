@@ -58,7 +58,7 @@ public class JwtUserDetailServiceImpl implements UserDetailsService {
         List<GrantedAuthority> authorities = new ArrayList<>();
         // 从数据库中取出数据信息
         if (StringUtils.isEmpty(username)){
-            log.info("用户名输入不能为空");
+            log.error("用户名输入不能为空");
             throw new UsernameNotFoundException(JSONObject.toJSONString(new ResultExceptionModel("用户名不能为空!!",0,"")));
         }
 
@@ -67,6 +67,7 @@ public class JwtUserDetailServiceImpl implements UserDetailsService {
         SystemUserModel systemUserModel = iSystemUserService.getUser(userModel);
 
         if (systemUserModel == null){
+            log.error("该用户名不存在");
             throw new UsernameNotFoundException(JSONObject.toJSONString(new ResultExceptionModel("该用户名不存在!",0,"")));
 
         }

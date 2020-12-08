@@ -84,7 +84,7 @@ public class JWTAuthenticationFilter extends AbstractAuthenticationProcessingFil
                                             Authentication authentication) throws IOException, ServletException {
 
         JwtUser jwtUser = (JwtUser) authentication.getPrincipal();
-        System.out.println("jwtUser:" + jwtUser.toString());
+        log.info("jwtUser:" + jwtUser.toString());
         boolean isRemember = threadLocal.get() == 1;
 
         Set<String> roles = AuthorityUtils.authorityListToSet(authentication.getAuthorities());
@@ -127,6 +127,7 @@ public class JWTAuthenticationFilter extends AbstractAuthenticationProcessingFil
 
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
+        log.error("authentication failed, reason: " + failed.getMessage());
         response.getWriter().write("authentication failed, reason: " + failed.getMessage());
     }
 

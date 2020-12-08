@@ -1,14 +1,12 @@
 package com.libbytian.pan.wechat.controller;
 
 import com.libbytian.pan.system.model.SystemTemDetailsModel;
-import com.libbytian.pan.system.model.SystemTemToTemdetail;
 import com.libbytian.pan.system.model.SystemTemplateModel;
 import com.libbytian.pan.system.model.SystemUserModel;
 import com.libbytian.pan.system.service.ISystemTemDetailsService;
 import com.libbytian.pan.system.service.ISystemTemplateService;
 
 import com.libbytian.pan.system.service.ISystemUserService;
-import com.libbytian.pan.wechat.constant.TemplateKeyword;
 import com.libbytian.pan.wechat.service.AsyncSearchCachedServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -24,8 +22,6 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.ByteArrayInputStream;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -223,7 +219,7 @@ public class WxPortalController {
 
 //            异步获取一次消息
             String searchWord = inMessage.getContent().trim();
-            asyncSearchCachedService.searchWord(searchWord);
+            asyncSearchCachedService.searchAsyncWord(searchWord);
 
             WxMpXmlOutMessage outMessage = this.route(inMessage);
             if (outMessage == null) {
@@ -307,7 +303,7 @@ public class WxPortalController {
 //
 //                for (String s : str) {
 //                    //判断传入的 片名 是否在隐藏资源中
-//                    if (s.equals(searchWord)) {
+//                    if (s.equals(searchAsyncWord)) {
 //                        stringBuffer.setLength(0);
 //                        stringBuffer.append(hiddenDetais.getKeywordToValue());
 //                        break;

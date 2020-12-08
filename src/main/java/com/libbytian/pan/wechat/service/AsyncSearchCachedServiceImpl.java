@@ -42,23 +42,30 @@ public class AsyncSearchCachedServiceImpl {
     private final NormalPageService normalPageService;
 
 
-
     @Value("${user.unread.weiduyingdan}")
     String unreadUrl;
     @Value("${user.lxxh.aidianying}")
     String lxxhUrl;
 
+
+    public List<MovieNameAndUrlModel> searchWord(String searchText) {
+        List<MovieNameAndUrlModel> movieNameAndUrlModels = new ArrayList<>();
+        movieNameAndUrlModels = (List<MovieNameAndUrlModel>) redisTemplate.opsForValue().get(searchText);
+        return movieNameAndUrlModels;
+    }
+
+
     /**
      * @param searchText
      * @return
-     * @Description: 根据待搜索关键词 搜索并存入redis
+     * @Description: 根据待搜索关键词 搜索并存入redis  需要增加一个异步方法给初始化
      */
     @Async
-    public List<MovieNameAndUrlModel> searchWord(String searchText) {
+    public void searchAsyncWord(String searchText) {
+
         List<MovieNameAndUrlModel> movieNameAndUrlModels = new ArrayList<>();
 
         try {
-
             /**
              * 逻辑修改
              * 1、先从Redis中获取。
@@ -72,17 +79,17 @@ public class AsyncSearchCachedServiceImpl {
 //        2.2、如果链接没有失效，则直接返回结果，并 /异步/重新获取资源，更新Redis 及数据库
             if (movieNameAndUrlModels != null && movieNameAndUrlModels.size() > 0) {
                 List<MovieNameAndUrlModel> checkedMovieNameAndUrlModels = new ArrayList<>();
-                for(MovieNameAndUrlModel movieNameAndUrlModel : movieNameAndUrlModels){
+                for (MovieNameAndUrlModel movieNameAndUrlModel : movieNameAndUrlModels) {
                     //如果网盘不存在则删除mysql 中数据
-                    if(StrUtil.isBlank(movieNameAndUrlModel.getWangPanUrl())){
+                    if (StrUtil.isBlank(movieNameAndUrlModel.getWangPanUrl())) {
                         continue;
                     }
-                    if(invalidUrlCheckingService.checkUrlMethod(movieNameAndUrlModel.getWangPanUrl())){
+                    if (invalidUrlCheckingService.checkUrlMethod(movieNameAndUrlModel.getWangPanUrl())) {
                         //从数据库中删除掉失效连接
-                       int delNum =  movieNameAndUrlService.dropMovieUrl(movieNameAndUrlModel);
+                        int delNum = movieNameAndUrlService.dropMovieUrl(movieNameAndUrlModel);
                         System.out.println(movieNameAndUrlModel.getMovieName());
 
-                    }else {
+                    } else {
                         //循环校验 放入新的list中
                         checkedMovieNameAndUrlModels.add(movieNameAndUrlModel);
                     }
@@ -90,12 +97,12 @@ public class AsyncSearchCachedServiceImpl {
                 }
 
                 //更新redis
-                if(redisTemplate.delete(searchText)){
+                if (redisTemplate.delete(searchText)) {
                     redisTemplate.opsForValue().set(searchText, movieNameAndUrlModels, 60 * 24 * 15, TimeUnit.MINUTES);
                 }
 
                 //由于redis数据库设计、此处直接返回不做失效链接判断
-                return movieNameAndUrlModels;
+//                return movieNameAndUrlModels;
 
             } else {
                 //2.1.1  如果没有数据，从数据库中获取数据
@@ -105,7 +112,7 @@ public class AsyncSearchCachedServiceImpl {
                     //记录到redis
                     redisTemplate.opsForValue().set(searchText, movieNameAndUrlModels, 60 * 24 * 15, TimeUnit.MINUTES);
                     //返回结果
-                    return movieNameAndUrlModels;
+//                    return movieNameAndUrlModels;
                 } else {
                     //重新爬虫，如果爬取到结果则保存到mysql 中， 如果没爬取到结果将redis设置为null;
                     List<MovieNameAndUrlModel> innerMovieList = new ArrayList();
@@ -124,7 +131,7 @@ public class AsyncSearchCachedServiceImpl {
                     if (movieNameAndUrlModels != null && movieNameAndUrlModels.size() > 0) {
                         movieNameAndUrlService.addMovieUrl(movieNameAndUrlModels);
                         redisTemplate.opsForValue().set(searchText, movieNameAndUrlModels, 60 * 24 * 15, TimeUnit.MINUTES);
-                        return movieNameAndUrlModels;
+//                        return movieNameAndUrlModels;
                     } else {
                         redisTemplate.opsForValue().set(searchText, null, 60 * 24 * 15, TimeUnit.MINUTES);
                     }
@@ -132,9 +139,7 @@ public class AsyncSearchCachedServiceImpl {
             }
         } catch (Exception e) {
             log.error(e.getMessage());
-            return movieNameAndUrlModels;
         }
-        return movieNameAndUrlModels;
     }
 
 }
