@@ -2,6 +2,7 @@ package com.libbytian.pan.system.security.filter;
 
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.libbytian.pan.system.common.AjaxResult;
@@ -128,7 +129,7 @@ public class JWTAuthenticationFilter extends AbstractAuthenticationProcessingFil
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
         log.error("authentication failed, reason: " + failed.getMessage());
-        response.getWriter().write("authentication failed, reason: " + failed.getMessage());
+        response.getWriter().write(JSONObject.toJSONString(AjaxResult.error("验证失败")));
     }
 
 

@@ -3,6 +3,7 @@ package com.libbytian.pan.system.security;
 import com.libbytian.pan.system.model.SystemPermissionModel;
 import com.libbytian.pan.system.model.SystemUserModel;
 import com.libbytian.pan.system.service.ISystemPermissionService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -27,6 +28,7 @@ import java.util.stream.Collectors;
  * @date 2019/4/10 10:33.
  */
 @Component("accessDecisionService")
+@Slf4j
 public class AccessDecisionService {
 
 
@@ -72,8 +74,6 @@ public class AccessDecisionService {
         SystemUserModel userModel = new SystemUserModel();
         userModel.setUsername(username.trim());
 
-        //根据用户名查出能访问哪些url, urls=findUrlByUserName()
-//        List<String> urls = queryUrlByUserName(userName);
         List<String> urls = queryUrlByUser(userModel);
         for (String url : urls) {
             if (antPathMatcher.match(url, request.getRequestURI())) {
@@ -100,6 +100,7 @@ public class AccessDecisionService {
             List<String> urlList = systemPermissionModelList.stream().map(SystemPermissionModel::getPermissionUrl).collect(Collectors.toList());
             return urlList;
         } catch (Exception e) {
+            log.error(e.getMessage());
             e.printStackTrace();
             return new ArrayList<>();
         }
