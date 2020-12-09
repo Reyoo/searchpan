@@ -87,7 +87,6 @@ public class AsyncSearchCachedServiceImpl {
                     if (invalidUrlCheckingService.checkUrlMethod(movieNameAndUrlModel.getWangPanUrl())) {
                         //从数据库中删除掉失效连接
                         int delNum = movieNameAndUrlService.dropMovieUrl(movieNameAndUrlModel);
-                        System.out.println(movieNameAndUrlModel.getMovieName());
 
                     } else {
                         //循环校验 放入新的list中
@@ -116,13 +115,13 @@ public class AsyncSearchCachedServiceImpl {
                 } else {
                     //重新爬虫，如果爬取到结果则保存到mysql 中， 如果没爬取到结果将redis设置为null;
                     List<MovieNameAndUrlModel> innerMovieList = new ArrayList();
-                    List<MovieNameAndUrlModel> unreadUrls = (List<MovieNameAndUrlModel>) normalPageService.getNormalUrl(unreadUrl + "/?s=" + searchText).get("data");
+                    List<MovieNameAndUrlModel> unreadUrls = normalPageService.getNormalUrl(unreadUrl + "/?s=" + searchText);
 
                     unreadUrls.stream().forEach(movieNameAndUrl ->
                             innerMovieList.add(normalPageService.getMoviePanUrl(movieNameAndUrl)));
 
                     //查询第二个链接
-                    List<MovieNameAndUrlModel> lxxhUrls = (List<MovieNameAndUrlModel>) normalPageService.getNormalUrl(lxxhUrl + "/?s=" + searchText).get("data");
+                    List<MovieNameAndUrlModel> lxxhUrls = normalPageService.getNormalUrl(lxxhUrl + "/?s=" + searchText);
                     lxxhUrls.stream().forEach(movieNameAndUrl ->
                             innerMovieList.add(normalPageService.getMoviePanUrl2(movieNameAndUrl)));
 
@@ -144,38 +143,5 @@ public class AsyncSearchCachedServiceImpl {
 
 }
 
-//            //先从redis 中根据 搜索影片名 有结果直接返回
-//            List<MovieNameAndUrlModel> realMovieList = new ArrayList();
-//            List<MovieNameAndUrlModel>  findList = (List<MovieNameAndUrlModel>)redisTemplate.opsForValue().get(searchText);
-//            if(findList!=null && findList.size()>0 ){
-//                return findList;
-//            }else{
-//                LocalTime begin = LocalTime.now();
-//                //查询第一个链接
-//                List<MovieNameAndUrlModel> innerMovieList = new ArrayList();
-//                List<MovieNameAndUrlModel> movieNameAndUrls = (List<MovieNameAndUrlModel>) normalPageService.getNormalUrl(unreadUrl + "/?s=" + searchText).get("data");
-//
-//                movieNameAndUrls.stream().forEach(movieNameAndUrl ->
-//                        innerMovieList.add(normalPageService.getMoviePanUrl(movieNameAndUrl)));
-//
-//                //查询第二个链接
-//                List<MovieNameAndUrlModel> movieNameAndUrls1 = (List<MovieNameAndUrlModel>) normalPageService.getNormalUrl(lxxhUrl + "/?s=" + searchText).get("data");
-//                movieNameAndUrls1.stream().forEach(movieNameAndUrl ->
-//                        innerMovieList.add(normalPageService.getMoviePanUrl2(movieNameAndUrl)));
-//
-//                realMovieList = innerMovieList;
-//                //没有结果第一次先去查询
-//                //redisTemplate.opsForList().rightPushAll(inMessage.getContent(), realMovieList);
-//                redisTemplate.opsForValue().set(searchText, realMovieList, 60 * 24 * 15, TimeUnit.MINUTES);
-//
-//                LocalTime end = LocalTime.now();
-//                Duration duration = Duration.between(begin, end);
-//                log.info("Duration: " + duration);
-//
-//                return realMovieList;
-//            }
-//        }catch (Exception e){
-//            e.printStackTrace();
-//
 
 

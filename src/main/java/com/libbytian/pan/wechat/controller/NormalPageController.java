@@ -34,9 +34,9 @@ public class NormalPageController {
     String lxxhUrl;
 
     @GetMapping("/unread/search")
-    @RequestLimit(count = 3, frameTime = 2, lockTime = 30)
+//    @RequestLimit(count = 3, frameTime = 2, lockTime = 30)
     public AjaxResult getUnreadMovie(@RequestParam String name){
-        List<MovieNameAndUrlModel> movieNameAndUrls =(List<MovieNameAndUrlModel>) normalPageService.getNormalUrl(unreadUrl+"/?s="+name).get("data");
+        List<MovieNameAndUrlModel> movieNameAndUrls =normalPageService.getNormalUrl(unreadUrl+"/?s="+name);
         List<MovieNameAndUrlModel> realMovieList = new ArrayList();
         movieNameAndUrls.stream().forEach( movieNameAndUrl ->
                 realMovieList.add(normalPageService.getMoviePanUrl(movieNameAndUrl)));
@@ -44,10 +44,10 @@ public class NormalPageController {
     }
 
     @GetMapping("/lxxh/search")
-    @RequestLimit(count = 3, frameTime = 2, lockTime = 30)
+//    @RequestLimit(count = 3, frameTime = 2, lockTime = 30)
     public AjaxResult getLxxhdMovie(@RequestParam String name){
 
-        List<MovieNameAndUrlModel> movieNameAndUrls =(List<MovieNameAndUrlModel>) normalPageService.getNormalUrl(lxxhUrl+"/?s="+name).get("data");
+        List<MovieNameAndUrlModel> movieNameAndUrls =normalPageService.getNormalUrl(lxxhUrl+"/?s="+name);
         List<MovieNameAndUrlModel> realMovieList = new ArrayList();
 
         movieNameAndUrls.stream().forEach(movieNameAndUrl ->
@@ -60,14 +60,14 @@ public class NormalPageController {
 
 
     @GetMapping("search")
-    @RequestLimit(count = 3, frameTime = 2, lockTime = 30)    
+//    @RequestLimit(count = 3, frameTime = 2, lockTime = 30)
     public AjaxResult getAllMovie(@RequestParam String name){
         List<MovieNameAndUrlModel> realMovieList = new ArrayList();
-        List<MovieNameAndUrlModel> movieNameAndUrls =(List<MovieNameAndUrlModel>) normalPageService.getNormalUrl(unreadUrl+"/?s="+name).get("data");
+        List<MovieNameAndUrlModel> movieNameAndUrls =normalPageService.getNormalUrl(unreadUrl+"/?s="+name);
 
         movieNameAndUrls.stream().forEach( movieNameAndUrl ->
                 realMovieList.add(normalPageService.getMoviePanUrl(movieNameAndUrl)));
-        List<MovieNameAndUrlModel> movieNameAndUrls1 =(List<MovieNameAndUrlModel>) normalPageService.getNormalUrl(lxxhUrl+"/?s="+name).get("data");
+        List<MovieNameAndUrlModel> movieNameAndUrls1 =normalPageService.getNormalUrl(lxxhUrl+"/?s="+name);
         movieNameAndUrls1.stream().forEach( movieNameAndUrl ->
                 realMovieList.add(normalPageService.getMoviePanUrl2(movieNameAndUrl)));
 

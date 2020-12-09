@@ -41,14 +41,13 @@ public class NormalPageService {
     String userAgent;
 
 
-
-
     /**
      * 获取第一层url信息 得到未读影像对应的pid
+     *
      * @param url
      * @return
      */
-    public AjaxResult getNormalUrl(String url){
+    public List<MovieNameAndUrlModel> getNormalUrl(String url) {
         LocalTime begin = LocalTime.now();
         List<MovieNameAndUrlModel> movieList = new ArrayList<>();
         HttpHeaders requestHeaders = new HttpHeaders();
@@ -58,7 +57,7 @@ public class NormalPageService {
                 String.format(url),
                 HttpMethod.GET, requestEntity, String.class);
         if (resultResponseEntity.getStatusCode() == HttpStatus.OK) {
-            String html= resultResponseEntity.getBody();
+            String html = resultResponseEntity.getBody();
             Document doc = Jsoup.parse(html);
             Elements elements = doc.select("article");
 
@@ -72,11 +71,11 @@ public class NormalPageService {
         LocalTime end = LocalTime.now();
         Duration duration = Duration.between(begin, end);
         System.out.println("接口请求 ---- > Duration: " + duration);
-        return AjaxResult.success(movieList);
+        return movieList;
     }
 
 
-    public MovieNameAndUrlModel getMoviePanUrl(MovieNameAndUrlModel  movieNameAndUrlModel){
+    public MovieNameAndUrlModel getMoviePanUrl(MovieNameAndUrlModel movieNameAndUrlModel) {
 
         HttpHeaders requestHeaders = new HttpHeaders();
         requestHeaders.add("User-Agent", userAgent);
@@ -85,7 +84,7 @@ public class NormalPageService {
                 String.format(movieNameAndUrlModel.getMovieUrl()),
                 HttpMethod.GET, requestEntity, String.class);
         if (resultResponseEntity.getStatusCode() == HttpStatus.OK) {
-            String html= resultResponseEntity.getBody();
+            String html = resultResponseEntity.getBody();
             Document document = Jsoup.parse(html);
             String name = document.getElementsByTag("title").first().text();
             String[] arr = name.split(" – ");
@@ -99,7 +98,7 @@ public class NormalPageService {
             Elements pages = element.select("p");
             for (Element page : pages) {
                 boolean contains1 = page.toString().contains("提取码");
-                boolean contains2 =  page.toString().contains("密码");
+                boolean contains2 = page.toString().contains("密码");
 
                 if (contains1 || contains2) {
                     movieNameAndUrlModel.setWangPanPassword(page.text());
@@ -109,7 +108,7 @@ public class NormalPageService {
         return movieNameAndUrlModel;
     }
 
-    public MovieNameAndUrlModel getMoviePanUrl2(MovieNameAndUrlModel  movieNameAndUrlModel){
+    public MovieNameAndUrlModel getMoviePanUrl2(MovieNameAndUrlModel movieNameAndUrlModel) {
 
         HttpHeaders requestHeaders = new HttpHeaders();
         requestHeaders.add("User-Agent", userAgent);
@@ -118,7 +117,7 @@ public class NormalPageService {
                 String.format(movieNameAndUrlModel.getMovieUrl()),
                 HttpMethod.GET, requestEntity, String.class);
         if (resultResponseEntity.getStatusCode() == HttpStatus.OK) {
-            String html= resultResponseEntity.getBody();
+            String html = resultResponseEntity.getBody();
             Document document = Jsoup.parse(html);
             String name = document.getElementsByTag("title").first().text();
             String[] arr = name.split(" – ");
@@ -127,10 +126,10 @@ public class NormalPageService {
 
             Elements elements = element.select("p");
             String lianjie = null;
-            String password = null ;
+            String password = null;
             for (Element wangpanurl : elements) {
-                boolean contains =  wangpanurl.toString().contains("pan.baidu.com");
-                if (contains){
+                boolean contains = wangpanurl.toString().contains("pan.baidu.com");
+                if (contains) {
                     lianjie = wangpanurl.select("a").attr("href");
                     movieNameAndUrlModel.setWangPanUrl(lianjie);
                     break;
@@ -140,8 +139,8 @@ public class NormalPageService {
 
             for (Element el : elements) {
                 boolean contains = el.toString().contains("密码");
-                if (contains){
-                    String[]arr2 =el.text().split(" ");
+                if (contains) {
+                    String[] arr2 = el.text().split(" ");
 
                     movieNameAndUrlModel.setWangPanPassword(arr2[1]);
                     break;

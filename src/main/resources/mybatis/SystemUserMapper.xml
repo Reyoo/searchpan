@@ -27,7 +27,8 @@
          status,
          act_time AS actTime,
          act_range AS actrange,
-         user_flag AS userFlag
+         user_flag AS userFlag,
+         allowremove AS allowremove
     </sql>
 
 
@@ -63,6 +64,14 @@
             </if>
             <if test="userFlag != null and userFlag != ''">
                 AND u.user_flag =#{userFlag}
+            </if>
+
+            <if test="userFlag != null and userFlag != ''">
+                AND u.user_flag =#{userFlag}
+            </if>
+
+            <if test="allowremove != null and allowremove != ''">
+                AND u.allowremove =#{allowremove}
             </if>
         </trim>
 
@@ -149,6 +158,8 @@
             <if test="userFlag != null and userFlag != ''">
                 AND u.user_flag =#{userFlag}
             </if>
+
+            AND u.allowremove ='true'
         </trim>
 
 

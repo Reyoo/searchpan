@@ -67,7 +67,7 @@ public interface ISystemUserService extends IService<SystemUserModel> {
      * @return
      * @throws Exception
      */
-    boolean checkUserStatus(SystemUserModel user) throws Exception;
+    Boolean checkUserStatus(SystemUserModel user) throws Exception;
 
 
     /**
@@ -76,5 +76,9 @@ public interface ISystemUserService extends IService<SystemUserModel> {
      * @return
      */
     SystemUserModel getUserByUerToTemplate(String templateId);
+
+
+
+    Boolean checkUserCouldDel(SystemUserModel user) throws Exception;
 
 }

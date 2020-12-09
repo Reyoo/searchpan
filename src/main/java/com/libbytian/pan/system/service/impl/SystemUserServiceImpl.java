@@ -48,6 +48,15 @@ public class SystemUserServiceImpl extends ServiceImpl<SystemUserMapper, SystemU
 
 
     @Override
+    public Boolean checkUserCouldDel(SystemUserModel user) throws Exception {
+        SystemUserModel systemUserModel = getUser(user);
+        if(systemUserModel.getAllowremove()){
+            return  Boolean.TRUE;
+        }
+        return  Boolean.FALSE;
+    }
+
+    @Override
     public SystemUserModel getUser(SystemUserModel systemUserModel) {
         return systemUserMapper.getUser(systemUserModel);
     }
@@ -235,7 +244,7 @@ public class SystemUserServiceImpl extends ServiceImpl<SystemUserMapper, SystemU
      * @return
      */
     @Override
-    public boolean checkUserStatus(SystemUserModel user) throws Exception {
+    public Boolean checkUserStatus(SystemUserModel user) throws Exception {
 
         // 判断该用户是否存在
         // 如果存在 ，判断该用户付费剩余时长

@@ -108,6 +108,10 @@ public class SystemUserModel extends Model<SystemUserModel>   {
     private Boolean userFlag;
 
 
+    @TableField("allowremove")
+    private Boolean allowremove;
+
+
     /**
      * 虚拟字段 查询开始时间
      */
@@ -138,6 +142,9 @@ public class SystemUserModel extends Model<SystemUserModel>   {
 
     @TableField(exist = false)
     private Integer rememberMe;
+
+
+
 
 
 

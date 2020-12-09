@@ -39,20 +39,12 @@ public class UserController {
     @RequestMapping(value = "/select", method = RequestMethod.POST)
     public AjaxResult findConditionByPage(@RequestBody(required = false) SystemUserModel user) {
 
-        long page = 1L;
-        long limits = 10L;
-        if(user !=null ){
-            if(user.getPage()!=null){
-                page = Long.valueOf(user.getPage());
-            }
-            if(user.getLimits()!=null){
-                limits =Long.valueOf( user.getLimits());
-            }
-        }
+
+        Long page = user.getPage()== null ? 1L:user.getPage();
+        Long limits = user.getLimits() == null?10L :user.getLimits();
 
         Page<SystemUserModel> findpage = new Page<>(page, limits);
         try {
-
             IPage<SystemUserModel> result = iSystemUserService.findConditionByPage(findpage, user);
             return AjaxResult.success(result);
         } catch (Exception e) {
@@ -64,7 +56,6 @@ public class UserController {
 
 
     /**
-     * HuangS
      * 删除用户
      *
      * @param systemUserModel 多表删除用户ID数据
@@ -76,8 +67,13 @@ public class UserController {
     public AjaxResult deleteUser(@RequestBody SystemUserModel systemUserModel) {
 
         try {
-            iSystemUserService.removeUserAll(systemUserModel);
-            return AjaxResult.success("delete success");
+            if(iSystemUserService.checkUserCouldDel(systemUserModel)){
+                iSystemUserService.removeUserAll(systemUserModel);
+                return AjaxResult.success("delete success");
+            }else {
+                return AjaxResult.error("该用户为系统保留用户 禁止删除！！！");
+            }
+
         } catch (Exception e) {
             return AjaxResult.error("delete error");
         }
@@ -93,8 +89,15 @@ public class UserController {
     public AjaxResult updateUser(@RequestBody SystemUserModel user) {
 
         try {
-            iSystemUserService.updateUser(user);
-            return AjaxResult.success();
+
+            if(iSystemUserService.checkUserCouldDel(user)){
+                iSystemUserService.updateUser(user);
+                return AjaxResult.success();
+            }else {
+                return AjaxResult.error("该用户为系统保留用户禁止修改");
+            }
+
+
         } catch (Exception e) {
             return AjaxResult.error(e.getMessage());
         }
