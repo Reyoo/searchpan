@@ -41,16 +41,29 @@ public class AsyncSearchCachedServiceImpl {
 
     private final NormalPageService normalPageService;
 
-
+    private final IMovieNameAndUrlService iMovieNameAndUrlService;
     @Value("${user.unread.weiduyingdan}")
     String unreadUrl;
     @Value("${user.lxxh.aidianying}")
     String lxxhUrl;
 
 
-    public List<MovieNameAndUrlModel> searchWord(String searchText) {
+    /**
+     * 启用 模糊查询
+     * @param searchText
+     * @return
+     */
+    public List<MovieNameAndUrlModel> searchWord(String searchText) throws Exception{
+        //先去数据库中模糊查询
+        //如果数据库中存在，则直接返回结果，
         List<MovieNameAndUrlModel> movieNameAndUrlModels = new ArrayList<>();
+        //先去缓存找 没有数据库找
         movieNameAndUrlModels = (List<MovieNameAndUrlModel>) redisTemplate.opsForValue().get(searchText);
+
+        if(movieNameAndUrlModels == null || movieNameAndUrlModels.size()==0){
+            movieNameAndUrlModels = iMovieNameAndUrlService.findLikeMovieUrl(searchText);
+        }
+
         return movieNameAndUrlModels;
     }
 

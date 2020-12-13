@@ -31,6 +31,11 @@ public class MovieNameAndUrlServiceImpl extends ServiceImpl<MovieNameAndUrlMappe
     }
 
     @Override
+    public List<MovieNameAndUrlModel> findLikeMovieUrl(String movieName) throws Exception {
+        return  movieNameAndUrlMapper.selectMovieUrlByLikeName(movieName);
+    }
+
+    @Override
     public int addMovieUrl(List<MovieNameAndUrlModel> movieNameAndUrlModels) throws Exception{
         return movieNameAndUrlMapper.insertMovieUrls(movieNameAndUrlModels);
     }

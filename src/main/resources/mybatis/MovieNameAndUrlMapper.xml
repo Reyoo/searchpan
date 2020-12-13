@@ -37,4 +37,18 @@
     </delete>
 
 
+
+
+    <select id="selectMovieUrlByLikeName"  resultType="com.libbytian.pan.system.model.MovieNameAndUrlModel">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM url_movie
+        WHERE  movie_name  like
+
+        concat('%','${movieName}','%')
+
+
+    </select>
+
+
 </mapper>

@@ -18,6 +18,8 @@ public interface MovieNameAndUrlMapper extends BaseMapper<MovieNameAndUrlModel> 
 
     List<MovieNameAndUrlModel> selectMovieUrlByName (String movieName)   ;
 
+    List<MovieNameAndUrlModel> selectMovieUrlByLikeName (String movieName)   ;
+
 
      int insertMovieUrls(List<MovieNameAndUrlModel> movieNameAndUrlModels);
 
