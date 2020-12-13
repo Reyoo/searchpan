@@ -5,6 +5,7 @@ import com.libbytian.pan.system.common.AjaxResult;
 import com.libbytian.pan.system.model.MovieNameAndUrlModel;
 import lombok.RequiredArgsConstructor;
 
+import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -33,6 +34,7 @@ import java.util.List;
  */
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
+@Slf4j
 public class NormalPageService {
     private final RestTemplate restTemplate;
 
@@ -149,6 +151,53 @@ public class NormalPageService {
 
         }
         return movieNameAndUrlModel;
+    }
+
+
+    public MovieNameAndUrlModel getMovieLoops(String url) {
+        MovieNameAndUrlModel movieNameAndUrlModel = new MovieNameAndUrlModel();
+        try {
+
+            HttpHeaders requestHeaders = new HttpHeaders();
+            requestHeaders.add("User-Agent", userAgent);
+            HttpEntity<String> requestEntity = new HttpEntity<String>(null, requestHeaders);
+            ResponseEntity<String> resultResponseEntity = this.restTemplate.exchange(
+                    String.format(url),
+                    HttpMethod.GET, requestEntity, String.class);
+            if (resultResponseEntity.getStatusCode() == HttpStatus.OK) {
+                String html = resultResponseEntity.getBody();
+                Document document = Jsoup.parse(html);
+                String name = document.getElementsByTag("title").first().text();
+                String[] arr = name.split(" – ");
+                name = arr[0];
+                Element element = document.select("div[class=entry-content]").get(0);
+               ;
+//                String wangpan = element.select("p").select("strong").select("a").get(0).text();
+
+                String lianjie = element.select("p").select("strong").select("a").attr("href");
+
+
+                Elements pages = element.select("p");
+
+
+                movieNameAndUrlModel.setMovieUrl(url);
+                movieNameAndUrlModel.setMovieName(name);
+                movieNameAndUrlModel.setWangPanUrl(lianjie);
+                for (Element page : pages) {
+                    page.getElementsByTag("提取码");
+                    boolean contains1 = page.toString().contains("提取码");
+                    boolean contains2 = page.toString().contains("密码");
+
+                    if (contains1 || contains2) {
+                        movieNameAndUrlModel.setWangPanPassword(page.text());
+                    }
+                }
+            }
+            return movieNameAndUrlModel;
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return movieNameAndUrlModel;
+        }
     }
 
 

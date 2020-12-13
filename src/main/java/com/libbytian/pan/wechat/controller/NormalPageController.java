@@ -33,15 +33,15 @@ public class NormalPageController {
     @Value("${user.lxxh.aidianying}")
     String lxxhUrl;
 
-    @GetMapping("/unread/search")
-//    @RequestLimit(count = 3, frameTime = 2, lockTime = 30)
-    public AjaxResult getUnreadMovie(@RequestParam String name){
-        List<MovieNameAndUrlModel> movieNameAndUrls =normalPageService.getNormalUrl(unreadUrl+"/?s="+name);
-        List<MovieNameAndUrlModel> realMovieList = new ArrayList();
-        movieNameAndUrls.stream().forEach( movieNameAndUrl ->
-                realMovieList.add(normalPageService.getMoviePanUrl(movieNameAndUrl)));
-        return AjaxResult.success(realMovieList);
-    }
+//    @GetMapping("/unread/search")
+////    @RequestLimit(count = 3, frameTime = 2, lockTime = 30)
+//    public AjaxResult getUnreadMovie(@RequestParam String name){
+//        List<MovieNameAndUrlModel> movieNameAndUrls =normalPageService.getNormalUrl(unreadUrl+"/?s="+name);
+//        List<MovieNameAndUrlModel> realMovieList = new ArrayList();
+//        movieNameAndUrls.stream().forEach( movieNameAndUrl ->
+//                realMovieList.add(normalPageService.getMoviePanUrl(movieNameAndUrl)));
+//        return AjaxResult.success(realMovieList);
+//    }
 
     @GetMapping("/lxxh/search")
 //    @RequestLimit(count = 3, frameTime = 2, lockTime = 30)

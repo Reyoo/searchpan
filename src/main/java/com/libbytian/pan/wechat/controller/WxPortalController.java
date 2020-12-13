@@ -54,19 +54,17 @@ public class WxPortalController {
     final Base64.Encoder encoder = Base64.getEncoder();
 
 
-
     /**
      * 与微信做认证通信 通过认证后调用其他接口
+     *
      * @param signature
      * @param timestamp
      * @param nonce
-     * @param echostr
-     *
-     * c3VucWklM0ExMjM0NTY3OA==
+     * @param echostr   c3VucWklM0ExMjM0NTY3OA==
      * @return
      */
 
-    @RequestMapping(path = "/{verification}",method = RequestMethod.GET , produces = "text/plain;charset=utf-8")
+    @RequestMapping(path = "/{verification}", method = RequestMethod.GET, produces = "text/plain;charset=utf-8")
     public String authGet(
             @PathVariable String verification,
             @RequestParam(name = "signature", required = false) String signature,
@@ -81,17 +79,16 @@ public class WxPortalController {
         }
 
         try {
-            String username =  new String(decoder.decode(verification), "UTF-8");
+            String username = new String(decoder.decode(verification), "UTF-8");
 
             SystemUserModel systemUserModel = new SystemUserModel();
             systemUserModel.setUsername(username);
             iSystemUserService.checkUserStatus(systemUserModel);
-            if(iSystemUserService.getUser(systemUserModel) == null){
+            if (iSystemUserService.getUser(systemUserModel) == null) {
                 return "无此接口认证权限，请联系管理员！";
             }
 
-
-        }catch (Exception e){
+        } catch (Exception e) {
             return e.getMessage();
         }
         /**
@@ -109,21 +106,17 @@ public class WxPortalController {
     }
 
 
-
-
-
-
-    @RequestMapping(path = "/{verification}" , method = RequestMethod.POST ,produces = "application/xml; charset=UTF-8")
+    @RequestMapping(path = "/{verification}", method = RequestMethod.POST, produces = "application/xml; charset=UTF-8")
     public String post(
             @PathVariable String verification,
-                       @RequestBody String requestBody,
-                       @RequestParam(value = "signature") String signature,
-                       @RequestParam(value = "timestamp") String timestamp,
-                       @RequestParam(value = "nonce") String nonce,
-                       @RequestParam(value = "openid") String openid,
-                       @RequestParam(value = "encrypt_type", required = false) String encType,
-                       @RequestParam(value = "msg_signature", required = false) String msgSignature)
-                       throws Exception {
+            @RequestBody String requestBody,
+            @RequestParam(value = "signature") String signature,
+            @RequestParam(value = "timestamp") String timestamp,
+            @RequestParam(value = "nonce") String nonce,
+            @RequestParam(value = "openid") String openid,
+            @RequestParam(value = "encrypt_type", required = false) String encType,
+            @RequestParam(value = "msg_signature", required = false) String msgSignature)
+            throws Exception {
         log.info("\n接收微信请求：[openid=[{}], [signature=[{}], encType=[{}], msgSignature=[{}],"
                         + " timestamp=[{}], nonce=[{}], requestBody=[\n{}\n] ",
                 openid, signature, encType, msgSignature, timestamp, nonce, requestBody);
@@ -134,7 +127,7 @@ public class WxPortalController {
 
 
         //解析传入的username,拿到user,查询对应模板
-        String username =  new String(decoder.decode(verification), "UTF-8");
+        String username = new String(decoder.decode(verification), "UTF-8");
 
 
         /**
@@ -147,8 +140,6 @@ public class WxPortalController {
         //获取启用状态的模板 (状态为True)  前端需要控制只能有一个 启用状态下的模板。
         List<SystemTemplateModel> systemTemplateModelListstatusOn = systemTemplateModels.stream().filter(systemTemplateModel -> systemTemplateModel.getTemplatestatus().equals(Boolean.TRUE)).collect(Collectors.toList());
         //通过模板ID，查询对应的模板详情，取出关键词，头部广告，底部广告
-
-
 
 
         SystemTemplateModel templateModel = new SystemTemplateModel();
@@ -209,37 +200,37 @@ public class WxPortalController {
         String out = null;
         try {
 
-        if (!wxService.checkSignature(timestamp, nonce, signature)) {
-            throw new IllegalArgumentException("非法请求，可能属于伪造的请求！");
-        }
+            if (!wxService.checkSignature(timestamp, nonce, signature)) {
+                throw new IllegalArgumentException("非法请求，可能属于伪造的请求！");
+            }
 
-        if (encType == null) {
-            // 明文传输的消息
-            WxMpXmlMessage inMessage = WxMpXmlMessage.fromXml(requestBody);
+            if (encType == null) {
+                // 明文传输的消息
+                WxMpXmlMessage inMessage = WxMpXmlMessage.fromXml(requestBody);
 
 //            异步获取一次消息
-            String searchWord = inMessage.getContent().trim();
-            asyncSearchCachedService.searchAsyncWord(searchWord);
+                String searchWord = inMessage.getContent().trim();
+                asyncSearchCachedService.searchAsyncWord(searchWord);
 
-            WxMpXmlOutMessage outMessage = this.route(inMessage);
-            if (outMessage == null) {
-                return "";
-            }
-            StringBuffer stringBuffer = new StringBuffer();
-            // 准备数据并解析。
-            byte[] bytes = requestBody.getBytes("UTF-8");
-            //1.创建Reader对象
-            SAXReader reader = new SAXReader();
-            //2.加载xml
-            Document document = reader.read(new ByteArrayInputStream(bytes));
-            //3.获取根节点
-            Element rootElement = document.getRootElement();
-            Iterator iterator = rootElement.elementIterator();
-            String searchContent = "";
-            String searchName = "";
+                WxMpXmlOutMessage outMessage = this.route(inMessage);
+                if (outMessage == null) {
+                    return "";
+                }
+                StringBuffer stringBuffer = new StringBuffer();
+                // 准备数据并解析。
+                byte[] bytes = requestBody.getBytes("UTF-8");
+                //1.创建Reader对象
+                SAXReader reader = new SAXReader();
+                //2.加载xml
+                Document document = reader.read(new ByteArrayInputStream(bytes));
+                //3.获取根节点
+                Element rootElement = document.getRootElement();
+                Iterator iterator = rootElement.elementIterator();
+                String searchContent = "";
+                String searchName = "";
 
 //            String searchName = "";
-            //未使用秘钥
+                //未使用秘钥
 //            while (iterator.hasNext()) {
 //                Element stu = (Element) iterator.next();
 //                if (stu.getName().equals("Content")) {
@@ -249,24 +240,24 @@ public class WxPortalController {
 //                }
 //            }
 
-            while (iterator.hasNext()) {
-                Element stu = (Element) iterator.next();
-                if (stu.getName().equals("Content")) {
-                    List<Node> attributes = stu.content();
-                    searchContent = attributes.get(0).getText();
-                    //传入秘钥+" "+片名，然后截取
-                    int idx = searchContent.lastIndexOf(" ");
-                    searchName = searchContent.substring(idx+1);
+                while (iterator.hasNext()) {
+                    Element stu = (Element) iterator.next();
+                    if (stu.getName().equals("Content")) {
+                        List<Node> attributes = stu.content();
+                        searchContent = attributes.get(0).getText();
+                        //传入秘钥+" "+片名，然后截取
+                        int idx = searchContent.lastIndexOf(" ");
+                        searchName = searchContent.substring(idx + 1);
 
+                    }
                 }
-            }
 
 
-            /**
-             * 响应内容
-             * 关键字 头部广告 headModel.getKeywordToValue()
-             * 关键字 底部广告 lastModel.getKeywordToValue()
-             */
+                /**
+                 * 响应内容
+                 * 关键字 头部广告 headModel.getKeywordToValue()
+                 * 关键字 底部广告 lastModel.getKeywordToValue()
+                 */
 
 //            从数据库中获取 是否有头信息 并且头部信息不为空和空串
 //            if (headModel != null){
@@ -274,21 +265,21 @@ public class WxPortalController {
 //            }
 
 
-            stringBuffer.append("\r\n");
-            stringBuffer.append("\r\n");
-            stringBuffer.append("<a href =\"http://findfish.top/#/mobileView?searchname=");
-            stringBuffer.append(searchName);
+                stringBuffer.append("\r\n");
+                stringBuffer.append("\r\n");
+                stringBuffer.append("<a href =\"http://findfish.top/#/mobileView?searchname=");
+                stringBuffer.append(searchName);
 
-            stringBuffer.append("&verification=");
-            stringBuffer.append(verification);
-            stringBuffer.append("&type=mobile");
-            stringBuffer.append("\">[");
-            stringBuffer.append(searchName);
-            stringBuffer.append("]关键词已获取，点击查看是否找到该内容</a>");
-            stringBuffer.append("\r\n");
-            stringBuffer.append("\r\n");
+                stringBuffer.append("&verification=");
+                stringBuffer.append(verification);
+                stringBuffer.append("&type=mobile");
+                stringBuffer.append("\">[");
+                stringBuffer.append(searchName);
+                stringBuffer.append("]关键词已获取，点击查看是否找到该内容</a>");
+                stringBuffer.append("\r\n");
+                stringBuffer.append("\r\n");
 
-            //            从数据库中获取 是否有头信息 并且头部信息不为空和空串
+                //            从数据库中获取 是否有头信息 并且头部信息不为空和空串
 //            if (lastModel != null){
 //                stringBuffer.append(lastModel.getKeywordToValue());
 //            }
@@ -313,10 +304,10 @@ public class WxPortalController {
 //            }
 
 
-            /**
-             * 关键词 维护判断
-             */
-            //维护时间
+                /**
+                 * 关键词 维护判断
+                 */
+                //维护时间
 //            String start = sleepStart.getKeywordToValue();
 //            String end = sleepEnd.getKeywordToValue();
 
@@ -350,12 +341,12 @@ public class WxPortalController {
 //
 //            }
 
-            /**
-             * HuangS  11.15
-             * 关键词 判断秘钥
-             * 最简单实现
-             * 判断传入的关键词中是否包含秘钥
-             */
+                /**
+                 * HuangS  11.15
+                 * 关键词 判断秘钥
+                 * 最简单实现
+                 * 判断传入的关键词中是否包含秘钥
+                 */
 //             if (StringUtils.isNotBlank(secretKey.getKeywordToValue()) && !searchContent.contains(secretKey.getKeywordToValue())){
 //
 //                    stringBuffer.setLength(0);
@@ -367,27 +358,26 @@ public class WxPortalController {
 //            }
 
 
-            outMessage = WxMpXmlOutTextMessage.TEXT()
-                    .toUser(inMessage.getFromUser())
-                    .fromUser(inMessage.getToUser())
-                    .content(stringBuffer.toString()).build();
+                outMessage = WxMpXmlOutTextMessage.TEXT()
+                        .toUser(inMessage.getFromUser())
+                        .fromUser(inMessage.getToUser())
+                        .content(stringBuffer.toString()).build();
 
-            out = outMessage.toXml();
-            System.out.println(out);
+                out = outMessage.toXml();
+                System.out.println(out);
 
-        } else if ("aes".equalsIgnoreCase(encType)) {
-            // aes加密的消息
-            WxMpXmlMessage inMessage = WxMpXmlMessage.fromEncryptedXml(requestBody, wxService.getWxMpConfigStorage(),
-                    timestamp, nonce, msgSignature);
-            log.debug("\n消息解密后内容为：\n{} ", inMessage.toString());
-            WxMpXmlOutMessage outMessage = this.route(inMessage);
-            if (outMessage == null) {
-                return "";
+            } else if ("aes".equalsIgnoreCase(encType)) {
+                // aes加密的消息
+                WxMpXmlMessage inMessage = WxMpXmlMessage.fromEncryptedXml(requestBody, wxService.getWxMpConfigStorage(),
+                        timestamp, nonce, msgSignature);
+                log.debug("\n消息解密后内容为：\n{} ", inMessage.toString());
+                WxMpXmlOutMessage outMessage = this.route(inMessage);
+                if (outMessage == null) {
+                    return "";
+                }
+                out = outMessage.toEncryptedXml(wxService.getWxMpConfigStorage());
             }
-            out = outMessage.toEncryptedXml(wxService.getWxMpConfigStorage());
-        }
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             return e.getMessage();
         }
@@ -397,7 +387,6 @@ public class WxPortalController {
 
 
     }
-
 
 
     private WxMpXmlOutMessage route(WxMpXmlMessage message) {
@@ -413,31 +402,32 @@ public class WxPortalController {
     /**
      * 注册用户获取公众号配置URL
      * 目前使用穿透测试 拼接URL 第一段 随时需换
+     *
      * @param username
      * @return
      */
-    @RequestMapping(value = "geturl",method = RequestMethod.GET)
-    public String getURL(@RequestParam String username){
+    @RequestMapping(value = "geturl", method = RequestMethod.GET)
+    public String getURL(@RequestParam String username) {
 
-        String encodeusername = encoder.encodeToString(username .getBytes());
-        return "http://6itty7.natappfree.cc"+"/wechat/portal/"+encodeusername;
+        String encodeusername = encoder.encodeToString(username.getBytes());
+        return "http://6itty7.natappfree.cc" + "/wechat/portal/" + encodeusername;
 
     }
 
 
     /**
      * 公众号秘钥功能 暂未实现
+     *
      * @return
      */
-    @RequestMapping(value = "random",method = RequestMethod.GET)
-    public int getRandom(){
+    @RequestMapping(value = "random", method = RequestMethod.GET)
+    public int getRandom() {
 
-        int number =  (int)((Math.random()*9+1)*100000);
+        int number = (int) ((Math.random() * 9 + 1) * 100000);
 
         return number;
 
     }
-
 
 
 }
