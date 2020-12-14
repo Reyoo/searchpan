@@ -142,7 +142,7 @@ public class MoviePageShowController {
             if (movieNameAndUrlModels!=null && movieNameAndUrlModels.size() > 0) {
                 return AjaxResult.success(movieNameAndUrlModels);
             } else {
-                return AjaxResult.success();
+                return AjaxResult.success("暂未发现数据");
             }
         } catch (Exception e) {
             e.printStackTrace();

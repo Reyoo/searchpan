@@ -165,7 +165,6 @@ public class WxPortalController {
 //        //秘钥回复
 //        SystemTemDetailsModel secretValue = new SystemTemDetailsModel();
 
-
 //        for (SystemTemDetailsModel model : systemdetails) {
 //            //头部广告
 //            if (TemplateKeyword.TOP_ADVS.equals(model.getKeyword())){
@@ -196,6 +195,7 @@ public class WxPortalController {
 //                secretValue.setKeywordToValue(model.getKeywordToValue());
 //            }
 //        }
+
 
         String out = null;
         try {

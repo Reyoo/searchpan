@@ -162,6 +162,7 @@ public class RoleController {
             List<String> permissionIdList = systemRoleModelListAll.stream().map(SystemPermissionModel::getPermissionId).collect(Collectors.toList());
             //B列表去除A列表已有的数据
             systemPermissionModelList = systemPermissionModelList.stream().filter(SystemRoleToPermission -> !permissionIdList.contains(SystemRoleToPermission.getPermissionId())).collect(Collectors.toList());
+            systemPermissionModelList.forEach(permissionModel -> permissionModel.setChecked(false));
             systemPermissionModelList.addAll(systemRoleModelListAll);
 
             return AjaxResult.success(systemPermissionModelList);

@@ -6,6 +6,7 @@ import com.libbytian.pan.system.common.AjaxResult;
 import com.libbytian.pan.system.exception.ImageCodeException;
 import com.libbytian.pan.system.exception.TokenIsExpiredException;
 import com.libbytian.pan.system.util.JwtTokenUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -37,6 +38,7 @@ import java.util.stream.Collectors;
  * @date 2019/10/22
  */
 @Component
+@Slf4j
 public class ValidateCodeFilter extends OncePerRequestFilter implements InitializingBean {
     /**
      * 哪些地址需要图片验证码进行验证
@@ -98,7 +100,6 @@ public class ValidateCodeFilter extends OncePerRequestFilter implements Initiali
             httpServletResponse.getWriter().flush();
             return;
         }catch (Exception e){
-            e.printStackTrace();
             logger.error(e.getMessage());
             httpServletResponse.setCharacterEncoding("UTF-8");
             httpServletResponse.setContentType("application/json; charset=utf-8");
@@ -127,10 +128,12 @@ public class ValidateCodeFilter extends OncePerRequestFilter implements Initiali
         String imageCode = httpServletRequest.getParameter("imageCode");
         /*redis的验证码不能为空*/
         if (StringUtils.isEmpty(redisImageCode) || StringUtils.isEmpty(imageCode)) {
+            log.error("验证码不能为空");
             throw new ImageCodeException("验证码不能为空");
         }
         /*校验验证码*/
         if (!imageCode.equalsIgnoreCase(redisImageCode)) {
+            log.error("验证码错误");
             throw new ImageCodeException("验证码错误");
         }
         redisTemplate.delete(redisImageCode);
@@ -148,7 +151,8 @@ public class ValidateCodeFilter extends OncePerRequestFilter implements Initiali
         String token = tokenHeader.replace(JwtTokenUtils.TOKEN_PREFIX, "");
         boolean expiration = JwtTokenUtils.isExpiration(token);
         if (expiration) {
-            throw new TokenIsExpiredException("token失效,请重新登录");
+            log.error("token失效,请重新登录");
+            throw new TokenIsExpiredException("连接超时,请重新登录");
         } else {
             String username = JwtTokenUtils.getUsername(token);
             List roles = JwtTokenUtils.getUserRole(token);

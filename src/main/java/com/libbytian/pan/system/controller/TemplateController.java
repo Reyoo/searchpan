@@ -113,12 +113,24 @@ public class TemplateController {
      */
     @RequestMapping(value = "/refresh", method = RequestMethod.PATCH)
     @Transactional
-    public AjaxResult updateTemplate(@RequestBody(required = true) SystemTemplateModel systemTemplateModel) {
+    public AjaxResult updateTemplate(HttpServletRequest httpRequest,@RequestBody(required = true) SystemTemplateModel systemTemplateModel) {
 
         try {
             if(StrUtil.isBlank(systemTemplateModel.getTemplateid())){
                 return AjaxResult.error("不能为空");
             }
+
+            String username = httpRequest.getRemoteUser();
+            SystemUserModel userModel = new SystemUserModel();
+            userModel.setUsername(username);
+            //校验模板
+            Boolean hasTemplateOn = iSystemTemplateService.checkTemplateIsBinded(userModel);
+
+            if(hasTemplateOn){
+                return AjaxResult.error("不允许同时启用多个模板,如需要使用该模板,请关闭启用状态模板");
+            }
+
+
             boolean isupdate = iSystemTemplateService.updateById(systemTemplateModel);
             if(isupdate){
                 return AjaxResult.success();
@@ -148,6 +160,7 @@ public class TemplateController {
 
             String username = httpRequest.getRemoteUser();
             SystemUserModel userModel = new SystemUserModel();
+            userModel.setUsername(username);
             //校验模板
             Boolean hasTemplateOn = iSystemTemplateService.checkTemplateIsBinded(userModel);
 

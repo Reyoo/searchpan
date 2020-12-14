@@ -63,7 +63,7 @@ public class SystemTemplateServiceImpl extends ServiceImpl<SystemTemplateMapper,
     @Override
     public boolean checkTemplateIsBinded(SystemUserModel systemUserModel) {
         List<SystemTemplateModel> systemTemplateModels =  systemTemplateMapper.listTemplatelByUser(systemUserModel);
-        if(systemTemplateModels!=null&&systemTemplateModels.size()>0){
+        if(systemTemplateModels!=null&&systemTemplateModels.size()>1){
             return Boolean.TRUE;
         }
         return Boolean.FALSE;
