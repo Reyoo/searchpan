@@ -63,12 +63,16 @@ public class NormalPageService {
             Document doc = Jsoup.parse(html);
             Elements elements = doc.select("article");
 
+
             for (Element element : elements) {
                 MovieNameAndUrlModel movieNameAndUrl = new MovieNameAndUrlModel();
                 movieNameAndUrl.setMovieName(element.select("a").get(1).text());
                 movieNameAndUrl.setMovieUrl(element.select("a").attr("href"));
                 movieList.add(movieNameAndUrl);
             }
+
+
+
         }
         LocalTime end = LocalTime.now();
         Duration duration = Duration.between(begin, end);

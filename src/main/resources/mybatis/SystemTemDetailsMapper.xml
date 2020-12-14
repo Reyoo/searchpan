@@ -4,17 +4,20 @@
 
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.libbytian.pan.system.model.SystemTemDetailsModel">
-        <id column="templatedetails_id" property="temdetailsId" />
-        <result column="templatedetails_keyword" property="keyword" />
-        <result column="templatedetails_value" property="keywordToValue" />
-        <result column="createtime" property="createtime" />
-        <result column="templatedetails_status" property="temdetailsstatus" />
-        <result column="show_order" property="showOrder" />
+        <id column="templatedetails_id" property="temdetailsId"/>
+        <result column="templatedetails_keyword" property="keyword"/>
+        <result column="templatedetails_value" property="keywordToValue"/>
+        <result column="createtime" property="createtime"/>
+        <result column="templatedetails_status" property="temdetailsstatus"/>
+        <result column="show_order" property="showOrder"/>
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-         d.templatedetails_id AS temdetailsId,
+        d
+        .
+        templatedetails_id
+        AS temdetailsId,
          d.templatedetails_keyword AS keyword,
          d.templatedetails_value AS keywordToValue,
          d.createtime AS createtime,
@@ -23,7 +26,8 @@
     </sql>
 
 
-    <select id="getTemDetails" parameterType="com.libbytian.pan.system.model.SystemTemplateModel" resultType="com.libbytian.pan.system.model.SystemTemDetailsModel">
+    <select id="getTemDetails" parameterType="com.libbytian.pan.system.model.SystemTemplateModel"
+            resultType="com.libbytian.pan.system.model.SystemTemDetailsModel">
         SELECT
         <include refid="Base_Column_List"/>
         FROM sys_temdetails d
@@ -48,7 +52,8 @@
     </select>
 
     <!-- 根据用户信息查询用户启用状态的模板list-->
-    <select id="findTemDetailsByUser" parameterType="com.libbytian.pan.system.model.SystemUserModel" resultType="com.libbytian.pan.system.model.SystemTemDetailsModel">
+    <select id="findTemDetailsByUser" parameterType="com.libbytian.pan.system.model.SystemUserModel"
+            resultType="com.libbytian.pan.system.model.SystemTemDetailsModel">
         SELECT
         <include refid="Base_Column_List"/>
         FROM
@@ -77,10 +82,9 @@
     </select>
 
 
-
-
     <!--用户输入模板详情 关键字  查询模板详情-->
-    <select id="listTemDetailsObjectsByWord" parameterType="com.libbytian.pan.system.model.SystemTemDetailsModel" resultType="com.libbytian.pan.system.model.SystemTemDetailsModel">
+    <select id="listTemDetailsObjectsByWord" parameterType="com.libbytian.pan.system.model.SystemTemDetailsModel"
+            resultType="com.libbytian.pan.system.model.SystemTemDetailsModel">
         SELECT
         <include refid="Base_Column_List"/>
         FROM sys_temdetails d
@@ -101,8 +105,26 @@
     </select>
 
 
+    <select id="selectUserKeywordDetail" parameterType="java.lang.String"
+            resultType="com.libbytian.pan.system.model.SystemTemDetailsModel">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM sys_temdetails d
+        LEFT JOIN
+        tem_temdetails t ON
+        d.templatedetails_id = t.templatedetails_id
+        LEFT JOIN sys_template st ON
+        st.template_id = t.template_id
 
+        LEFT JOIN user_template ut ON
+        ut.template_id = t.template_id
+        LEFT JOIN sys_user u ON
+        ut.user_id = u.user_id
 
+        WHERE st.template_status = 1
+        AND u.user_name = #{username}
+        AND d.templatedetails_keyword = #{keyword}
+    </select>
 
 
 </mapper>
