@@ -36,4 +36,8 @@ public interface SystemTemDetailsMapper extends BaseMapper<SystemTemDetailsModel
 
 
 
+    SystemTemDetailsModel selectUserKeywordDetail(String username,String keyword);
+
+
+
 }

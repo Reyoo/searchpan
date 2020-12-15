@@ -113,13 +113,13 @@ public class JWTAuthenticationFilter extends AbstractAuthenticationProcessingFil
 //        /**
 //         * 未付费用户 HuangS
 //         */
-//        if (roles.contains("ROLE_NORMAL")){
-//            //登录到cms管理
-//            authenticationSuccessModel.setRoute("mainManagement");
-//            //移除token值
-//            authenticationSuccessModel.setToken(null);
-//            response.getWriter().write(JSON.toJSONString(authenticationSuccessModel));
-//        }
+        if (roles.contains("ROLE_NORMAL")){
+            //登录到cms管理
+            authenticationSuccessModel.setRoute("mainManagement");
+            //移除token值
+            authenticationSuccessModel.setToken(null);
+            response.getWriter().write(JSON.toJSONString(authenticationSuccessModel));
+        }
 
 
 
@@ -129,9 +129,7 @@ public class JWTAuthenticationFilter extends AbstractAuthenticationProcessingFil
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
         log.error("authentication failed, reason: " + failed.getMessage());
-        response.getWriter().write(JSONObject.toJSONString(AjaxResult.error("验证失败")));
+        response.getWriter().write(JSONObject.toJSONString(AjaxResult.error("该用户不存在")));
     }
-
-
 
 }

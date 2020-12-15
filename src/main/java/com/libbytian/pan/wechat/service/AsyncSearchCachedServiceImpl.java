@@ -143,6 +143,8 @@ public class AsyncSearchCachedServiceImpl {
                     if (movieNameAndUrlModels != null && movieNameAndUrlModels.size() > 0) {
                         movieNameAndUrlService.addMovieUrl(movieNameAndUrlModels);
                         redisTemplate.opsForValue().set(searchText, movieNameAndUrlModels, 60 * 24 * 15, TimeUnit.MINUTES);
+
+
 //                        return movieNameAndUrlModels;
                     } else {
                         redisTemplate.opsForValue().set(searchText, null, 60 * 24 * 15, TimeUnit.MINUTES);

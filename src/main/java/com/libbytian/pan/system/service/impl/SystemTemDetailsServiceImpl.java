@@ -375,4 +375,16 @@ public class SystemTemDetailsServiceImpl extends ServiceImpl<SystemTemDetailsMap
 
     }
 
+    /**
+     * 根据用户 及关键词返回模板详细
+     * @param username
+     * @param keyword
+     * @return
+     */
+    @Override
+    public SystemTemDetailsModel getUserKeywordDetail(String username, String keyword) {
+        return systemTemDetailsMapper.selectUserKeywordDetail(username,keyword);
+
+    }
+
 }

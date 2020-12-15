@@ -119,13 +119,13 @@ public class UserController {
 
             List<String> roleIds = systemUserToRoles.stream().map(SystemUserToRole::getRoleId).collect(Collectors.toList());
             List<SystemRoleModel> systemRoleModelList = iSystemRoleService.listByIds(roleIds);
-            systemRoleModelList.forEach(role -> role.setIsChecked(true));
+            systemRoleModelList.forEach(role -> role.setChecked(true));
             List<SystemRoleModel> systemRoleModelsAll = iSystemRoleService.list();
             //id为两个列表相同属性，取出A的list中的id
             List<String> roleIdList = systemRoleModelList.stream().map(SystemRoleModel::getRoleId).collect(Collectors.toList());
             //B列表去除A列表已有的数据
             systemRoleModelsAll = systemRoleModelsAll.stream().filter(SystemRoleModel -> !roleIdList.contains(SystemRoleModel.getRoleId())).collect(Collectors.toList());
-
+            systemRoleModelsAll.forEach(role -> role.setChecked(false));
             systemRoleModelsAll.addAll(systemRoleModelList);
 
             return AjaxResult.success(systemRoleModelsAll);

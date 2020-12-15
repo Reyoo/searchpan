@@ -69,7 +69,7 @@ public class SystemRoleModel extends Model<SystemRoleModel>   {
 
     @TableField(exist = false)
     @Value("false")
-    private Boolean isChecked;
+    private Boolean checked;
 
     @TableField(exist = false)
     @Value("false")

@@ -49,7 +49,6 @@ public class AsyncTask {
             ArrayList arrayList = new ArrayList();
             if (StrUtil.isNotBlank(movieNameAndUrlModel.getMovieName())& StrUtil.isNotBlank(movieNameAndUrlModel.getWangPanPassword())) {
                 arrayList.add(movieNameAndUrlModel);
-
                 iMovieNameAndUrlService.addMovieUrl(arrayList);
             }
 

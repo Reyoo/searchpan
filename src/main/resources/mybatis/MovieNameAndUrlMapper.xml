@@ -13,7 +13,9 @@
         SELECT
         <include refid="Base_Column_List"/>
         FROM url_movie
-            WHERE  movie_name =#{movieName}
+            WHERE  movie_name  like
+
+            concat('%','${movieName}','%')
 
     </select>
 

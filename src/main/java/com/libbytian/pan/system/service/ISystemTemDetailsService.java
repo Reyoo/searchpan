@@ -44,5 +44,9 @@ public interface ISystemTemDetailsService extends IService<SystemTemDetailsModel
 
 
 
+    SystemTemDetailsModel getUserKeywordDetail(String username,String keyword);
+
+
+
 
 }
