@@ -40,5 +40,7 @@ public interface ISystemRoleService extends IService<SystemRoleModel> {
 
     List<SystemRoleModel> getRoleInfoByUser(SystemUserModel systemUserModel);
 
+    Boolean checkRolerCouldDel(SystemRoleModel systemRoleModel) throws Exception;
+
 
 }

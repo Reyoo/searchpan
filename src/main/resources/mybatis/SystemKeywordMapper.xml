@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.libbytian.pan.system.mapper.SystemKeywordMapper">
+
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+         keyword_id AS keywordId,
+         secret_key AS secretKey,
+         start_time AS startTime,
+         end_time AS endTime
+    </sql>
+
+
+    <select id="getKeywordByUser" parameterType="String"
+            resultType="com.libbytian.pan.system.model.SystemKeywordModel">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM sys_keyword
+        LEFT JOIN user_keyword ON sys_keyword.keyword_id = user_keyword.keyword_id
+        LEFT JOIN sys_user ON user_keyword.user_id = sys_user.user_id
+        WHERE
+        sys_user.user_id = #{userId}
+
+    </select>
+
+    <update id="updateKeyword" parameterType="com.libbytian.pan.system.model.SystemKeywordModel">
+        UPDATE
+        sys_keyword
+        SET
+        <if test="keywordId != null and keywordId != ''">
+            keyword_id =#{keywordId}
+        </if>
+        <if test="secretKey != null and secretKey != ''">
+            secret_key =#{secretKey}
+        </if>
+        <if test="startTime != null and startTime != ''">
+            start_time =#{startTime}
+        </if>
+        <if test="endTime != null and endTime != ''">
+            end_time =#{endTime}
+        </if>
+
+
+    </update>
+
+</mapper>

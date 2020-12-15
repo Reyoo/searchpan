@@ -108,8 +108,17 @@ public class SystemUserModel extends Model<SystemUserModel>   {
     private Boolean userFlag;
 
 
+    /**
+     * 可修改状态（0：不允许，1：允许）
+     */
     @TableField("allowremove")
     private Boolean allowremove;
+
+    /**
+     * base64用户名
+     */
+    @TableField("user_base64_name")
+    private String userBase64Name;
 
 
     /**
@@ -142,6 +151,10 @@ public class SystemUserModel extends Model<SystemUserModel>   {
 
     @TableField(exist = false)
     private Integer rememberMe;
+
+
+    @TableField(exist = false)
+    private String wxToken;
 
 
 

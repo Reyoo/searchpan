@@ -56,6 +56,12 @@ public class SystemRoleModel extends Model<SystemRoleModel>   {
     @TableField("role_status")
     private Boolean roleStatus;
 
+    /**
+     * 可修改状态（0：不允许，1：允许）
+     */
+    @TableField("allowremove")
+    private Boolean allowremove;
+
 
 
     @TableField("createtime")

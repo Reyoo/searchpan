@@ -39,7 +39,7 @@ public class AsyncTask {
     public void getAllmovieInit(String url) throws Exception {
 
 
-        for (int i = 50001; i <= 60000; i++) {
+        for (int i = 1001; i <= 10000; i++) {
 
 
             int num=(int) (Math.random()*(5-1+1)+1);

@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.Base64;
 import java.util.List;
 
 /**
@@ -84,6 +85,7 @@ public class SystemUserServiceImpl extends ServiceImpl<SystemUserMapper, SystemU
         String encode = encoder.encode(user.getPassword());
         user.setPassword(encode);
         user.setActTime(LocalDateTime.now());
+        user.setUserBase64Name("http://51.findfish.top/wechat/portal/" + Base64.getEncoder().encodeToString(user.getUsername().getBytes()));
         boolean result = this.save(user);
         /**
          * 新用户赋权限为 ROLE_NORMAL

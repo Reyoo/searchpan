@@ -8,6 +8,7 @@ import com.libbytian.pan.system.model.*;
 import com.libbytian.pan.system.service.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -89,11 +90,19 @@ public class RoleController {
     public AjaxResult putRole(@RequestBody SystemRoleModel role) {
 
         try {
-            if ("ROLE_ADMIN".equals(role.getRoleName()) || "ROLE_NORMAL".equals(role.getRoleName()) || "ROLE_PAYUSER".equals(role.getRoleName())) {
-                return AjaxResult.error("该用户权限不允许修改");
+            if(iSystemRoleService.checkRolerCouldDel(role)){
+                iSystemRoleService.updateById(role);
+                return AjaxResult.success();
+            }else {
+                return AjaxResult.error("该角色为系统保留用户禁止修改");
             }
-            iSystemRoleService.updateById(role);
-            return AjaxResult.success();
+
+//            if ("ROLE_ADMIN".equals(role.getRoleName()) || "ROLE_NORMAL".equals(role.getRoleName()) || "ROLE_PAYUSER".equals(role.getRoleName())) {
+//                return AjaxResult.error("该用户权限不允许修改");
+//            }
+//            iSystemRoleService.updateById(role);
+//            return AjaxResult.success();
+
         } catch (Exception e) {
             return AjaxResult.error(e.getMessage());
         }
@@ -109,12 +118,17 @@ public class RoleController {
     public AjaxResult dropRole(@RequestBody SystemRoleModel role) {
 
         try {
-            if (StrUtil.isBlank(role.getRoleId())) {
+            if (StringUtils.isBlank(role.getRoleId())) {
                 return AjaxResult.error("字段不能为空");
             }
-            if ("ROLE_ADMIN".equals(role.getRoleName()) || "ROLE_NORMAL".equals(role.getRoleName()) || "ROLE_PAYUSER".equals(role.getRoleName())) {
-                return AjaxResult.error("该用户权限不允许修改");
+//            if ("ROLE_ADMIN".equals(role.getRoleName()) || "ROLE_NORMAL".equals(role.getRoleName()) || "ROLE_PAYUSER".equals(role.getRoleName())) {
+//                return AjaxResult.error("该用户权限不允许修改");
+//            }
+
+            if(!iSystemRoleService.checkRolerCouldDel(role)){
+                return AjaxResult.error("该角色为系统保留用户禁止删除");
             }
+
             //查询用户角色表,判断角色是否绑定用户
             SystemUserToRole systemUserToRole = new SystemUserToRole();
             systemUserToRole.setRoleId(role.getRoleId());

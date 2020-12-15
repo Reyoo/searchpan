@@ -128,5 +128,15 @@ public class SystemRoleImpl extends ServiceImpl<SystemRoleMapper, SystemRoleMode
     public List<SystemRoleModel> getRoleInfoByUser(SystemUserModel systemUserModel) {
         return systemRoleMapper.selectUserRoleByUser(systemUserModel);
     }
+
+    @Override
+    public Boolean checkRolerCouldDel(SystemRoleModel systemRoleModel) throws Exception {
+
+        SystemRoleModel roleModel = getRoles(systemRoleModel);
+        if(roleModel.getAllowremove()){
+            return  Boolean.TRUE;
+        }
+        return  Boolean.FALSE;
+    }
 }
 

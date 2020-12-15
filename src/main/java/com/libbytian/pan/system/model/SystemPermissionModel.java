@@ -53,6 +53,13 @@ public class SystemPermissionModel {
     @TableField("createtime")
     private LocalDateTime createtime;
 
+
+    /**
+     * 可修改状态（0：不允许，1：允许）
+     */
+    @TableField("allowremove")
+    private Boolean allowremove;
+
     /**
      * 虚拟字段， 查询开始时间
      */

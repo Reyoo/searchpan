@@ -29,4 +29,5 @@ public interface ISystemPermissionService extends IService<SystemPermissionModel
 
     int savePermission(SystemPermissionModel permission) throws Exception;
 
+
 }
