@@ -2,11 +2,8 @@ package com.libbytian.pan.system.service.impl;
 
 
 import cn.hutool.core.lang.UUID;
-import cn.hutool.core.util.StrUtil;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.libbytian.pan.system.mapper.SystemUserMapper;
@@ -45,7 +42,9 @@ public class SystemUserServiceImpl extends ServiceImpl<SystemUserMapper, SystemU
 
     private final ISystemTemplateService systemTemplateService;
 
-    private final ISystemTemDetailsService iSystemTemDetailsService;
+    private final ISystemTemDetailsService systemTemDetailsService;
+
+    private final IKeywordService keywordService;
 
 
     @Override
@@ -107,20 +106,6 @@ public class SystemUserServiceImpl extends ServiceImpl<SystemUserMapper, SystemU
         if (result) {
             SystemUserToRole userToRole  = SystemUserToRole.builder().userId(user.getUserId()).roleId(roleModel.getRoleId()).build();
             userToRoleService.save(userToRole);
-
-
-            /**
-             * HuangS
-             * 11.12-优化
-             * 注册时不为用户新建模板，直接绑定默认展示模板"1"
-             * 付费后删除绑定模板"1"，并允许用户新建模板
-             */
-//            //模板ID绑定用户ID
-//            SystemUserToTemplate userToTemplate = SystemUserToTemplate.builder().userId(user.getUserId()).templateId("1").userTemplateStatus(true).build();
-//            userToTemplateService.save(userToTemplate);
-
-
-            //          //新增模板,存入模板表 sys_template
             String templateId = UUID.randomUUID().toString();
             SystemTemplateModel template =  new SystemTemplateModel();
             template.setTemplateid(templateId);
@@ -128,13 +113,16 @@ public class SystemUserServiceImpl extends ServiceImpl<SystemUserMapper, SystemU
             template.setTemplatecreatetime(LocalDateTime.now());
             template.setTemplatestatus(true);
             systemTemplateService.save(template);
-
             //模板ID绑定用户ID
             SystemUserToTemplate userToTemplate = SystemUserToTemplate.builder().userId(user.getUserId()).templateId(templateId).userTemplateStatus(true).build();
             userToTemplateService.save(userToTemplate);
-
             //注册时,在默认模板ID对应模板详情下存入默认关键词
-            iSystemTemDetailsService.defaultSave(templateId);
+            systemTemDetailsService.defaultSave(templateId);
+
+
+
+
+
         }
         return user;
     }
@@ -227,7 +215,6 @@ public class SystemUserServiceImpl extends ServiceImpl<SystemUserMapper, SystemU
             if(systemUserModel.getStatus()!=null){
                 queryWrapper.eq("status",systemUserModel.getStatus());
             }
-
 
             if(systemUserModel.getStarttime() != null && systemUserModel.getEndtime() != null){
                 queryWrapper.ge("createtime",systemUserModel.getStarttime());

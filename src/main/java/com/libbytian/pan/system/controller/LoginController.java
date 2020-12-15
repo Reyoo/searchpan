@@ -48,17 +48,17 @@ public class LoginController {
     @RequestMapping(path = "/login/register", method = RequestMethod.POST)
     public AjaxResult loginRegister(@RequestBody SystemUserModel systemUserModel) {
         try {
-            //HuangS 2020.11.11
-            //查询用户是否存在，只判断用户名,不传入密码
+
             SystemUserModel userModel = new SystemUserModel();
             userModel.setUsername(systemUserModel.getUsername());
-
             SystemUserModel user = iSystemUserService.getUser(userModel);
-
             if (user != null) {
                 return AjaxResult.error("该用户已存在,不可添加");
             }
             iSystemUserService.register(systemUserModel);
+
+
+
             return AjaxResult.success();
         } catch (Exception e) {
             log.error(e.getMessage());

@@ -18,4 +18,5 @@ public interface SystemKeywordMapper extends BaseMapper<SystemKeywordModel> {
     SystemKeywordModel getKeywordByUser(String userId);
 
     void updateKeyword(SystemKeywordModel systemKeywordModel);
+
 }
