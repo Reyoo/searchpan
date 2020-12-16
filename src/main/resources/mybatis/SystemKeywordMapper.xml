@@ -7,6 +7,8 @@
     <sql id="Base_Column_List">
          keyword_id AS keywordId,
          secret_key AS secretKey,
+         user_safe_key AS userSafeKey,
+         user_token AS userToken,
          start_time AS startTime,
          end_time AS endTime
     </sql>
@@ -43,5 +45,56 @@
 
 
     </update>
+
+
+    <insert id="insertKeyword" parameterType="com.libbytian.pan.system.model.SystemKeywordModel">
+        INSERT INTO sys_keyword
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+             <if test="keywordId != null">
+                 keyword_id,
+             </if>
+             <if test="secretKey != null">
+                 secret_key,
+             </if>
+             <if test="userSafeKey != null">
+                 user_safe_key,
+             </if>
+             <if test="userToken != null">
+                 user_token,
+             </if>
+             <if test="startTime != null">
+                 start_time,
+             </if>
+
+             <if test="endTime != null">
+                 end_time,
+             </if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="keywordId != null">
+                #{keywordId,jdbcType=VARCHAR},
+            </if>
+
+            <if test="secretKey != null">
+                #{secretKey,jdbcType=VARCHAR },
+            </if>
+
+            <if test="userSafeKey != null">
+                #{userSafeKey,jdbcType=VARCHAR},
+            </if>
+
+            <if test="userToken != null">
+                #{userToken,jdbcType=VARCHAR},
+            </if>
+
+            <if test="startTime != null">
+                #{startTime,jdbcType=VARCHAR},
+            </if>
+
+            <if test="endTime != null">
+                #{endTime,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
 
 </mapper>

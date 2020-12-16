@@ -28,8 +28,7 @@
          act_time AS actTime,
          act_range AS actrange,
          user_flag AS userFlag,
-         allowremove AS allowremove,
-         user_base64_name AS userBase64Name
+         allowremove AS allowremove
     </sql>
 
 
@@ -73,9 +72,6 @@
 
             <if test="allowremove != null and allowremove != ''">
                 AND u.allowremove =#{allowremove}
-            </if>
-            <if test="userBase64Name != null and userBase64Name != ''">
-                AND u.user_base64_name =#{userBase64Name}
             </if>
         </trim>
 
@@ -162,7 +158,6 @@
             <if test="userFlag != null and userFlag != ''">
                 AND u.user_flag =#{userFlag}
             </if>
-
             AND u.allowremove ='true'
         </trim>
 

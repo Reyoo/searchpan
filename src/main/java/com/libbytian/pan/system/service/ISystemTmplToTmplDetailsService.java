@@ -5,7 +5,11 @@ import com.libbytian.pan.system.model.SystemTemToTemdetail;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Transactional(propagation = Propagation.REQUIRES_NEW)
 public interface ISystemTmplToTmplDetailsService extends IService<SystemTemToTemdetail> {
 
+
+    int addTemplateToTemplateDetail(List<SystemTemToTemdetail> systemTemToTemdetails);
 }

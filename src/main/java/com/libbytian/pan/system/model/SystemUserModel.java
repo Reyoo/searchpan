@@ -114,11 +114,6 @@ public class SystemUserModel extends Model<SystemUserModel>   {
     @TableField("allowremove")
     private Boolean allowremove;
 
-    /**
-     * base64用户名
-     */
-    @TableField("user_base64_name")
-    private String userBase64Name;
 
 
     /**

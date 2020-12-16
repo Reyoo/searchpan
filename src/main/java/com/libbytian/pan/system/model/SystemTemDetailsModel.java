@@ -30,10 +30,20 @@ public class SystemTemDetailsModel extends Model<SystemTemDetailsModel> {
 
     private static final long serialVersionUID = 1L;
 
+
+    public SystemTemDetailsModel(String temdetailsId, String keyword, String keywordToValue, LocalDateTime createtime, Boolean temdetailsstatus, Integer showOrder) {
+        this.temdetailsId = temdetailsId;
+        this.keyword = keyword;
+        this.keywordToValue = keywordToValue;
+        this.createtime = createtime;
+        this.temdetailsstatus = temdetailsstatus;
+        this.showOrder = showOrder;
+    }
+
     /**
      * 主键
      */
-    @TableId(value = "templatedetails_id",type = IdType.ASSIGN_UUID)
+    @TableId(value = "templatedetails_id")
     private String temdetailsId;
 
     /**

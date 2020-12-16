@@ -19,4 +19,7 @@ public interface IKeywordService extends IService<SystemKeywordModel> {
     SystemKeywordModel getKeywordByUser(String userId);
 
     void updateKeyword(SystemKeywordModel systemKeywordModel);
+
+
+    int addkeyword(SystemKeywordModel systemKeywordModel);
 }

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.libbytian.pan.system.mapper.SystemUserToKeywordMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.libbytian.pan.system.model.SystemUserToKeyword">
+        <id column="user_keyword_id" property="userKeyId" />
+        <result column="user_id" property="userId" />
+        <result column="keyword_id" property="keywordId" />
+    </resultMap>
+
+
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+         user_keyword_id AS userKeyId,
+         user_id AS userId,
+         keyword_id AS keywordId
+    </sql>
+
+
+
+    <insert id="insertSysuserToKeyword" parameterType="com.libbytian.pan.system.model.SystemUserToKeyword">
+        INSERT INTO sys_user_ketword
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="temdetailsId != null">
+                userKeyId,
+            </if>
+            <if test="keyword != null">
+                userId,
+            </if>
+            <if test="keywordToValue != null">
+                keywordId,
+            </if>
+        </trim>
+
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userKeyId != null">
+                #{userKeyId,jdbcType=VARCHAR},
+            </if>
+
+            <if test="userId != null">
+                #{userId,jdbcType=VARCHAR },
+            </if>
+
+            <if test="keywordId != null">
+                #{keywordId,jdbcType=VARCHAR},
+            </if>
+        </trim>
+
+
+    </insert>
+
+
+
+
+</mapper>

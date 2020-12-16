@@ -17,6 +17,17 @@ public interface SystemKeywordMapper extends BaseMapper<SystemKeywordModel> {
 
     SystemKeywordModel getKeywordByUser(String userId);
 
+    /**
+     * 更新用户关联关键字
+     * @param systemKeywordModel
+     */
     void updateKeyword(SystemKeywordModel systemKeywordModel);
+
+    /**
+     * 新增用户关联关键字
+     * @param systemKeywordModel
+     * @return
+     */
+    int insertKeyword(SystemKeywordModel systemKeywordModel);
 
 }

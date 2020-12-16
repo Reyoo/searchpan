@@ -32,4 +32,9 @@ public class KeywordServiceImpl extends ServiceImpl<SystemKeywordMapper, SystemK
     public void updateKeyword(SystemKeywordModel systemKeywordModel) {
         systemKeywordMapper.updateKeyword(systemKeywordModel);
     }
+
+    @Override
+    public int addkeyword(SystemKeywordModel systemKeywordModel) {
+        return systemKeywordMapper.insertKeyword(systemKeywordModel);
+    }
 }

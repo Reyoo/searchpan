@@ -61,13 +61,15 @@ public class CrawlerWebInfoController {
 //
 //            asyncTask.getAllmovieInit(urlBase);
 
-
+//http://www.lxxh7.com/author/1273726325qq-com
             //查询第二个链接
             List<MovieNameAndUrlModel> lxxhUrls = normalPageService.getNormalUrl(lxxhUrl + "/?s=" + searchText);
             System.out.println(lxxhUrl + "/?s=" + searchText);
 //            lxxhUrls.stream().forEach(movieNameAndUrl ->
 //                    innerMovieList.add(normalPageService.getMoviePanUrl2(movieNameAndUrl)));
             System.out.println(lxxhUrls.size());
+
+            normalPageService.getMoviePanUrl2(lxxhUrls.get(0));
 
 
             return AjaxResult.success("表入库成功");

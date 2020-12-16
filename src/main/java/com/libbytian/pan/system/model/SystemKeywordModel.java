@@ -3,11 +3,13 @@ package com.libbytian.pan.system.model;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
@@ -22,7 +24,12 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Data
 @TableName("sys_keyword")
-public class SystemKeywordModel {
+public class SystemKeywordModel extends Model<SystemKeywordModel> {
+
+    private static final long serialVersionUID = 1L;
+
+
+
 
     /**
      * 关键词id主键
@@ -36,16 +43,45 @@ public class SystemKeywordModel {
     @TableField("secret_key")
     private String secretKey;
 
+
+
+    /**
+     * 用户base64 认证
+     */
+    @TableField("user_safe_key")
+    private String userSafeKey;
+
+
+
+
+    /**
+     * 用户接口认证token
+     */
+    @TableField("user_token")
+    private String userToken;
+
+
+
+
     /**
      * 维护开始时间
      */
     @TableField("start_time")
-    private LocalDateTime startTime;
+    private String startTime;
 
     /**
      * 维护结束时间
      */
     @TableField("end_time")
-    private LocalDateTime endTime;
+    private String endTime;
+
+
+
+    @Override
+    protected Serializable pkVal() {
+        return this.keywordId;
+    }
+
+
 
 }

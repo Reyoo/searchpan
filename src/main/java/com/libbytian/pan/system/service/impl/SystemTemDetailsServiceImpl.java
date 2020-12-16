@@ -280,8 +280,7 @@ public class SystemTemDetailsServiceImpl extends ServiceImpl<SystemTemDetailsMap
         List<SystemTemDetailsModel> detailist = new ArrayList<>();
 
         SystemTemDetailsModel focus = new SystemTemDetailsModel();
-        SystemTemDetailsModel sleepStart = new SystemTemDetailsModel();
-        SystemTemDetailsModel sleepEnd = new SystemTemDetailsModel();
+
         SystemTemDetailsModel sleepDetails = new SystemTemDetailsModel();
         SystemTemDetailsModel headAdvert = new SystemTemDetailsModel();
         SystemTemDetailsModel endAdvert = new SystemTemDetailsModel();
@@ -292,17 +291,11 @@ public class SystemTemDetailsServiceImpl extends ServiceImpl<SystemTemDetailsMap
         SystemTemDetailsModel secretKey = new SystemTemDetailsModel();
         SystemTemDetailsModel secretValue = new SystemTemDetailsModel();
 
+
         focus.setKeyword("首次关注");
         focus.setKeywordToValue("首次关注回复内容");
         focus.setShowOrder(1);
 
-        sleepStart.setKeyword("开始维护");
-        sleepStart.setKeywordToValue("10:00");
-        sleepStart.setShowOrder(2);
-
-        sleepEnd.setKeyword("结束维护");
-        sleepEnd.setKeywordToValue("18:00");
-        sleepEnd.setShowOrder(3);
 
         sleepDetails.setKeyword("维护内容");
         sleepDetails.setKeywordToValue("维护时间内回复内容");
@@ -341,8 +334,6 @@ public class SystemTemDetailsServiceImpl extends ServiceImpl<SystemTemDetailsMap
         secretKey.setShowOrder(12);
 
         detailist.add(focus);
-        detailist.add(sleepStart);
-        detailist.add(sleepEnd);
         detailist.add(sleepDetails);
         detailist.add(headAdvert);
         detailist.add(endAdvert);
@@ -359,11 +350,10 @@ public class SystemTemDetailsServiceImpl extends ServiceImpl<SystemTemDetailsMap
 
 
             SystemTemDetailsModel details = detailist.get(i);
-
             details.setTemdetailsId(UUID.randomUUID().toString());
             details.setCreatetime(LocalDateTime.now());
 
-            systemTemDetailsMapper.insert(details);
+            systemTemDetailsMapper.insertSystemTemDetails(details);
 
 
             //用户模板绑定模板详情

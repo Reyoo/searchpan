@@ -14,10 +14,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        d
-        .
-        templatedetails_id
-        AS temdetailsId,
+        d.templatedetails_id AS temdetailsId,
          d.templatedetails_keyword AS keyword,
          d.templatedetails_value AS keywordToValue,
          d.createtime AS createtime,
@@ -125,6 +122,62 @@
         AND u.user_name = #{username}
         AND d.templatedetails_keyword = #{keyword}
     </select>
+
+
+
+
+
+    <insert id="insertSystemTemDetails" parameterType="com.libbytian.pan.system.model.SystemTemDetailsModel">
+        INSERT INTO sys_temdetails
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="temdetailsId != null">
+                templatedetails_id,
+            </if>
+            <if test="keyword != null">
+                templatedetails_keyword,
+            </if>
+            <if test="keywordToValue != null">
+                templatedetails_value,
+            </if>
+            <if test="createtime != null">
+                createtime,
+            </if>
+            <if test="temdetailsstatus != null">
+                temdetailsstatus,
+            </if>
+
+            <if test="showOrder != null">
+                show_order,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="temdetailsId != null">
+                #{temdetailsId,jdbcType=VARCHAR},
+            </if>
+
+            <if test="keyword != null">
+                #{keyword,jdbcType=VARCHAR },
+            </if>
+
+            <if test="keywordToValue != null">
+                #{keywordToValue,jdbcType=VARCHAR},
+            </if>
+
+            <if test="createtime != null">
+                #{createtime,jdbcType=VARCHAR},
+            </if>
+
+            <if test="temdetailsstatus != null">
+                #{temdetailsstatus,jdbcType=VARCHAR},
+            </if>
+
+            <if test="showOrder != null">
+                #{showOrder,jdbcType=VARCHAR},
+            </if>
+
+
+        </trim>
+    </insert>
 
 
 </mapper>
