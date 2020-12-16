@@ -4,7 +4,7 @@ package com.libbytian.pan.system.service.impl;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.libbytian.pan.system.mapper.SystemKeywordMapper;
 import com.libbytian.pan.system.model.SystemKeywordModel;
-import com.libbytian.pan.system.service.IKeywordService;
+import com.libbytian.pan.system.service.ISystemKeywordService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,7 +18,7 @@ import org.springframework.stereotype.Service;
  */
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-public class KeywordServiceImpl extends ServiceImpl<SystemKeywordMapper, SystemKeywordModel> implements IKeywordService {
+public class SystemKeywordServiceImpl extends ServiceImpl<SystemKeywordMapper, SystemKeywordModel> implements ISystemKeywordService {
 
     private final SystemKeywordMapper systemKeywordMapper ;
 

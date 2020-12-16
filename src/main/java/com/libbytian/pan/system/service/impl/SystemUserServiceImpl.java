@@ -45,7 +45,7 @@ public class SystemUserServiceImpl extends ServiceImpl<SystemUserMapper, SystemU
 
     private final ISystemTemDetailsService systemTemDetailsService;
 
-    private final IKeywordService keywordService;
+    private final ISystemKeywordService keywordService;
 
     private final SystemUserToKeywordMapper systemUserToKeywordMapper;
 
@@ -124,15 +124,9 @@ public class SystemUserServiceImpl extends ServiceImpl<SystemUserMapper, SystemU
             systemKeywordModel.setEndTime("24:00");
             //新增用户 信息类 插入关键字表
             keywordService.addkeyword(systemKeywordModel);
-
             //插入关联表
-
             SystemUserToKeyword systemUserToKeyword = new SystemUserToKeyword(UUID.randomUUID().toString(true),user.getUserId(),templateId);
-
             systemUserToKeywordMapper.insertSysuserToKeyword(systemUserToKeyword);
-
-
-
 
 
         }

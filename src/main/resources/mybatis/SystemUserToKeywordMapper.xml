@@ -21,16 +21,16 @@
 
 
     <insert id="insertSysuserToKeyword" parameterType="com.libbytian.pan.system.model.SystemUserToKeyword">
-        INSERT INTO sys_user_ketword
+        INSERT INTO sys_user_keyword
         <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="temdetailsId != null">
-                userKeyId,
+            <if test="userKeyId != null">
+                user_keyword_id,
             </if>
-            <if test="keyword != null">
-                userId,
+            <if test="userId != null">
+                user_id,
             </if>
-            <if test="keywordToValue != null">
-                keywordId,
+            <if test="keywordId != null">
+                keyword_id,
             </if>
         </trim>
 

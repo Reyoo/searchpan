@@ -14,7 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
  */
 
 @Transactional(propagation = Propagation.REQUIRES_NEW)
-public interface IKeywordService extends IService<SystemKeywordModel> {
+public interface ISystemKeywordService extends IService<SystemKeywordModel> {
 
     SystemKeywordModel getKeywordByUser(String userId);
 

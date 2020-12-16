@@ -29,21 +29,19 @@
     <update id="updateKeyword" parameterType="com.libbytian.pan.system.model.SystemKeywordModel">
         UPDATE
         sys_keyword
-        SET
-        <if test="keywordId != null and keywordId != ''">
-            keyword_id =#{keywordId}
-        </if>
+        <trim prefix="set" suffixOverrides=",">
         <if test="secretKey != null and secretKey != ''">
-            secret_key =#{secretKey}
+            secret_key =#{secretKey},
         </if>
         <if test="startTime != null and startTime != ''">
-            start_time =#{startTime}
+            start_time =#{startTime},
         </if>
         <if test="endTime != null and endTime != ''">
-            end_time =#{endTime}
+            end_time =#{endTime},
         </if>
-
-
+        </trim>
+        WHERE
+        keyword_id =#{keywordId}
     </update>
 
 

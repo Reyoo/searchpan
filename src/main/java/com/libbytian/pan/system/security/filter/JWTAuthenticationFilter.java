@@ -117,7 +117,7 @@ public class JWTAuthenticationFilter extends AbstractAuthenticationProcessingFil
             //登录到cms管理
             authenticationSuccessModel.setRoute("mainManagement");
             //移除token值
-            authenticationSuccessModel.setToken(null);
+//            authenticationSuccessModel.setToken(null);
             response.getWriter().write(JSON.toJSONString(authenticationSuccessModel));
         }
 
@@ -129,7 +129,7 @@ public class JWTAuthenticationFilter extends AbstractAuthenticationProcessingFil
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
         log.error("authentication failed, reason: " + failed.getMessage());
-        response.getWriter().write(JSONObject.toJSONString(AjaxResult.error("该用户不存在")));
+        response.getWriter().write(JSONObject.toJSONString(AjaxResult.error("用户名或密码错误")));
     }
 
 }
