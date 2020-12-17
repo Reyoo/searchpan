@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -70,24 +71,22 @@ public class CrawlerWebInfoController {
     @RequestMapping(value = "/getall/lxxh", method = RequestMethod.GET)
     public AjaxResult loopGet() {
         try {
-
-
-
-
-
-
-
+            Random random = new Random();
 
 //            http://www.lxxh7.com/随机/随机/93687LjLXH.html#comments
             StringBuffer stringBuffer = new StringBuffer();
             stringBuffer.append(lxxhUrl);
-            stringBuffer.append("/");
-//            stringBuffer.append(maybeMonth);
-            stringBuffer.append(12);
-
 
             String urlBase = stringBuffer.toString();
-            asyncTask.getAllmovieInit(urlBase);
+
+            for (int i = 3081; i <= 4000; i++) {
+                int s = random.nextInt(29) % (29 - 10 + 1) + 10;
+                int m = random.nextInt(12) % (12-11 + 1) +11;
+                asyncTask.getAllmovieInit(urlBase,String.valueOf(i),s,m);
+            }
+
+
+
             return AjaxResult.success("表入库成功");
         } catch (Exception e) {
             return AjaxResult.error("表入库失败");
