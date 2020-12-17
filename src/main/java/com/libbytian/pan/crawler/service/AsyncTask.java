@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -70,7 +71,8 @@ public class AsyncTask {
         }
     }
 
-
+//    @Async("taskExecutor")
+//    @Transactional
     public void getAllmovieInit(String url ,String num,int s ,int m) throws Exception {
 
 

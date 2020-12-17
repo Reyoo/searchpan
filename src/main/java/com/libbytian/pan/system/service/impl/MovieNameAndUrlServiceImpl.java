@@ -20,7 +20,6 @@ import java.util.List;
  * @Description:
  */
 @Service
-@Transactional
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class MovieNameAndUrlServiceImpl extends ServiceImpl<MovieNameAndUrlMapper, MovieNameAndUrlModel> implements IMovieNameAndUrlService {
 
