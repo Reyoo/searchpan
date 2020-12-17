@@ -4,6 +4,7 @@ package com.libbytian.pan.system.service.impl;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.libbytian.pan.system.mapper.SystemKeywordMapper;
 import com.libbytian.pan.system.model.SystemKeywordModel;
+import com.libbytian.pan.system.model.SystemUserModel;
 import com.libbytian.pan.system.service.ISystemKeywordService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,8 +25,8 @@ public class SystemKeywordServiceImpl extends ServiceImpl<SystemKeywordMapper, S
 
 
     @Override
-    public SystemKeywordModel getKeywordByUser(String userId) {
-        return systemKeywordMapper.getKeywordByUser(userId);
+    public SystemKeywordModel getKeywordByUser(String username ) {
+        return systemKeywordMapper.getKeywordByUser(username);
     }
 
     @Override

@@ -76,6 +76,10 @@ public class SystemKeywordModel extends Model<SystemKeywordModel> {
     private String endTime;
 
 
+    @TableField("fans_key")
+    private String fansKey;
+
+
 
     @Override
     protected Serializable pkVal() {

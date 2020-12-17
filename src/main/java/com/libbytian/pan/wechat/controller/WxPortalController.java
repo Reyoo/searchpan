@@ -1,8 +1,10 @@
 package com.libbytian.pan.wechat.controller;
 
+import com.libbytian.pan.system.model.SystemKeywordModel;
 import com.libbytian.pan.system.model.SystemTemDetailsModel;
 import com.libbytian.pan.system.model.SystemTemplateModel;
 import com.libbytian.pan.system.model.SystemUserModel;
+import com.libbytian.pan.system.service.ISystemKeywordService;
 import com.libbytian.pan.system.service.ISystemTemDetailsService;
 import com.libbytian.pan.system.service.ISystemTemplateService;
 
@@ -19,10 +21,16 @@ import me.chanjar.weixin.mp.bean.message.WxMpXmlOutTextMessage;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.*;
 import org.dom4j.io.SAXReader;
+import org.omg.CosNaming.BindingIterator;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
+import sun.security.krb5.internal.tools.Kinit;
 
 import java.io.ByteArrayInputStream;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -40,15 +48,11 @@ public class WxPortalController {
     private final WxMpService wxService;
     private final WxMpMessageRouter messageRouter;
 
-    private final ISystemTemplateService systemTemplateService;
-
     private final ISystemTemDetailsService iSystemTemDetailsService;
-
     private final ISystemUserService iSystemUserService;
-
-    private final RedisTemplate redisTemplate;
-
     private final AsyncSearchCachedServiceImpl asyncSearchCachedService;
+
+    private final ISystemKeywordService systemKeywordService;
 
 
     final Base64.Decoder decoder = Base64.getDecoder();
@@ -81,6 +85,44 @@ public class WxPortalController {
 
         try {
             String username = new String(decoder.decode(verification), "UTF-8");
+
+            SystemKeywordModel systemKeywordModel = systemKeywordService.getKeywordByUser(username);
+
+
+            String userStart = systemKeywordModel.getStartTime();
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm");
+
+            Date userStartdate = simpleDateFormat.parse(userStart);
+
+            String userEnd = systemKeywordModel.getEndTime();
+
+
+            Date userEnddate = simpleDateFormat.parse(userEnd);
+
+            ZoneId shanghaiZoneId = ZoneId.of("Asia/Shanghai");
+            ZonedDateTime shanghaiZonedDateTime = ZonedDateTime.now(shanghaiZoneId);
+
+            int nowHour = shanghaiZonedDateTime.getHour();
+            int nowMinutes = shanghaiZonedDateTime.getMinute();
+
+            Date nowDate = simpleDateFormat.parse(String.valueOf(nowHour) + ":" + String.valueOf(nowMinutes));
+
+
+//        Date1.after(Date2),当Date1大于Date2时，返回TRUE，当小于等于时，返回false；
+//        Date1.before(Date2)，当Date1小于Date2时，返回TRUE，当大于等于时，返回false；
+            if (!"00:00".equals(userStart) && !"23:59".equals(userEnd)) {
+                //如果当前时间不小于用户其实时间  那么是允许放行的
+
+                if (nowDate.compareTo(userStartdate) < 0) {
+                    return "当前时间 不在用户限定时间内";
+                }
+
+                if (nowDate.compareTo(userEnddate) >0) {
+                    return "当前时间 不在用户限定时间内";
+                }
+
+            }
+
 
             SystemUserModel systemUserModel = new SystemUserModel();
             systemUserModel.setUsername(username);
@@ -129,6 +171,15 @@ public class WxPortalController {
 
         //解析传入的username,拿到user,查询对应模板
         String username = new String(decoder.decode(verification), "UTF-8");
+
+
+        //根据用户关键字时间、判断是否是可返回接口状态
+
+
+        //启用状态
+
+        //如果启用时间是00:00 ~ 23:59  则全时段放行
+        //否则 只跑 时间段范围内的逻辑 。例如, 10:00 ~ 23:59 则 不允许 00:00 ~ 09:59  访问接口
 
 
         /**

@@ -25,10 +25,12 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response,
                          AuthenticationException authException) throws IOException, ServletException {
+
+
         response.setCharacterEncoding("utf-8");
         response.setContentType("text/javascript;charset=utf-8");
-        log.error("请检查验证码");
-        response.getWriter().print(JSONObject.toJSONString(AjaxResult.error("请检查验证码")));
+        response.getWriter().print(JSONObject.toJSONString(AjaxResult.error("")));
+
     }
 
 }

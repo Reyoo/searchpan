@@ -5,24 +5,26 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-         keyword_id AS keywordId,
-         secret_key AS secretKey,
-         user_safe_key AS userSafeKey,
-         user_token AS userToken,
-         start_time AS startTime,
-         end_time AS endTime
+        k.keyword_id  AS keywordId,
+        k.secret_key AS secretKey,
+        k.user_safe_key AS userSafeKey,
+        k.user_token AS userToken,
+        k.start_time AS startTime,
+        k.end_time AS endTime,
+        k.fans_key AS fansKey
     </sql>
 
 
-    <select id="getKeywordByUser" parameterType="String"
+    <select id="getKeywordByUser" parameterType="java.lang.String"
             resultType="com.libbytian.pan.system.model.SystemKeywordModel">
         SELECT
         <include refid="Base_Column_List"/>
-        FROM sys_keyword
-        LEFT JOIN user_keyword ON sys_keyword.keyword_id = user_keyword.keyword_id
-        LEFT JOIN sys_user ON user_keyword.user_id = sys_user.user_id
-        WHERE
-        sys_user.user_id = #{userId}
+        FROM
+        sys_keyword k
+        LEFT JOIN sys_user_keyword  uk ON
+        k.keyword_id = uk.keyword_id
+        LEFT JOIN sys_user u ON u.user_id = uk.user_id
+        WHERE u.user_name = #{username}
 
     </select>
 
@@ -30,15 +32,20 @@
         UPDATE
         sys_keyword
         <trim prefix="set" suffixOverrides=",">
-        <if test="secretKey != null and secretKey != ''">
-            secret_key =#{secretKey},
-        </if>
-        <if test="startTime != null and startTime != ''">
-            start_time =#{startTime},
-        </if>
-        <if test="endTime != null and endTime != ''">
-            end_time =#{endTime},
-        </if>
+            <if test="secretKey != null and secretKey != ''">
+                secret_key =#{secretKey},
+            </if>
+            <if test="startTime != null and startTime != ''">
+                start_time =#{startTime},
+            </if>
+            <if test="endTime != null and endTime != ''">
+                end_time =#{endTime},
+            </if>
+
+            <if test="fansKey != null and fansKey != ''">
+                fans_key =#{fansKey},
+            </if>
+
         </trim>
         WHERE
         keyword_id =#{keywordId}
@@ -48,26 +55,30 @@
     <insert id="insertKeyword" parameterType="com.libbytian.pan.system.model.SystemKeywordModel">
         INSERT INTO sys_keyword
         <trim prefix="(" suffix=")" suffixOverrides=",">
-             <if test="keywordId != null">
-                 keyword_id,
-             </if>
-             <if test="secretKey != null">
-                 secret_key,
-             </if>
-             <if test="userSafeKey != null">
-                 user_safe_key,
-             </if>
-             <if test="userToken != null">
-                 user_token,
-             </if>
-             <if test="startTime != null">
-                 start_time,
-             </if>
+            <if test="keywordId != null">
+                keyword_id,
+            </if>
+            <if test="secretKey != null">
+                secret_key,
+            </if>
+            <if test="userSafeKey != null">
+                user_safe_key,
+            </if>
+            <if test="userToken != null">
+                user_token,
+            </if>
+            <if test="startTime != null">
+                start_time,
+            </if>
 
-             <if test="endTime != null">
-                 end_time,
-             </if>
-         </trim>
+            <if test="endTime != null">
+                end_time,
+            </if>
+
+            <if test="fans_key != null">
+                end_time,
+            </if>
+        </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="keywordId != null">
                 #{keywordId,jdbcType=VARCHAR},
@@ -91,6 +102,10 @@
 
             <if test="endTime != null">
                 #{endTime,jdbcType=VARCHAR},
+            </if>
+
+            <if test="fans_key != null">
+                #{fansKey,jdbcType=VARCHAR},
             </if>
         </trim>
     </insert>

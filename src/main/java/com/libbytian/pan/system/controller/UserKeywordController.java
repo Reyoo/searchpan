@@ -8,10 +8,7 @@ import com.libbytian.pan.system.service.ISystemKeywordService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * 用户关键字接口
@@ -29,13 +26,13 @@ public class UserKeywordController {
 
 
 
-    @RequestMapping(value = "/list", method = RequestMethod.GET)
-    public AjaxResult getUserKeywordByUser(@RequestBody(required = true) SystemUserModel user) {
+    @RequestMapping(value = "/list/{username}", method = RequestMethod.GET)
+    public AjaxResult getUserKeywordByUser(@PathVariable String username) {
 
         try {
-            return AjaxResult.success(iSystemKeywordService.getKeywordByUser(user.getUserId()));
+            return AjaxResult.success(iSystemKeywordService.getKeywordByUser(username));
         } catch (Exception e) {
-            log.error("userId -- >" + user.getUserId() + "error -> " + e.getMessage());
+            log.error( "error -> " + e.getMessage());
             return AjaxResult.error(e.getMessage());
         }
     }
