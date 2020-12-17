@@ -52,6 +52,7 @@ public class AccessDecisionService {
         whiteList.add("/initmovie/**");
         whiteList.add("/userkey/**");
 
+
         /**
          * 验证码接口放过
          */

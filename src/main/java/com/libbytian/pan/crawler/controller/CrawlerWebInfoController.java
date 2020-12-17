@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 /**
  * @ProjectName: pansearch
@@ -70,10 +71,21 @@ public class CrawlerWebInfoController {
     public AjaxResult loopGet() {
         try {
 
+
+
+
+
+
+
+
 //            http://www.lxxh7.com/随机/随机/93687LjLXH.html#comments
             StringBuffer stringBuffer = new StringBuffer();
             stringBuffer.append(lxxhUrl);
-            stringBuffer.append("/?p=");
+            stringBuffer.append("/");
+//            stringBuffer.append(maybeMonth);
+            stringBuffer.append(12);
+
+
             String urlBase = stringBuffer.toString();
             asyncTask.getAllmovieInit(urlBase);
             return AjaxResult.success("表入库成功");

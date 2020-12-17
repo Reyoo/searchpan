@@ -37,15 +37,28 @@ public class AsyncTask {
 
     //    @Async("taskExecutor")
     public void getAllmovieInit(String url) throws Exception {
+        Random random = new Random();
+
+        int s = random.nextInt(29) % (29 - 10 + 1) + 10;
 
 
-        for (int i = 1001; i <= 10000; i++) {
+        StringBuffer stringBuffer = new StringBuffer(url);
+        stringBuffer.append("/");
+        stringBuffer.append(s);
+        stringBuffer.append("/");
+
+
+        for (int i = 3081; i <= 10000; i++) {
 
 
             int num=(int) (Math.random()*(5-1+1)+1);
             System.out.println(num);
             Thread.sleep(num);
-            MovieNameAndUrlModel movieNameAndUrlModel = normalPageService.getMovieLoops(url + i);
+
+
+//            http://www.lxxh7.com/随机/随机/93687LjLXH.html#comments
+            System.out.println(url + i + "LjLXH.html");
+            MovieNameAndUrlModel movieNameAndUrlModel = normalPageService.getMovieLoopsAiDianying(url + i +"LjLXH.html");
             ArrayList arrayList = new ArrayList();
             if (StrUtil.isNotBlank(movieNameAndUrlModel.getMovieName())& StrUtil.isNotBlank(movieNameAndUrlModel.getWangPanPassword())) {
                 arrayList.add(movieNameAndUrlModel);
