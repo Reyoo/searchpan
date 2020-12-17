@@ -18,6 +18,13 @@ public interface SystemTemplateMapper extends BaseMapper<SystemTemplateModel> {
 
     List<SystemTemplateModel> listTemplatelByUser(SystemUserModel systemUserModel);
 
+    /**
+     * 查询用户在使用模板
+     * @param systemUserModel
+     * @return
+     */
+    List<SystemTemplateModel> listTemplatelByUserOnUse(SystemUserModel systemUserModel);
+
 
     List<SystemTemplateModel> listTemplatelObjects(SystemTemplateModel systemTemplateModel);
 

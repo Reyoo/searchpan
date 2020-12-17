@@ -161,12 +161,15 @@ public class TemplateController {
             String username = httpRequest.getRemoteUser();
             SystemUserModel userModel = new SystemUserModel();
             userModel.setUsername(username);
-            //校验模板
-            Boolean hasTemplateOn = iSystemTemplateService.checkTemplateIsBinded(userModel);
 
-            if(hasTemplateOn){
-                return AjaxResult.error("不允许同时启用多个模板,如需要使用该模板,请关闭启用状态模板");
+            if(systemTemplateModel.getTemplatestatus() ==true){
+                //校验模板
+                Boolean hasTemplateOn = iSystemTemplateService.checkTemplateIsBinded(userModel);
+                if(hasTemplateOn){
+                    return AjaxResult.error("不允许同时启用多个模板,如需要使用该模板,请关闭启用状态模板");
+                }
             }
+
 
             String templateId = UUID.randomUUID().toString();
             systemTemplateModel.setTemplateid(templateId);

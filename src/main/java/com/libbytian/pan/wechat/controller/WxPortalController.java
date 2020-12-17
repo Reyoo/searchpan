@@ -88,7 +88,6 @@ public class WxPortalController {
 
             SystemKeywordModel systemKeywordModel = systemKeywordService.getKeywordByUser(username);
 
-
             String userStart = systemKeywordModel.getStartTime();
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm");
 
@@ -122,7 +121,6 @@ public class WxPortalController {
                 }
 
             }
-
 
             SystemUserModel systemUserModel = new SystemUserModel();
             systemUserModel.setUsername(username);

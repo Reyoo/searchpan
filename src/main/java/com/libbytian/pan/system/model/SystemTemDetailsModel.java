@@ -25,7 +25,7 @@ import java.time.LocalDateTime;
 @Setter
 @TableName("sys_temdetails")
 
-public class SystemTemDetailsModel extends Model<SystemTemDetailsModel> {
+public class  SystemTemDetailsModel extends Model<SystemTemDetailsModel> {
 
 
     private static final long serialVersionUID = 1L;
