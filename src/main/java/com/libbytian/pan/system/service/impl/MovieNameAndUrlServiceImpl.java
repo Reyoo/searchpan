@@ -37,7 +37,7 @@ public class MovieNameAndUrlServiceImpl extends ServiceImpl<MovieNameAndUrlMappe
     }
 
     @Override
-    public int addMovieUrl(List<MovieNameAndUrlModel> movieNameAndUrlModels) throws Exception{
+    public int addMovieUrls(List<MovieNameAndUrlModel> movieNameAndUrlModels) throws Exception{
         return movieNameAndUrlMapper.insertMovieUrls(movieNameAndUrlModels);
     }
 
@@ -45,4 +45,10 @@ public class MovieNameAndUrlServiceImpl extends ServiceImpl<MovieNameAndUrlMappe
     public int dropMovieUrl(MovieNameAndUrlModel movieNameAndUrlModel) throws Exception {
         return movieNameAndUrlMapper.deleteUrlMovieUrls(movieNameAndUrlModel);
     }
+
+    @Override
+    public int addMovieUrl(MovieNameAndUrlModel movieNameAndUrlModels) throws Exception{
+        return movieNameAndUrlMapper.insertMovieUrl(movieNameAndUrlModels);
+    }
+
 }

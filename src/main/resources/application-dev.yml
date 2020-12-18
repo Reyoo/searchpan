@@ -37,22 +37,22 @@ spring:
   # 配置数据源
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://114.116.229.225:33306/findfish?useUnicode=true&characterEncoding=utf-8&serverTimezone=Hongkong
+    url: jdbc:mysql://114.116.229.225:33306/findfish?useUnicode=true&characterEncoding=utf-8&serverTimezone=Hongkong&autoReconnect=true&failOverReadOnly=false
     username: root
     password: libbytian123QWE!@#
     type: com.alibaba.druid.pool.DruidDataSource
     filters: stat
-    maxActive: 5
-    initialSize: 1
-    maxWait: 60000
+    maxActive: 10
+    initialSize: 5
+    maxWait: 90000
     minIdle: 1
-    timeBetweenEvictionRunsMillis: 60000
+    timeBetweenEvictionRunsMillis: 90000
     minEvictableIdleTimeMillis: 300000
     validationQuery: "SELECT 'x'"
     testWhileIdle: false
     testOnBorrow: false
     testOnReturn: false
-    maxOpenPreparedStatements: 10
+    maxOpenPreparedStatements: 100
     removeAbandoned: true
     removeAbandonedTimeout: 1800
     logAbandoned: true

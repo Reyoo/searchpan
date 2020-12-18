@@ -32,6 +32,17 @@
     </insert>
 
 
+    <insert id="insertMovieUrl" parameterType="com.libbytian.pan.system.model.MovieNameAndUrlModel">
+        INSERT INTO url_movie
+        (movie_name,movie_url,wangpan_url,wangpan_passwd)
+        VALUES
+            (#{movieName},#{movieUrl},
+            #{wangPanUrl},#{wangPanPassword})
+
+    </insert>
+
+
+
     <delete id="deleteUrlMovieUrls" parameterType="com.libbytian.pan.system.model.MovieNameAndUrlModel">
         DELETE FROM url_movie
         WHERE

@@ -79,7 +79,7 @@ public class CrawlerWebInfoController {
 
             String urlBase = stringBuffer.toString();
 
-            for (int i = 4001; i <= 10000; i++) {
+            for (int i = 4359; i <= 10000; i++) {
                 int s = random.nextInt(29) % (29 - 10 + 1) + 10;
                 int m = random.nextInt(12) % (12-11 + 1) +11;
                 asyncTask.getAllmovieInit(urlBase,String.valueOf(i),s,m);

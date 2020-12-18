@@ -15,7 +15,6 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 /**
  * @ProjectName: pansearch
@@ -141,7 +140,7 @@ public class AsyncSearchCachedServiceImpl {
                     movieNameAndUrlModels = innerMovieList;
 
                     if (movieNameAndUrlModels != null && movieNameAndUrlModels.size() > 0) {
-                        movieNameAndUrlService.addMovieUrl(movieNameAndUrlModels);
+                        movieNameAndUrlService.addMovieUrls(movieNameAndUrlModels);
                         redisTemplate.opsForValue().set(searchText, movieNameAndUrlModels, 60 * 24 * 15, TimeUnit.MINUTES);
 
 

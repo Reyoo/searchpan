@@ -3,15 +3,12 @@ package com.libbytian.pan.crawler.service;
 import cn.hutool.core.util.StrUtil;
 import com.libbytian.pan.system.model.MovieNameAndUrlModel;
 import com.libbytian.pan.system.service.IMovieNameAndUrlService;
-import com.libbytian.pan.system.service.impl.MovieNameAndUrlServiceImpl;
 import com.libbytian.pan.wechat.service.NormalPageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -54,7 +51,7 @@ public class AsyncTask {
         stringBuffer.append("/");
         url = stringBuffer.toString();
 
-        for (int i = 3083; i <= 3084; i++) {
+        for (int i = 4366; i <= 5000; i++) {
 
             int num=(int) (Math.random()*(5-1+1)+1);
             System.out.println(num);
@@ -65,7 +62,7 @@ public class AsyncTask {
             ArrayList arrayList = new ArrayList();
             if (StrUtil.isNotBlank(movieNameAndUrlModel.getMovieName())& StrUtil.isNotBlank(movieNameAndUrlModel.getWangPanPassword())) {
                 arrayList.add(movieNameAndUrlModel);
-                iMovieNameAndUrlService.addMovieUrl(arrayList);
+                iMovieNameAndUrlService.addMovieUrls(arrayList);
             }
 
         }
@@ -93,10 +90,10 @@ public class AsyncTask {
 //            http://www.lxxh7.com/随机/随机/93687LjLXH.html#comments
             System.out.println(url + num + "LjLXH.html");
             MovieNameAndUrlModel movieNameAndUrlModel = normalPageService.getMovieLoopsAiDianying(url + num +"LjLXH.html");
-            ArrayList arrayList = new ArrayList();
+
             if (StrUtil.isNotBlank(movieNameAndUrlModel.getMovieName())& StrUtil.isNotBlank(movieNameAndUrlModel.getWangPanPassword())) {
-                arrayList.add(movieNameAndUrlModel);
-                iMovieNameAndUrlService.addMovieUrl(arrayList);
+                iMovieNameAndUrlService.addMovieUrl(movieNameAndUrlModel);
+                log.info("插入成功 -》 " + movieNameAndUrlModel.getMovieUrl());
             }
 
 

@@ -15,7 +15,9 @@ public interface IMovieNameAndUrlService extends IService<MovieNameAndUrlModel> 
     List<MovieNameAndUrlModel> findMovieUrl (String movieName) throws  Exception;
     List<MovieNameAndUrlModel> findLikeMovieUrl (String movieName) throws  Exception;
 
-    int addMovieUrl( List<MovieNameAndUrlModel> movieNameAndUrlModels) throws Exception;
+    int addMovieUrls(List<MovieNameAndUrlModel> movieNameAndUrlModels) throws Exception;
+
+    int addMovieUrl(MovieNameAndUrlModel movieNameAndUrlModels) throws Exception;
 
     int dropMovieUrl (MovieNameAndUrlModel movieNameAndUrlModel) throws Exception;
 }
