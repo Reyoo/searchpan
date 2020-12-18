@@ -51,7 +51,7 @@ public class AsyncTask {
         stringBuffer.append("/");
         url = stringBuffer.toString();
 
-        for (int i = 4366; i <= 5000; i++) {
+        for (int i = 7440; i <= 10000; i++) {
 
             int num=(int) (Math.random()*(5-1+1)+1);
             System.out.println(num);
