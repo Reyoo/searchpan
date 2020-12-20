@@ -16,4 +16,7 @@ public interface ISystemUserToRoleService extends IService<SystemUserToRole> {
 
     int removeUserToRoleObject(SystemUserToRole systemUserToRole);
 
+    int addUserToRoleModel(SystemUserToRole systemUserToRole);
+
+
 }

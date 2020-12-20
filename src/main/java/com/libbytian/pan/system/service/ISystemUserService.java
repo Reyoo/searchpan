@@ -81,4 +81,8 @@ public interface ISystemUserService extends IService<SystemUserModel> {
 
     Boolean checkUserCouldDel(SystemUserModel user) throws Exception;
 
+
+
+    int addSystemUser(SystemUserModel systemUserModel ) throws Exception;
+
 }

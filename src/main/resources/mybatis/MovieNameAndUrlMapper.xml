@@ -3,65 +3,101 @@
 <mapper namespace="com.libbytian.pan.system.mapper.MovieNameAndUrlMapper">
 
 
-
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-            id,movie_name,movie_url,wangpan_url,wangpan_passwd
+        id
+        AS id,
+            movie_name AS movieName,
+            wangpan_url AS wangPanUrl,
+            wangpan_passwd AS wangPanPassword
     </sql>
 
-    <select id="selectMovieUrlByName"  resultType="com.libbytian.pan.system.model.MovieNameAndUrlModel">
+    <select id="selectMovieUrlByName" resultType="com.libbytian.pan.system.model.MovieNameAndUrlModel">
         SELECT
         <include refid="Base_Column_List"/>
         FROM url_movie
-            WHERE  movie_name  like
-
-            concat('%','${movieName}','%')
+        WHERE movie_name = #{movieName}
 
     </select>
-
 
 
     <insert id="insertMovieUrls">
         INSERT INTO url_movie
         (movie_name,movie_url,wangpan_url,wangpan_passwd)
         VALUES
-        <foreach collection ="list" item="movieNameAndUrlModels" separator =",">
+        <foreach collection="list" item="movieNameAndUrlModels" separator=",">
             (#{movieNameAndUrlModels.movieName}, #{movieNameAndUrlModels.movieUrl},
-             #{movieNameAndUrlModels.wangPanUrl},#{movieNameAndUrlModels.wangPanPassword})
-        </foreach >
+            #{movieNameAndUrlModels.wangPanUrl},#{movieNameAndUrlModels.wangPanPassword})
+        </foreach>
     </insert>
+
+
+
+<!--    由于设置了自增长ID 无法使用插入更新  ON DUPLICATE KEY UPDATE-->
+
+<!--    <insert id="insertMovieUrls" parameterType="com.libbytian.pan.system.model.MovieNameAndUrlModel">
+        INSERT INTO url_movie
+        (movie_name,movie_url,wangpan_url,wangpan_passwd)
+        values
+                <foreach collection="list" item="movieNameAndUrlModels" separator=",">
+                    (#{movieNameAndUrlModels.movieName}, #{movieNameAndUrlModels.movieUrl},
+                    #{movieNameAndUrlModels.wangPanUrl},#{movieNameAndUrlModels.wangPanPassword})
+                </foreach>
+        ON DUPLICATE KEY UPDATE
+        movie_name = values(movieName)
+    </insert>-->
+
+
+
 
 
     <insert id="insertMovieUrl" parameterType="com.libbytian.pan.system.model.MovieNameAndUrlModel">
         INSERT INTO url_movie
-        (movie_name,movie_url,wangpan_url,wangpan_passwd)
-        VALUES
-            (#{movieName},#{movieUrl},
-            #{wangPanUrl},#{wangPanPassword})
+            (movie_name, movie_url, wangpan_url, wangpan_passwd)
+        VALUES (#{movieName}, #{movieUrl},
+                #{wangPanUrl}, #{wangPanPassword})
 
     </insert>
 
 
-
     <delete id="deleteUrlMovieUrls" parameterType="com.libbytian.pan.system.model.MovieNameAndUrlModel">
-        DELETE FROM url_movie
-        WHERE
-                movie_name  = #{movieName} AND  wangpan_url = #{wangPanUrl};
+        DELETE
+        FROM url_movie
+        WHERE movie_name = #{movieName}
+          AND wangpan_url = #{wangPanUrl};
     </delete>
 
 
-
-
-    <select id="selectMovieUrlByLikeName"  resultType="com.libbytian.pan.system.model.MovieNameAndUrlModel">
+    <select id="selectMovieUrlByLikeName" resultType="com.libbytian.pan.system.model.MovieNameAndUrlModel">
         SELECT
         <include refid="Base_Column_List"/>
         FROM url_movie
-        WHERE  movie_name  like
+        WHERE movie_name like
 
         concat('%','${movieName}','%')
 
 
     </select>
+
+
+
+
+    <update id="updateUrlMovieUrls" parameterType="com.libbytian.pan.system.model.MovieNameAndUrlModel">
+        UPDATE
+        url_movie
+        <trim prefix="set" suffixOverrides=",">
+
+            <if test="wangPanUrl != null and wangPanUrl != ''">
+                wangpan_url =#{wangPanUrl},
+            </if>
+            <if test="wangPanPassword != null and wangPanPassword != ''">
+                wangpan_passwd =#{wangPanPassword},
+            </if>
+
+        </trim>
+        WHERE
+        movie_name =#{movieName}
+    </update>
 
 
 </mapper>

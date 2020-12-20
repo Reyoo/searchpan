@@ -8,6 +8,7 @@ import com.libbytian.pan.system.model.SystemRoleToPermission;
 import com.libbytian.pan.system.service.IMovieNameAndUrlService;
 import com.libbytian.pan.system.service.IRoleToPermissionService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,24 +22,48 @@ import java.util.List;
  */
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
+@Slf4j
 public class MovieNameAndUrlServiceImpl extends ServiceImpl<MovieNameAndUrlMapper, MovieNameAndUrlModel> implements IMovieNameAndUrlService {
 
 
-    private  final MovieNameAndUrlMapper movieNameAndUrlMapper;
+    private final MovieNameAndUrlMapper movieNameAndUrlMapper;
 
     @Override
     public List<MovieNameAndUrlModel> findMovieUrl(String movieName) throws Exception {
-        return  movieNameAndUrlMapper.selectMovieUrlByName(movieName);
+        return movieNameAndUrlMapper.selectMovieUrlByName(movieName);
     }
 
     @Override
     public List<MovieNameAndUrlModel> findLikeMovieUrl(String movieName) throws Exception {
-        return  movieNameAndUrlMapper.selectMovieUrlByLikeName(movieName);
+        return movieNameAndUrlMapper.selectMovieUrlByLikeName(movieName);
     }
 
+
+    /**
+     * 插入更新操作、如果数据库中 不存在 则插入、如果存在 则更新
+     *
+     * @param movieNameAndUrlModels
+     * @return
+     * @throws Exception
+     */
     @Override
-    public int addMovieUrls(List<MovieNameAndUrlModel> movieNameAndUrlModels) throws Exception{
-        return movieNameAndUrlMapper.insertMovieUrls(movieNameAndUrlModels);
+    public void addMovieUrls(List<MovieNameAndUrlModel> movieNameAndUrlModels) throws Exception {
+
+
+        for (MovieNameAndUrlModel movieNameAndUrlModel : movieNameAndUrlModels) {
+
+            List<MovieNameAndUrlModel> list = movieNameAndUrlMapper.selectMovieUrlByName(movieNameAndUrlModel.getMovieName().trim());
+            if (list.size() > 0) {
+//                如果查询到数据 则更新
+                movieNameAndUrlMapper.updateUrlMovieUrls(movieNameAndUrlModel);
+                log.info("更新电影列表-->" + movieNameAndUrlModel);
+
+            } else {
+                movieNameAndUrlMapper.insertMovieUrls(movieNameAndUrlModels);
+                log.info("插入电影列表-->" + movieNameAndUrlModel);
+            }
+        }
+
     }
 
     @Override
@@ -47,7 +72,7 @@ public class MovieNameAndUrlServiceImpl extends ServiceImpl<MovieNameAndUrlMappe
     }
 
     @Override
-    public int addMovieUrl(MovieNameAndUrlModel movieNameAndUrlModels) throws Exception{
+    public int addMovieUrl(MovieNameAndUrlModel movieNameAndUrlModels) throws Exception {
         return movieNameAndUrlMapper.insertMovieUrl(movieNameAndUrlModels);
     }
 

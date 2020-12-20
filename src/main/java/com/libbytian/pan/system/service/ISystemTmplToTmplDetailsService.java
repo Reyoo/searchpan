@@ -12,4 +12,12 @@ public interface ISystemTmplToTmplDetailsService extends IService<SystemTemToTem
 
 
     int addTemplateToTemplateDetail(List<SystemTemToTemdetail> systemTemToTemdetails);
+
+
+    /**
+     * 根据模板详细删除 模板与模板详细关联表中模板详细的绑定关联
+     * @param templateIds
+     * @return
+     */
+    int dropTemplateAndDetails(List<String> templateIds);
 }

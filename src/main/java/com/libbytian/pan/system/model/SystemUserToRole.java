@@ -31,8 +31,8 @@ public class SystemUserToRole extends Model<SystemUserToRole> {
     /**
      * 主键
      */
-    @TableId(value = "id", type = IdType.AUTO)
-    private Integer userToRoleId;
+    @TableId(value = "id")
+    private String userToRoleId;
     /**
      * 用户编号
      */
@@ -46,7 +46,7 @@ public class SystemUserToRole extends Model<SystemUserToRole> {
 
 
     @TableField("user_role_status")
-    private String userRoleStatus;
+    private Boolean userRoleStatus;
 
     @TableField(exist = false)
     @Value("false")

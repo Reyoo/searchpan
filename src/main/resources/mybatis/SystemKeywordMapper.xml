@@ -75,8 +75,9 @@
                 end_time,
             </if>
 
-            <if test="fans_key != null">
-                end_time,
+            <if test="fansKey != null">
+                fans_key,
+
             </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -104,7 +105,7 @@
                 #{endTime,jdbcType=VARCHAR},
             </if>
 
-            <if test="fans_key != null">
+            <if test="fansKey != null">
                 #{fansKey,jdbcType=VARCHAR},
             </if>
         </trim>

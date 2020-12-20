@@ -29,7 +29,7 @@ import java.util.Date;
 @AllArgsConstructor
 @Data
 @TableName("sys_role")
-public class SystemRoleModel extends Model<SystemRoleModel>   {
+public class SystemRoleModel extends Model<SystemRoleModel> {
 
     private static final long serialVersionUID = 1L;
 
@@ -37,58 +37,54 @@ public class SystemRoleModel extends Model<SystemRoleModel>   {
      * 角色id主键
      */
     @TableId(value = "role_id")
-    private String roleId;
+    String roleId;
     /**
      * 角色字符
      */
     @TableField("role_name")
-    private String roleName;
+    String roleName;
 
 
     /**
      * 角色名称
      */
     @TableField("show_name")
-    private String showName;
+    String showName;
     /**
      * 角色状态
      */
     @TableField("role_status")
-    private Boolean roleStatus;
+    Boolean roleStatus;
 
     /**
      * 可修改状态（0：不允许，1：允许）
      */
     @TableField("allowremove")
-    private Boolean allowremove;
-
+    Boolean allowremove;
 
 
     @TableField("createtime")
-    private LocalDateTime createTime;
+    LocalDateTime createTime;
 
     @TableField(exist = false)
     @Value("false")
-    private Boolean checked;
+    Boolean checked;
 
     @TableField(exist = false)
     @Value("false")
-    private LocalDateTime starttime;
+    LocalDateTime starttime;
 
     @TableField(exist = false)
     @Value("false")
-    private LocalDateTime endtime;
-
-
-    @TableField(exist = false )
-    private Long  page;
+    LocalDateTime endtime;
 
 
     @TableField(exist = false)
-    private  Long limits;
+    Long page;
 
 
-
+    @TableField(exist = false)
+    Long limits;
 
 
     @Override

@@ -28,4 +28,10 @@ public class SystemUserToRoleImpl extends ServiceImpl<SystemUserToRoleMapper, Sy
     public int removeUserToRoleObject(SystemUserToRole systemUserToRole) {
         return userToRoleMapper.deleteUserToRoleObject(systemUserToRole);
     }
+
+    public  int addUserToRoleModel(SystemUserToRole systemUserToRole) {
+        return userToRoleMapper.insertUserToRoleModel(systemUserToRole);
+    }
+
+
 }

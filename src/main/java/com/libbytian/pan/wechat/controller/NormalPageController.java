@@ -4,8 +4,11 @@ package com.libbytian.pan.wechat.controller;
 import com.libbytian.pan.system.aop.RequestLimit;
 import com.libbytian.pan.system.common.AjaxResult;
 import com.libbytian.pan.system.model.MovieNameAndUrlModel;
+import com.libbytian.pan.system.service.IMovieNameAndUrlService;
+import com.libbytian.pan.system.service.impl.MovieNameAndUrlServiceImpl;
 import com.libbytian.pan.wechat.service.NormalPageService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,9 +26,11 @@ import java.util.List;
 @RestController
 @RequestMapping("/home")
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
+@Slf4j
 public class NormalPageController {
 
     private final NormalPageService normalPageService;
+    private final IMovieNameAndUrlService movieNameAndUrlService;
 
 
     @Value("${user.unread.weiduyingdan}")
@@ -47,14 +52,17 @@ public class NormalPageController {
 //    @RequestLimit(count = 3, frameTime = 2, lockTime = 30)
     public AjaxResult getLxxhdMovie(@RequestParam String name){
 
-        List<MovieNameAndUrlModel> movieNameAndUrls =normalPageService.getNormalUrl(lxxhUrl+"/?s="+name);
-        List<MovieNameAndUrlModel> realMovieList = new ArrayList();
+        try {
+            MovieNameAndUrlModel movieNameAndUrl;
+            movieNameAndUrl = normalPageService.getMovieLoopsAiDianying(lxxhUrl+"/?s="+name);
+            List<MovieNameAndUrlModel> arrayList = new ArrayList();
+            arrayList.add(movieNameAndUrl);
+            movieNameAndUrlService.addMovieUrls(arrayList);
+            return AjaxResult.success(movieNameAndUrl);
+        } catch (Exception e){
+            return AjaxResult.error(e.getMessage());
+        }
 
-        movieNameAndUrls.stream().forEach(movieNameAndUrl ->
-                realMovieList.add(normalPageService.getMoviePanUrl2(movieNameAndUrl)));
-
-
-        return AjaxResult.success(realMovieList);
     }
 
 

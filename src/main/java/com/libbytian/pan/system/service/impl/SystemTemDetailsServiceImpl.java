@@ -48,11 +48,12 @@ public class SystemTemDetailsServiceImpl extends ServiceImpl<SystemTemDetailsMap
 
     @Override
     public IPage<SystemTemDetailsModel> findTemDetailsPage(Page page, String templateId) throws Exception {
-        return systemTemDetailsMapper.selectTemDetailsPage(page,templateId);
+        return systemTemDetailsMapper.selectTemDetailsPage(page, templateId);
     }
 
     /**
      * 不分页查询
+     *
      * @param
      * @return
      * @throws Exception
@@ -63,28 +64,26 @@ public class SystemTemDetailsServiceImpl extends ServiceImpl<SystemTemDetailsMap
     }
 
 
-
     /**
-     *
      * @param filename
      * @param inputStream
      * @return
      */
     @Override
-    public int exportExceltoDb(String filename, InputStream inputStream ,String templateId)  throws Exception{
+    public int exportExceltoDb(String filename, InputStream inputStream, String templateId) throws Exception {
         List<SystemTemDetailsModel> systemTemDetailsModelList = new ArrayList<>();
         List<String> uuidList = new ArrayList<>();
 
-        Workbook wb =null;
+        Workbook wb = null;
         Sheet sheet = null;
         Row row = null;
-        List<Map<String,String>> list = null;
+        List<Map<String, String>> list = null;
         String cellData = null;
-        String columns[] = {"id","question","answer","userid","date_time","isTop"};
+        String columns[] = {"id", "question", "answer", "userid", "date_time", "isTop"};
         wb = ReadOrWriteExcelUtil.readExcel(filename, inputStream);
-        if(wb != null){
+        if (wb != null) {
             //用来存放表中数据
-            list = new ArrayList<Map<String,String>>();
+            list = new ArrayList<Map<String, String>>();
             //获取第一个sheet
             sheet = wb.getSheetAt(0);
             //获取最大行数
@@ -93,15 +92,15 @@ public class SystemTemDetailsServiceImpl extends ServiceImpl<SystemTemDetailsMap
             row = sheet.getRow(0);
             //获取最大列数
             int colnum = row.getPhysicalNumberOfCells();
-            for (int i = 1; i<rownum; i++) {
-                Map<String,String> map = new LinkedHashMap<String,String>();
+            for (int i = 1; i < rownum; i++) {
+                Map<String, String> map = new LinkedHashMap<String, String>();
                 row = sheet.getRow(i);
-                if(row !=null){
-                    for (int j=0;j<colnum;j++){
+                if (row != null) {
+                    for (int j = 0; j < colnum; j++) {
                         cellData = (String) ReadOrWriteExcelUtil.getCellFormatValue(row.getCell(j));
                         map.put(columns[j], cellData);
                     }
-                }else{
+                } else {
                     break;
                 }
                 list.add(map);
@@ -113,26 +112,26 @@ public class SystemTemDetailsServiceImpl extends ServiceImpl<SystemTemDetailsMap
 
 
         //遍历解析出来的list
-        for (Map<String,String> map : list) {
+        for (Map<String, String> map : list) {
             SystemTemDetailsModel systemTemDetailsModel = new SystemTemDetailsModel();
-            for (Map.Entry<String,String> entry : map.entrySet()) {
-                if(entry.getKey().equals("question")){
+            for (Map.Entry<String, String> entry : map.entrySet()) {
+                if (entry.getKey().equals("question")) {
                     systemTemDetailsModel.setKeyword(entry.getValue());
                 }
-                if(entry.getKey().equals("answer")){
+                if (entry.getKey().equals("answer")) {
                     systemTemDetailsModel.setKeywordToValue(entry.getValue());
                 }
-                if(entry.getKey().equals("date_time")){
+                if (entry.getKey().equals("date_time")) {
 
-                    LocalDateTime time = LocalDateTime.parse(entry.getValue(),dateTimeFormatter);
+                    LocalDateTime time = LocalDateTime.parse(entry.getValue(), dateTimeFormatter);
                     systemTemDetailsModel.setCreatetime(time);
                 }
-                if(entry.getKey().equals("isTop")){
+                if (entry.getKey().equals("isTop")) {
                     systemTemDetailsModel.setTemdetailsstatus(Boolean.valueOf(entry.getValue()));
                 }
             }
 
-            String uuid = UUID.randomUUID().toString();
+            String uuid = UUID.randomUUID(true).toString();
             systemTemDetailsModel.setTemdetailsId(uuid);
             uuidList.add(uuid);
             systemTemDetailsModelList.add(systemTemDetailsModel);
@@ -142,13 +141,12 @@ public class SystemTemDetailsServiceImpl extends ServiceImpl<SystemTemDetailsMap
         this.saveBatch(systemTemDetailsModelList);
 
         for (String uuid : uuidList) {
-            SystemTemToTemdetail temToTemdetails= SystemTemToTemdetail.builder().templateid(templateId).templatedetailsid(uuid).build();
+            SystemTemToTemdetail temToTemdetails = SystemTemToTemdetail.builder().templateid(templateId).templatedetailsid(uuid).build();
             iSystemTmplToTmplDetailsService.save(temToTemdetails);
         }
 
         return 0;
     }
-
 
 
     @Override
@@ -173,12 +171,13 @@ public class SystemTemDetailsServiceImpl extends ServiceImpl<SystemTemDetailsMap
 
     /**
      * 导出excel
+     *
      * @param httpServletRequest
      * @param templateId
      * @throws Exception
      */
     @Override
-    public void exportTemDetails(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse,String templateId) throws Exception {
+    public void exportTemDetails(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, String templateId) throws Exception {
 
         //1 拿着模板号 先去关联表中取出所有模板详细ID
         QueryWrapper queryWrapper = new QueryWrapper();
@@ -190,15 +189,15 @@ public class SystemTemDetailsServiceImpl extends ServiceImpl<SystemTemDetailsMap
         //得到了详细数据
         List<SystemTemDetailsModel> systemTemDetailsModelList = this.listByIds(detailsIdList);
         //excel标题
-        String title[] = {"id","question","answer","userid","date_time","isTop"};
+        String title[] = {"id", "question", "answer", "userid", "date_time", "isTop"};
         //excel文件名
 
         SystemTemplateModel systemTemplateModel = iSystemTemplateService.getById(templateId);
-         //sheet名
-        String  sheetName = systemTemplateModel.getTemplatename();
+        //sheet名
+        String sheetName = systemTemplateModel.getTemplatename();
         String fileName = sheetName + ".xls";
         DateTimeFormatter pattern = DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm:ss");
-        String[][] content=new String[systemTemDetailsModelList.size()][title.length];
+        String[][] content = new String[systemTemDetailsModelList.size()][title.length];
         for (int i = 0; i < systemTemDetailsModelList.size(); i++) {
             SystemTemDetailsModel obj = systemTemDetailsModelList.get(i);
             content[i][0] = obj.getTemdetailsId();
@@ -213,12 +212,12 @@ public class SystemTemDetailsServiceImpl extends ServiceImpl<SystemTemDetailsMap
         HSSFWorkbook wb = ReadOrWriteExcelUtil.getHSSFWorkbook(sheetName, title, content, null);
         //响应到客户端
         try {
-            this.setResponseHeader(httpServletResponse,fileName);
+            this.setResponseHeader(httpServletResponse, fileName);
             OutputStream os = httpServletResponse.getOutputStream();
             wb.write(os);
             os.flush();
             os.close();
-            } catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -226,22 +225,22 @@ public class SystemTemDetailsServiceImpl extends ServiceImpl<SystemTemDetailsMap
 
 
     /**
-     *@Author zxl
-     *@Description 发送响应流方法
-     *@Date 13:40 2019/2/11
-     *@Param [response, fileName]
-     *@Return void
+     * @Author zxl
+     * @Description 发送响应流方法
+     * @Date 13:40 2019/2/11
+     * @Param [response, fileName]
+     * @Return void
      */
     public void setResponseHeader(HttpServletResponse response, String fileName) {
         try {
             try {
-                fileName = new String(fileName.getBytes(),"ISO8859-1");
+                fileName = new String(fileName.getBytes(), "ISO8859-1");
             } catch (UnsupportedEncodingException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
             response.setContentType("application/octet-stream;charset=ISO8859-1");
-            response.setHeader("Content-Disposition", "attachment;filename="+ fileName);
+            response.setHeader("Content-Disposition", "attachment;filename=" + fileName);
             response.addHeader("Pargam", "no-cache");
             response.addHeader("Cache-Control", "no-cache");
         } catch (Exception ex) {
@@ -256,12 +255,11 @@ public class SystemTemDetailsServiceImpl extends ServiceImpl<SystemTemDetailsMap
      * @param systemUserModel
      */
     @Override
-    @Cacheable(value = "userTemplateDetail",key = "#systemUserModel.username")
     public List<SystemTemDetailsModel> getTemDetailsWithUser(SystemUserModel systemUserModel) throws Exception {
         List<SystemTemDetailsModel> systemTemDetailsModels = new ArrayList<>();
         try {
             systemTemDetailsModels = systemTemDetailsMapper.findTemDetailsByUser(systemUserModel);
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return systemTemDetailsModels;
@@ -280,7 +278,6 @@ public class SystemTemDetailsServiceImpl extends ServiceImpl<SystemTemDetailsMap
         List<SystemTemDetailsModel> detailist = new ArrayList<>();
 
         SystemTemDetailsModel focus = new SystemTemDetailsModel();
-
         SystemTemDetailsModel sleepDetails = new SystemTemDetailsModel();
         SystemTemDetailsModel headAdvert = new SystemTemDetailsModel();
         SystemTemDetailsModel endAdvert = new SystemTemDetailsModel();
@@ -288,52 +285,37 @@ public class SystemTemDetailsServiceImpl extends ServiceImpl<SystemTemDetailsMap
         SystemTemDetailsModel hideReply = new SystemTemDetailsModel();
         SystemTemDetailsModel headWeb = new SystemTemDetailsModel();
         SystemTemDetailsModel endWeb = new SystemTemDetailsModel();
-        SystemTemDetailsModel secretKey = new SystemTemDetailsModel();
-        SystemTemDetailsModel secretValue = new SystemTemDetailsModel();
-
-
-        focus.setKeyword("首次关注");
-        focus.setKeywordToValue("首次关注回复内容");
-        focus.setShowOrder(1);
 
 
         sleepDetails.setKeyword("维护内容");
         sleepDetails.setKeywordToValue("维护时间内回复内容");
-        sleepDetails.setShowOrder(4);
+        sleepDetails.setShowOrder(1);
 
         headAdvert.setKeyword("头部广告");
         headAdvert.setKeywordToValue("微信回复头部广告（可设置开关）");
-        headAdvert.setShowOrder(5);
+        headAdvert.setShowOrder(2);
 
         endAdvert.setKeyword("底部广告");
         endAdvert.setKeywordToValue("微信回复底部广告（可设置开关）");
-        endAdvert.setShowOrder(6);
+        endAdvert.setShowOrder(3);
 
         hideResource.setKeyword("隐藏资源");
         hideResource.setKeywordToValue("隐藏资源名称");
-        hideResource.setShowOrder(7);
+        hideResource.setShowOrder(4);
 
         hideReply.setKeyword("隐藏回复");
         hideReply.setKeywordToValue("隐藏资源后返回给粉丝内容");
-        hideReply.setShowOrder(8);
+        hideReply.setShowOrder(5);
 
         headWeb.setKeyword("头部提示web");
         headWeb.setKeywordToValue("web页面头部提示内容");
-        headWeb.setShowOrder(9);
+        headWeb.setShowOrder(6);
 
         endWeb.setKeyword("底部提示web");
         endWeb.setKeywordToValue("web页面底部提示内容");
-        endWeb.setShowOrder(10);
+        endWeb.setShowOrder(7);
 
-        secretKey.setKeyword("秘钥内容");
-        secretKey.setKeywordToValue("123456");
-        secretKey.setShowOrder(11);
 
-        secretValue.setKeyword("秘钥回复");
-        secretKey.setKeywordToValue("自定义秘钥回复");
-        secretKey.setShowOrder(12);
-
-        detailist.add(focus);
         detailist.add(sleepDetails);
         detailist.add(headAdvert);
         detailist.add(endAdvert);
@@ -341,39 +323,33 @@ public class SystemTemDetailsServiceImpl extends ServiceImpl<SystemTemDetailsMap
         detailist.add(hideReply);
         detailist.add(headWeb);
         detailist.add(endWeb);
-        detailist.add(secretKey);
-        detailist.add(secretValue);
 
 
-
+/**
+ * 需要改成批量插入
+ */
         for (int i = 0; i < detailist.size(); i++) {
-
-
             SystemTemDetailsModel details = detailist.get(i);
             details.setTemdetailsId(UUID.randomUUID().toString());
             details.setCreatetime(LocalDateTime.now());
-
             systemTemDetailsMapper.insertSystemTemDetails(details);
-
-
             //用户模板绑定模板详情
             SystemTemToTemdetail temToTemdetail = SystemTemToTemdetail.builder().templateid(templateId).templatedetailsid(details.getTemdetailsId()).build();
             iSystemTmplToTmplDetailsService.save(temToTemdetail);
-
-
         }
 
     }
 
     /**
      * 根据用户 及关键词返回模板详细
+     *
      * @param username
      * @param keyword
      * @return
      */
     @Override
     public SystemTemDetailsModel getUserKeywordDetail(String username, String keyword) {
-        return systemTemDetailsMapper.selectUserKeywordDetail(username,keyword);
+        return systemTemDetailsMapper.selectUserKeywordDetail(username, keyword);
 
     }
 

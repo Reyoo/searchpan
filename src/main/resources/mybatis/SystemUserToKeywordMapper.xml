@@ -10,14 +10,12 @@
     </resultMap>
 
 
-
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
          user_keyword_id AS userKeyId,
          user_id AS userId,
          keyword_id AS keywordId
     </sql>
-
 
 
     <insert id="insertSysuserToKeyword" parameterType="com.libbytian.pan.system.model.SystemUserToKeyword">

@@ -130,7 +130,6 @@ public class TemplateController {
                 return AjaxResult.error("不允许同时启用多个模板,如需要使用该模板,请关闭启用状态模板");
             }
 
-
             boolean isupdate = iSystemTemplateService.updateById(systemTemplateModel);
             if(isupdate){
                 return AjaxResult.success();
@@ -157,8 +156,8 @@ public class TemplateController {
 
         try {
 
-
-            String username = httpRequest.getRemoteUser();
+//            String username = httpRequest.getRemoteUser();
+            String username  = "qi@qi.com";
             SystemUserModel userModel = new SystemUserModel();
             userModel.setUsername(username);
 
@@ -175,7 +174,6 @@ public class TemplateController {
             systemTemplateModel.setTemplateid(templateId);
             systemTemplateModel.setTemplatecreatetime(LocalDateTime.now());
             iSystemTemplateService.save(systemTemplateModel);
-
 
             userModel.setUsername(username);
             SystemUserModel systemUserModel = iSystemUserService.getUser(userModel);

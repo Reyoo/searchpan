@@ -246,6 +246,7 @@ public class WxPortalController {
                     stringBuffer.append("\r\n");
                 }
 
+//                stringBuffer.append("<a href =\"http:///#/mobileView?searchname=");
                 stringBuffer.append("<a href =\"http://findfish.top/#/mobileView?searchname=");
                 stringBuffer.append(searchName);
 

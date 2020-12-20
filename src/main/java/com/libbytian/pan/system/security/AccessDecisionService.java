@@ -51,6 +51,7 @@ public class AccessDecisionService {
         whiteList.add("/invalid/**");
         whiteList.add("/initmovie/**");
         whiteList.add("/userkey/**");
+        whiteList.add("/home/**");
 
 
         /**

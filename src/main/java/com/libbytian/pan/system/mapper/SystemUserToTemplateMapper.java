@@ -27,4 +27,5 @@ public interface SystemUserToTemplateMapper extends BaseMapper<SystemUserToTempl
      * @return
      */
     int deleteTemplateIdAll(String temped);
+
 }

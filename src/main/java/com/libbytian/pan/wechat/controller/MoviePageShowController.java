@@ -53,10 +53,8 @@ public class MoviePageShowController {
             String username = new String(decoder.decode(fishEncryption), "UTF-8");
             SystemUserModel systemUserModel = new SystemUserModel();
             systemUserModel.setUsername(username);
-            //获取用户模板
-//            List<SystemTemplateModel> systemTemplateModels = systemTemplateService.getTemplateModelByUser(systemUserModel,true);
-//            //通过模板ID，查询对应的模板详情，取出关键词，头部广告，底部广告
-//            List<SystemTemDetailsModel> systemdetails = systemTemplateService.findTemDetails(systemTemplateModels.get(0).getTemplateid());
+
+
 
             List<SystemTemDetailsModel> systemdetails = iSystemTemDetailsService.getTemDetailsWithUser(systemUserModel);
             Map map = new HashMap();
@@ -72,12 +70,6 @@ public class MoviePageShowController {
                     map.put("foot",systemTemDetailsModel);
                 }
             }
-
-//            List<SystemTemDetailsModel> headAndTialDetail = systemdetails.stream().
-//                    filter(systemTemdetailsModel -> "头部提示web".equals(systemTemdetailsModel.getKeyword())
-//                            || "底部提示web".equals(systemTemdetailsModel.getKeyword())).collect(Collectors.toList());
-
-
 
 
 

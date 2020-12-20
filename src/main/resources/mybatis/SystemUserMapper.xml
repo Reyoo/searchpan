@@ -165,4 +165,109 @@
     </delete>
 
 
+
+
+
+    <insert id="insertSystemUser" parameterType="com.libbytian.pan.system.model.SystemUserModel">
+        INSERT INTO sys_user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">
+                user_id,
+            </if>
+            <if test="username != null">
+                user_name,
+            </if>
+            <if test="mobile != null">
+                user_mobile,
+            </if>
+
+            <if test="password != null">
+                user_password,
+            </if>
+
+            <if test="lastLoginTime != null">
+                user_last_login_time,
+            </if>
+
+            <if test="createTime != null">
+                createTime,
+            </if>
+
+            <if test="status != null">
+                status,
+            </if>
+
+            <if test="actTime != null">
+                act_time,
+            </if>
+
+            <if test="actrange != null">
+                act_range,
+            </if>
+
+            <if test="userFlag != null">
+                user_flag,
+            </if>
+
+            <if test="allowremove != null">
+                allowremove,
+            </if>
+
+        </trim>
+
+
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null">
+                #{userId,jdbcType=VARCHAR},
+            </if>
+
+            <if test="username != null">
+                #{username,jdbcType=VARCHAR},
+            </if>
+
+            <if test="mobile != null">
+                #{mobile,jdbcType=VARCHAR},
+            </if>
+
+            <if test="password != null">
+                #{password,jdbcType=VARCHAR},
+            </if>
+
+            <if test="lastLoginTime != null">
+                #{lastLoginTime,jdbcType=TIMESTAMP},
+            </if>
+
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+
+            <if test="status != null">
+                #{status,jdbcType=TINYINT},
+            </if>
+
+            <if test="actTime != null">
+                #{actTime,jdbcType=TIMESTAMP},
+            </if>
+
+            <if test="actrange != null">
+                #{actrange,jdbcType=INTEGER},
+            </if>
+
+            <if test="userFlag != null">
+                #{userFlag,jdbcType=TINYINT},
+            </if>
+
+            <if test="allowremove != null">
+                #{allowremove,jdbcType=TINYINT},
+            </if>
+
+        </trim>
+
+
+    </insert>
+
+
+
+
+
 </mapper>

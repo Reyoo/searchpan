@@ -4,32 +4,34 @@
 
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.libbytian.pan.system.model.SystemUserToRole">
-        <id column="id" property="userToRoleId" />
-        <result column="user_id" property="userId" />
-        <result column="role_id" property="roleId" />
-        <result column="user_role_status" property="userRoleStatus" />
+        <id column="id" property="userToRoleId"/>
+        <result column="user_id" property="userId"/>
+        <result column="role_id" property="roleId"/>
+        <result column="user_role_status" property="userRoleStatus"/>
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-         id AS userToRoleId,
+        id
+        AS userToRoleId,
          user_id AS userId,
          role_id AS roleId,
          user_role_status AS userRoleStatus
     </sql>
 
 
-    <select id="selectUserToRoleObject" parameterType="com.libbytian.pan.system.model.SystemUserToRole" resultType="com.libbytian.pan.system.model.SystemUserToRole">
+    <select id="selectUserToRoleObject" parameterType="com.libbytian.pan.system.model.SystemUserToRole"
+            resultType="com.libbytian.pan.system.model.SystemUserToRole">
         SELECT
         <include refid="Base_Column_List"/>
         FROM sys_user_role
         <trim prefix="where" prefixOverrides="and|">
-        <if test="userId != null and userId != ''">
+            <if test="userId != null and userId != ''">
                 AND user_id= #{userId}
-        </if>
-         <if test="roleId != null and roleId != ''">
+            </if>
+            <if test="roleId != null and roleId != ''">
                 AND role_id= #{roleId}
-         </if>
+            </if>
 
         </trim>
 
@@ -50,6 +52,13 @@
 
     </delete>
 
+
+    <insert id="insertUserToRoleModel" parameterType="com.libbytian.pan.system.model.SystemUserToRole">
+        INSERT INTO sys_user_role
+            (id, user_id, role_id, user_role_status)
+        VALUES (#{userToRoleId}, #{userId}, #{roleId}, #{userRoleStatus})
+
+    </insert>
 
 
 </mapper>

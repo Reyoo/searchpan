@@ -16,7 +16,8 @@
          r.role_name AS roleName,
          r.show_name AS showName,
          r.role_status AS roleStatus,
-         r.createtime AS createTime
+         r.createtime AS createTime,
+        r.allowremove AS allowremove
     </sql>
 
 

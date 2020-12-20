@@ -29,5 +29,7 @@ public interface SystemUserMapper extends BaseMapper<SystemUserModel> {
 
     SystemUserModel getUserByUerToTemplate(String templateId);
 
+    int insertSystemUser(SystemUserModel systemUserModel);
+
 
 }

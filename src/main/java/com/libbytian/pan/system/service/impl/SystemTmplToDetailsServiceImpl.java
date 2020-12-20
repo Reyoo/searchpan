@@ -16,8 +16,16 @@ public class SystemTmplToDetailsServiceImpl extends ServiceImpl<SystemTemToTemDe
 
     private  final SystemTemToTemDetailsMapper systemTemToTemDetailsMapper;
 
+
     @Override
     public int addTemplateToTemplateDetail(List<SystemTemToTemdetail> systemTemToTemdetails) {
         return systemTemToTemDetailsMapper.insertTmeplateToTemplateDetails(systemTemToTemdetails);
+    }
+
+
+
+    @Override
+    public int dropTemplateAndDetails(List<String> templateDetailsList) {
+        return systemTemToTemDetailsMapper.deleteTemplateAndDetails(templateDetailsList);
     }
 }

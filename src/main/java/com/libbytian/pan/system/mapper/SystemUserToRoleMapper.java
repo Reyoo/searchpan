@@ -23,5 +23,5 @@ public interface SystemUserToRoleMapper extends BaseMapper<SystemUserToRole> {
 
     int deleteUserToRoleObject(SystemUserToRole systemUserToRole);
 
-
+    int insertUserToRoleModel(SystemUserToRole systemUserToRole);
 }

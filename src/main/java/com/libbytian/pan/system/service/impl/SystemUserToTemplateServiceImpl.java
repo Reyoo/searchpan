@@ -23,4 +23,5 @@ public class SystemUserToTemplateServiceImpl extends ServiceImpl<SystemUserToTem
     public int removieTemplateIdAll(String tempid) {
         return systemUserToTemplateMapper.deleteTemplateIdAll(tempid);
     }
+
 }

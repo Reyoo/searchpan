@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -30,6 +31,7 @@ import java.util.List;
  */
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
+@Transactional
 public class SystemUserServiceImpl extends ServiceImpl<SystemUserMapper, SystemUserModel> implements ISystemUserService {
 
 
@@ -60,6 +62,11 @@ public class SystemUserServiceImpl extends ServiceImpl<SystemUserMapper, SystemU
     }
 
     @Override
+    public int addSystemUser(SystemUserModel systemUserModel) throws Exception {
+        return systemUserMapper.insertSystemUser(systemUserModel);
+    }
+
+    @Override
     public SystemUserModel getUser(SystemUserModel systemUserModel) {
         return systemUserMapper.getUser(systemUserModel);
     }
@@ -81,7 +88,9 @@ public class SystemUserServiceImpl extends ServiceImpl<SystemUserMapper, SystemU
     public SystemUserModel register(SystemUserModel user) throws Exception {
 
 //        user.setStatus(true);
+        String userId = UUID.fastUUID().toString();
         user.setCreateTime(LocalDateTime.now());
+        user.setUserId(userId);
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         String encode = encoder.encode(user.getPassword());
         user.setPassword(encode);
@@ -90,18 +99,21 @@ public class SystemUserServiceImpl extends ServiceImpl<SystemUserMapper, SystemU
         user.setActTime(time.plusDays(7L));
 //        user.setUserBase64Name(");
         //新增用户
-        boolean result = this.save(user);
+        int insertFlag =  systemUserMapper.insertSystemUser(user);
         SystemRoleModel systemRoleModel = new SystemRoleModel();
         systemRoleModel.setRoleName("ROLE_NORMAL");
 
 
         SystemRoleModel roleModel = systemRoleService.getRoles(systemRoleModel);
 
-        if (result) {
-            //保存用户角色信息
-            SystemUserToRole userToRole = SystemUserToRole.builder().userId(user.getUserId()).roleId(roleModel.getRoleId()).build();
-            userToRoleService.save(userToRole);
+        if (insertFlag == 1) {
             String templateId = UUID.randomUUID().toString(true);
+            //保存用户角色信息
+            SystemUserToRole userToRole = new SystemUserToRole(templateId,userId,roleModel.getRoleId(),Boolean.TRUE,Boolean.FALSE);
+
+            userToRoleService.addUserToRoleModel(userToRole);
+
+
             SystemTemplateModel template = new SystemTemplateModel();
             template.setTemplateid(templateId);
             template.setTemplatename("默认模板");
@@ -111,7 +123,7 @@ public class SystemUserServiceImpl extends ServiceImpl<SystemUserMapper, SystemU
             systemTemplateService.save(template);
             //模板ID绑定用户ID
             //用户绑定模板表
-            SystemUserToTemplate userToTemplate = SystemUserToTemplate.builder().userId(user.getUserId()).templateId(templateId).userTemplateStatus(true).build();
+            SystemUserToTemplate userToTemplate = SystemUserToTemplate.builder().userId(userId).templateId(templateId).userTemplateStatus(true).build();
             userToTemplateService.save(userToTemplate);
             //注册时,在默认模板ID对应模板详情下存入默认关键词
             systemTemDetailsService.defaultSave(templateId);
@@ -134,6 +146,10 @@ public class SystemUserServiceImpl extends ServiceImpl<SystemUserMapper, SystemU
     }
 
 
+    /**
+     * 删除要一个一个删除  先去删除关联表  最后删除用户表   ！！！！！！！！！！！！！！！！！！！！！！！2020年12月20日21:50:50 待改 功能不可用
+     * @param user
+     */
     @Override
     public void removeUserAll(SystemUserModel user) {
 

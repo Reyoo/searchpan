@@ -43,23 +43,25 @@ public class AsyncSearchCachedServiceImpl {
     private final IMovieNameAndUrlService iMovieNameAndUrlService;
     @Value("${user.unread.weiduyingdan}")
     String unreadUrl;
+
     @Value("${user.lxxh.aidianying}")
     String lxxhUrl;
 
 
     /**
      * 启用 模糊查询
+     *
      * @param searchText
      * @return
      */
-    public List<MovieNameAndUrlModel> searchWord(String searchText) throws Exception{
+    public List<MovieNameAndUrlModel> searchWord(String searchText) throws Exception {
         //先去数据库中模糊查询
         //如果数据库中存在，则直接返回结果，
         List<MovieNameAndUrlModel> movieNameAndUrlModels = new ArrayList<>();
         //先去缓存找 没有数据库找
         movieNameAndUrlModels = (List<MovieNameAndUrlModel>) redisTemplate.opsForValue().get(searchText);
 
-        if(movieNameAndUrlModels == null || movieNameAndUrlModels.size()==0){
+        if (movieNameAndUrlModels == null || movieNameAndUrlModels.size() == 0) {
             movieNameAndUrlModels = iMovieNameAndUrlService.findLikeMovieUrl(searchText);
         }
 
@@ -112,18 +114,14 @@ public class AsyncSearchCachedServiceImpl {
                     redisTemplate.opsForValue().set(searchText, movieNameAndUrlModels, 60 * 24 * 15, TimeUnit.MINUTES);
                 }
 
-                //由于redis数据库设计、此处直接返回不做失效链接判断
-//                return movieNameAndUrlModels;
-
             } else {
                 //2.1.1  如果没有数据，从数据库中获取数据
                 //模糊查询是否放过？
-                movieNameAndUrlModels = movieNameAndUrlService.findMovieUrl(searchText);
+                movieNameAndUrlModels = movieNameAndUrlService.findLikeMovieUrl(searchText);
                 if (movieNameAndUrlModels != null && movieNameAndUrlModels.size() > 0) {
                     //记录到redis
                     redisTemplate.opsForValue().set(searchText, movieNameAndUrlModels, 60 * 24 * 15, TimeUnit.MINUTES);
-                    //返回结果
-//                    return movieNameAndUrlModels;
+
                 } else {
                     //重新爬虫，如果爬取到结果则保存到mysql 中， 如果没爬取到结果将redis设置为null;
                     List<MovieNameAndUrlModel> innerMovieList = new ArrayList();
@@ -132,19 +130,21 @@ public class AsyncSearchCachedServiceImpl {
                     unreadUrls.stream().forEach(movieNameAndUrl ->
                             innerMovieList.add(normalPageService.getMoviePanUrl(movieNameAndUrl)));
 
-                    //查询第二个链接
-                    List<MovieNameAndUrlModel> lxxhUrls = normalPageService.getNormalUrl(lxxhUrl + "/?s=" + searchText);
-                    lxxhUrls.stream().forEach(movieNameAndUrl ->
-                            innerMovieList.add(normalPageService.getMoviePanUrl2(movieNameAndUrl)));
+                    MovieNameAndUrlModel movieNameAndUrl = normalPageService.getMovieLoopsAiDianying(lxxhUrl + "/?s=" + searchText);
+
 
                     movieNameAndUrlModels = innerMovieList;
+                    movieNameAndUrlModels.add(movieNameAndUrl);
 
                     if (movieNameAndUrlModels != null && movieNameAndUrlModels.size() > 0) {
+
+
+                        //这个地方要做插入更新操作
                         movieNameAndUrlService.addMovieUrls(movieNameAndUrlModels);
+
+
                         redisTemplate.opsForValue().set(searchText, movieNameAndUrlModels, 60 * 24 * 15, TimeUnit.MINUTES);
 
-
-//                        return movieNameAndUrlModels;
                     } else {
                         redisTemplate.opsForValue().set(searchText, null, 60 * 24 * 15, TimeUnit.MINUTES);
                     }

@@ -13,4 +13,5 @@ public interface ISystemUserToTemplateService extends IService<SystemUserToTempl
 
     int removieTemplateIdAll(String tempid);
 
+
 }

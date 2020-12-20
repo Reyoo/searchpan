@@ -60,6 +60,9 @@ public class NormalPageService {
                 HttpMethod.GET, requestEntity, String.class);
         if (resultResponseEntity.getStatusCode() == HttpStatus.OK) {
             String html = resultResponseEntity.getBody();
+            System.out.println("==================");
+            System.out.println(html);
+            System.out.println("==================");
             Document doc = Jsoup.parse(html);
             Elements elements = doc.select("article");
 

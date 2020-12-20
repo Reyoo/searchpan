@@ -27,4 +27,7 @@ public interface MovieNameAndUrlMapper extends BaseMapper<MovieNameAndUrlModel> 
      int insertMovieUrl(MovieNameAndUrlModel movieNameAndUrlModel);
 
      int deleteUrlMovieUrls(MovieNameAndUrlModel movieNameAndUrlModel);
+
+
+     int updateUrlMovieUrls(MovieNameAndUrlModel movieNameAndUrlModel);
 }

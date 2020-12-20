@@ -133,6 +133,7 @@ public class SystemRoleImpl extends ServiceImpl<SystemRoleMapper, SystemRoleMode
     public Boolean checkRolerCouldDel(SystemRoleModel systemRoleModel) throws Exception {
 
         SystemRoleModel roleModel = getRoles(systemRoleModel);
+        System.out.println(roleModel.getAllowremove());
         if(roleModel.getAllowremove()){
             return  Boolean.TRUE;
         }
