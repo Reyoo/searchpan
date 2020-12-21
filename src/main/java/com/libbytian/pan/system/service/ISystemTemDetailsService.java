@@ -30,23 +30,24 @@ public interface ISystemTemDetailsService extends IService<SystemTemDetailsModel
 
      void exportTemDetails(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, @RequestParam String templateId)  throws Exception;
 
-
     /**
      * 根据用户信息获取 启用状态的模板详细List
      */
     List<SystemTemDetailsModel> getTemDetailsWithUser (SystemUserModel systemUserModel) throws Exception;
-
 
     List<SystemTemDetailsModel> listTemDetailsObjectsByWord(SystemTemDetailsModel systemTemDetailsModel);
 
     void  defaultSave(String templateId);
 
 
-
-
     SystemTemDetailsModel getUserKeywordDetail(String username,String keyword);
 
 
-
+    /**
+     * 根据用户ID 删除用户模板详细
+     * @param systemUserModel
+     * @return
+     */
+    int  dropTemplateDetailsByUser(SystemUserModel systemUserModel) throws Exception;
 
 }

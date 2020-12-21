@@ -1,6 +1,7 @@
 package com.libbytian.pan.system.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.libbytian.pan.system.model.SystemUserModel;
 import com.libbytian.pan.system.model.SystemUserToRole;
 import com.libbytian.pan.system.model.SystemUserToTemplate;
 import org.apache.ibatis.annotations.Mapper;
@@ -27,5 +28,8 @@ public interface SystemUserToTemplateMapper extends BaseMapper<SystemUserToTempl
      * @return
      */
     int deleteTemplateIdAll(String temped);
+
+
+    int deleteTemplateByUser(SystemUserModel systemUserModel);
 
 }

@@ -15,6 +15,7 @@ import com.libbytian.pan.system.service.ISystemTemplateService;
 import com.libbytian.pan.system.service.ISystemTmplToTmplDetailsService;
 import com.libbytian.pan.system.util.ReadOrWriteExcelUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -38,6 +39,7 @@ import java.util.stream.Collectors;
  */
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
+@Slf4j
 public class SystemTemDetailsServiceImpl extends ServiceImpl<SystemTemDetailsMapper, SystemTemDetailsModel> implements ISystemTemDetailsService {
 
 
@@ -351,6 +353,20 @@ public class SystemTemDetailsServiceImpl extends ServiceImpl<SystemTemDetailsMap
     public SystemTemDetailsModel getUserKeywordDetail(String username, String keyword) {
         return systemTemDetailsMapper.selectUserKeywordDetail(username, keyword);
 
+    }
+
+    @Override
+    public int dropTemplateDetailsByUser(SystemUserModel systemUserModel) throws Exception {
+
+        if (getTemDetailsWithUser(systemUserModel).size() < 0) {
+            return 0;
+        }else {
+            log.info("开始删除");
+            systemTemDetailsMapper.deleteTemplateDetailsByUser(systemUserModel);
+        }
+
+
+        return 0;
     }
 
 }

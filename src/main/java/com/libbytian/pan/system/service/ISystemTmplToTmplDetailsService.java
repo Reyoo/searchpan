@@ -20,4 +20,6 @@ public interface ISystemTmplToTmplDetailsService extends IService<SystemTemToTem
      * @return
      */
     int dropTemplateAndDetails(List<String> templateIds);
+
+
 }

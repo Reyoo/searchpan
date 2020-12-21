@@ -33,18 +33,11 @@ public interface SystemTemDetailsMapper extends BaseMapper<SystemTemDetailsModel
 
     List<SystemTemDetailsModel> listTemDetailsObjectsByWord(SystemTemDetailsModel systemTemDetailsModel);
 
-
-
-
-
-
-
-
     SystemTemDetailsModel selectUserKeywordDetail(String username,String keyword);
 
-
-
     int insertSystemTemDetails(SystemTemDetailsModel systemTemDetailsModels);
+
+    int deleteTemplateDetailsByUser(SystemUserModel systemUserModel);
 
 
 

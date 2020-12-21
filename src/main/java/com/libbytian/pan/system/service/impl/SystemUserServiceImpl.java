@@ -16,6 +16,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.xml.crypto.dsig.spec.ExcC14NParameterSpec;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Base64;
@@ -99,7 +100,7 @@ public class SystemUserServiceImpl extends ServiceImpl<SystemUserMapper, SystemU
         user.setActTime(time.plusDays(7L));
 //        user.setUserBase64Name(");
         //新增用户
-        int insertFlag =  systemUserMapper.insertSystemUser(user);
+        int insertFlag = systemUserMapper.insertSystemUser(user);
         SystemRoleModel systemRoleModel = new SystemRoleModel();
         systemRoleModel.setRoleName("ROLE_NORMAL");
 
@@ -109,7 +110,7 @@ public class SystemUserServiceImpl extends ServiceImpl<SystemUserMapper, SystemU
         if (insertFlag == 1) {
             String templateId = UUID.randomUUID().toString(true);
             //保存用户角色信息
-            SystemUserToRole userToRole = new SystemUserToRole(templateId,userId,roleModel.getRoleId(),Boolean.TRUE,Boolean.FALSE);
+            SystemUserToRole userToRole = new SystemUserToRole(templateId, userId, roleModel.getRoleId(), Boolean.TRUE, Boolean.FALSE);
 
             userToRoleService.addUserToRoleModel(userToRole);
 
@@ -129,7 +130,7 @@ public class SystemUserServiceImpl extends ServiceImpl<SystemUserMapper, SystemU
             systemTemDetailsService.defaultSave(templateId);
 
 
-            SystemKeywordModel systemKeywordModel = new SystemKeywordModel( );
+            SystemKeywordModel systemKeywordModel = new SystemKeywordModel();
             systemKeywordModel.setUserSafeKey("http://51.findfish.top/wechat/portal/" + Base64.getEncoder().encodeToString(user.getUsername().getBytes()));
             systemKeywordModel.setKeywordId(templateId);
             systemKeywordModel.setStartTime("00:00");
@@ -137,7 +138,7 @@ public class SystemUserServiceImpl extends ServiceImpl<SystemUserMapper, SystemU
             //新增用户 信息类 插入关键字表
             keywordService.addkeyword(systemKeywordModel);
             //插入关联表
-            SystemUserToKeyword systemUserToKeyword = new SystemUserToKeyword(UUID.randomUUID().toString(true),user.getUserId(),templateId);
+            SystemUserToKeyword systemUserToKeyword = new SystemUserToKeyword(UUID.randomUUID().toString(true), user.getUserId(), templateId);
             systemUserToKeywordMapper.insertSysuserToKeyword(systemUserToKeyword);
 
 
@@ -148,12 +149,29 @@ public class SystemUserServiceImpl extends ServiceImpl<SystemUserMapper, SystemU
 
     /**
      * 删除要一个一个删除  先去删除关联表  最后删除用户表   ！！！！！！！！！！！！！！！！！！！！！！！2020年12月20日21:50:50 待改 功能不可用
+     *
      * @param user
      */
     @Override
-    public void removeUserAll(SystemUserModel user) {
+    public void removeUserAll(SystemUserModel user)    {
 
-        systemUserMapper.removeUserAll(user);
+
+//        1、拿着用户ID先去 删除模板用户关联表中的 模板详细
+        try {
+            systemTemDetailsService.dropTemplateDetailsByUser(user);
+        }catch (Exception e){
+            log.error("删除失败");
+            log.error(e.getMessage()+ " 元数据为： "+user);
+        }
+
+
+
+
+//        2、删除模板
+//        3、删除用户与模板关联表
+//        4、删除角色用户关联表
+//        5、删除用户表
+
 
     }
 

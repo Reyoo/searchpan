@@ -180,4 +180,25 @@
     </insert>
 
 
+
+
+
+    <!-- 批量删除 -->
+    <delete id="deleteTemplateDetailsByUser" parameterType="com.libbytian.pan.system.model.SystemUserModel">
+        DELETE
+        FROM
+            sys_temdetails
+        WHERE
+                templatedetails_id IN (
+                SELECT
+                    templatedetails_id
+                FROM
+                    sys_user s
+                        LEFT JOIN user_template ut ON s.user_id = ut.user_id
+                        LEFT JOIN tem_temdetails tt ON tt.template_id = ut.template_id WHERE s.user_id = #{userId}
+            )
+    </delete>
+
+
+
 </mapper>
