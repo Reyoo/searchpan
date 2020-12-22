@@ -15,13 +15,14 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 @RequestMapping("/role")
 @Slf4j
-public class RoleController {
+public class FindFishRoleController {
 
     private final IRoleToPermissionService iRoleToPermissionService;
     private final ISystemUserToRoleService iSystemUserToRoleService;
@@ -31,6 +32,7 @@ public class RoleController {
 
     /**
      * 查询角色
+     *
      * @param systemRoleModel
      * @return
      */
@@ -71,7 +73,8 @@ public class RoleController {
     public AjaxResult addRole(@RequestBody SystemRoleModel role) {
         try {
             role.setCreateTime(LocalDateTime.now());
-            iSystemRoleService.save(role);
+            role.setRoleId(UUID.randomUUID().toString());
+            iSystemRoleService.addFindFishRole(role);
             return AjaxResult.success();
         } catch (Exception e) {
             log.error(e.getMessage());
@@ -90,10 +93,10 @@ public class RoleController {
     public AjaxResult putRole(@RequestBody SystemRoleModel role) {
 
         try {
-            if(iSystemRoleService.checkRolerCouldDel(role)){
+            if (iSystemRoleService.checkRolerCouldDel(role)) {
                 iSystemRoleService.updateById(role);
                 return AjaxResult.success();
-            }else {
+            } else {
                 return AjaxResult.error("该角色为系统保留用户禁止修改");
             }
 
@@ -111,6 +114,7 @@ public class RoleController {
     /**
      * HuangS
      * 根据角色ID删除角色
+     *
      * @param role 必传（roleId，roleName）
      * @return
      */
@@ -125,7 +129,7 @@ public class RoleController {
 //                return AjaxResult.error("该用户权限不允许修改");
 //            }
 
-            if(!iSystemRoleService.checkRolerCouldDel(role)){
+            if (!iSystemRoleService.checkRolerCouldDel(role)) {
                 return AjaxResult.error("该角色为系统保留用户禁止删除");
             }
 
@@ -138,7 +142,8 @@ public class RoleController {
                 return AjaxResult.error("该角色已绑定用户，不可删除");
             }
 
-            iSystemRoleService.dropRole(role.getRoleId());
+
+            iSystemRoleService.dropRole(role);
             return AjaxResult.success();
         } catch (Exception e) {
             return AjaxResult.error(e.getMessage());
@@ -148,6 +153,7 @@ public class RoleController {
 
     /**
      * 查询角色下绑定的权限
+     *
      * @param systemRoleModel
      * @return
      */

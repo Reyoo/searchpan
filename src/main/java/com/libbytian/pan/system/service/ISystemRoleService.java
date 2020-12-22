@@ -23,7 +23,6 @@ public interface ISystemRoleService extends IService<SystemRoleModel> {
      */
     List<SystemRoleModel> listRolesByUser(SystemUserModel user);
 
-
     SystemRoleModel getRoles(SystemRoleModel systemRoleModel);
 
     IPage<SystemRoleModel> getRolesPage(Page page , SystemRoleModel systemRoleModel);
@@ -32,15 +31,21 @@ public interface ISystemRoleService extends IService<SystemRoleModel> {
 
     IPage<SystemRoleModel> findRole(Page<SystemRoleModel> page , SystemRoleModel systemRoleModel) throws Exception;
 
-    int dropRole(String roleId) throws Exception;
-
+    int dropRole(SystemRoleModel systemRoleModel) throws Exception;
 
     boolean checkEmail(String roleName) throws Exception;
-
 
     List<SystemRoleModel> getRoleInfoByUser(SystemUserModel systemUserModel);
 
     Boolean checkRolerCouldDel(SystemRoleModel systemRoleModel) throws Exception;
+
+
+    /**
+     * 新增角色 单个角色额
+     */
+
+    int addFindFishRole(SystemRoleModel systemRoleModel);
+
 
 
 }

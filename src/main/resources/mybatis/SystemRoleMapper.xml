@@ -140,4 +140,83 @@
         </trim>
     </select>
 
+
+
+    <insert id="insertFindFishRole" parameterType="com.libbytian.pan.system.model.SystemRoleModel">
+        INSERT INTO sys_role
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="roleId != null">
+                role_id,
+            </if>
+            <if test="roleName != null">
+                role_name,
+            </if>
+            <if test="showName != null">
+                show_name,
+            </if>
+
+            <if test="roleStatus != null">
+                role_status,
+            </if>
+
+            <if test="createTime != null">
+                createtime,
+            </if>
+
+            <if test="allowremove != null">
+                allowremove,
+            </if>
+        </trim>
+
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="roleId != null">
+                #{roleId,jdbcType=VARCHAR},
+            </if>
+
+            <if test="roleName != null">
+                #{roleName,jdbcType=VARCHAR},
+            </if>
+
+            <if test="showName != null">
+                #{showName,jdbcType=VARCHAR},
+            </if>
+
+            <if test="roleStatus != null">
+                #{roleStatus,jdbcType=TINYINT},
+            </if>
+
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+
+            <if test="allowremove != null">
+                #{allowremove,jdbcType=TINYINT},
+            </if>
+
+        </trim>
+
+
+    </insert>
+
+
+
+
+    <delete id="deleteFindFishRole" parameterType="com.libbytian.pan.system.model.SystemRoleModel">
+        DELETE
+        FROM sys_role
+        <trim prefix="WHERE(" prefixOverrides="and|">
+            <if test="roleId != null and roleId != ''">
+                AND role_id= #{roleId}
+            </if>
+            <if test="roleName != null and roleName != ''">
+                AND role_name= #{roleName}
+            </if>
+            <if test="showName != null and showName != ''">
+                AND show_name= #{showName}
+            </if>)
+        </trim>
+
+
+    </delete>
+
 </mapper>

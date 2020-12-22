@@ -3,6 +3,7 @@ package com.libbytian.pan.system.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.libbytian.pan.system.model.SystemTemDetailsModel;
 import com.libbytian.pan.system.model.SystemTemToTemdetail;
+import com.libbytian.pan.system.model.SystemUserModel;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -26,5 +27,9 @@ public interface SystemTemToTemDetailsMapper extends BaseMapper<SystemTemToTemde
      * @return
      */
     int deleteTemplateAndDetails(List<String> templateDetailsList);
+
+
+
+    int deleteFindFishTempToTempDetailsByUser(SystemUserModel systemUserModel);
 
 }

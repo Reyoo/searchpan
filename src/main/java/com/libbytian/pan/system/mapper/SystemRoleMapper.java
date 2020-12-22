@@ -31,4 +31,8 @@ public interface SystemRoleMapper extends BaseMapper<SystemRoleModel> {
 
     List<SystemRoleModel> selectUserRoleByUser(SystemUserModel systemUserModel);
 
+    int insertFindFishRole(SystemRoleModel systemRoleModel);
+
+    int deleteFindFishRole(SystemRoleModel systemRoleModel);
+
 }

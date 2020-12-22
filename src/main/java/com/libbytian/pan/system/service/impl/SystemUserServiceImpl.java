@@ -41,6 +41,7 @@ public class SystemUserServiceImpl extends ServiceImpl<SystemUserMapper, SystemU
 
     private final SystemUserMapper systemUserMapper;
     private final SystemTemplateMapper systemTemplateMapper;
+    private final SystemTemToTemDetailsMapper systemTemToTemDetailsMapper ;
 
     private final SystemUserToTemplateMapper systemUserToTemplateMapper;
 
@@ -176,9 +177,12 @@ public class SystemUserServiceImpl extends ServiceImpl<SystemUserMapper, SystemU
             //删除模板表
             log.info("刪除模板表");
             systemTemplateMapper.deleteTemplateByUser(user);
+            //删除模板与模板详细关联表
+            systemTemToTemDetailsMapper.deleteFindFishTempToTempDetailsByUser(user);
             //删除用户模板关联表
             log.info("刪除用户模板关联表");
             systemUserToTemplateMapper.deleteUserToTemplateByUserId(user);
+
             //删除用户角色关联表中数据
             log.info("删除角色关联表");
             userToRoleMapper.deleteUserRoleByUserModel(user);

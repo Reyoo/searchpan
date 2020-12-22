@@ -9,6 +9,7 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.HashMap;
@@ -16,6 +17,7 @@ import java.util.HashMap;
 @SpringBootApplication
 @EnableCaching
 @EnableAsync
+@EnableTransactionManagement
 public class SearchpanApplication {
 
 	public static void main(String[] args) {

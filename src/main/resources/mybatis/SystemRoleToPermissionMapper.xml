@@ -4,23 +4,24 @@
 
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.libbytian.pan.system.model.SystemRoleToPermission">
-        <id column="role_permission_id" property="rolepermissionId" />
-        <result column="role_id" property="roleId" />
-        <result column="permission_id" property="permissionId" />
-        <result column="role_permission_status" property="rolepermissionstatus" />
+        <id column="role_permission_id" property="rolepermissionId"/>
+        <result column="role_id" property="roleId"/>
+        <result column="permission_id" property="permissionId"/>
+        <result column="role_permission_status" property="rolepermissionstatus"/>
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-         role_permission_id AS rolepermissionId,
+        role_permission_id
+        AS rolepermissionId,
          role_id AS roleId,
          permission_id AS permissionId,
          role_permission_status AS rolepermissionstatus
     </sql>
 
 
-
-    <select id="listRoleToPermissionObjects" parameterType="com.libbytian.pan.system.model.SystemRoleToPermission" resultType="com.libbytian.pan.system.model.SystemRoleToPermission">
+    <select id="listRoleToPermissionObjects" parameterType="com.libbytian.pan.system.model.SystemRoleToPermission"
+            resultType="com.libbytian.pan.system.model.SystemRoleToPermission">
         SELECT
         <include refid="Base_Column_List"/>
         FROM role_permission
@@ -58,6 +59,11 @@
     </delete>
 
 
+    <delete id="deleteRoleToPermissionByRole" parameterType="com.libbytian.pan.system.model.SystemRoleModel">
+        DELETE
+        FROM role_permission
+        WHERE role_id = #{roleId}
+    </delete>
 
 
 </mapper>

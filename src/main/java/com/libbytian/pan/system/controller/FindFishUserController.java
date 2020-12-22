@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 @RequestMapping("/user")
 @Slf4j
-public class UserController {
+public class FindFishUserController {
 
     private final ISystemUserService iSystemUserService;
     private final ISystemUserToRoleService iSystemUserToRoleService;

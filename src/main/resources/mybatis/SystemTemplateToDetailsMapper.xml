@@ -4,30 +4,31 @@
 
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.libbytian.pan.system.model.SystemTemToTemdetail">
-        <id column="tem_temdetails_id" property="temtemdetailsid" />
-        <result column="template_id" property="templateid" />
-        <result column="templatedetails_id" property="templatedetailsid" />
+        <id column="tem_temdetails_id" property="temtemdetailsid"/>
+        <result column="template_id" property="templateid"/>
+        <result column="templatedetails_id" property="templatedetailsid"/>
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-         t.tem_temdetails_id AS temtemdetailsid,
+        t
+        .
+        tem_temdetails_id
+        AS temtemdetailsid,
          t.template_id AS templateid,
          t.templatedetails_id AS templatedetailsid
     </sql>
-
-
 
 
     <insert id="insertTmeplateToTemplateDetails">
         INSERT INTO tem_temdetails
         (tem_temdetails_id, template_id, templatedetails_id)
         VALUES
-        <foreach collection ="list" item="systemTemToTemdetails" separator =",">
-            (#{systemTemToTemdetails.temtemdetailsid}, #{systemTemToTemdetails.templateid}, #{systemTemToTemdetails.templatedetailsid})
-        </foreach >
+        <foreach collection="list" item="systemTemToTemdetails" separator=",">
+            (#{systemTemToTemdetails.temtemdetailsid}, #{systemTemToTemdetails.templateid},
+            #{systemTemToTemdetails.templatedetailsid})
+        </foreach>
     </insert>
-
 
 
     <!-- 批量删除 -->
@@ -36,6 +37,22 @@
         <foreach collection="list" item="templateDetailsList" separator="," open="(" close=")">
             #{templateDetailsList,jdbcType=VARCHAR}
         </foreach>
+    </delete>
+
+
+    <delete id="deleteFindFishTempToTempDetailsByUser" parameterType="com.libbytian.pan.system.model.SystemUserModel">
+        DELETE
+        FROM
+            tem_temdetails
+        WHERE
+                template_id IN (
+                SELECT
+                    template_id
+                FROM
+                    user_template
+                        LEFT JOIN sys_user ON user_template.user_id = sys_user.user_id
+                WHERE
+                    sys_user.user_id = #{userId})
     </delete>
 
 
