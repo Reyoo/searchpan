@@ -83,4 +83,14 @@
 
 
 
+    <!-- 批量删除 -->
+    <delete id="deleteTemplateByUser" parameterType="com.libbytian.pan.system.model.SystemUserModel">
+        DELETE
+        FROM
+            sys_template
+        WHERE
+                template_id IN ( SELECT ut.template_id FROM user_template ut LEFT JOIN sys_user u ON ut.user_id = u.user_id WHERE u.user_id =#{userId} )
+    </delete>
+
+
 </mapper>

@@ -38,4 +38,10 @@ public class SystemKeywordServiceImpl extends ServiceImpl<SystemKeywordMapper, S
     public int addkeyword(SystemKeywordModel systemKeywordModel) {
         return systemKeywordMapper.insertKeyword(systemKeywordModel);
     }
+    @Override
+    public int dropKeywordByUser(SystemUserModel systemUserModel) {
+        return systemKeywordMapper.deleteKeywordByUser(systemUserModel);
+    }
+
+
 }

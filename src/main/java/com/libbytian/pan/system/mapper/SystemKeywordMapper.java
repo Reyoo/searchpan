@@ -31,4 +31,12 @@ public interface SystemKeywordMapper extends BaseMapper<SystemKeywordModel> {
      */
     int insertKeyword(SystemKeywordModel systemKeywordModel);
 
+
+    /**
+     * 根据用户删除关键字
+     * @param systemUserModel
+     * @return
+     */
+    int deleteKeywordByUser(SystemUserModel systemUserModel);
+
 }

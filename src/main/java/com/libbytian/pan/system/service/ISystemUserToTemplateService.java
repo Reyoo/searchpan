@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-@Transactional(propagation = Propagation.REQUIRES_NEW)
+
 public interface ISystemUserToTemplateService extends IService<SystemUserToTemplate> {
 
     int removieTemplateIdAll(String tempid);
@@ -17,7 +17,11 @@ public interface ISystemUserToTemplateService extends IService<SystemUserToTempl
 
 
 
-    int dropTemplateByUserId(SystemUserModel systemUserModel) throws Exception;
+    int dropUserToTemplateByUserId(SystemUserModel systemUserModel) throws Exception;
+
+
+
+
 
 
 }

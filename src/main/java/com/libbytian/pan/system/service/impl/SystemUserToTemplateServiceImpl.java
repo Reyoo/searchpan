@@ -20,14 +20,15 @@ public class SystemUserToTemplateServiceImpl extends ServiceImpl<SystemUserToTem
     private final SystemUserToTemplateMapper systemUserToTemplateMapper;
 
 
-    @Override
-    public int dropTemplateByUserId(SystemUserModel systemUserModel) throws Exception {
-        return systemUserToTemplateMapper.deleteTemplateByUser(systemUserModel);
-    }
 
     @Override
     public int removieTemplateIdAll(String tempid) {
         return systemUserToTemplateMapper.deleteTemplateIdAll(tempid);
+    }
+
+    @Override
+    public int dropUserToTemplateByUserId(SystemUserModel systemUserModel) throws Exception {
+        return systemUserToTemplateMapper.deleteUserToTemplateByUserId(systemUserModel);
     }
 
 }

@@ -75,6 +75,8 @@ public class UserController {
             }
 
         } catch (Exception e) {
+            e.getMessage();
+            log.error(e.getMessage());
             return AjaxResult.error("delete error");
         }
     }

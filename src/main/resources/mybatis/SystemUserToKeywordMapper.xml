@@ -51,5 +51,14 @@
 
 
 
+    <!-- 批量删除 -->
+    <delete id="deleteUserToKeywordByUser" parameterType="com.libbytian.pan.system.model.SystemUserModel">
+        DELETE
+        FROM
+            sys_user_keyword
+        WHERE
+                user_id  =#{userId}
+    </delete>
+
 
 </mapper>

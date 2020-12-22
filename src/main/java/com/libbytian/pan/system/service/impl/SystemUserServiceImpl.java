@@ -6,11 +6,11 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.libbytian.pan.system.mapper.SystemUserMapper;
-import com.libbytian.pan.system.mapper.SystemUserToKeywordMapper;
+import com.libbytian.pan.system.mapper.*;
 import com.libbytian.pan.system.model.*;
 import com.libbytian.pan.system.service.*;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -33,20 +33,33 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 @Transactional
+@Slf4j
 public class SystemUserServiceImpl extends ServiceImpl<SystemUserMapper, SystemUserModel> implements ISystemUserService {
 
 
     private final ISystemUserToRoleService userToRoleService;
 
     private final SystemUserMapper systemUserMapper;
+    private final SystemTemplateMapper systemTemplateMapper;
+
+    private final SystemUserToTemplateMapper systemUserToTemplateMapper;
+
+    private final SystemKeywordMapper systemKeywordMapper;
+
 
     private final ISystemRoleService systemRoleService;
+
+
+    private final SystemUserToRoleMapper userToRoleMapper;
+
 
     private final ISystemUserToTemplateService userToTemplateService;
 
     private final ISystemTemplateService systemTemplateService;
 
     private final ISystemTemDetailsService systemTemDetailsService;
+
+    private final SystemTemDetailsMapper systemTemDetailsMapper;
 
     private final ISystemKeywordService keywordService;
 
@@ -55,8 +68,8 @@ public class SystemUserServiceImpl extends ServiceImpl<SystemUserMapper, SystemU
 
     @Override
     public Boolean checkUserCouldDel(SystemUserModel user) throws Exception {
-        SystemUserModel systemUserModel = getUser(user);
-        if (systemUserModel.getAllowremove()) {
+        SystemUserModel systemUserModelInfo = getUser(user);
+        if (systemUserModelInfo.getAllowremove()) {
             return Boolean.TRUE;
         }
         return Boolean.FALSE;
@@ -153,17 +166,32 @@ public class SystemUserServiceImpl extends ServiceImpl<SystemUserMapper, SystemU
      * @param user
      */
     @Override
-    public void removeUserAll(SystemUserModel user)    {
+    public void removeUserAll(SystemUserModel user) throws  Exception{
 
 
-//        1、拿着用户ID先去 删除模板用户关联表中的 模板详细
-        try {
-            systemTemDetailsService.dropTemplateDetailsByUser(user);
-        }catch (Exception e){
-            log.error("删除失败");
-            log.error(e.getMessage()+ " 元数据为： "+user);
-        }
 
+            //删除模板详细
+            log.info("删除模板详细");
+            systemTemDetailsMapper.deleteTemplateDetailsByUser(user);
+            //删除模板表
+            log.info("刪除模板表");
+            systemTemplateMapper.deleteTemplateByUser(user);
+            //删除用户模板关联表
+            log.info("刪除用户模板关联表");
+            systemUserToTemplateMapper.deleteUserToTemplateByUserId(user);
+            //删除用户角色关联表中数据
+            log.info("删除角色关联表");
+            userToRoleMapper.deleteUserRoleByUserModel(user);
+            //删除用户关键词
+            log.info("刪除用户关键词");
+            systemKeywordMapper.deleteKeywordByUser(user);
+//            删除用户关键词关联表
+            log.info("删除用户关键词关联表");
+            systemUserToKeywordMapper.deleteUserToKeywordByUser(user);
+//            删除用户表
+
+            log.info("删除用户表");
+            systemUserMapper.deleteSysUserByUser(user);
 
 
 

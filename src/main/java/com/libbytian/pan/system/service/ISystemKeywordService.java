@@ -14,7 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
  * 描述: TODO
  */
 
-@Transactional(propagation = Propagation.REQUIRES_NEW)
+
 public interface ISystemKeywordService extends IService<SystemKeywordModel> {
 
     SystemKeywordModel getKeywordByUser(String username);
@@ -23,4 +23,7 @@ public interface ISystemKeywordService extends IService<SystemKeywordModel> {
 
 
     int addkeyword(SystemKeywordModel systemKeywordModel);
+
+
+    int dropKeywordByUser(SystemUserModel systemUserModel);
 }

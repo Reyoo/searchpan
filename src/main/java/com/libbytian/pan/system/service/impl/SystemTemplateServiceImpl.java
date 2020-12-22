@@ -69,4 +69,15 @@ public class SystemTemplateServiceImpl extends ServiceImpl<SystemTemplateMapper,
         return Boolean.FALSE;
     }
 
+    /**
+     * 根据用户 删除用户模板
+     * @param systemUserModel
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public int dropTemplateByUser(SystemUserModel systemUserModel) throws Exception {
+        return systemTemplateMapper.deleteTemplateByUser(systemUserModel);
+    }
+
 }

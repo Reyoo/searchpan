@@ -12,7 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Map;
 
-@Transactional(propagation = Propagation.REQUIRES_NEW)
+
 public interface ISystemTemplateService extends IService<SystemTemplateModel> {
 
 
@@ -24,5 +24,13 @@ public interface ISystemTemplateService extends IService<SystemTemplateModel> {
 
      boolean checkTemplateIsBinded(SystemUserModel systemUserModel);
 
+
+     /**
+      * 根据用户删除模板表
+      * @param systemUserModel
+      * @return
+      * @throws Exception
+      */
+     int dropTemplateByUser(SystemUserModel systemUserModel) throws  Exception;
 
 }

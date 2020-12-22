@@ -18,4 +18,6 @@ public interface SystemUserToKeywordMapper extends BaseMapper<SystemUserToKeywor
 
     int insertSysuserToKeyword(SystemUserToKeyword systemUserToKeyword);
 
+    int deleteUserToKeywordByUser(SystemUserModel systemUserModel);
+
 }

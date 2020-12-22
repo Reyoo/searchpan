@@ -30,6 +30,7 @@ public interface SystemUserToTemplateMapper extends BaseMapper<SystemUserToTempl
     int deleteTemplateIdAll(String temped);
 
 
-    int deleteTemplateByUser(SystemUserModel systemUserModel);
+    int deleteUserToTemplateByUserId(SystemUserModel systemUserModel);
+
 
 }

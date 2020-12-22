@@ -111,4 +111,14 @@
         </trim>
     </insert>
 
+
+    <!-- 批量删除 -->
+    <delete id="deleteKeywordByUser" parameterType="com.libbytian.pan.system.model.SystemUserModel">
+        DELETE
+        FROM
+            sys_keyword
+        WHERE
+                keyword_id IN ( SELECT keyword_id FROM sys_user_keyword LEFT JOIN sys_user ON sys_user_keyword.user_id = sys_user.user_id WHERE sys_user.user_id = #{userId} )
+    </delete>
+
 </mapper>

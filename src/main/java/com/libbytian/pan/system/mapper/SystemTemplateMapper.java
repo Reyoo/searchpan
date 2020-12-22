@@ -28,5 +28,7 @@ public interface SystemTemplateMapper extends BaseMapper<SystemTemplateModel> {
 
     List<SystemTemplateModel> listTemplatelObjects(SystemTemplateModel systemTemplateModel);
 
+    int deleteTemplateByUser(SystemUserModel systemUserModel);
+
 
 }

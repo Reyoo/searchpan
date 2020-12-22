@@ -34,8 +34,6 @@ public class TemplateController {
     private final ISystemTemDetailsService iSystemTemDetailsService;
 
 
-
-
     /**
      * @param systemTemplateModel
      * @return
@@ -55,18 +53,17 @@ public class TemplateController {
     }
 
 
-
-
     /**
      * 删除用户模板
      * HuangS
      * 同时删除 用户模板表、模板表、模板详情表、详情表中对应数据
+     *
      * @param tempid
      * @return
      */
     @RequestMapping(value = "/drop/{tempid}", method = RequestMethod.DELETE)
     @Transactional
-    public AjaxResult removeTemplate( @PathVariable(value = "tempid") String tempid){
+    public AjaxResult removeTemplate(@PathVariable(value = "tempid") String tempid) {
 
         try {
 
@@ -108,15 +105,16 @@ public class TemplateController {
 
     /**
      * 更新模板模板
+     *
      * @param systemTemplateModel
      * @return
      */
     @RequestMapping(value = "/refresh", method = RequestMethod.PATCH)
     @Transactional
-    public AjaxResult updateTemplate(HttpServletRequest httpRequest,@RequestBody(required = true) SystemTemplateModel systemTemplateModel) {
+    public AjaxResult updateTemplate(HttpServletRequest httpRequest, @RequestBody(required = true) SystemTemplateModel systemTemplateModel) {
 
         try {
-            if(StrUtil.isBlank(systemTemplateModel.getTemplateid())){
+            if (StrUtil.isBlank(systemTemplateModel.getTemplateid())) {
                 return AjaxResult.error("不能为空");
             }
 
@@ -126,15 +124,15 @@ public class TemplateController {
             //校验模板
             Boolean hasTemplateOn = iSystemTemplateService.checkTemplateIsBinded(userModel);
 
-            if(hasTemplateOn){
+            if (hasTemplateOn) {
                 return AjaxResult.error("不允许同时启用多个模板,如需要使用该模板,请关闭启用状态模板");
             }
 
             boolean isupdate = iSystemTemplateService.updateById(systemTemplateModel);
-            if(isupdate){
+            if (isupdate) {
                 return AjaxResult.success();
             }
-           return AjaxResult.error();
+            return AjaxResult.error();
         } catch (Exception e) {
             log.error(e.getMessage());
             return AjaxResult.error(e.getMessage());
@@ -142,11 +140,11 @@ public class TemplateController {
     }
 
 
-
     /**
      * 新增用户模板表
      * HuangS
      * 新增模板设置默认关键字
+     *
      * @param
      * @return
      */
@@ -156,15 +154,16 @@ public class TemplateController {
 
         try {
 
-//            String username = httpRequest.getRemoteUser();
-            String username  = "qi@qi.com";
+            String username = httpRequest.getRemoteUser();
+            System.out.println(httpRequest.getRemoteUser());
+            ;
             SystemUserModel userModel = new SystemUserModel();
             userModel.setUsername(username);
 
-            if(systemTemplateModel.getTemplatestatus() ==true){
+            if (systemTemplateModel.getTemplatestatus() == true) {
                 //校验模板
                 Boolean hasTemplateOn = iSystemTemplateService.checkTemplateIsBinded(userModel);
-                if(hasTemplateOn){
+                if (hasTemplateOn) {
                     return AjaxResult.error("不允许同时启用多个模板,如需要使用该模板,请关闭启用状态模板");
                 }
             }

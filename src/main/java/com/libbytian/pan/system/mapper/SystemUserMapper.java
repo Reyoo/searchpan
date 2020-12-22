@@ -16,7 +16,6 @@ import java.util.List;
  * @since 2018-05-03
  */
 @Mapper
-@Repository
 public interface SystemUserMapper extends BaseMapper<SystemUserModel> {
 
 
@@ -30,6 +29,9 @@ public interface SystemUserMapper extends BaseMapper<SystemUserModel> {
     SystemUserModel getUserByUerToTemplate(String templateId);
 
     int insertSystemUser(SystemUserModel systemUserModel);
+
+
+    int deleteSysUserByUser(SystemUserModel systemUserModel);
 
 
 }

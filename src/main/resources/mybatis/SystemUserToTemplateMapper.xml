@@ -48,5 +48,14 @@
 
 
 
+    <!-- 批量删除 -->
+    <delete id="deleteUserToTemplateByUserId" parameterType="com.libbytian.pan.system.model.SystemUserModel">
+        DELETE
+        FROM
+            user_template
+        WHERE
+            user_id = #{userId}
+    </delete>
+
 
 </mapper>

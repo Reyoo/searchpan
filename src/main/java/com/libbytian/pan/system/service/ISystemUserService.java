@@ -53,7 +53,7 @@ public interface ISystemUserService extends IService<SystemUserModel> {
      * 删除用户时，同时删除权限关联表，模板关联表中数据
      * @param user
      */
-    void removeUserAll(SystemUserModel user);
+    void removeUserAll(SystemUserModel user) throws Exception;
 
 
     SystemUserModel updateUser(SystemUserModel user) throws Exception;

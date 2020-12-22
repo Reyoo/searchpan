@@ -61,4 +61,16 @@
     </insert>
 
 
+    <!-- 批量删除 -->
+    <delete id="deleteUserRoleByUserModel" parameterType="com.libbytian.pan.system.model.SystemUserModel">
+        DELETE
+        FROM
+            sys_user_role
+        WHERE
+                user_id =#{userId}
+    </delete>
+
+
+
+
 </mapper>
