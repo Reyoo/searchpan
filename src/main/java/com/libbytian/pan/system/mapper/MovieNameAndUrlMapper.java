@@ -16,18 +16,71 @@ import java.util.List;
 public interface MovieNameAndUrlMapper extends BaseMapper<MovieNameAndUrlModel> {
 
 
-    List<MovieNameAndUrlModel> selectMovieUrlByName (String movieName)   ;
-
-    List<MovieNameAndUrlModel> selectMovieUrlByLikeName (String movieName)   ;
+    List<MovieNameAndUrlModel> selectMovieUrlByName(String tablename , String movieName);
 
 
-     int insertMovieUrls(List<MovieNameAndUrlModel> movieNameAndUrlModels);
+
+    List<MovieNameAndUrlModel> selectAiDianYingMovieUrlByName(String movieName);
+
+    /**
+     * 查找爱电影电影名资源
+     * @param movieName
+     * @return
+     */
+    List<MovieNameAndUrlModel> selectAiDianYingMovieUrlByLikeName(String movieName);
 
 
-     int insertMovieUrl(MovieNameAndUrlModel movieNameAndUrlModel);
+    /**
+     * 未读爱电影批量新增
+     * @param movieNameAndUrlModels
+     * @return
+     */
+    int insertMovieUrls(List<MovieNameAndUrlModel> movieNameAndUrlModels);
 
-     int deleteUrlMovieUrls(MovieNameAndUrlModel movieNameAndUrlModel);
+    /**
+     * 爱电影新增
+     * @param movieNameAndUrlModel
+     * @return
+     */
+    int insertMovieUrl(MovieNameAndUrlModel movieNameAndUrlModel);
 
 
-     int updateUrlMovieUrls(MovieNameAndUrlModel movieNameAndUrlModel);
+    /**
+     * 删除爱电影资源
+     * @param movieNameAndUrlModel
+     * @return
+     */
+    int deleteUrlMovieUrls(MovieNameAndUrlModel movieNameAndUrlModel);
+
+
+    /**
+     * 更新爱电影资源
+     * @param movieNameAndUrlModel
+     * @return
+     */
+
+
+
+
+    int updateAiDianYingUrlMovieUrls(MovieNameAndUrlModel movieNameAndUrlModel);
+
+
+
+
+
+    /**
+     * 查找未读影单电影资源
+     * @param movieName
+     * @return
+     */
+    List<MovieNameAndUrlModel> selectUnReadMovieUrlByLikeName(String movieName);
+
+
+    /**
+     * 暂时未使用
+     * @param movieNameAndUrlModel
+     * @return
+     */
+    int updateUrlMovieUrls(MovieNameAndUrlModel movieNameAndUrlModel);
+
 }

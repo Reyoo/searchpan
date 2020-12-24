@@ -203,7 +203,10 @@ public class WxPortalController {
 
 //            异步获取一次消息
                 String searchWord = inMessage.getContent().trim();
-                asyncSearchCachedService.searchAsyncWord(searchWord);
+                List<String> crawlerNames = new ArrayList<>();
+                crawlerNames.add("ALL");
+
+                asyncSearchCachedService.searchAsyncWord(crawlerNames,    "'"+searchWord+ "'");
                 WxMpXmlOutMessage outMessage = this.route(inMessage);
                 if (outMessage == null) {
                     return "";

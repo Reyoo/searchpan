@@ -47,8 +47,6 @@ public class CrawlerWebInfoController {
     @RequestMapping(value = "/getall/unread", method = RequestMethod.GET)
     public AjaxResult loopGetMoviePid() {
         try {
-
-
             //http://www.unreadmovie.com/?p=5011
             //循环调用 接口  p =1  到99999 存入库中
             StringBuffer stringBuffer = new StringBuffer();

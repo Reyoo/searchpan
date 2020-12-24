@@ -12,13 +12,16 @@
             wangpan_passwd AS wangPanPassword
     </sql>
 
-    <select id="selectMovieUrlByName" resultType="com.libbytian.pan.system.model.MovieNameAndUrlModel">
+    <select id="selectMovieUrlByName" resultType="com.libbytian.pan.system.model.MovieNameAndUrlModel"  statementType="STATEMENT">
         SELECT
         <include refid="Base_Column_List"/>
-        FROM url_movie
-        WHERE movie_name = #{movieName}
+        FROM  ${tablename}
+        WHERE movie_name = ${movieName}
 
     </select>
+
+
+
 
 
     <insert id="insertMovieUrls">
@@ -67,11 +70,10 @@
           AND wangpan_url = #{wangPanUrl};
     </delete>
 
-
-    <select id="selectMovieUrlByLikeName" resultType="com.libbytian.pan.system.model.MovieNameAndUrlModel">
+    <select id="selectAiDianYingMovieUrlByLikeName" resultType="com.libbytian.pan.system.model.MovieNameAndUrlModel">
         SELECT
         <include refid="Base_Column_List"/>
-        FROM url_movie
+        FROM url_movie_aidianying
         WHERE movie_name like
 
         concat('%','${movieName}','%')
@@ -80,6 +82,43 @@
     </select>
 
 
+
+    <select id="selectAiDianYingMovieUrlByName" resultType="com.libbytian.pan.system.model.MovieNameAndUrlModel">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM url_movie_aidianying
+        WHERE movie_name = #{movieName}
+    </select>
+
+
+    <update id="updateAiDianYingUrlMovieUrls" parameterType="com.libbytian.pan.system.model.MovieNameAndUrlModel">
+        UPDATE
+        url_movie_aidianying
+        <trim prefix="set" suffixOverrides=",">
+
+            <if test="wangPanUrl != null and wangPanUrl != ''">
+                wangpan_url =#{wangPanUrl},
+            </if>
+            <if test="wangPanPassword != null and wangPanPassword != ''">
+                wangpan_passwd =#{wangPanPassword},
+            </if>
+
+        </trim>
+        WHERE
+        movie_name =#{movieName}
+    </update>
+
+
+    <!--  ***********************爱电影结束***********************      -->
+    <!-- ************************未读影单*************************       -->
+    <select id="selectUnReadMovieUrlByLikeName" resultType="com.libbytian.pan.system.model.MovieNameAndUrlModel">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM url_movie_unread
+        WHERE movie_name like
+        concat('%','${movieName}','%')
+
+    </select>
 
 
     <update id="updateUrlMovieUrls" parameterType="com.libbytian.pan.system.model.MovieNameAndUrlModel">
@@ -98,6 +137,9 @@
         WHERE
         movie_name =#{movieName}
     </update>
+
+
+
 
 
 </mapper>

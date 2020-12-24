@@ -28,12 +28,17 @@ public class InvalidUrlCheckingController {
     InvalidUrlCheckingService invalidUrlCheckingService;
 
 
+    /**
+     * 校验url 是否正常使用、这里应当做一个操作、即如果url
+     * @param wangPanUrls
+     * @return
+     */
     @RequestMapping(path = "/url", method = RequestMethod.POST)
     public AjaxResult checkInvalidUrl(@RequestBody List<MovieNameAndUrlModel> wangPanUrls) {
 
         try {
             for (MovieNameAndUrlModel movieNameAndUrlModel : wangPanUrls) {
-                boolean isValid = invalidUrlCheckingService.checkUrlMethod(movieNameAndUrlModel.getWangPanUrl());
+                boolean isValid = invalidUrlCheckingService.checkUrlByUrlStr(movieNameAndUrlModel.getWangPanUrl());
 
                 if (isValid) {
                     return AjaxResult.success("链接失效");

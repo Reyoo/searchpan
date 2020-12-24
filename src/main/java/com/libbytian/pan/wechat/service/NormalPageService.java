@@ -44,8 +44,7 @@ public class NormalPageService {
 
 
     /**
-     * 获取第一层url信息 得到未读影像对应的pid
-     *
+     * 未读影单
      * @param url
      * @return
      */
@@ -83,6 +82,11 @@ public class NormalPageService {
     }
 
 
+    /**
+     * 未读影单 根据搜索到的文本内容的sid 搜索sid后的资源
+     * @param movieNameAndUrlModel
+     * @return
+     */
     public MovieNameAndUrlModel getMoviePanUrl(MovieNameAndUrlModel movieNameAndUrlModel) {
 
         HttpHeaders requestHeaders = new HttpHeaders();
@@ -160,60 +164,14 @@ public class NormalPageService {
     }
 
 
-    public MovieNameAndUrlModel getMovieLoops(String url) {
-        MovieNameAndUrlModel movieNameAndUrlModel = new MovieNameAndUrlModel();
-        try {
-
-            HttpHeaders requestHeaders = new HttpHeaders();
-            requestHeaders.add("User-Agent", userAgent);
-            HttpEntity<String> requestEntity = new HttpEntity<String>(null, requestHeaders);
-            ResponseEntity<String> resultResponseEntity = this.restTemplate.exchange(
-                    String.format(url),
-                    HttpMethod.GET, requestEntity, String.class);
-            if (resultResponseEntity.getStatusCode() == HttpStatus.OK) {
-                String html = resultResponseEntity.getBody();
-                System.out.println("=========================================");
-                System.out.println(html);
-                System.out.println("=========================================");
-                Document document = Jsoup.parse(html);
-                String name = document.getElementsByTag("title").first().text();
-                System.out.println("******");
-                System.out.println(name);
-                System.out.println("******");
-
-                String[] arr = name.split(" – ");
-                name = arr[0];
-                Element element = document.select("div[class=entry-content]").get(0);
-                ;
-//                String wangpan = element.select("p").select("strong").select("a").get(0).text();
-
-                String lianjie = element.select("p").select("strong").select("a").attr("href");
 
 
-                Elements pages = element.select("p");
 
-
-                movieNameAndUrlModel.setMovieUrl(url);
-                movieNameAndUrlModel.setMovieName(name);
-                movieNameAndUrlModel.setWangPanUrl(lianjie);
-                for (Element page : pages) {
-                    page.getElementsByTag("提取码");
-                    boolean contains1 = page.toString().contains("提取码");
-                    boolean contains2 = page.toString().contains("密码");
-
-                    if (contains1 || contains2) {
-                        movieNameAndUrlModel.setWangPanPassword(page.text());
-                    }
-                }
-            }
-            return movieNameAndUrlModel;
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            return movieNameAndUrlModel;
-        }
-    }
-
-
+    /**
+     * 爱电影
+     * @param url
+     * @return
+     */
     public MovieNameAndUrlModel getMovieLoopsAiDianying(String url) {
         MovieNameAndUrlModel movieNameAndUrlModel = new MovieNameAndUrlModel();
 

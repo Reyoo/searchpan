@@ -53,6 +53,7 @@ public class AccessDecisionService {
         whiteList.add("/userkey/**");
         whiteList.add("/home/**");
         whiteList.add("/user/**");
+        whiteList.add("/fantasy/**");
 
         /**
          * 验证码接口放过

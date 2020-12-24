@@ -1,11 +1,9 @@
 package com.libbytian.pan.wechat.controller;
 
 
-import com.libbytian.pan.system.aop.RequestLimit;
 import com.libbytian.pan.system.common.AjaxResult;
 import com.libbytian.pan.system.model.MovieNameAndUrlModel;
 import com.libbytian.pan.system.service.IMovieNameAndUrlService;
-import com.libbytian.pan.system.service.impl.MovieNameAndUrlServiceImpl;
 import com.libbytian.pan.wechat.service.NormalPageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -38,15 +36,6 @@ public class NormalPageController {
     @Value("${user.lxxh.aidianying}")
     String lxxhUrl;
 
-//    @GetMapping("/unread/search")
-////    @RequestLimit(count = 3, frameTime = 2, lockTime = 30)
-//    public AjaxResult getUnreadMovie(@RequestParam String name){
-//        List<MovieNameAndUrlModel> movieNameAndUrls =normalPageService.getNormalUrl(unreadUrl+"/?s="+name);
-//        List<MovieNameAndUrlModel> realMovieList = new ArrayList();
-//        movieNameAndUrls.stream().forEach( movieNameAndUrl ->
-//                realMovieList.add(normalPageService.getMoviePanUrl(movieNameAndUrl)));
-//        return AjaxResult.success(realMovieList);
-//    }
 
     @GetMapping("/lxxh/search")
 //    @RequestLimit(count = 3, frameTime = 2, lockTime = 30)
@@ -57,7 +46,7 @@ public class NormalPageController {
             movieNameAndUrl = normalPageService.getMovieLoopsAiDianying(lxxhUrl+"/?s="+name);
             List<MovieNameAndUrlModel> arrayList = new ArrayList();
             arrayList.add(movieNameAndUrl);
-            movieNameAndUrlService.addMovieUrls(arrayList);
+            movieNameAndUrlService.addOrUpdateMovieUrls(arrayList,"url_movie_aidianying");
             return AjaxResult.success(movieNameAndUrl);
         } catch (Exception e){
             return AjaxResult.error(e.getMessage());

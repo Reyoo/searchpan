@@ -11,6 +11,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -62,14 +63,21 @@ public class AsyncTask {
             ArrayList arrayList = new ArrayList();
             if (StrUtil.isNotBlank(movieNameAndUrlModel.getMovieName())& StrUtil.isNotBlank(movieNameAndUrlModel.getWangPanPassword())) {
                 arrayList.add(movieNameAndUrlModel);
-                iMovieNameAndUrlService.addMovieUrls(arrayList);
+                iMovieNameAndUrlService.addOrUpdateMovieUrls(arrayList,"url_movie_aidianying");
             }
 
         }
     }
 
-//    @Async("taskExecutor")
-//    @Transactional
+
+    /**
+     * 爱电影
+     * @param url
+     * @param num
+     * @param s
+     * @param m
+     * @throws Exception
+     */
     public void getAllmovieInit(String url ,String num,int s ,int m) throws Exception {
 
 
@@ -82,20 +90,17 @@ public class AsyncTask {
         stringBuffer.append(s);
         stringBuffer.append("/");
         url = stringBuffer.toString();
-
-
-
             int sleept=(int) (Math.random()*(5-1+1)+1);
             Thread.sleep(sleept);
 //            http://www.lxxh7.com/随机/随机/93687LjLXH.html#comments
             System.out.println(url + num + "LjLXH.html");
             MovieNameAndUrlModel movieNameAndUrlModel = normalPageService.getMovieLoopsAiDianying(url + num +"LjLXH.html");
-
+            List<MovieNameAndUrlModel> movieNameAndUrlModelList = new ArrayList<>();
             if (StrUtil.isNotBlank(movieNameAndUrlModel.getMovieName())& StrUtil.isNotBlank(movieNameAndUrlModel.getWangPanPassword())) {
-                iMovieNameAndUrlService.addMovieUrl(movieNameAndUrlModel);
+                movieNameAndUrlModelList.add(movieNameAndUrlModel);
+                iMovieNameAndUrlService.addOrUpdateMovieUrls(movieNameAndUrlModelList,"url_movie_unread");
                 log.info("插入成功 -》 " + movieNameAndUrlModel.getMovieUrl());
             }
-
 
     }
 
