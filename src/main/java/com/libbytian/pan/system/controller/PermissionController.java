@@ -59,7 +59,7 @@ public class PermissionController {
     public AjaxResult putPermission(@RequestBody SystemPermissionModel systemPermissionModel) {
 
         try {
-            iSystemPermissionService.updateById( systemPermissionModel);
+            iSystemPermissionService.patchFindfishPermission( systemPermissionModel);
             return AjaxResult.success();
         } catch (Exception e) {
             log.error(e.getMessage());
@@ -76,7 +76,7 @@ public class PermissionController {
     @RequestMapping(value = "/dropper", method = RequestMethod.DELETE)
     public AjaxResult dropPermission(@RequestBody SystemPermissionModel systemPermissionModel) {
         try {
-            iSystemPermissionService.removeById(systemPermissionModel.getPermissionId());
+            iSystemPermissionService.removeFindfishPermission(systemPermissionModel);
             return AjaxResult.success();
         } catch (Exception e) {
             return AjaxResult.error(e.getMessage());

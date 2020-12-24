@@ -33,5 +33,6 @@ public interface SystemUserMapper extends BaseMapper<SystemUserModel> {
 
     int deleteSysUserByUser(SystemUserModel systemUserModel);
 
+    SystemUserModel getUserById(SystemUserModel systemUserModel);
 
 }

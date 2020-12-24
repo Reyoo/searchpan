@@ -42,13 +42,13 @@ public class SystemUserModel extends Model<SystemUserModel>   {
     /**
      * 用户主键
      */
-    @TableId("user_id")
+    @TableField("user_id")
     private String userId;
 
     /**
      * 用户名
      */
-    @TableField("user_name")
+    @TableId("user_name")
     private String username;
 
     /**

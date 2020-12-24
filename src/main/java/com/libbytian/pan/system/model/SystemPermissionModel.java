@@ -26,13 +26,14 @@ public class SystemPermissionModel {
     /**
      * 权限id主键
      */
-    @TableId(value = "permission_id")
+    @TableField(value = "permission_id")
     private String permissionId;
 
     /**
      * 权限url
      */
-    @TableField("permission_url")
+
+    @TableId ("permission_url")
     private String permissionUrl;
 
     /**
@@ -81,7 +82,7 @@ public class SystemPermissionModel {
     private  Long limits;
 
     @TableField(exist = false)
-    @Value("false")
+//    @Value("false")
     private Boolean checked;
 
 

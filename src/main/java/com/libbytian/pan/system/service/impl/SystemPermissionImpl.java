@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * @Description：  权限业务实现类
@@ -75,12 +76,38 @@ public class SystemPermissionImpl extends ServiceImpl<SystemPermissionMapper, Sy
     public int savePermission(SystemPermissionModel permission) throws Exception {
 
         permission.setCreatetime(LocalDateTime.now());
-
+        permission.setPermissionId(UUID.randomUUID().toString());
         if(StrUtil.isBlank(permission.getPermissionComment())){
             throw new Exception("权限名不允许为空");
         }
 
         return systemPermissionMapper.insertPermission(permission);
+    }
+
+
+    /**
+     * 更新权限
+     * @param systemPermissionModel
+     * @return
+     */
+    @Override
+    public int patchFindfishPermission(SystemPermissionModel systemPermissionModel) {
+        return systemPermissionMapper.updateFindfishPermission(systemPermissionModel);
+    }
+
+    /**
+     * 删除权限
+     * @param systemPermissionModel
+     * @return
+     */
+    @Override
+    public int removeFindfishPermission(SystemPermissionModel systemPermissionModel) {
+        return systemPermissionMapper.deleteFindfishPermission(systemPermissionModel);
+    }
+
+    @Override
+    public List<SystemPermissionModel> listPermissionByPermission(List<String> permissionIds) {
+        return systemPermissionMapper.selectPermissionByPermissionId(permissionIds);
     }
 }
 

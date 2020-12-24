@@ -94,13 +94,14 @@ public class FindFishUserController {
 
             if(iSystemUserService.checkUserCouldDel(user)){
                 iSystemUserService.updateUser(user);
-                return AjaxResult.success();
+                return AjaxResult.success("更新成功");
             }else {
                 return AjaxResult.error("该用户为系统保留用户禁止修改");
             }
 
 
         } catch (Exception e) {
+            log.error("更新失败 --》 " + e.getMessage());
             return AjaxResult.error(e.getMessage());
         }
     }

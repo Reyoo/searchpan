@@ -52,7 +52,7 @@ public class AccessDecisionService {
         whiteList.add("/initmovie/**");
         whiteList.add("/userkey/**");
         whiteList.add("/home/**");
-
+        whiteList.add("/user/**");
 
         /**
          * 验证码接口放过

@@ -56,13 +56,77 @@
 
     </select>
 
-    <insert id="insertPermission" parameterType="com.libbytian.pan.system.model.SystemUserToRole" >
+    <insert id="insertPermission" parameterType="com.libbytian.pan.system.model.SystemPermissionModel" >
          INSERT INTO sys_permission
-         (permission_url,permission_comment,permission_status,createtime)
+         (permission_id,permission_url,permission_comment,permission_status,createtime)
          VALUES
-         (#{permissionUrl},#{permissionComment},0,#{createtime})
+         (#{permissionId} ,#{permissionUrl},#{permissionComment},0,#{createtime})
 
     </insert>
+
+
+    <update id="updateFindfishPermission" parameterType="com.libbytian.pan.system.model.SystemPermissionModel">
+        UPDATE
+        sys_permission
+        <trim prefix="set" suffixOverrides=",">
+            <if test="permissionUrl != null and permissionUrl != ''">
+                permission_url =#{permissionUrl},
+            </if>
+            <if test="permissionComment != null and permissionComment != ''">
+                permission_comment =#{permissionComment},
+            </if>
+            <if test="permissionstatus != null and permissionstatus != ''">
+                permission_status =#{permissionstatus},
+            </if>
+
+            <if test="createtime != null and createtime != ''">
+                createtime =#{createtime},
+            </if>
+
+        </trim>
+        WHERE
+        permission_id =#{permissionId}
+    </update>
+
+
+
+    <delete id="deleteFindfishPermission" parameterType="com.libbytian.pan.system.model.SystemPermissionModel">
+        DELETE
+        FROM sys_permission
+        <trim prefix="WHERE(" prefixOverrides="and|">
+            <if test="permissionId != null and permissionId != ''">
+                AND permission_id= #{permissionId}
+            </if>
+            <if test="permissionUrl != null and permissionUrl != ''">
+                AND permission_url= #{permissionUrl}
+            </if>
+            <if test="permissionComment != null and permissionComment != ''">
+                AND permission_comment= #{permissionComment}
+            </if>
+            <if test="permissionstatus != null and permissionstatus != ''">
+                AND permission_status= #{permissionstatus}
+            </if>)
+
+        </trim>
+
+
+    </delete>
+
+
+
+    <select id="selectPermissionByPermissionId" parameterType="java.util.List"
+            resultType="com.libbytian.pan.system.model.SystemPermissionModel">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM sys_permission p
+        <where>
+            p.permission_id in
+            <foreach item="permissionIds" collection="list" separator="," open="(" close=")" index="">
+                #{permissionIds, jdbcType=VARCHAR}
+            </foreach>
+        </where>
+
+    </select>
 
 
 </mapper>

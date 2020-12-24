@@ -18,7 +18,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-         u.user_id AS userId,
+         user_id AS userId,
          user_name AS username,
          user_mobile AS mobile ,
          user_password AS password,
@@ -276,6 +276,17 @@
         WHERE
             user_id = #{userId}
     </delete>
+
+
+    <select id="getUserById" parameterType="com.libbytian.pan.system.model.SystemUserModel"
+            resultType="com.libbytian.pan.system.model.SystemUserModel">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM sys_user u
+        WHERE  u.user_id = #{userId}
+
+    </select>
+
 
 
 </mapper>

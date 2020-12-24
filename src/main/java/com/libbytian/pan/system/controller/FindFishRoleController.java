@@ -173,7 +173,13 @@ public class FindFishRoleController {
 
 
             List<String> permissionId = systemRoleToPermissionList.stream().map(SystemRoleToPermission::getPermissionId).collect(Collectors.toList());
-            List<SystemPermissionModel> systemRoleModelListAll = iPermissionService.listByIds(permissionId);
+
+//            List<SystemPermissionModel> systemRoleModelListAll = iPermissionService.listByIds(permissionId);
+            List<SystemPermissionModel> systemRoleModelListAll = iPermissionService.listPermissionByPermission(permissionId);
+
+
+
+
             systemRoleModelListAll.forEach(permissionModel -> permissionModel.setChecked(true));
 
 

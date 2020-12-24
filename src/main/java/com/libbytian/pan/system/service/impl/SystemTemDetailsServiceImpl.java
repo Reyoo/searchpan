@@ -294,11 +294,11 @@ public class SystemTemDetailsServiceImpl extends ServiceImpl<SystemTemDetailsMap
         sleepDetails.setShowOrder(1);
 
         headAdvert.setKeyword("头部广告");
-        headAdvert.setKeywordToValue("微信回复头部广告（可设置开关）");
+        headAdvert.setKeywordToValue("微信回复头部广告（删除可去掉）");
         headAdvert.setShowOrder(2);
 
         endAdvert.setKeyword("底部广告");
-        endAdvert.setKeywordToValue("微信回复底部广告（可设置开关）");
+        endAdvert.setKeywordToValue("微信回复底部广告（删除可去掉）");
         endAdvert.setShowOrder(3);
 
         hideResource.setKeyword("隐藏资源");

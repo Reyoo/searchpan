@@ -30,4 +30,13 @@ public interface ISystemPermissionService extends IService<SystemPermissionModel
     int savePermission(SystemPermissionModel permission) throws Exception;
 
 
+    int patchFindfishPermission(SystemPermissionModel systemPermissionModel);
+
+    int removeFindfishPermission(SystemPermissionModel systemPermissionModel);
+
+
+    List<SystemPermissionModel> listPermissionByPermission (List<String> permissionIds);
+
+
+
 }

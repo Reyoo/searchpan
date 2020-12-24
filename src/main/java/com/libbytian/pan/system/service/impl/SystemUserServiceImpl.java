@@ -69,7 +69,7 @@ public class SystemUserServiceImpl extends ServiceImpl<SystemUserMapper, SystemU
 
     @Override
     public Boolean checkUserCouldDel(SystemUserModel user) throws Exception {
-        SystemUserModel systemUserModelInfo = getUser(user);
+        SystemUserModel systemUserModelInfo = systemUserMapper.getUserById(user);
         if (systemUserModelInfo.getAllowremove()) {
             return Boolean.TRUE;
         }
@@ -211,7 +211,7 @@ public class SystemUserServiceImpl extends ServiceImpl<SystemUserMapper, SystemU
     @Override
     public SystemUserModel updateUser(SystemUserModel user) throws Exception {
 
-        if (user.getUsername().isEmpty()) {
+        if (user.getUserId().isEmpty()) {
             throw new Exception("用户名不能为空");
         }
         if (user.getActTime() != null) {
