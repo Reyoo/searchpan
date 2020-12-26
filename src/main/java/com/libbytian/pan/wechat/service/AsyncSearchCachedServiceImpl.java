@@ -1,5 +1,6 @@
 package com.libbytian.pan.wechat.service;
 
+import com.libbytian.pan.system.mapper.MovieNameAndUrlMapper;
 import com.libbytian.pan.system.service.IMovieNameAndUrlService;
 import com.libbytian.pan.system.service.impl.InvalidUrlCheckingService;
 import com.libbytian.pan.system.model.MovieNameAndUrlModel;
@@ -42,6 +43,8 @@ public class AsyncSearchCachedServiceImpl {
     private final NormalPageService normalPageService;
 
     private final IMovieNameAndUrlService iMovieNameAndUrlService;
+
+    private final MovieNameAndUrlMapper movieNameAndUrlMapper;
     @Value("${user.unread.weiduyingdan}")
     String unreadUrl;
 
@@ -52,60 +55,67 @@ public class AsyncSearchCachedServiceImpl {
     /**
      * 根据不同表示返回不用结果
      *
-     * @param searchText
+     * @param searchMovieText
      * @param search
      * @return
      * @throws Exception
      */
-    public List<MovieNameAndUrlModel> searchWord(String searchText, String search) throws Exception {
+    public List<MovieNameAndUrlModel> searchWord(String searchMovieText, String search) throws Exception {
 
         List<MovieNameAndUrlModel> movieNameAndUrlModels = new ArrayList<>();
-        Map<String, List<MovieNameAndUrlModel>> movieNameAndList = new HashMap<>();
+
         switch (search) {
             case "a":
                 //从爱电影获取资源返回aidianying
-                movieNameAndList = (Map<String, List<MovieNameAndUrlModel>>) redisTemplate.opsForValue().get("aidianying");
-                if (movieNameAndList == null || movieNameAndList.size() == 0) {
+                movieNameAndUrlModels = (List<MovieNameAndUrlModel>) redisTemplate.opsForHash().get("aidianying", searchMovieText);
+
+                if (movieNameAndUrlModels == null || movieNameAndUrlModels.size() == 0) {
                     //从数据库里拿
 //                    movieNameAndUrlModels = iMovieNameAndUrlService.findAiDianYingUrl(searchText);
-                    movieNameAndUrlModels = iMovieNameAndUrlService.findMovieUrl("url_movie_aidianying","'"+searchText+"'");
+                    movieNameAndUrlModels = movieNameAndUrlMapper.selectMovieUrlByLikeName("url_movie_aidianying", searchMovieText);
 //                    redis中没有 、数据库中也没有 、则说明都没有、可以调用异步方法重新爬取 这里需要补一个异步爬取的方法
-                    return invalidUrlCheckingService.checkUrlMethod(movieNameAndUrlModels);
+                    List<MovieNameAndUrlModel> movieNameAndUrlModelList = invalidUrlCheckingService.checkUrlMethod("url_movie_aidianying", movieNameAndUrlModels);
+                    //更新一波Redis
+                    redisTemplate.opsForHash().putIfAbsent("aidianying", searchMovieText, movieNameAndUrlModelList);
+                    return movieNameAndUrlModelList;
                 } else {
-                    return movieNameAndList.get(searchText);
+                    return movieNameAndUrlModels;
                 }
 
             case "u":
 //                  从未读影单获取资源unreadmovie
-                movieNameAndList = (Map<String, List<MovieNameAndUrlModel>>) redisTemplate.opsForValue().get("unreadmovie");
-                if (movieNameAndList == null || movieNameAndList.size() == 0) {
+
+                movieNameAndUrlModels = (List<MovieNameAndUrlModel>) redisTemplate.opsForHash().get("unreadmovie", searchMovieText);
+
+                if (movieNameAndUrlModels == null || movieNameAndUrlModels.size() == 0) {
                     //从数据库里拿
-                    movieNameAndUrlModels = iMovieNameAndUrlService.findUnReadMovieUrl(searchText);
-                    return invalidUrlCheckingService.checkUrlMethod(movieNameAndUrlModels);
+                    movieNameAndUrlModels = movieNameAndUrlMapper.selectMovieUrlByLikeName("url_movie_unread", "'" + searchMovieText + "'");
+                    redisTemplate.opsForHash().putIfAbsent("unreadmovie", searchMovieText, movieNameAndUrlModels);
+                    return invalidUrlCheckingService.checkUrlMethod("url_movie_unread", movieNameAndUrlModels);
                 } else {
-                    return movieNameAndList.get(searchText);
+                    return movieNameAndUrlModels;
                 }
 
             case "x":
 //                  从xxx  获取资源  暂时用未读影单的
-                movieNameAndList = (Map<String, List<MovieNameAndUrlModel>>) redisTemplate.opsForValue().get("unreadmovie");
-                if (movieNameAndList == null || movieNameAndList.size() == 0) {
+                movieNameAndUrlModels = movieNameAndUrlMapper.selectMovieUrlByLikeName("XXXX", searchMovieText);
+                if (movieNameAndUrlModels == null || movieNameAndUrlModels.size() == 0) {
                     //从数据库里拿
-                    movieNameAndUrlModels = iMovieNameAndUrlService.findUnReadMovieUrl(searchText);
-                    return invalidUrlCheckingService.checkUrlMethod(movieNameAndUrlModels);
+                    movieNameAndUrlModels = movieNameAndUrlMapper.selectMovieUrlByLikeName("url_movie_unreadxx", "'" + searchMovieText + "'");
+                    return invalidUrlCheckingService.checkUrlMethod("url_movie_unreadxx", movieNameAndUrlModels);
                 } else {
-                    return movieNameAndList.get(searchText);
+                    return movieNameAndUrlModels;
                 }
 
             default:
-                movieNameAndList = (Map<String, List<MovieNameAndUrlModel>>) redisTemplate.opsForValue().get("aidianying");
-                movieNameAndList.putAll((Map<String, List<MovieNameAndUrlModel>>) redisTemplate.opsForValue().get("unreadmovie"));
-                if (movieNameAndList == null || movieNameAndList.size() == 0) {
-                    //从数据库里拿
-                    movieNameAndUrlModels = iMovieNameAndUrlService.findAiDianYingUrl(searchText);
-                    return invalidUrlCheckingService.checkUrlMethod(movieNameAndUrlModels);
+                movieNameAndUrlModels = movieNameAndUrlMapper.selectMovieUrlByLikeName("url_movie_aidianying", searchMovieText);
+                movieNameAndUrlModels.addAll(movieNameAndUrlMapper.selectMovieUrlByLikeName("url_movie_aidianying", searchMovieText));
+                if (movieNameAndUrlModels == null || movieNameAndUrlModels.size() == 0) {
+                    //从数据库不同表里拿
+                    movieNameAndUrlModels = movieNameAndUrlMapper.selectMovieUrlByLikeName("diffrent-table", "'" + searchMovieText + "'");
+                    return invalidUrlCheckingService.checkUrlMethod("diffrent-table", movieNameAndUrlModels);
                 } else {
-                    return movieNameAndList.get(searchText);
+                    return movieNameAndUrlModels;
                 }
         }
 
@@ -115,128 +125,138 @@ public class AsyncSearchCachedServiceImpl {
     /**
      * @param
      * @return
-     * @Description: 根据待搜索的来源和电影名搜索并存入redis
+     * @Description: 根据待搜索的来源和电影名搜索并存入redis  crawlerNames 对应tableName
      */
     @Async
     public void searchAsyncWord(List<String> crawlerNames, String searchMovieName) throws Exception {
-
 
         if (crawlerNames.size() == 0) {
             throw new Exception("要获取的资源名不能为空");
         }
 
-
         for (String crawlerName : crawlerNames) {
             //查询redis 中的资源
-            Map crawlerNameWithMapModel = new HashMap();
+            List<MovieNameAndUrlModel> movieNameAndMovieList = new ArrayList<>();
 
-            crawlerNameWithMapModel = (Map<String, List<MovieNameAndUrlModel>>) redisTemplate.opsForValue().get(crawlerName);
+            movieNameAndMovieList = (List<MovieNameAndUrlModel>) redisTemplate.opsForHash().get(crawlerName, searchMovieName);
 
-            List<MovieNameAndUrlModel> movieNameAndUrlModels = new ArrayList<>();
             //如果redis中存在
-            if (crawlerNameWithMapModel != null && crawlerNameWithMapModel.size() > 0) {
-
+            if (movieNameAndMovieList != null && movieNameAndMovieList.size() > 0) {
+                List<MovieNameAndUrlModel> movieNameAndUrlModels = new ArrayList<>();
                 //获取有效链接
-                movieNameAndUrlModels = invalidUrlCheckingService.checkUrlMethod((List<MovieNameAndUrlModel>) crawlerNameWithMapModel.get(searchMovieName));
+                movieNameAndUrlModels = invalidUrlCheckingService.checkUrlMethod(getTableName(crawlerName), movieNameAndMovieList);
                 //将有效连接更新到redis中
-                redisTemplate.opsForValue().set(searchMovieName, movieNameAndUrlModels, 60 * 24 * 15, TimeUnit.MINUTES);
+
+                redisTemplate.opsForHash().putIfAbsent(crawlerName, searchMovieName, movieNameAndMovieList);
+
 
             } else {
-//                否则不存在
-
+//                否则Redis中不存在 //重新爬虫 存入到mysql和redis中
                 switch (crawlerName) {
 
                     case "aidianying":
-
-//                        movieNameAndUrlModels = movieNameAndUrlService.findAiDianYingUrl(searchMovieName);
-
-                        crawlerAndSaveAiDianYingUrl(searchMovieName);
-
-//                        调用爱电影方法
+                        crawlerAndSaveUrl(searchMovieName, "url_movie_aidianying", crawlerName);
                         break;
 
                     case "unreadmovie":
-//调用未读影单方法
-                        movieNameAndUrlModels = movieNameAndUrlService.findUnReadMovieUrl(searchMovieName);
+                        crawlerAndSaveUrl(searchMovieName, "url_movie_unread", crawlerName);
                         break;
 
                     default:
-                        movieNameAndUrlModels.addAll(movieNameAndUrlService.findAiDianYingUrl(searchMovieName));
-                        movieNameAndUrlModels.addAll(movieNameAndUrlService.findUnReadMovieUrl(searchMovieName));
+                        crawlerAndSaveUrl(searchMovieName, "url_movie_aidianying", crawlerName);
+                        crawlerAndSaveUrl(searchMovieName, "url_movie_unread", crawlerName);
                         break;
 
                 }
-
             }
-
         }
-
-//        searchText could be unread  loveMovie
-
-        List<MovieNameAndUrlModel> movieNameAndUrlModels = new ArrayList<>();
-
-
-        /**
-         * 逻辑修改
-         * 1、先从Redis中获取。
-         * 2、如果Redis中有结果，则判断链接是否失效
-         * 2.1 、如果链接失效、则删除redis数据
-         * 2.1.1 重新获取资源
-         * 2.1.2 插入MySQL、同时插入Redis  返回结果。
-         * 2.2、如果链接没有失效，则直接返回结果，并异步重新获取资源，更新Redis 及数据库
-         */
-
-
-        movieNameAndUrlModels = (List<MovieNameAndUrlModel>) redisTemplate.opsForValue().get(searchMovieName);
-//        2.2、如果链接没有失效，则直接返回结果，并 /异步/重新获取资源，更新Redis 及数据库
-
 
     }
 
 
     /**
-     * 获取爱电影资源
+     * 根据爬取的资源类型返回table 名称
      *
-     * @param searchMovieName redis 不存在 去数据库查询的过程
+     * @param crawlerName
      * @return
      */
-    public List<MovieNameAndUrlModel> crawlerAndSaveAiDianYingUrl(String searchMovieName) {
+    public String getTableName(String crawlerName) {
+        switch (crawlerName) {
+
+            case "aidianying":
+                return "url_movie_aidianying";
+
+            case "unreadmovie":
+                return "url_movie_unread";
+
+            default:
+                break;
+
+        }
+        return null;
+    }
+
+    /**
+     * redis 不存在 去数据库查询的过程 同时更新redis
+     *
+     * @param searchMovieName
+     * @param tableName
+     * @param crawlerName
+     * @return
+     */
+
+    public List<MovieNameAndUrlModel> crawlerAndSaveUrl(String searchMovieName, String tableName, String crawlerName) {
         List<MovieNameAndUrlModel> movieNameAndUrlModels = new ArrayList<>();
-        Map<String, List<MovieNameAndUrlModel>> crawlerNameWithMapModel = new HashMap();
+
         try {
 //            从数据库中获取
-            movieNameAndUrlModels = movieNameAndUrlService.findAiDianYingUrl(searchMovieName);
-
+            movieNameAndUrlModels = movieNameAndUrlService.findMovieUrl(tableName, searchMovieName);
 //            如果数据库中存在
             if (movieNameAndUrlModels != null && movieNameAndUrlModels.size() > 0) {
-
 //               校验URL
-                movieNameAndUrlModels = invalidUrlCheckingService.checkUrlMethod(movieNameAndUrlModels);
-                crawlerNameWithMapModel.put(searchMovieName, movieNameAndUrlModels);
+                movieNameAndUrlModels = invalidUrlCheckingService.checkUrlMethod(tableName, movieNameAndUrlModels);
                 //记录到redis
-                redisTemplate.opsForValue().set("AiDianying", crawlerNameWithMapModel, 60 * 24 * 15, TimeUnit.MINUTES);
+                redisTemplate.opsForHash().putIfAbsent(crawlerName, searchMovieName, movieNameAndUrlModels);
 
             } else {
                 //如果数据库不存在, 重新爬虫，如果爬取到结果则保存到mysql 中， 如果没爬取到结果将redis设置为null;
                 List<MovieNameAndUrlModel> innerMovieList = new ArrayList();
+                MovieNameAndUrlModel movieNameAndUrl = null;
 
-                MovieNameAndUrlModel movieNameAndUrl = normalPageService.getMovieLoopsAiDianying(lxxhUrl + "/?s=" + searchMovieName);
-
-                movieNameAndUrlModels = innerMovieList;
-                movieNameAndUrlModels.add(movieNameAndUrl);
-                if (movieNameAndUrlModels != null && movieNameAndUrlModels.size() > 0) {
-//                        检查url 是否正确
-                    movieNameAndUrlModels = invalidUrlCheckingService.checkUrlMethod(movieNameAndUrlModels);
-//                        插入更新操作
-                    movieNameAndUrlService.addOrUpdateAiDianYingMovieUrls(movieNameAndUrlModels , "url_movie_aidianying");
-
-                    redisTemplate.opsForValue().set("aidianying", crawlerNameWithMapModel.put(searchMovieName,movieNameAndUrlModels), 60 * 24 * 15, TimeUnit.MINUTES);
+                if ("aidianying".equals(crawlerName)) {
+                    movieNameAndUrl = normalPageService.getMovieLoopsAiDianying(lxxhUrl + "/?s=" + searchMovieName);
+                    redisTemplate.opsForHash().putIfAbsent(crawlerName, searchMovieName, new ArrayList().add(movieNameAndUrl));
+                } else if ("unreadmovie".equals(crawlerName)) {
+                    List<MovieNameAndUrlModel> unreadUrls = normalPageService.getNormalUrl(unreadUrl + "/?s=" + searchMovieName);
+                    unreadUrls.stream().forEach(innermovieNameAndUrl ->
+                            innerMovieList.add(normalPageService.getMoviePanUrl(innermovieNameAndUrl)));
+                    redisTemplate.opsForHash().putIfAbsent(crawlerName, searchMovieName, new ArrayList().add(innerMovieList));
 
                 } else {
-                    redisTemplate.opsForValue().set(searchMovieName, crawlerNameWithMapModel.put(searchMovieName,null), 60 * 24 * 15, TimeUnit.MINUTES);
+                    movieNameAndUrl = normalPageService.getMovieLoopsAiDianying(lxxhUrl + "/?s=" + searchMovieName);
+                    List<MovieNameAndUrlModel> unreadUrls = normalPageService.getNormalUrl(unreadUrl + "/?s=" + searchMovieName);
+                    unreadUrls.stream().forEach(innermovieNameAndUrl ->
+                            innerMovieList.add(normalPageService.getMoviePanUrl(innermovieNameAndUrl)));
+                }
+                movieNameAndUrlModels = innerMovieList;
+
+                if (movieNameAndUrl != null) {
+                    movieNameAndUrlModels.add(movieNameAndUrl);
+                }
+
+
+                if (movieNameAndUrlModels != null && movieNameAndUrlModels.size() > 0) {
+//                        检查url 是否正确
+                    movieNameAndUrlModels = invalidUrlCheckingService.checkUrlMethod(tableName, movieNameAndUrlModels);
+//                        插入更新操作
+                    movieNameAndUrlService.addOrUpdateMovieUrls(movieNameAndUrlModels, tableName);
+                    //记录到redis
+
+                    redisTemplate.opsForHash().putIfAbsent(crawlerName, searchMovieName, movieNameAndUrlModels);
+                } else {
+                    redisTemplate.opsForHash().putIfAbsent(crawlerName, searchMovieName, movieNameAndUrlModels);
                 }
             }
-
 
             return movieNameAndUrlModels;
         } catch (Exception e) {
@@ -246,11 +266,8 @@ public class AsyncSearchCachedServiceImpl {
     }
 
 
-//     未读影单
-//              List<MovieNameAndUrlModel> unreadUrls = normalPageService.getNormalUrl(unreadUrl + "/?s=" + searchMovieName);
-//
-//                unreadUrls.stream().forEach(movieNameAndUrl ->
-//                        innerMovieList.add(normalPageService.getMoviePanUrl(movieNameAndUrl)));
+
+
 }
 
 

@@ -206,7 +206,7 @@ public class WxPortalController {
                 List<String> crawlerNames = new ArrayList<>();
                 crawlerNames.add("ALL");
 
-                asyncSearchCachedService.searchAsyncWord(crawlerNames,    "'"+searchWord+ "'");
+                asyncSearchCachedService.searchAsyncWord(crawlerNames,    searchWord);
                 WxMpXmlOutMessage outMessage = this.route(inMessage);
                 if (outMessage == null) {
                     return "";

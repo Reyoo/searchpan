@@ -29,7 +29,7 @@ public class InvalidUrlCheckingController {
 
 
     /**
-     * 校验url 是否正常使用、这里应当做一个操作、即如果url
+     * 校验url 是否正常使用、这里应当做一个操作、即如果url  未启用接口
      * @param wangPanUrls
      * @return
      */

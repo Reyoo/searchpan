@@ -19,68 +19,39 @@ public interface MovieNameAndUrlMapper extends BaseMapper<MovieNameAndUrlModel> 
     List<MovieNameAndUrlModel> selectMovieUrlByName(String tablename , String movieName);
 
 
-
-    List<MovieNameAndUrlModel> selectAiDianYingMovieUrlByName(String movieName);
-
-    /**
-     * 查找爱电影电影名资源
-     * @param movieName
-     * @return
-     */
-    List<MovieNameAndUrlModel> selectAiDianYingMovieUrlByLikeName(String movieName);
-
+    List<MovieNameAndUrlModel> selectMovieUrlByLikeName(String tablename , String movieName);
 
     /**
-     * 未读爱电影批量新增
+     * 批量新增
      * @param movieNameAndUrlModels
      * @return
      */
-    int insertMovieUrls(List<MovieNameAndUrlModel> movieNameAndUrlModels);
+    int insertMovieUrls(String tableName,List<MovieNameAndUrlModel> movieNameAndUrlModels);
 
     /**
-     * 爱电影新增
+     * 新增
      * @param movieNameAndUrlModel
      * @return
      */
-    int insertMovieUrl(MovieNameAndUrlModel movieNameAndUrlModel);
+    int insertMovieUrl(String tableName ,MovieNameAndUrlModel movieNameAndUrlModel);
 
 
     /**
-     * 删除爱电影资源
+     * 删除资源
      * @param movieNameAndUrlModel
      * @return
      */
-    int deleteUrlMovieUrls(MovieNameAndUrlModel movieNameAndUrlModel);
+    int deleteUrlMovieUrls(String tableName ,MovieNameAndUrlModel movieNameAndUrlModel);
+
+
+
 
 
     /**
-     * 更新爱电影资源
+     * 更新电影资源
      * @param movieNameAndUrlModel
      * @return
      */
-
-
-
-
-    int updateAiDianYingUrlMovieUrls(MovieNameAndUrlModel movieNameAndUrlModel);
-
-
-
-
-
-    /**
-     * 查找未读影单电影资源
-     * @param movieName
-     * @return
-     */
-    List<MovieNameAndUrlModel> selectUnReadMovieUrlByLikeName(String movieName);
-
-
-    /**
-     * 暂时未使用
-     * @param movieNameAndUrlModel
-     * @return
-     */
-    int updateUrlMovieUrls(MovieNameAndUrlModel movieNameAndUrlModel);
+    int updateUrlMovieUrl(String tableName, MovieNameAndUrlModel movieNameAndUrlModel);
 
 }

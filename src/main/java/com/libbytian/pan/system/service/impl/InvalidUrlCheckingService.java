@@ -1,6 +1,8 @@
 package com.libbytian.pan.system.service.impl;
 
+import cn.hutool.core.util.StrUtil;
 import com.libbytian.pan.system.model.MovieNameAndUrlModel;
+import com.libbytian.pan.system.service.IMovieNameAndUrlService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
@@ -27,7 +29,15 @@ import java.util.List;
 public class InvalidUrlCheckingService {
 
 
-    public List<MovieNameAndUrlModel> checkUrlMethod(List<MovieNameAndUrlModel> movieNameAndUrlModels) throws Exception {
+    private final IMovieNameAndUrlService movieNameAndUrlService;
+
+    /**
+     * 判断是否失效、失效则数据库中删除
+     * @param movieNameAndUrlModels
+     * @return
+     * @throws Exception
+     */
+    public List<MovieNameAndUrlModel> checkUrlMethod(String tableName ,List<MovieNameAndUrlModel> movieNameAndUrlModels) throws Exception {
 
         List<MovieNameAndUrlModel> couldBeFindUrls = new ArrayList<>();
         if (movieNameAndUrlModels == null || movieNameAndUrlModels.size() == 0) {
@@ -36,12 +46,20 @@ public class InvalidUrlCheckingService {
         } else {
 
             for (MovieNameAndUrlModel movieNameAndUrlModel : movieNameAndUrlModels) {
-                Document document = Jsoup.connect(movieNameAndUrlModel.getWangPanUrl()).get();
+
+                String wangPanUrl = movieNameAndUrlModel.getWangPanUrl();
+                if(StrUtil.isBlank(wangPanUrl)){
+                    continue;
+                }
+                Document document = Jsoup.connect(wangPanUrl).get();
                 String title = document.title();
                 //获取html中的标题
                 log.info("title--> :" + title);
                 if (!"百度网盘-链接不存在".contains(title) || !"页面不存在".contains(title)) {
+                    //Redis 暂时不做处理
                     couldBeFindUrls.add(movieNameAndUrlModel);
+                }else {
+                    movieNameAndUrlService.dropMovieUrl(tableName,movieNameAndUrlModel);
                 }
             }
             return couldBeFindUrls;
