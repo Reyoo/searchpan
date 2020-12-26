@@ -23,6 +23,7 @@ import org.dom4j.*;
 import org.dom4j.io.SAXReader;
 import org.omg.CosNaming.BindingIterator;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.*;
 import sun.security.krb5.internal.tools.Kinit;
 
@@ -148,6 +149,7 @@ public class WxPortalController {
 
 
     @RequestMapping(path = "/{verification}", method = RequestMethod.POST, produces = "application/xml; charset=UTF-8")
+    @Async
     public String post(
             @PathVariable String verification,
             @RequestBody String requestBody,

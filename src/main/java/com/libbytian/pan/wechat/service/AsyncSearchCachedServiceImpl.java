@@ -142,12 +142,10 @@ public class AsyncSearchCachedServiceImpl {
 
             //如果redis中存在
             if (movieNameAndMovieList != null && movieNameAndMovieList.size() > 0) {
-                List<MovieNameAndUrlModel> movieNameAndUrlModels = new ArrayList<>();
-                //获取有效链接
-                movieNameAndUrlModels = invalidUrlCheckingService.checkUrlMethod(getTableName(crawlerName), movieNameAndMovieList);
+                List<MovieNameAndUrlModel> movieNameAndUrlModels = invalidUrlCheckingService.checkUrlMethod(getTableName(crawlerName), movieNameAndMovieList);
                 //将有效连接更新到redis中
 
-                redisTemplate.opsForHash().putIfAbsent(crawlerName, searchMovieName, movieNameAndMovieList);
+                redisTemplate.opsForHash().putIfAbsent(crawlerName, searchMovieName, movieNameAndUrlModels);
 
 
             } else {
