@@ -108,6 +108,9 @@ public class WxPortalController {
             Date nowDate = simpleDateFormat.parse(String.valueOf(nowHour) + ":" + String.valueOf(nowMinutes));
 
 
+            //如果启用时间是00:00 ~ 23:59  则全时段放行
+            //否则 只跑 时间段范围内的逻辑 。例如, 10:00 ~ 23:59 则 不允许 00:00 ~ 09:59  访问接口
+
 //        Date1.after(Date2),当Date1大于Date2时，返回TRUE，当小于等于时，返回false；
 //        Date1.before(Date2)，当Date1小于Date2时，返回TRUE，当大于等于时，返回false；
             if (!"00:00".equals(userStart) && !"23:59".equals(userEnd)) {
@@ -149,7 +152,7 @@ public class WxPortalController {
 
 
     @RequestMapping(path = "/{verification}", method = RequestMethod.POST, produces = "application/xml; charset=UTF-8")
-    @Async
+//    @Async
     public String post(
             @PathVariable String verification,
             @RequestBody String requestBody,
@@ -172,14 +175,8 @@ public class WxPortalController {
         //解析传入的username,拿到user,查询对应模板
         String username = new String(decoder.decode(verification), "UTF-8");
 
-
         //根据用户关键字时间、判断是否是可返回接口状态
 
-
-        //启用状态
-
-        //如果启用时间是00:00 ~ 23:59  则全时段放行
-        //否则 只跑 时间段范围内的逻辑 。例如, 10:00 ~ 23:59 则 不允许 00:00 ~ 09:59  访问接口
 
 
         /**
