@@ -5,6 +5,7 @@ import com.libbytian.pan.crawler.service.AsyncTask;
 import com.libbytian.pan.system.common.AjaxResult;
 import com.libbytian.pan.system.model.MovieNameAndUrlModel;
 import com.libbytian.pan.system.service.impl.MovieNameAndUrlServiceImpl;
+import com.libbytian.pan.wechat.service.CrawlerSumsuService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +36,7 @@ public class CrawlerWebInfoController {
     private final AsyncTask asyncTask;
 
 
-    private final MovieNameAndUrlServiceImpl movieNameAndUrlService;
+    private final CrawlerSumsuService crawlerSumsuService;
     @Value("${user.unread.weiduyingdan}")
     String unreadUrl;
     @Value("${user.lxxh.aidianying}")
@@ -102,7 +103,12 @@ public class CrawlerWebInfoController {
         try {
 //            http://520.sumsu.cn/forum.php?mod=viewthread&tid=20252&highlight=%87%E5%C2%E8
 
-//            asyncTask.getAllSumsuUrl();
+            for(int i = 5147 ; i <=20000;i++){
+                int num=(int) (Math.random()*(5000-1000+1000)+1000);
+                Thread.sleep(num);
+                crawlerSumsuService.firstInitTidSumsuUrl(i);
+            }
+
 
             return AjaxResult.success("表入库成功");
 

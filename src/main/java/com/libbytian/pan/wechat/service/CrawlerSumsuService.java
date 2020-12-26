@@ -152,12 +152,20 @@ public class CrawlerSumsuService {
                             movieNameAndUrlModel.setWangPanUrl(baiPan);
                             movieNameAndUrlModel.setMovieName(tidDoc.title());
                             movieNameAndUrlModel.setMovieUrl(sumsuUrl);
-                            movieNameAndUrlModel.setWangPanPassword(link.parent().text().split("提取码:")[1].trim());
+
+                            if(link.parent().text().contains("提取码")){
+                                movieNameAndUrlModel.setWangPanPassword(link.parent().text().split("提取码:")[1].trim());
+                            }
+
+                            if(link.parent().text().contains("密码")){
+                                movieNameAndUrlModel.setWangPanPassword(link.parent().text().split("密码:")[1].trim());
+                            }
+
                             movieNameAndUrlModels.add(movieNameAndUrlModel);
                         }
 
                     }
-                    movieNameAndUrlService.addOrUpdateMovieUrls(movieNameAndUrlModels, "url_movie_unread");
+                    movieNameAndUrlService.addOrUpdateMovieUrls(movieNameAndUrlModels, "url_movie_sumsu");
                 }
             }
         } catch (Exception e) {
@@ -166,5 +174,68 @@ public class CrawlerSumsuService {
         return movieNameAndUrlModels;
     }
 
+
+    /**
+     * 数据库初始化 time 循环次数
+     * @param times
+     * @return
+     */
+    public List<MovieNameAndUrlModel> firstInitTidSumsuUrl(int times) {
+
+        List<MovieNameAndUrlModel> movieNameAndUrlModels = new ArrayList<>();
+        try {
+                String url = "http://520.sumsu.cn/forum.php?mod=viewthread&tid=" + times + "&highlight=%BD%AB%BE%FC&mobile=2";
+                System.out.println(url);
+                HttpHeaders requestSumsuHeaders = new HttpHeaders();
+                requestSumsuHeaders.add("User-Agent", userAgent);
+                HttpEntity<String> requestSumsuEntity = new HttpEntity(null, requestSumsuHeaders);
+                ResponseEntity<String> resultSumsuResponseEntity = this.restTemplate.exchange(
+                        url,
+                        HttpMethod.GET, requestSumsuEntity, String.class);
+
+                if (resultSumsuResponseEntity.getStatusCode() == HttpStatus.OK) {
+                    String tidHtml = resultSumsuResponseEntity.getBody();
+//                    System.out.println("*****");
+//                    System.out.println(tidHtml);
+//                    System.out.println("*****");
+                    Document tidDoc = Jsoup.parse(tidHtml);
+                    String movieName = null;
+                    if(tidDoc.title().contains("-")){
+                         movieName = tidDoc.title().split("-")[0].trim();
+                    }else if(tidDoc.title().contains("Powered by Discuz")){
+                        movieName = tidDoc.title().split("Powered by Discuz")[0].trim();
+                    }
+
+                    Elements elements = tidDoc.select("strong").select("a");
+
+
+                    for (Element link : elements) {
+                        String linkhref = link.attr("href");
+                        if (linkhref.startsWith("https://pan.baidu.com")) {
+                            System.out.println("--------------------------------");
+                            MovieNameAndUrlModel movieNameAndUrlModel = new MovieNameAndUrlModel();
+                            String baiPan = link.attr("href").toString();
+                            movieNameAndUrlModel.setWangPanUrl(baiPan);
+                            movieNameAndUrlModel.setMovieName(movieName);
+                            movieNameAndUrlModel.setMovieUrl(url);
+                            if(link.parent().text().contains("提取码")){
+                                movieNameAndUrlModel.setWangPanPassword(link.parent().text().split("提取码:")[1].trim());
+                            }
+
+                            if(link.parent().text().contains("密码")){
+                                movieNameAndUrlModel.setWangPanPassword(link.parent().text().split("密码:")[1].trim());
+                            }
+                            movieNameAndUrlModels.add(movieNameAndUrlModel);
+                        }
+
+                    }
+                    movieNameAndUrlService.addOrUpdateMovieUrls(movieNameAndUrlModels, "url_movie_sumsu");
+                }
+
+        } catch (Exception e) {
+            log.error(e.getMessage());
+        }
+        return movieNameAndUrlModels;
+    }
 
 }

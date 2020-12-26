@@ -115,7 +115,7 @@ user:
     url: http://520.sumsu.cn/search.php?mod=forum
 
 temp:
-  fileroot: 'D:/'
+  filrooet: 'D:/'
   filePath: /temp
 
 wx:
