@@ -80,7 +80,37 @@ public class MoviePageShowController {
         }
     }
 
+    /**
+     * @param fishEncryption
+     * @return
+     * @Description: 根据加密内容 返回会员信息 头尾list
+     */
+    @RequestMapping(path = "/member/{fishEncryption}/{searchName}", method = RequestMethod.GET)
+    public AjaxResult getMemberList(@PathVariable String fishEncryption, @PathVariable String searchName) {
+        try {
+            String username = new String(decoder.decode(fishEncryption), "UTF-8");
+            SystemUserModel systemUserModel = new SystemUserModel();
+            systemUserModel.setUsername(username);
 
+            List<SystemTemDetailsModel> systemdetails = iSystemTemDetailsService.getTemDetailsWithUser(systemUserModel);
+
+            /**
+             *  searchName 后期要改用模糊查询
+             */
+            List<SystemTemDetailsModel> memberList = systemdetails.stream().
+                    filter(systemTemdetailsModel -> searchName.equals(systemTemdetailsModel.getKeyword())).collect(Collectors.toList());
+
+
+            if (memberList.size() > 0) {
+                return AjaxResult.success(memberList);
+            } else {
+                return AjaxResult.error();
+            }
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return AjaxResult.error();
+        }
+    }
 
 
     /**

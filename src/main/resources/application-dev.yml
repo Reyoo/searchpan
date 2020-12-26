@@ -111,6 +111,8 @@ user:
     weiduyingdan: http://www.unreadmovie.com
   lxxh:
     aidianying: http://www.lxxh7.com
+  sumsu:
+    url: http://520.sumsu.cn/search.php?mod=forum
 
 temp:
   fileroot: 'D:/'

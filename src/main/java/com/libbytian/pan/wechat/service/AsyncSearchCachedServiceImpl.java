@@ -42,7 +42,8 @@ public class AsyncSearchCachedServiceImpl {
 
     private final NormalPageService normalPageService;
 
-    private final IMovieNameAndUrlService iMovieNameAndUrlService;
+
+    private final CrawlerSumsuService crawlerSumsuService;
 
     private final MovieNameAndUrlMapper movieNameAndUrlMapper;
     @Value("${user.unread.weiduyingdan}")
@@ -97,30 +98,33 @@ public class AsyncSearchCachedServiceImpl {
                 }
 
             case "x":
-//                  从xxx  获取资源  暂时用未读影单的
-                movieNameAndUrlModels = movieNameAndUrlMapper.selectMovieUrlByLikeName("XXXX", searchMovieText);
+//                  从 社区动力
+//               从redis 中拿
+                movieNameAndUrlModels = movieNameAndUrlMapper.selectMovieUrlByLikeName("sumsu", "'" + searchMovieText + "'");
                 if (movieNameAndUrlModels == null || movieNameAndUrlModels.size() == 0) {
                     //从数据库里拿
-                    movieNameAndUrlModels = movieNameAndUrlMapper.selectMovieUrlByLikeName("url_movie_unreadxx", "'" + searchMovieText + "'");
-                    return invalidUrlCheckingService.checkUrlMethod("url_movie_unreadxx", movieNameAndUrlModels);
+                    movieNameAndUrlModels = movieNameAndUrlMapper.selectMovieUrlByLikeName("url_movie_sumsu", "'" + searchMovieText + "'");
+                    redisTemplate.opsForHash().putIfAbsent("sumsu", searchMovieText, movieNameAndUrlModels);
+                    return invalidUrlCheckingService.checkUrlMethod("url_movie_sumsu", movieNameAndUrlModels);
                 } else {
                     return movieNameAndUrlModels;
                 }
 
+
             default:
-                movieNameAndUrlModels = movieNameAndUrlMapper.selectMovieUrlByLikeName("url_movie_aidianying", searchMovieText);
-                movieNameAndUrlModels.addAll(movieNameAndUrlMapper.selectMovieUrlByLikeName("url_movie_aidianying", searchMovieText));
+                //查询全部
+                movieNameAndUrlModels = movieNameAndUrlMapper.selectMovieUrlByLikeName("url_movie", searchMovieText);
+
                 if (movieNameAndUrlModels == null || movieNameAndUrlModels.size() == 0) {
                     //从数据库不同表里拿
-                    movieNameAndUrlModels = movieNameAndUrlMapper.selectMovieUrlByLikeName("diffrent-table", "'" + searchMovieText + "'");
-                    return invalidUrlCheckingService.checkUrlMethod("diffrent-table", movieNameAndUrlModels);
+                    movieNameAndUrlModels = movieNameAndUrlMapper.selectMovieUrlByLikeName("url_movie", "'" + searchMovieText + "'");
+                    return invalidUrlCheckingService.checkUrlMethod("url_movie", movieNameAndUrlModels);
                 } else {
                     return movieNameAndUrlModels;
                 }
         }
 
     }
-
 
     /**
      * @param
@@ -160,9 +164,13 @@ public class AsyncSearchCachedServiceImpl {
                         crawlerAndSaveUrl(searchMovieName, "url_movie_unread", crawlerName);
                         break;
 
+                    case "sumsu":
+                        crawlerAndSaveUrl(searchMovieName, "url_movie_sumsu", crawlerName);
+                        break;
                     default:
                         crawlerAndSaveUrl(searchMovieName, "url_movie_aidianying", crawlerName);
                         crawlerAndSaveUrl(searchMovieName, "url_movie_unread", crawlerName);
+                        crawlerAndSaveUrl(searchMovieName, "url_movie_sumsu", crawlerName);
                         break;
 
                 }
@@ -223,25 +231,37 @@ public class AsyncSearchCachedServiceImpl {
 
                 if ("aidianying".equals(crawlerName)) {
                     movieNameAndUrl = normalPageService.getMovieLoopsAiDianying(lxxhUrl + "/?s=" + searchMovieName);
-                    redisTemplate.opsForHash().putIfAbsent(crawlerName, searchMovieName, new ArrayList().add(movieNameAndUrl));
+                    List<MovieNameAndUrlModel> aiDianyingList = new ArrayList<>();
+                    aiDianyingList.add(movieNameAndUrl);
+                    redisTemplate.opsForHash().putIfAbsent(crawlerName, searchMovieName, new ArrayList().add(aiDianyingList));
+                    innerMovieList = aiDianyingList;
+
                 } else if ("unreadmovie".equals(crawlerName)) {
                     List<MovieNameAndUrlModel> unreadUrls = normalPageService.getNormalUrl(unreadUrl + "/?s=" + searchMovieName);
+                    List<MovieNameAndUrlModel> unreadMovieList = new ArrayList<>();
                     unreadUrls.stream().forEach(innermovieNameAndUrl ->
-                            innerMovieList.add(normalPageService.getMoviePanUrl(innermovieNameAndUrl)));
+                            unreadMovieList.add(normalPageService.getMoviePanUrl(innermovieNameAndUrl)));
                     redisTemplate.opsForHash().putIfAbsent(crawlerName, searchMovieName, new ArrayList().add(innerMovieList));
+                    innerMovieList = unreadMovieList;
+                }else if("sumsu".equals(crawlerName)){
+                    innerMovieList = crawlerSumsuService.getSumsuUrl(searchMovieName);
+                    redisTemplate.opsForHash().putIfAbsent(crawlerName, searchMovieName,innerMovieList );
 
                 } else {
                     movieNameAndUrl = normalPageService.getMovieLoopsAiDianying(lxxhUrl + "/?s=" + searchMovieName);
                     List<MovieNameAndUrlModel> unreadUrls = normalPageService.getNormalUrl(unreadUrl + "/?s=" + searchMovieName);
+                    List<MovieNameAndUrlModel> finalInnerMovieList1 = innerMovieList;
                     unreadUrls.stream().forEach(innermovieNameAndUrl ->
-                            innerMovieList.add(normalPageService.getMoviePanUrl(innermovieNameAndUrl)));
+                            finalInnerMovieList1.add(normalPageService.getMoviePanUrl(innermovieNameAndUrl)));
+                    innerMovieList = finalInnerMovieList1;
                 }
+
+
                 movieNameAndUrlModels = innerMovieList;
 
                 if (movieNameAndUrl != null) {
                     movieNameAndUrlModels.add(movieNameAndUrl);
                 }
-
 
                 if (movieNameAndUrlModels != null && movieNameAndUrlModels.size() > 0) {
 //                        检查url 是否正确
@@ -249,11 +269,9 @@ public class AsyncSearchCachedServiceImpl {
 //                        插入更新操作
                     movieNameAndUrlService.addOrUpdateMovieUrls(movieNameAndUrlModels, tableName);
                     //记录到redis
-
-                    redisTemplate.opsForHash().putIfAbsent(crawlerName, searchMovieName, movieNameAndUrlModels);
-                } else {
                     redisTemplate.opsForHash().putIfAbsent(crawlerName, searchMovieName, movieNameAndUrlModels);
                 }
+
             }
 
             return movieNameAndUrlModels;
@@ -262,8 +280,6 @@ public class AsyncSearchCachedServiceImpl {
             return movieNameAndUrlModels;
         }
     }
-
-
 
 
 }

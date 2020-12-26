@@ -62,7 +62,6 @@ public class CrawlerWebInfoController {
     }
 
 
-
     /**
      * 调用电影PID 入库 触发接口类
      */
@@ -80,8 +79,8 @@ public class CrawlerWebInfoController {
             for (int i = 130001; i <= 140000; i++) {
 
                 int s = random.nextInt(29) % (29 - 10 + 1) + 10;
-                int m = random.nextInt(12) % (12-11 + 1) +11;
-                asyncTask.getAllmovieInit(urlBase,String.valueOf(i),s,m);
+                int m = random.nextInt(12) % (12 - 11 + 1) + 11;
+                asyncTask.getAllmovieInit(urlBase, String.valueOf(i), s, m);
             }
 
             return AjaxResult.success("表入库成功");
@@ -90,5 +89,30 @@ public class CrawlerWebInfoController {
         }
 
     }
+
+//sumsu
+//    http://520.sumsu.cn/forum.php?mod=viewthread&tid=20252&highlight=%87%E5%C2%E8
+
+
+    /**
+     * 调用电影PID 入库 触发接口类
+     */
+    @RequestMapping(value = "/getall/sumsu", method = RequestMethod.GET)
+    public AjaxResult getSumsu() {
+        try {
+//            http://520.sumsu.cn/forum.php?mod=viewthread&tid=20252&highlight=%87%E5%C2%E8
+
+//            asyncTask.getAllSumsuUrl();
+
+            return AjaxResult.success("表入库成功");
+
+
+        } catch (
+                Exception e) {
+            return AjaxResult.error("表入库失败");
+        }
+
+    }
+
 
 }

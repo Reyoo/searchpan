@@ -4,6 +4,7 @@ package com.libbytian.pan.wechat.controller;
 import com.libbytian.pan.system.common.AjaxResult;
 import com.libbytian.pan.system.model.MovieNameAndUrlModel;
 import com.libbytian.pan.system.service.IMovieNameAndUrlService;
+import com.libbytian.pan.wechat.service.CrawlerSumsuService;
 import com.libbytian.pan.wechat.service.NormalPageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,12 +30,16 @@ public class NormalPageController {
 
     private final NormalPageService normalPageService;
     private final IMovieNameAndUrlService movieNameAndUrlService;
+    private final CrawlerSumsuService crawlerSumsuService;
 
 
     @Value("${user.unread.weiduyingdan}")
     String unreadUrl;
     @Value("${user.lxxh.aidianying}")
     String lxxhUrl;
+
+    @Value("${user.sumsu.url}")
+    String sumSuUrl;
 
 
     @GetMapping("/lxxh/search")
@@ -67,6 +72,19 @@ public class NormalPageController {
         List<MovieNameAndUrlModel> movieNameAndUrls1 =normalPageService.getNormalUrl(lxxhUrl+"/?s="+name);
         movieNameAndUrls1.stream().forEach( movieNameAndUrl ->
                 realMovieList.add(normalPageService.getMoviePanUrl2(movieNameAndUrl)));
+
+        return AjaxResult.success(realMovieList);
+    }
+
+
+
+    @GetMapping("sumsu")
+//    @RequestLimit(count = 3, frameTime = 2, lockTime = 30)
+    public AjaxResult getSumsuMovie(@RequestParam String searchMovieName) throws Exception{
+        List<MovieNameAndUrlModel> realMovieList = new ArrayList();
+
+        List<MovieNameAndUrlModel> movieNameAndUrls =crawlerSumsuService.getSumsuUrl(searchMovieName);
+
 
         return AjaxResult.success(realMovieList);
     }
