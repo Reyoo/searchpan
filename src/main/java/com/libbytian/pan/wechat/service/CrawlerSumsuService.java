@@ -139,7 +139,11 @@ public class CrawlerSumsuService {
                     System.out.println("*****");
                     Document tidDoc = Jsoup.parse(tidHtml);
 
+                    if( tidDoc.title().contains("404")){
+                        continue;
+                    }
 
+                    String movieName = tidDoc.title();
                     Elements elements = tidDoc.select("strong").select("a");
 
 
@@ -153,12 +157,20 @@ public class CrawlerSumsuService {
                             movieNameAndUrlModel.setMovieName(tidDoc.title());
                             movieNameAndUrlModel.setMovieUrl(sumsuUrl);
 
-                            if(link.parent().text().contains("提取码")){
+                            if(link.parent().text().contains("提取码:")){
                                 movieNameAndUrlModel.setWangPanPassword(link.parent().text().split("提取码:")[1].trim());
                             }
 
-                            if(link.parent().text().contains("密码")){
+                            if(link.parent().text().contains("提取码：")){
+                                movieNameAndUrlModel.setWangPanPassword(link.parent().text().split("提取码：")[1].trim());
+                            }
+
+                            if(link.parent().text().contains("密码:")){
                                 movieNameAndUrlModel.setWangPanPassword(link.parent().text().split("密码:")[1].trim());
+                            }
+
+                            if(link.parent().text().contains("密码：")){
+                                movieNameAndUrlModel.setWangPanPassword(link.parent().text().split("密码：")[1].trim());
                             }
 
                             movieNameAndUrlModels.add(movieNameAndUrlModel);
@@ -195,15 +207,21 @@ public class CrawlerSumsuService {
 
                 if (resultSumsuResponseEntity.getStatusCode() == HttpStatus.OK) {
                     String tidHtml = resultSumsuResponseEntity.getBody();
-//                    System.out.println("*****");
-//                    System.out.println(tidHtml);
-//                    System.out.println("*****");
+
+                    System.out.println(tidHtml);
+                    System.out.println("************");
                     Document tidDoc = Jsoup.parse(tidHtml);
-                    String movieName = null;
-                    if(tidDoc.title().contains("-")){
-                         movieName = tidDoc.title().split("-")[0].trim();
-                    }else if(tidDoc.title().contains("Powered by Discuz")){
-                        movieName = tidDoc.title().split("Powered by Discuz")[0].trim();
+                    if( tidDoc.title().contains("404")){
+                        return movieNameAndUrlModels;
+                    }
+                    String movieName = tidDoc.title();
+
+                    if(movieName.contains("百度云下载链接")){
+                        movieName = tidDoc.title().split("百度云下载链接")[0].trim();
+                    }
+
+                    else if(movieName.contains("Powered by Discuz")){
+                        movieName = movieName.split("Powered by Discuz")[0].trim();
                     }
 
                     Elements elements = tidDoc.select("strong").select("a");
@@ -212,19 +230,29 @@ public class CrawlerSumsuService {
                     for (Element link : elements) {
                         String linkhref = link.attr("href");
                         if (linkhref.startsWith("https://pan.baidu.com")) {
-                            System.out.println("--------------------------------");
                             MovieNameAndUrlModel movieNameAndUrlModel = new MovieNameAndUrlModel();
                             String baiPan = link.attr("href").toString();
                             movieNameAndUrlModel.setWangPanUrl(baiPan);
                             movieNameAndUrlModel.setMovieName(movieName);
                             movieNameAndUrlModel.setMovieUrl(url);
-                            if(link.parent().text().contains("提取码")){
+                            if(link.parent().text().contains("提取码:")){
                                 movieNameAndUrlModel.setWangPanPassword(link.parent().text().split("提取码:")[1].trim());
                             }
 
-                            if(link.parent().text().contains("密码")){
+                            if(link.parent().text().contains("提取码：")){
+                                movieNameAndUrlModel.setWangPanPassword(link.parent().text().split("提取码：")[1].trim());
+                            }
+
+                            if(link.parent().text().contains("密码:")){
                                 movieNameAndUrlModel.setWangPanPassword(link.parent().text().split("密码:")[1].trim());
                             }
+
+                            if(link.parent().text().contains("密码：")){
+                                movieNameAndUrlModel.setWangPanPassword(link.parent().text().split("密码：")[1].trim());
+                            }
+
+
+
                             movieNameAndUrlModels.add(movieNameAndUrlModel);
                         }
 
@@ -233,6 +261,7 @@ public class CrawlerSumsuService {
                 }
 
         } catch (Exception e) {
+            e.printStackTrace();
             log.error(e.getMessage());
         }
         return movieNameAndUrlModels;

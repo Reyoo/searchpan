@@ -103,16 +103,12 @@ public class CrawlerWebInfoController {
         try {
 //            http://520.sumsu.cn/forum.php?mod=viewthread&tid=20252&highlight=%87%E5%C2%E8
 
-            for(int i = 5147 ; i <=20000;i++){
-                int num=(int) (Math.random()*(5000-1000+1000)+1000);
-                Thread.sleep(num);
+            for(int i = 11817 ; i <=20000;i++){
+//                int num=(int) (Math.random()*(5000-1000+1000)+1000);
+//                Thread.sleep(num);
                 crawlerSumsuService.firstInitTidSumsuUrl(i);
             }
-
-
             return AjaxResult.success("表入库成功");
-
-
         } catch (
                 Exception e) {
             return AjaxResult.error("表入库失败");
