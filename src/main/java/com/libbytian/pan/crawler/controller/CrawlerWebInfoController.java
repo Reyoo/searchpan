@@ -103,7 +103,7 @@ public class CrawlerWebInfoController {
         try {
 //            http://520.sumsu.cn/forum.php?mod=viewthread&tid=20252&highlight=%87%E5%C2%E8
 
-            for(int i = 11817 ; i <=20000;i++){
+            for(int i = 12370 ; i <=20000;i++){
 //                int num=(int) (Math.random()*(5000-1000+1000)+1000);
 //                Thread.sleep(num);
                 crawlerSumsuService.firstInitTidSumsuUrl(i);

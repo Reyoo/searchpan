@@ -33,6 +33,8 @@ public class AjaxResult extends HashMap<String, Object> {
          */
         WARN(301),
 
+        FORBBIDENT(300),
+
 
         /**
          * 错误
@@ -167,6 +169,18 @@ public class AjaxResult extends HashMap<String, Object> {
      */
     public static AjaxResult warn(String msg, Object data) {
         return new AjaxResult(Type.WARN, msg, data);
+    }
+
+    public static AjaxResult hide() {
+        return AjaxResult.hide("隐藏");
+    }
+
+    public static AjaxResult hide(String msg, Object data) {
+        return new AjaxResult(Type.FORBBIDENT, msg, data);
+    }
+
+    public static AjaxResult hide(String msg) {
+        return AjaxResult.hide(msg, null);
     }
 
     /**

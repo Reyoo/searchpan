@@ -54,7 +54,7 @@ public class InvalidUrlCheckingService {
                 Document document = Jsoup.connect(wangPanUrl).get();
                 String title = document.title();
                 //获取html中的标题
-                log.info("title--> :" + title);
+                log.info("title--> :" + title + " 网盘URL --> " + wangPanUrl + " 原资源 --> " + movieNameAndUrlModel.getMovieUrl());
                 if (!"百度网盘-链接不存在".contains(title) || !"页面不存在".contains(title)) {
                     //Redis 暂时不做处理
                     couldBeFindUrls.add(movieNameAndUrlModel);
@@ -62,6 +62,7 @@ public class InvalidUrlCheckingService {
                     movieNameAndUrlService.dropMovieUrl(tableName,movieNameAndUrlModel);
                 }
             }
+            log.info("校验完毕");
             return couldBeFindUrls;
         }
     }

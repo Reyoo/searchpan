@@ -175,8 +175,6 @@ public class WxPortalController {
         //解析传入的username,拿到user,查询对应模板
         String username = new String(decoder.decode(verification), "UTF-8");
 
-        //根据用户关键字时间、判断是否是可返回接口状态
-
 
 
         /**
@@ -203,7 +201,9 @@ public class WxPortalController {
 //            异步获取一次消息
                 String searchWord = inMessage.getContent().trim();
                 List<String> crawlerNames = new ArrayList<>();
-                crawlerNames.add("ALL");
+                crawlerNames.add("aidianying");
+                crawlerNames.add("unreadmovie");
+                crawlerNames.add("sumsu");
 
                 asyncSearchCachedService.searchAsyncWord(crawlerNames,    searchWord);
                 WxMpXmlOutMessage outMessage = this.route(inMessage);

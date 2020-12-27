@@ -104,11 +104,11 @@ public class MoviePageShowController {
             if (memberList.size() > 0) {
                 return AjaxResult.success(memberList);
             } else {
-                return AjaxResult.error();
+                return AjaxResult.hide();
             }
         } catch (Exception e) {
             log.error(e.getMessage());
-            return AjaxResult.error();
+            return AjaxResult.hide();
         }
     }
 
@@ -131,13 +131,12 @@ public class MoviePageShowController {
             movieNameAndUrlModels = asyncSearchCachedService.searchWord(searchName.trim(), search);
 
             if (movieNameAndUrlModels.size() == 0) {
-                return AjaxResult.error("未查询到 '" + searchName + "' 的相关资源");
+                return AjaxResult.hide("全网搜 '" + searchName + "' 中 挖坑埋点土数个一二三四五，再点一次大厅");
             }
-
             return AjaxResult.success(movieNameAndUrlModels);
         } catch (Exception e) {
             e.printStackTrace();
-            return AjaxResult.error("未查询到 '" + searchName + "' 的相关资源");
+            return AjaxResult.hide("全网搜 '" + searchName + "' 中 挖坑埋点土数个一二三四五，再点一次大厅");
         }
 
     }
