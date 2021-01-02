@@ -113,6 +113,8 @@ user:
     aidianying: http://www.lxxh7.com
   sumsu:
     url: http://520.sumsu.cn/search.php?mod=forum
+  xiaoyou:
+    url: http://y.yuanxiao.net.cn
 
 temp:
   fileroot: 'D:/'

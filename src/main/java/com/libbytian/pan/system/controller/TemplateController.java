@@ -156,7 +156,7 @@ public class TemplateController {
 
             String username = httpRequest.getRemoteUser();
             System.out.println(httpRequest.getRemoteUser());
-            ;
+
             SystemUserModel userModel = new SystemUserModel();
             userModel.setUsername(username);
 

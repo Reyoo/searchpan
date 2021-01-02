@@ -63,6 +63,7 @@ public class CrawlerWebInfoController {
     }
 
 
+
     /**
      * 调用电影PID 入库 触发接口类
      */
@@ -83,6 +84,8 @@ public class CrawlerWebInfoController {
                 int m = random.nextInt(12) % (12 - 11 + 1) + 11;
                 asyncTask.getAllmovieInit(urlBase, String.valueOf(i), s, m);
             }
+
+
 
             return AjaxResult.success("表入库成功");
         } catch (Exception e) {

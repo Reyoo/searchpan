@@ -1,6 +1,7 @@
 package com.libbytian.pan.system.service.impl;
 
 import cn.hutool.core.lang.UUID;
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -287,6 +288,7 @@ public class SystemTemDetailsServiceImpl extends ServiceImpl<SystemTemDetailsMap
         SystemTemDetailsModel hideReply = new SystemTemDetailsModel();
         SystemTemDetailsModel headWeb = new SystemTemDetailsModel();
         SystemTemDetailsModel endWeb = new SystemTemDetailsModel();
+        SystemTemDetailsModel preserveContent = new SystemTemDetailsModel();
 
 
         sleepDetails.setKeyword("维护内容");
@@ -317,6 +319,10 @@ public class SystemTemDetailsServiceImpl extends ServiceImpl<SystemTemDetailsMap
         endWeb.setKeywordToValue("web页面底部提示内容");
         endWeb.setShowOrder(7);
 
+        preserveContent.setKeyword("维护内容");
+        preserveContent.setKeywordToValue("维护期间回复内容");
+        preserveContent.setShowOrder(8);
+
 
         detailist.add(sleepDetails);
         detailist.add(headAdvert);
@@ -325,6 +331,7 @@ public class SystemTemDetailsServiceImpl extends ServiceImpl<SystemTemDetailsMap
         detailist.add(hideReply);
         detailist.add(headWeb);
         detailist.add(endWeb);
+        detailist.add(preserveContent);
 
 
 /**

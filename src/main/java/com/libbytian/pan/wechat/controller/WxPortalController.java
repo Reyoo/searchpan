@@ -113,18 +113,19 @@ public class WxPortalController {
 
 //        Date1.after(Date2),当Date1大于Date2时，返回TRUE，当小于等于时，返回false；
 //        Date1.before(Date2)，当Date1小于Date2时，返回TRUE，当大于等于时，返回false；
-            if (!"00:00".equals(userStart) && !"23:59".equals(userEnd)) {
-                //如果当前时间不小于用户其实时间  那么是允许放行的
 
-                if (nowDate.compareTo(userStartdate) < 0) {
-                    return "当前时间 不在用户限定时间内";
-                }
-
-                if (nowDate.compareTo(userEnddate) >0) {
-                    return "当前时间 不在用户限定时间内";
-                }
-
-            }
+//            if (!"00:00".equals(userStart) && !"23:59".equals(userEnd)) {
+//                //如果当前时间不小于用户其实时间  那么是允许放行的
+//
+//                if (nowDate.compareTo(userStartdate) < 0) {
+//                    return "当前时间 不在用户限定时间内";
+//                }
+//
+//                if (nowDate.compareTo(userEnddate) >0) {
+//                    return "当前时间 不在用户限定时间内";
+//                }
+//
+//            }
 
             SystemUserModel systemUserModel = new SystemUserModel();
             systemUserModel.setUsername(username);
@@ -186,6 +187,12 @@ public class WxPortalController {
         SystemTemDetailsModel headModel = iSystemTemDetailsService.getUserKeywordDetail(username, TemplateKeyword.TOP_ADVS);
         SystemTemDetailsModel lastModel = iSystemTemDetailsService.getUserKeywordDetail(username, TemplateKeyword.TAIL_ADVS);
 
+        SystemTemDetailsModel secretContent = iSystemTemDetailsService.getUserKeywordDetail(username, TemplateKeyword.SECRET_CONTENT);
+        SystemTemDetailsModel secretReply = iSystemTemDetailsService.getUserKeywordDetail(username, TemplateKeyword.SECRET_REPLY);
+
+        SystemTemDetailsModel keyContent = iSystemTemDetailsService.getUserKeywordDetail(username, TemplateKeyword.KEY_CONTENT);
+        SystemTemDetailsModel preserveContent = iSystemTemDetailsService.getUserKeywordDetail(username, TemplateKeyword.PRESERVE_CONTENT);
+
 
         String out = null;
         try {
@@ -236,6 +243,8 @@ public class WxPortalController {
                     }
                 }
 
+
+
                 /**
                  * 响应内容
                  * 关键字 头部广告 headModel.getKeywordToValue()
@@ -265,7 +274,83 @@ public class WxPortalController {
                     stringBuffer.append(lastModel.getKeywordToValue());
                 }
 
-//
+
+                /**
+                 * 关键词 隐藏判断
+                 */
+                if (secretContent != null) {
+                    //隐藏的片名以空格分隔，获取隐藏片名的数组
+                    String[] str = secretContent.getKeywordToValue().split(" ");
+
+                    for (String s : str) {
+                        //判断传入的 片名 是否在隐藏资源中
+                        if (s.equals(searchName)) {
+                            stringBuffer.setLength(0);
+                            stringBuffer.append(secretReply.getKeywordToValue());
+                            break;
+
+                        }
+                    }
+                }
+
+                SystemKeywordModel systemKeywordModel = systemKeywordService.getKeywordByUser(username);
+                String secretKey = systemKeywordModel.getSecretKey();
+
+
+
+                /**
+                 * 关键词 维护判断
+                 */
+                //维护时间
+                String userStart = systemKeywordModel.getStartTime();
+                String userEnd = systemKeywordModel.getEndTime();
+
+                if (StringUtils.isNotBlank(userStart) && StringUtils.isNotBlank(userEnd)) {
+
+                    SimpleDateFormat df = new SimpleDateFormat("HH:mm");
+                    Date dateStart = df.parse(userStart);
+                    Date dateEnd = df.parse(userEnd);
+                    //当前时间
+                    Date now = df.parse(df.format(new Date()));
+
+                    Calendar nowTime = Calendar.getInstance();
+                    nowTime.setTime(now);
+
+                    Calendar beginTime = Calendar.getInstance();
+                    beginTime.setTime(dateStart);
+
+                    Calendar endTime = Calendar.getInstance();
+                    endTime.setTime(dateEnd);
+
+                    //如果开始时间 > 结束时间，跨天 给结束时间加一天
+                    if (beginTime.after(endTime)) {
+                        endTime.add(Calendar.DAY_OF_MONTH, 1);
+                    }
+
+                    //如果当前时间在维护期内，返回维护内容
+                    if (nowTime.after(beginTime) && nowTime.before(endTime)) {
+                        stringBuffer.setLength(0);
+                        stringBuffer.append(preserveContent.getKeywordToValue());
+                    }
+
+                }
+
+
+                /**
+                 * HuangS
+                 * 关键词 判断秘钥
+                 * 最简单实现
+                 * 判断传入的关键词中是否包含秘钥
+                 */
+                if (StringUtils.isNotBlank(secretKey) && !searchContent.contains(secretKey)){
+
+                    stringBuffer.setLength(0);
+                    if (StringUtils.isNotBlank(secretKey)){
+                        stringBuffer.append(keyContent.getKeywordToValue());
+                    }
+                }
+
+
 
                 outMessage = WxMpXmlOutTextMessage.TEXT()
                         .toUser(inMessage.getFromUser())
@@ -319,7 +404,7 @@ public class WxPortalController {
     public String getURL(@RequestParam String username) {
 
         String encodeusername = encoder.encodeToString(username.getBytes());
-        return "http://6itty7.natappfree.cc" + "/wechat/portal/" + encodeusername;
+        return "http://vyvir9.natappfree.cc" + "/wechat/portal/" + encodeusername;
 
     }
 

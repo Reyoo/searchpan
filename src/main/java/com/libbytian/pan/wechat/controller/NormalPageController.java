@@ -41,6 +41,9 @@ public class NormalPageController {
     @Value("${user.sumsu.url}")
     String sumSuUrl;
 
+    @Value(("${user.xiaoyou.url}"))
+    String xiaoyouUrl;
+
 
     @GetMapping("/lxxh/search")
 //    @RequestLimit(count = 3, frameTime = 2, lockTime = 30)
@@ -85,7 +88,20 @@ public class NormalPageController {
 
         List<MovieNameAndUrlModel> movieNameAndUrls =crawlerSumsuService.getSumsuUrl(searchMovieName);
 
-
         return AjaxResult.success(realMovieList);
     }
+
+//    @GetMapping("xiaoyou")
+//    public AjaxResult getXiaoYouMovie(@RequestParam String name) {
+//        try {
+//            MovieNameAndUrlModel movieNameAndUrl;
+//            movieNameAndUrl = normalPageService.getMovieLoopsAiDianying(lxxhUrl + "/?s=" + name);
+//            List<MovieNameAndUrlModel> arrayList = new ArrayList();
+//            arrayList.add(movieNameAndUrl);
+//            movieNameAndUrlService.addOrUpdateMovieUrls(arrayList, "url_movie_aidianying");
+//            return AjaxResult.success(movieNameAndUrl);
+//        } catch (Exception e) {
+//            return AjaxResult.error(e.getMessage());
+//        }
+//    }
 }
