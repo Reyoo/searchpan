@@ -2,6 +2,7 @@ package com.libbytian.pan.system.service.impl;
 
 
 import cn.hutool.core.lang.UUID;
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -144,11 +145,18 @@ public class SystemUserServiceImpl extends ServiceImpl<SystemUserMapper, SystemU
             systemTemDetailsService.defaultSave(templateId);
 
 
+
+            String appId = user.getAppId();
+            if(StrUtil.isBlank(appId)){
+                appId = "limits";
+            }
+
             SystemKeywordModel systemKeywordModel = new SystemKeywordModel();
-            systemKeywordModel.setUserSafeKey("http://51.findfish.top/wechat/portal/" + Base64.getEncoder().encodeToString(user.getUsername().getBytes()));
+            systemKeywordModel.setUserSafeKey("http://51.findfish.top/wechat/portal/" + Base64.getEncoder().encodeToString(user.getUsername().getBytes())+"/" + appId);
             systemKeywordModel.setKeywordId(templateId);
             systemKeywordModel.setStartTime("00:00");
             systemKeywordModel.setEndTime("24:00");
+            systemKeywordModel.setAppId(appId);
             //新增用户 信息类 插入关键字表
             keywordService.addkeyword(systemKeywordModel);
             //插入关联表

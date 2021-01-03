@@ -152,6 +152,8 @@ public class SystemUserModel extends Model<SystemUserModel>   {
     private String wxToken;
 
 
+    @TableField(exist = false)
+    private String appId;
 
 
 

@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -31,7 +32,7 @@ import java.util.concurrent.TimeUnit;
 @Component
 @Slf4j
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-
+@EnableAsync
 public class AsyncSearchCachedServiceImpl {
 
 
@@ -77,8 +78,7 @@ public class AsyncSearchCachedServiceImpl {
                 movieNameAndUrlModels = (List<MovieNameAndUrlModel>) redisTemplate.opsForHash().get("aidianying", searchMovieText);
                 log.info("--------------------------------------------");
                 if (movieNameAndUrlModels == null || movieNameAndUrlModels.size() == 0) {
-                    //从数据库里拿
-//                    movieNameAndUrlModels = iMovieNameAndUrlService.findAiDianYingUrl(searchText);
+
                     movieNameAndUrlModels = movieNameAndUrlMapper.selectMovieUrlByLikeName("url_movie_aidianying", searchMovieText);
 //                    redis中没有 、数据库中也没有 、则说明都没有、可以调用异步方法重新爬取 这里需要补一个异步爬取的方法
 
@@ -220,6 +220,7 @@ public class AsyncSearchCachedServiceImpl {
      * @return
      */
 
+    @Async
     public List<MovieNameAndUrlModel> crawlerAndSaveUrl(String searchMovieName, String tableName, String crawlerName) {
         List<MovieNameAndUrlModel> movieNameAndUrlModels = new ArrayList<>();
 

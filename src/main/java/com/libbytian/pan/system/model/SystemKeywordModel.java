@@ -79,6 +79,10 @@ public class SystemKeywordModel extends Model<SystemKeywordModel> {
     private String fansKey;
 
 
+    @TableField("app_id")
+    private String appId;
+
+
 
     @Override
     protected Serializable pkVal() {

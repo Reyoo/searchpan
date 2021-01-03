@@ -10,6 +10,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import java.util.Base64;
+
 /**
  * 用户关键字接口
  */
@@ -39,11 +42,15 @@ public class UserKeywordController {
 
 
     @RequestMapping(value = "/fresh", method = RequestMethod.PATCH)
-    public AjaxResult updateUserKeyword(@RequestBody(required = true) SystemKeywordModel systemKeywordModel) {
+    public AjaxResult updateUserKeyword(HttpServletRequest httpRequest, @RequestBody(required = true) SystemKeywordModel systemKeywordModel) {
 
         try {
+            String userSafeKey ="http://51.findfish.top/wechat/portal/"+ Base64.getEncoder().encodeToString(httpRequest.getRemoteUser().getBytes())+  "/" + systemKeywordModel.getAppId();
+
+            systemKeywordModel.setUserSafeKey(userSafeKey);
+
             iSystemKeywordService.updateKeyword(systemKeywordModel);
-            return AjaxResult.success("update is success !!! call me baba ~");
+            return AjaxResult.success("update is success !!! ");
         } catch (Exception e) {
             log.error("systemKeywordModel -- >" + systemKeywordModel.getKeywordId() + "error -> " + e.getMessage());
             return AjaxResult.error(e.getMessage());

@@ -11,7 +11,8 @@
         k.user_token AS userToken,
         k.start_time AS startTime,
         k.end_time AS endTime,
-        k.fans_key AS fansKey
+        k.fans_key AS fansKey,
+        k.app_id AS appId
     </sql>
 
 
@@ -46,6 +47,15 @@
                 fans_key =#{fansKey},
             </if>
 
+            <if test="userSafeKey != null and userSafeKey != ''">
+                user_safe_key =#{userSafeKey},
+            </if>
+
+            <if test="appId != null ">
+                app_id =#{appId},
+            </if>
+
+
         </trim>
         WHERE
         keyword_id =#{keywordId}
@@ -77,8 +87,12 @@
 
             <if test="fansKey != null">
                 fans_key,
-
             </if>
+
+            <if test="appId != null">
+                app_id,
+            </if>
+
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="keywordId != null">
@@ -107,6 +121,10 @@
 
             <if test="fansKey != null">
                 #{fansKey,jdbcType=VARCHAR},
+            </if>
+
+            <if test="appId != null">
+                #{appId,jdbcType=VARCHAR},
             </if>
         </trim>
     </insert>

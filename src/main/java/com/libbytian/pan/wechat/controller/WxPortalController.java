@@ -10,9 +10,11 @@ import com.libbytian.pan.system.service.ISystemTemplateService;
 
 import com.libbytian.pan.system.service.ISystemUserService;
 import com.libbytian.pan.wechat.constant.TemplateKeyword;
+import com.libbytian.pan.wechat.handler.SubscribeHandler;
 import com.libbytian.pan.wechat.service.AsyncSearchCachedServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import me.chanjar.weixin.common.session.WxSessionManager;
 import me.chanjar.weixin.mp.api.WxMpMessageRouter;
 import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlMessage;
@@ -49,6 +51,8 @@ public class WxPortalController {
     private final WxMpService wxService;
     private final WxMpMessageRouter messageRouter;
 
+    private final SubscribeHandler subscribeHandler;
+
     private final ISystemTemDetailsService iSystemTemDetailsService;
     private final ISystemUserService iSystemUserService;
     private final AsyncSearchCachedServiceImpl asyncSearchCachedService;
@@ -70,9 +74,11 @@ public class WxPortalController {
      * @return
      */
 
-    @RequestMapping(path = "/{verification}", method = RequestMethod.GET, produces = "text/plain;charset=utf-8")
+
+    @RequestMapping(path = "/{verification}/{appId}", method = RequestMethod.GET, produces = "text/plain;charset=utf-8")
     public String authGet(
             @PathVariable String verification,
+            @PathVariable String appId,
             @RequestParam(name = "signature", required = false) String signature,
             @RequestParam(name = "timestamp", required = false) String timestamp,
             @RequestParam(name = "nonce", required = false) String nonce,
@@ -88,44 +94,29 @@ public class WxPortalController {
             String username = new String(decoder.decode(verification), "UTF-8");
 
             SystemKeywordModel systemKeywordModel = systemKeywordService.getKeywordByUser(username);
-
             String userStart = systemKeywordModel.getStartTime();
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm");
-
             Date userStartdate = simpleDateFormat.parse(userStart);
-
             String userEnd = systemKeywordModel.getEndTime();
-
-
             Date userEnddate = simpleDateFormat.parse(userEnd);
-
             ZoneId shanghaiZoneId = ZoneId.of("Asia/Shanghai");
             ZonedDateTime shanghaiZonedDateTime = ZonedDateTime.now(shanghaiZoneId);
-
             int nowHour = shanghaiZonedDateTime.getHour();
             int nowMinutes = shanghaiZonedDateTime.getMinute();
-
             Date nowDate = simpleDateFormat.parse(String.valueOf(nowHour) + ":" + String.valueOf(nowMinutes));
-
-
-            //如果启用时间是00:00 ~ 23:59  则全时段放行
-            //否则 只跑 时间段范围内的逻辑 。例如, 10:00 ~ 23:59 则 不允许 00:00 ~ 09:59  访问接口
-
+//            如果启用时间是00:00 ~ 23:59  则全时段放行
+//            否则 只跑 时间段范围内的逻辑 。例如, 10:00 ~ 23:59 则 不允许 00:00 ~ 09:59  访问接口
 //        Date1.after(Date2),当Date1大于Date2时，返回TRUE，当小于等于时，返回false；
 //        Date1.before(Date2)，当Date1小于Date2时，返回TRUE，当大于等于时，返回false；
-
-//            if (!"00:00".equals(userStart) && !"23:59".equals(userEnd)) {
-//                //如果当前时间不小于用户其实时间  那么是允许放行的
-//
-//                if (nowDate.compareTo(userStartdate) < 0) {
-//                    return "当前时间 不在用户限定时间内";
-//                }
-//
-//                if (nowDate.compareTo(userEnddate) >0) {
-//                    return "当前时间 不在用户限定时间内";
-//                }
-//
-//            }
+            if (!"00:00".equals(userStart) && !"23:59".equals(userEnd)) {
+                //如果当前时间不小于用户其实时间  那么是允许放行的
+                if (nowDate.compareTo(userStartdate) < 0) {
+                    return "当前时间 不在用户限定时间内";
+                }
+                if (nowDate.compareTo(userEnddate) > 0) {
+                    return "当前时间 不在用户限定时间内";
+                }
+            }
 
             SystemUserModel systemUserModel = new SystemUserModel();
             systemUserModel.setUsername(username);
@@ -140,8 +131,8 @@ public class WxPortalController {
         /**
          * 如果限制appid 则为私有
          */
-//        if (!this.wxService.switchover(appid)) {
-//            throw new IllegalArgumentException(String.format("未找到对应appid=[%s]的配置，请核实！", appid));
+//        if (!this.wxService.switchover(appId)) {
+//            throw new IllegalArgumentException(String.format("未找到对应appid=[%s]的配置，请核实！", appId));
 //        }
 
         if (wxService.checkSignature(timestamp, nonce, signature)) {
@@ -152,10 +143,11 @@ public class WxPortalController {
     }
 
 
-    @RequestMapping(path = "/{verification}", method = RequestMethod.POST, produces = "application/xml; charset=UTF-8")
+    @RequestMapping(path = "/{verification}/{appId}", method = RequestMethod.POST, produces = "application/xml; charset=UTF-8")
 //    @Async
     public String post(
             @PathVariable String verification,
+            @PathVariable String appId,
             @RequestBody String requestBody,
             @RequestParam(value = "signature") String signature,
             @RequestParam(value = "timestamp") String timestamp,
@@ -168,8 +160,8 @@ public class WxPortalController {
                         + " timestamp=[{}], nonce=[{}], requestBody=[\n{}\n] ",
                 openid, signature, encType, msgSignature, timestamp, nonce, requestBody);
 
-//        if (!this.wxService.switchover(appid)) {
-//            throw new IllegalArgumentException(String.format("未找到对应appid=[%s]的配置，请核实！", appid));
+//        if (!this.wxService.switchover(appId)) {
+//            throw new IllegalArgumentException(String.format("未找到对应appid=[%s]的配置，请核实！", appId));
 //        }
 
 
@@ -186,8 +178,8 @@ public class WxPortalController {
         SystemTemDetailsModel headModel = iSystemTemDetailsService.getUserKeywordDetail(username, TemplateKeyword.TOP_ADVS);
         SystemTemDetailsModel lastModel = iSystemTemDetailsService.getUserKeywordDetail(username, TemplateKeyword.TAIL_ADVS);
 
-        SystemTemDetailsModel secretContent = iSystemTemDetailsService.getUserKeywordDetail(username, TemplateKeyword.SECRET_CONTENT);
-        SystemTemDetailsModel secretReply = iSystemTemDetailsService.getUserKeywordDetail(username, TemplateKeyword.SECRET_REPLY);
+//        SystemTemDetailsModel secretContent = iSystemTemDetailsService.getUserKeywordDetail(username, TemplateKeyword.SECRET_CONTENT);
+//        SystemTemDetailsModel secretReply = iSystemTemDetailsService.getUserKeywordDetail(username, TemplateKeyword.SECRET_REPLY);
 
         SystemTemDetailsModel keyContent = iSystemTemDetailsService.getUserKeywordDetail(username, TemplateKeyword.KEY_CONTENT);
         SystemTemDetailsModel preserveContent = iSystemTemDetailsService.getUserKeywordDetail(username, TemplateKeyword.PRESERVE_CONTENT);
@@ -204,6 +196,8 @@ public class WxPortalController {
                 // 明文传输的消息
                 WxMpXmlMessage inMessage = WxMpXmlMessage.fromXml(requestBody);
 
+                System.out.println( wxService.getUserService());
+                System.out.println( inMessage.getAllFieldsMap());
 
                 String searchWord = inMessage.getContent().trim();
                 List<String> crawlerNames = new ArrayList<>();
@@ -211,8 +205,10 @@ public class WxPortalController {
                 crawlerNames.add("unreadmovie");
                 crawlerNames.add("sumsu");
 
-                asyncSearchCachedService.searchAsyncWord(crawlerNames,searchWord);
+                asyncSearchCachedService.searchAsyncWord(crawlerNames, searchWord);
                 WxMpXmlOutMessage outMessage = this.route(inMessage);
+
+
                 if (outMessage == null) {
                     return "";
                 }
@@ -243,7 +239,6 @@ public class WxPortalController {
                 }
 
 
-
                 /**
                  * 响应内容
                  * 关键字 头部广告 headModel.getKeywordToValue()
@@ -256,84 +251,76 @@ public class WxPortalController {
                     stringBuffer.append("\r\n");
                 }
 
-//                stringBuffer.append("<a href =\"http:///#/mobileView?searchname=");
                 stringBuffer.append("<a href =\"http://findfish.top/#/mobileView?searchname=");
                 stringBuffer.append(searchName);
-
                 stringBuffer.append("&verification=");
                 stringBuffer.append(verification);
                 stringBuffer.append("&type=mobile");
                 stringBuffer.append("\">[");
                 stringBuffer.append(searchName);
                 stringBuffer.append("]关键词已获取，点击查看是否找到该内容</a>");
-
                 if (lastModel != null) {
                     stringBuffer.append("\r\n");
                     stringBuffer.append("\r\n");
                     stringBuffer.append(lastModel.getKeywordToValue());
                 }
 
-
                 /**
                  * 关键词 隐藏判断
                  */
-                if (secretContent != null) {
-                    //隐藏的片名以空格分隔，获取隐藏片名的数组
-                    String[] str = secretContent.getKeywordToValue().split(" ");
-
-                    for (String s : str) {
-                        //判断传入的 片名 是否在隐藏资源中
-                        if (s.equals(searchName)) {
-                            stringBuffer.setLength(0);
-                            stringBuffer.append(secretReply.getKeywordToValue());
-                            break;
-
-                        }
-                    }
-                }
+//                if (secretContent != null) {
+//                    //隐藏的片名以空格分隔，获取隐藏片名的数组
+//                    String[] str = secretContent.getKeywordToValue().split(" ");
+//
+//                    for (String s : str) {
+//                        //判断传入的 片名 是否在隐藏资源中
+//                        if (s.equals(searchName)) {
+//                            stringBuffer.setLength(0);
+//                            stringBuffer.append(secretReply.getKeywordToValue());
+//                            break;
+//                        }
+//                    }
+//                }
 
                 SystemKeywordModel systemKeywordModel = systemKeywordService.getKeywordByUser(username);
-                String secretKey = systemKeywordModel.getSecretKey();
-
+//                String secretKey = systemKeywordModel.getSecretKey();
 
 
                 /**
                  * 关键词 维护判断
                  */
                 //维护时间
-                String userStart = systemKeywordModel.getStartTime();
-                String userEnd = systemKeywordModel.getEndTime();
+//                String userStart = systemKeywordModel.getStartTime();
+//                String userEnd = systemKeywordModel.getEndTime();
 
-                if (StringUtils.isNotBlank(userStart) && StringUtils.isNotBlank(userEnd)) {
-
-                    SimpleDateFormat df = new SimpleDateFormat("HH:mm");
-                    Date dateStart = df.parse(userStart);
-                    Date dateEnd = df.parse(userEnd);
-                    //当前时间
-                    Date now = df.parse(df.format(new Date()));
-
-                    Calendar nowTime = Calendar.getInstance();
-                    nowTime.setTime(now);
-
-                    Calendar beginTime = Calendar.getInstance();
-                    beginTime.setTime(dateStart);
-
-                    Calendar endTime = Calendar.getInstance();
-                    endTime.setTime(dateEnd);
-
-                    //如果开始时间 > 结束时间，跨天 给结束时间加一天
-                    if (beginTime.after(endTime)) {
-                        endTime.add(Calendar.DAY_OF_MONTH, 1);
-                    }
-
-                    //如果当前时间在维护期内，返回维护内容
-                    if (nowTime.after(beginTime) && nowTime.before(endTime)) {
-                        stringBuffer.setLength(0);
-                        stringBuffer.append(preserveContent.getKeywordToValue());
-                    }
-
-                }
-
+//                if (StringUtils.isNotBlank(userStart) && StringUtils.isNotBlank(userEnd)) {
+//
+//                    SimpleDateFormat df = new SimpleDateFormat("HH:mm");
+//                    Date dateStart = df.parse(userStart);
+//                    Date dateEnd = df.parse(userEnd);
+//                    //当前时间
+//                    Date now = df.parse(df.format(new Date()));
+//
+//                    Calendar nowTime = Calendar.getInstance();
+//                    nowTime.setTime(now);
+//
+//                    Calendar beginTime = Calendar.getInstance();
+//                    beginTime.setTime(dateStart);
+//
+//                    Calendar endTime = Calendar.getInstance();
+//                    endTime.setTime(dateEnd);
+//
+//                    //如果开始时间 > 结束时间，跨天 给结束时间加一天
+//                    if (beginTime.after(endTime)) {
+//                        endTime.add(Calendar.DAY_OF_MONTH, 1);
+//                    }
+//
+//                    //如果当前时间在维护期内，返回维护内容
+//                    if (nowTime.after(beginTime) && nowTime.before(endTime)) {
+//                        stringBuffer.setLength(0);
+//                        stringBuffer.append(preserveContent.getKeywordToValue());
+//                    }
+//                }
 
                 /**
                  * HuangS
@@ -341,16 +328,15 @@ public class WxPortalController {
                  * 最简单实现
                  * 判断传入的关键词中是否包含秘钥
                  */
-                if (StringUtils.isNotBlank(secretKey) && !searchContent.contains(secretKey)){
+//                if (StringUtils.isNotBlank(secretKey) && !searchContent.contains(secretKey)) {
+//
+//                    stringBuffer.setLength(0);
+//                    if (StringUtils.isNotBlank(secretKey)) {
+//                        stringBuffer.append(keyContent.getKeywordToValue());
+//                    }
+//                }
 
-                    stringBuffer.setLength(0);
-                    if (StringUtils.isNotBlank(secretKey)){
-                        stringBuffer.append(keyContent.getKeywordToValue());
-                    }
-                }
-
-
-
+                Thread.sleep(1500);
                 outMessage = WxMpXmlOutTextMessage.TEXT()
                         .toUser(inMessage.getFromUser())
                         .fromUser(inMessage.getToUser())
@@ -393,34 +379,14 @@ public class WxPortalController {
     }
 
     /**
-     * 注册用户获取公众号配置URL
-     * 目前使用穿透测试 拼接URL 第一段 随时需换
-     *
-     * @param username
-     * @return
-     */
-    @RequestMapping(value = "geturl", method = RequestMethod.GET)
-    public String getURL(@RequestParam String username) {
-
-        String encodeusername = encoder.encodeToString(username.getBytes());
-        return "http://vyvir9.natappfree.cc" + "/wechat/portal/" + encodeusername;
-
-    }
-
-
-    /**
      * 公众号秘钥功能 暂未实现
      *
      * @return
      */
     @RequestMapping(value = "random", method = RequestMethod.GET)
     public int getRandom() {
-
         int number = (int) ((Math.random() * 9 + 1) * 100000);
-
         return number;
-
     }
-
 
 }
