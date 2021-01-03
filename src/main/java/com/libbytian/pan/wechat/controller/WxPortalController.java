@@ -177,7 +177,6 @@ public class WxPortalController {
         String username = new String(decoder.decode(verification), "UTF-8");
 
 
-
         /**
          * 获取用户名绑定的模板
          */
@@ -205,14 +204,14 @@ public class WxPortalController {
                 // 明文传输的消息
                 WxMpXmlMessage inMessage = WxMpXmlMessage.fromXml(requestBody);
 
-//            异步获取一次消息
+
                 String searchWord = inMessage.getContent().trim();
                 List<String> crawlerNames = new ArrayList<>();
                 crawlerNames.add("aidianying");
                 crawlerNames.add("unreadmovie");
                 crawlerNames.add("sumsu");
 
-                asyncSearchCachedService.searchAsyncWord(crawlerNames,    searchWord);
+                asyncSearchCachedService.searchAsyncWord(crawlerNames,searchWord);
                 WxMpXmlOutMessage outMessage = this.route(inMessage);
                 if (outMessage == null) {
                     return "";

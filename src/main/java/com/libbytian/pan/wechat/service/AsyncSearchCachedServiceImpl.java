@@ -4,6 +4,7 @@ import com.libbytian.pan.system.mapper.MovieNameAndUrlMapper;
 import com.libbytian.pan.system.service.IMovieNameAndUrlService;
 import com.libbytian.pan.system.service.impl.InvalidUrlCheckingService;
 import com.libbytian.pan.system.model.MovieNameAndUrlModel;
+import com.libbytian.pan.wechat.service.aidianying.AiDianyingService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,6 +47,10 @@ public class AsyncSearchCachedServiceImpl {
     private final CrawlerSumsuService crawlerSumsuService;
 
     private final MovieNameAndUrlMapper movieNameAndUrlMapper;
+
+    private final AiDianyingService aiDianyingService;
+
+
     @Value("${user.unread.weiduyingdan}")
     String unreadUrl;
 
@@ -234,11 +239,10 @@ public class AsyncSearchCachedServiceImpl {
                 MovieNameAndUrlModel movieNameAndUrl = null;
 
                 if ("aidianying".equals(crawlerName)) {
-                    movieNameAndUrl = normalPageService.getMovieLoopsAiDianying(lxxhUrl + "/?s=" + searchMovieName);
+                    //爱电影 查询并存入数据库 更新redis
+                    List<MovieNameAndUrlModel> aiDianyingList = aiDianyingService.getAiDianYingCrawlerResult(searchMovieName);
 
-                    List<MovieNameAndUrlModel> aiDianyingList = new ArrayList<>();
-                    aiDianyingList.add(movieNameAndUrl);
-                    redisTemplate.opsForHash().putIfAbsent(crawlerName, searchMovieName, aiDianyingList);
+//                    redisTemplate.opsForHash().putIfAbsent(crawlerName, searchMovieName, aiDianyingList);
                     innerMovieList = aiDianyingList;
 
                 } else if ("unreadmovie".equals(crawlerName)) {
@@ -255,10 +259,8 @@ public class AsyncSearchCachedServiceImpl {
                 } else {
 
                     //爱电影
-                    movieNameAndUrl = normalPageService.getMovieLoopsAiDianying(lxxhUrl + "/?s=" + searchMovieName);
-                    List<MovieNameAndUrlModel> aiDianyingList = new ArrayList<>();
-                    aiDianyingList.add(movieNameAndUrl);
-                    redisTemplate.opsForHash().putIfAbsent("aidianying", searchMovieName, aiDianyingList);
+                    List<MovieNameAndUrlModel> aiDianyingList = aiDianyingService.getAiDianYingCrawlerResult(searchMovieName);
+
 
                     //未读影单
                     List<MovieNameAndUrlModel> unreadUrls = normalPageService.getNormalUrl(unreadUrl + "/?s=" + searchMovieName);

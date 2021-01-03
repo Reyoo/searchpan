@@ -4,6 +4,7 @@ import cn.hutool.core.util.StrUtil;
 import com.libbytian.pan.system.model.MovieNameAndUrlModel;
 import com.libbytian.pan.system.service.IMovieNameAndUrlService;
 import com.libbytian.pan.wechat.service.NormalPageService;
+import com.libbytian.pan.wechat.service.aidianying.AiDianyingService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,11 +31,12 @@ public class AsyncTask {
 
 
     private final NormalPageService normalPageService;
+    private final AiDianyingService aiDianyingService;
 
     private final IMovieNameAndUrlService iMovieNameAndUrlService;
 
 
-    @Async("taskExecutor")
+//    @Async("taskExecutor")
     public void getAllmovieInit(String url) throws Exception {
         Random random = new Random();
 
@@ -59,7 +61,7 @@ public class AsyncTask {
             Thread.sleep(num);
 //            http://www.lxxh7.com/随机/随机/93687LjLXH.html#comments
             System.out.println(url + i + "LjLXH.html");
-            MovieNameAndUrlModel movieNameAndUrlModel = normalPageService.getMovieLoopsAiDianying(url + i +"LjLXH.html");
+            MovieNameAndUrlModel movieNameAndUrlModel = aiDianyingService.getMovieLoopsAiDianying(url + i +"LjLXH.html");
             ArrayList arrayList = new ArrayList();
             if (StrUtil.isNotBlank(movieNameAndUrlModel.getMovieName())& StrUtil.isNotBlank(movieNameAndUrlModel.getWangPanPassword())) {
                 arrayList.add(movieNameAndUrlModel);
@@ -94,7 +96,7 @@ public class AsyncTask {
             Thread.sleep(sleept);
 //            http://www.lxxh7.com/随机/随机/93687LjLXH.html#comments
             System.out.println(url + num + "LjLXH.html");
-            MovieNameAndUrlModel movieNameAndUrlModel = normalPageService.getMovieLoopsAiDianying(url + num +"LjLXH.html");
+            MovieNameAndUrlModel movieNameAndUrlModel = aiDianyingService.getMovieLoopsAiDianying(url + num +"LjLXH.html");
             List<MovieNameAndUrlModel> movieNameAndUrlModelList = new ArrayList<>();
             if (StrUtil.isNotBlank(movieNameAndUrlModel.getMovieName())& StrUtil.isNotBlank(movieNameAndUrlModel.getWangPanPassword())) {
                 movieNameAndUrlModelList.add(movieNameAndUrlModel);

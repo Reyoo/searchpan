@@ -6,6 +6,7 @@ import com.libbytian.pan.system.model.MovieNameAndUrlModel;
 import com.libbytian.pan.system.service.IMovieNameAndUrlService;
 import com.libbytian.pan.wechat.service.CrawlerSumsuService;
 import com.libbytian.pan.wechat.service.NormalPageService;
+import com.libbytian.pan.wechat.service.aidianying.AiDianyingService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +32,7 @@ public class NormalPageController {
     private final NormalPageService normalPageService;
     private final IMovieNameAndUrlService movieNameAndUrlService;
     private final CrawlerSumsuService crawlerSumsuService;
-
+    private final AiDianyingService aiDianyingService;
 
     @Value("${user.unread.weiduyingdan}")
     String unreadUrl;
@@ -45,17 +46,20 @@ public class NormalPageController {
     String xiaoyouUrl;
 
 
+    /**
+     * 接口有问题
+     * @param name
+     * @return
+     */
     @GetMapping("/lxxh/search")
 //    @RequestLimit(count = 3, frameTime = 2, lockTime = 30)
     public AjaxResult getLxxhdMovie(@RequestParam String name){
 
         try {
-            MovieNameAndUrlModel movieNameAndUrl;
-            movieNameAndUrl = normalPageService.getMovieLoopsAiDianying(lxxhUrl+"/?s="+name);
-            List<MovieNameAndUrlModel> arrayList = new ArrayList();
-            arrayList.add(movieNameAndUrl);
+
+            List<MovieNameAndUrlModel> arrayList =aiDianyingService.getAiDianYingCrawlerResult(name);
             movieNameAndUrlService.addOrUpdateMovieUrls(arrayList,"url_movie_aidianying");
-            return AjaxResult.success(movieNameAndUrl);
+            return AjaxResult.success(arrayList);
         } catch (Exception e){
             return AjaxResult.error(e.getMessage());
         }
