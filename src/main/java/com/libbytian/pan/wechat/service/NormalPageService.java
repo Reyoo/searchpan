@@ -149,6 +149,59 @@ public class NormalPageService {
     }
 
 
+    /**
+     * 莉莉
+     * @param url
+     * @return
+     */
+    public MovieNameAndUrlModel getMovieLoopsLiLi(String url) {
+
+        MovieNameAndUrlModel movieNameAndUrlModel = new MovieNameAndUrlModel();
+
+        movieNameAndUrlModel.setMovieUrl(url);
+        HttpHeaders requestHeaders = new HttpHeaders();
+        requestHeaders.add("User-Agent", userAgent);
+        HttpEntity<String> requestEntity = new HttpEntity<String>(null, requestHeaders);
+
+        ResponseEntity<String> resultResponseEntity = this.restTemplate.exchange(
+                String.format(url),
+                HttpMethod.GET, requestEntity, String.class);
+
+        if (resultResponseEntity.getStatusCode() == HttpStatus.OK) {
+            String html = resultResponseEntity.getBody();
+//                System.out.println("=========================================");
+//                System.out.println(html);
+//                System.out.println("=========================================");
+            Document document = Jsoup.parse(html);
+            String name = document.getElementsByTag("title").first().text();
+            movieNameAndUrlModel.setMovieName(name);
+            System.out.println("******");
+            System.out.println(name);
+            System.out.println("******");
+
+            Elements attr = document.getElementsByTag("p");
+            for (Element element : attr) {
+                for (Element aTag : element.getElementsByTag("a")) {
+
+                    String linkhref = aTag.attr("href");
+                    if (linkhref.startsWith("https://pan.baidu.com/")) {
+                        log.info("这里已经拿到要爬取的url : " + linkhref);
+                        movieNameAndUrlModel.setWangPanUrl(linkhref);
+                        System.out.println(linkhref);
+                    }
+
+                }
+                if (element.text().contains("密码")) {
+                    movieNameAndUrlModel.setWangPanPassword(element.text().split("【")[0].split(" ")[1]);
+                }
+            }
+            System.out.println("-----------------");
+        }
+        return movieNameAndUrlModel;
+
+
+    }
+
 
 
 }

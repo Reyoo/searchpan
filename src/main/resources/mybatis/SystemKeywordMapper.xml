@@ -6,7 +6,6 @@
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
         k.keyword_id  AS keywordId,
-        k.secret_key AS secretKey,
         k.user_safe_key AS userSafeKey,
         k.user_token AS userToken,
         k.start_time AS startTime,
@@ -33,9 +32,7 @@
         UPDATE
         sys_keyword
         <trim prefix="set" suffixOverrides=",">
-            <if test="secretKey != null and secretKey != ''">
-                secret_key =#{secretKey},
-            </if>
+
             <if test="startTime != null and startTime != ''">
                 start_time =#{startTime},
             </if>
@@ -68,9 +65,6 @@
             <if test="keywordId != null">
                 keyword_id,
             </if>
-            <if test="secretKey != null">
-                secret_key,
-            </if>
             <if test="userSafeKey != null">
                 user_safe_key,
             </if>
@@ -97,10 +91,6 @@
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="keywordId != null">
                 #{keywordId,jdbcType=VARCHAR},
-            </if>
-
-            <if test="secretKey != null">
-                #{secretKey,jdbcType=VARCHAR },
             </if>
 
             <if test="userSafeKey != null">

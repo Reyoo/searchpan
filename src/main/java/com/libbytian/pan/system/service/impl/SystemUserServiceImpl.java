@@ -103,7 +103,6 @@ public class SystemUserServiceImpl extends ServiceImpl<SystemUserMapper, SystemU
     @Override
     public SystemUserModel register(SystemUserModel user) throws Exception {
 
-//        user.setStatus(true);
         String userId = UUID.fastUUID().toString();
         user.setCreateTime(LocalDateTime.now());
         user.setUserId(userId);
@@ -112,8 +111,7 @@ public class SystemUserServiceImpl extends ServiceImpl<SystemUserMapper, SystemU
         user.setPassword(encode);
         LocalDateTime time = LocalDateTime.now();
         //激活到期时间 + 7天
-        user.setActTime(time.plusDays(7L));
-//        user.setUserBase64Name(");
+        user.setActTime(time.plusDays(3L));
         //新增用户
         int insertFlag = systemUserMapper.insertSystemUser(user);
         SystemRoleModel systemRoleModel = new SystemRoleModel();

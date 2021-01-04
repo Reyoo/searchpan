@@ -44,8 +44,8 @@ public class NormalPageController {
     @Value("${user.sumsu.url}")
     String sumSuUrl;
 
-    @Value(("${user.xiaoyou.url}"))
-    String xiaoyouUrl;
+    @Value(("${user.lili.url}"))
+    String liliUrl;
 
 
     /**
@@ -88,17 +88,18 @@ public class NormalPageController {
         return AjaxResult.success(movieNameAndUrls);
     }
 
-//    @GetMapping("xiaoyou")
-//    public AjaxResult getXiaoYouMovie(@RequestParam String name) {
-//        try {
-//            MovieNameAndUrlModel movieNameAndUrl;
-//            movieNameAndUrl = normalPageService.getMovieLoopsAiDianying(lxxhUrl + "/?s=" + name);
-//            List<MovieNameAndUrlModel> arrayList = new ArrayList();
-//            arrayList.add(movieNameAndUrl);
-//            movieNameAndUrlService.addOrUpdateMovieUrls(arrayList, "url_movie_aidianying");
-//            return AjaxResult.success(movieNameAndUrl);
-//        } catch (Exception e) {
-//            return AjaxResult.error(e.getMessage());
-//        }
-//    }
+    @GetMapping("lili")
+    public AjaxResult getLiliMovie(@RequestParam String name) {
+        try {
+            MovieNameAndUrlModel movieNameAndUrl;
+            movieNameAndUrl = normalPageService.getMovieLoopsLiLi(liliUrl + "/?s=" + name);
+
+            List<MovieNameAndUrlModel> arrayList = new ArrayList();
+            arrayList.add(movieNameAndUrl);
+            movieNameAndUrlService.addOrUpdateMovieUrls(arrayList, "url_movie_aidianying");
+            return AjaxResult.success(movieNameAndUrl);
+        } catch (Exception e) {
+            return AjaxResult.error(e.getMessage());
+        }
+    }
 }
