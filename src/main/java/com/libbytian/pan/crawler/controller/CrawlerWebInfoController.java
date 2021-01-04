@@ -52,11 +52,12 @@ public class CrawlerWebInfoController {
             stringBuffer.append("/?p=");
             String urlBase = stringBuffer.toString();
 
-//            for(int i =0 ; i <=20000; i ++ ){
-//                unReadService.getUnReadMovieLoops(urlBase+i);
-//            }
+            for(int i =0 ; i <=90000; i ++ ){
+                System.out.println(urlBase + i);
+                asyncTask.getUnreadAllmovieInit(urlBase +i);
+            }
 
-            unReadService.getUnReadCrawlerResult("战狼");
+//            unReadService.getUnReadCrawlerResult("战狼");
 
 
             return AjaxResult.success("表入库成功");

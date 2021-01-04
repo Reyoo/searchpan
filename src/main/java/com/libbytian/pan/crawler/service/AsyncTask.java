@@ -1,6 +1,7 @@
 package com.libbytian.pan.crawler.service;
 
 import cn.hutool.core.util.StrUtil;
+import com.libbytian.pan.crawler.service.unread.UnReadService;
 import com.libbytian.pan.system.model.MovieNameAndUrlModel;
 import com.libbytian.pan.system.service.IMovieNameAndUrlService;
 import com.libbytian.pan.wechat.service.NormalPageService;
@@ -30,6 +31,7 @@ public class AsyncTask {
 
     private final NormalPageService normalPageService;
     private final AiDianyingService aiDianyingService;
+    private final UnReadService unReadService;
 
     private final IMovieNameAndUrlService iMovieNameAndUrlService;
 
@@ -66,6 +68,28 @@ public class AsyncTask {
                 iMovieNameAndUrlService.addOrUpdateMovieUrls(movieNameAndUrlModelList,"url_movie_aidianying");
                 log.info("插入成功 -》 " + movieNameAndUrlModel.getMovieUrl());
             }
+    }
+
+
+    /**
+     * 未读影单初始化数据导入
+     * @param url
+     * @throws Exception
+     */
+    public void getUnreadAllmovieInit(String url) throws Exception {
+
+        StringBuffer stringBuffer = new StringBuffer(url);
+
+        int sleept=(int) (Math.random()*(5-1+1)+1);
+        Thread.sleep(sleept);
+
+        MovieNameAndUrlModel movieNameAndUrlModel = unReadService.getUnReadMovieLoops(url);
+        List<MovieNameAndUrlModel> movieNameAndUrlModelList = new ArrayList<>();
+        if (StrUtil.isNotBlank(movieNameAndUrlModel.getMovieName())& StrUtil.isNotBlank(movieNameAndUrlModel.getWangPanPassword())) {
+            movieNameAndUrlModelList.add(movieNameAndUrlModel);
+            iMovieNameAndUrlService.addOrUpdateMovieUrls(movieNameAndUrlModelList,"url_movie_unread");
+            log.info("插入成功 -》 " + movieNameAndUrlModel.getMovieUrl());
+        }
     }
 
 
