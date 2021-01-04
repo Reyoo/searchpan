@@ -52,7 +52,7 @@ public class CrawlerWebInfoController {
             stringBuffer.append("?p=");
             String urlBase = stringBuffer.toString();
 
-            for(int i =1000 ; i <=100000; i ++ ){
+            for(int i =1 ; i <=297; i ++ ){
                 System.out.println(urlBase + i);
                 asyncTask.getUnreadAllmovieInit(urlBase +i);
             }

@@ -1,5 +1,6 @@
 package com.libbytian.pan.crawler.service.unread;
 
+import cn.hutool.core.util.StrUtil;
 import com.libbytian.pan.system.model.MovieNameAndUrlModel;
 import com.libbytian.pan.system.service.IMovieNameAndUrlService;
 import com.libbytian.pan.system.service.impl.InvalidUrlCheckingService;
@@ -71,30 +72,51 @@ public class UnReadService {
                 System.out.println("=========================================");
                 Document document = Jsoup.parse(html);
                 String name = document.getElementsByTag("title").first().text();
+                if(name.contains("– 未读影单")){
+                    name = name.split("– 未读影单")[0].trim();
+                }
 
                 String linkhref = null;
                 Elements attr = document.getElementsByTag("p");
                 for (Element element : attr) {
 
-                    for (Element aTag : element.getElementsByTag("a")) {
-
-                         linkhref = aTag.attr("href");
-                        if (linkhref.startsWith("https://pan.baidu.com/")) {
-                            log.info("这里已经拿到要爬取的url : " + linkhref);
-                            movieNameAndUrlModel.setWangPanUrl(linkhref);
-                            System.out.println(linkhref);
-                        } else {
-                            continue;
+                    if(StrUtil.isBlank(linkhref)){
+                        for (Element aTag : element.getElementsByTag("a")) {
+                            linkhref = aTag.attr("href");
+                            if (linkhref.startsWith("https://pan.baidu.com/")) {
+                                log.info("这里已经拿到要爬取的url : " + linkhref);
+                                movieNameAndUrlModel.setWangPanUrl(linkhref);
+                                System.out.println(linkhref);
+                                break;
+                            } else {
+                                continue;
+                            }
                         }
                     }
 
-                    if (element.text().contains("密码")) {
+
+
+
+
+                    if (element.text().contains("密码:")) {
                         movieNameAndUrlModel.setWangPanPassword(element.text());
                         System.out.println(element.text());
                         break;
                     }
 
-                    if (element.text().contains("提取码")) {
+                    if (element.text().contains("密码：")) {
+                        movieNameAndUrlModel.setWangPanPassword(element.text());
+                        System.out.println(element.text());
+                        break;
+                    }
+
+                    if (element.text().contains("提取码:")) {
+                        movieNameAndUrlModel.setWangPanPassword(element.text());
+                        System.out.println(element.text());
+                        break;
+                    }
+
+                    if (element.text().contains("提取码：")) {
                         movieNameAndUrlModel.setWangPanPassword(element.text());
                         System.out.println(element.text());
                         break;
