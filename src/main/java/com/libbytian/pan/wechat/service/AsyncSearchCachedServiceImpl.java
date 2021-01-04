@@ -5,6 +5,7 @@ import com.libbytian.pan.system.service.IMovieNameAndUrlService;
 import com.libbytian.pan.system.service.impl.InvalidUrlCheckingService;
 import com.libbytian.pan.system.model.MovieNameAndUrlModel;
 import com.libbytian.pan.wechat.service.aidianying.AiDianyingService;
+import com.libbytian.pan.wechat.service.unread.UnReadService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,6 +51,8 @@ public class AsyncSearchCachedServiceImpl {
     private final MovieNameAndUrlMapper movieNameAndUrlMapper;
 
     private final AiDianyingService aiDianyingService;
+
+    private final UnReadService unReadService;
 
 
     @Value("${user.unread.weiduyingdan}")
@@ -247,12 +250,10 @@ public class AsyncSearchCachedServiceImpl {
                     innerMovieList = aiDianyingList;
 
                 } else if ("unreadmovie".equals(crawlerName)) {
-                    List<MovieNameAndUrlModel> unreadUrls = normalPageService.getNormalUrl(unreadUrl + "/?s=" + searchMovieName);
-                    List<MovieNameAndUrlModel> unreadMovieList = new ArrayList<>();
-                    unreadUrls.stream().forEach(innermovieNameAndUrl ->
-                            unreadMovieList.add(normalPageService.getMoviePanUrl(innermovieNameAndUrl)));
-                    redisTemplate.opsForHash().putIfAbsent(crawlerName, searchMovieName, unreadMovieList);
-                    innerMovieList = unreadMovieList;
+                    List<MovieNameAndUrlModel> unreadUrls = unReadService.getUnReadCrawlerResult(searchMovieName);
+                    innerMovieList = unreadUrls;
+
+
                 } else if ("sumsu".equals(crawlerName)) {
                     innerMovieList = crawlerSumsuService.getSumsuUrl(searchMovieName);
                     redisTemplate.opsForHash().putIfAbsent(crawlerName, searchMovieName, innerMovieList);
@@ -261,14 +262,8 @@ public class AsyncSearchCachedServiceImpl {
 
                     //爱电影
                     List<MovieNameAndUrlModel> aiDianyingList = aiDianyingService.getAiDianYingCrawlerResult(searchMovieName);
-
-
                     //未读影单
-                    List<MovieNameAndUrlModel> unreadUrls = normalPageService.getNormalUrl(unreadUrl + "/?s=" + searchMovieName);
-                    List<MovieNameAndUrlModel> unreadMovieList = new ArrayList<>();
-                    unreadUrls.stream().forEach(innermovieNameAndUrl ->
-                            unreadMovieList.add(normalPageService.getMoviePanUrl(innermovieNameAndUrl)));
-                    redisTemplate.opsForHash().putIfAbsent("unreadmovie", searchMovieName, innerMovieList);
+                    List<MovieNameAndUrlModel> unreadUrls = unReadService.getUnReadCrawlerResult(searchMovieName);
 
                     //社区动力
                     List<MovieNameAndUrlModel> sumsuMovieList = new ArrayList<>();
@@ -276,7 +271,7 @@ public class AsyncSearchCachedServiceImpl {
                     redisTemplate.opsForHash().putIfAbsent("sumsu", searchMovieName, sumsuMovieList);
 
                     innerMovieList.addAll(aiDianyingList);
-                    innerMovieList.addAll(unreadMovieList);
+                    innerMovieList.addAll(unreadUrls);
                     innerMovieList.addAll(sumsuMovieList);
                 }
 

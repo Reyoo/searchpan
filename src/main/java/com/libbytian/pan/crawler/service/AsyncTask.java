@@ -36,7 +36,11 @@ public class AsyncTask {
     private final IMovieNameAndUrlService iMovieNameAndUrlService;
 
 
-//    @Async("taskExecutor")
+    /**
+     * 获取爱电影
+     * @param url
+     * @throws Exception
+     */
     public void getAllmovieInit(String url) throws Exception {
         Random random = new Random();
 

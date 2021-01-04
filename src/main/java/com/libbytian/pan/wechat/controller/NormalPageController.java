@@ -7,6 +7,7 @@ import com.libbytian.pan.system.service.IMovieNameAndUrlService;
 import com.libbytian.pan.wechat.service.CrawlerSumsuService;
 import com.libbytian.pan.wechat.service.NormalPageService;
 import com.libbytian.pan.wechat.service.aidianying.AiDianyingService;
+import com.libbytian.pan.wechat.service.unread.UnReadService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +34,7 @@ public class NormalPageController {
     private final IMovieNameAndUrlService movieNameAndUrlService;
     private final CrawlerSumsuService crawlerSumsuService;
     private final AiDianyingService aiDianyingService;
+    private final UnReadService unReadService;
 
     @Value("${user.unread.weiduyingdan}")
     String unreadUrl;
@@ -71,16 +73,9 @@ public class NormalPageController {
     @GetMapping("search")
 //    @RequestLimit(count = 3, frameTime = 2, lockTime = 30)
     public AjaxResult getAllMovie(@RequestParam String name){
-        List<MovieNameAndUrlModel> realMovieList = new ArrayList();
-        List<MovieNameAndUrlModel> movieNameAndUrls =normalPageService.getNormalUrl(unreadUrl+"/?s="+name);
+        List<MovieNameAndUrlModel> movieNameAndUrls =unReadService.getUnReadCrawlerResult(name);
 
-        movieNameAndUrls.stream().forEach( movieNameAndUrl ->
-                realMovieList.add(normalPageService.getMoviePanUrl(movieNameAndUrl)));
-        List<MovieNameAndUrlModel> movieNameAndUrls1 =normalPageService.getNormalUrl(lxxhUrl+"/?s="+name);
-        movieNameAndUrls1.stream().forEach( movieNameAndUrl ->
-                realMovieList.add(normalPageService.getMoviePanUrl2(movieNameAndUrl)));
-
-        return AjaxResult.success(realMovieList);
+        return AjaxResult.success(movieNameAndUrls);
     }
 
 
