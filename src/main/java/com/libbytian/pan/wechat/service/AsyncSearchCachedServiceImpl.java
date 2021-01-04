@@ -4,8 +4,9 @@ import com.libbytian.pan.system.mapper.MovieNameAndUrlMapper;
 import com.libbytian.pan.system.service.IMovieNameAndUrlService;
 import com.libbytian.pan.system.service.impl.InvalidUrlCheckingService;
 import com.libbytian.pan.system.model.MovieNameAndUrlModel;
-import com.libbytian.pan.wechat.service.aidianying.AiDianyingService;
-import com.libbytian.pan.wechat.service.unread.UnReadService;
+import com.libbytian.pan.crawler.service.aidianying.AiDianyingService;
+import com.libbytian.pan.crawler.service.sumsu.CrawlerSumsuService;
+import com.libbytian.pan.crawler.service.unread.UnReadService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,10 +17,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 /**
  * @ProjectName: pansearch
@@ -153,14 +151,12 @@ public class AsyncSearchCachedServiceImpl {
         for (String crawlerName : crawlerNames) {
             //查询redis 中的资源
             List<MovieNameAndUrlModel> movieNameAndMovieList = new ArrayList<>();
-
             movieNameAndMovieList = (List<MovieNameAndUrlModel>) redisTemplate.opsForHash().get(crawlerName, searchMovieName);
 
             //如果redis中存在
             if (movieNameAndMovieList != null && movieNameAndMovieList.size() > 0) {
                 List<MovieNameAndUrlModel> movieNameAndUrlModels = invalidUrlCheckingService.checkUrlMethod(getTableName(crawlerName), movieNameAndMovieList);
                 //将有效连接更新到redis中
-
                 redisTemplate.opsForHash().putIfAbsent(crawlerName, searchMovieName, movieNameAndUrlModels);
 
 
@@ -252,7 +248,6 @@ public class AsyncSearchCachedServiceImpl {
                 } else if ("unreadmovie".equals(crawlerName)) {
                     List<MovieNameAndUrlModel> unreadUrls = unReadService.getUnReadCrawlerResult(searchMovieName);
                     innerMovieList = unreadUrls;
-
 
                 } else if ("sumsu".equals(crawlerName)) {
                     innerMovieList = crawlerSumsuService.getSumsuUrl(searchMovieName);

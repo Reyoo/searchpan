@@ -46,7 +46,6 @@ public class InvalidUrlCheckingService {
         } else {
 
             for (MovieNameAndUrlModel movieNameAndUrlModel : movieNameAndUrlModels) {
-
                 String wangPanUrl = movieNameAndUrlModel.getWangPanUrl();
                 if(StrUtil.isBlank(wangPanUrl)){
                     continue;
@@ -57,11 +56,17 @@ public class InvalidUrlCheckingService {
                 log.info("title--> :" + title + " 网盘URL --> " + wangPanUrl + " 原资源 --> " + movieNameAndUrlModel.getMovieUrl());
                 if (!"百度网盘-链接不存在".contains(title) || !"页面不存在".contains(title)) {
                     //Redis 暂时不做处理
+                    //插入更新
                     couldBeFindUrls.add(movieNameAndUrlModel);
                 }else {
                     movieNameAndUrlService.dropMovieUrl(tableName,movieNameAndUrlModel);
                 }
             }
+
+            //插入更新可用数据
+            movieNameAndUrlService.addOrUpdateMovieUrls(couldBeFindUrls,tableName);
+
+
             log.info("校验完毕");
             return couldBeFindUrls;
         }

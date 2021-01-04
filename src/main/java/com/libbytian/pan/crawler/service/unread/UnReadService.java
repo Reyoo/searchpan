@@ -1,7 +1,8 @@
-package com.libbytian.pan.wechat.service.unread;
+package com.libbytian.pan.crawler.service.unread;
 
 import com.libbytian.pan.system.model.MovieNameAndUrlModel;
 import com.libbytian.pan.system.service.IMovieNameAndUrlService;
+import com.libbytian.pan.system.service.impl.InvalidUrlCheckingService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
@@ -33,6 +34,7 @@ import java.util.Set;
 public class UnReadService {
 
     private final IMovieNameAndUrlService iMovieNameAndUrlService;
+    private InvalidUrlCheckingService invalidUrlCheckingService;
     private final RestTemplate restTemplate;
     private final RedisTemplate redisTemplate;
 
@@ -166,8 +168,10 @@ public class UnReadService {
                     movieNameAndUrlModelList.add(movieNameAndUrlModel);
                 }
             }
-            iMovieNameAndUrlService.addOrUpdateMovieUrls(movieNameAndUrlModelList, "url_movie_unread");
-            redisTemplate.opsForHash().putIfAbsent("unread", searchMovieName, movieNameAndUrlModelList);
+
+            //判断URL 可用性  可用则插入更新 否则则删除
+            List<MovieNameAndUrlModel> couldUseMovieUrl = invalidUrlCheckingService.checkUrlMethod("url_movie_unread", movieNameAndUrlModelList);
+            redisTemplate.opsForHash().putIfAbsent("unreadmovie", searchMovieName, couldUseMovieUrl);
 
         } catch (Exception e) {
             log.error(e.getMessage());

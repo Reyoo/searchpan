@@ -4,10 +4,10 @@ package com.libbytian.pan.wechat.controller;
 import com.libbytian.pan.system.common.AjaxResult;
 import com.libbytian.pan.system.model.MovieNameAndUrlModel;
 import com.libbytian.pan.system.service.IMovieNameAndUrlService;
-import com.libbytian.pan.wechat.service.CrawlerSumsuService;
+import com.libbytian.pan.crawler.service.sumsu.CrawlerSumsuService;
 import com.libbytian.pan.wechat.service.NormalPageService;
-import com.libbytian.pan.wechat.service.aidianying.AiDianyingService;
-import com.libbytian.pan.wechat.service.unread.UnReadService;
+import com.libbytian.pan.crawler.service.aidianying.AiDianyingService;
+import com.libbytian.pan.crawler.service.unread.UnReadService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -84,10 +84,8 @@ public class NormalPageController {
 //    @RequestLimit(count = 3, frameTime = 2, lockTime = 30)
     public AjaxResult getSumsuMovie(@RequestParam String searchMovieName) throws Exception{
         List<MovieNameAndUrlModel> realMovieList = new ArrayList();
-
         List<MovieNameAndUrlModel> movieNameAndUrls =crawlerSumsuService.getSumsuUrl(searchMovieName);
-
-        return AjaxResult.success(realMovieList);
+        return AjaxResult.success(movieNameAndUrls);
     }
 
 //    @GetMapping("xiaoyou")

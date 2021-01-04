@@ -1,21 +1,17 @@
 package com.libbytian.pan.crawler.controller;
 
-import cn.hutool.core.util.StrUtil;
 import com.libbytian.pan.crawler.service.AsyncTask;
 import com.libbytian.pan.system.common.AjaxResult;
-import com.libbytian.pan.system.model.MovieNameAndUrlModel;
-import com.libbytian.pan.system.service.impl.MovieNameAndUrlServiceImpl;
-import com.libbytian.pan.wechat.service.CrawlerSumsuService;
+import com.libbytian.pan.crawler.service.sumsu.CrawlerSumsuService;
+import com.libbytian.pan.crawler.service.unread.UnReadService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
 import java.util.Random;
 
 /**
@@ -35,6 +31,7 @@ public class CrawlerWebInfoController {
 
     private final AsyncTask asyncTask;
 
+    private final UnReadService unReadService;
 
     private final CrawlerSumsuService crawlerSumsuService;
     @Value("${user.unread.weiduyingdan}")
@@ -54,7 +51,14 @@ public class CrawlerWebInfoController {
             stringBuffer.append(unreadUrl);
             stringBuffer.append("/?p=");
             String urlBase = stringBuffer.toString();
-            asyncTask.getAllmovieInit(urlBase);
+
+//            for(int i =0 ; i <=20000; i ++ ){
+//                unReadService.getUnReadMovieLoops(urlBase+i);
+//            }
+
+            unReadService.getUnReadCrawlerResult("战狼");
+
+
             return AjaxResult.success("表入库成功");
         } catch (Exception e) {
             return AjaxResult.error("表入库失败");
@@ -79,7 +83,7 @@ public class CrawlerWebInfoController {
             for (int i = 80001; i <= 100000; i++) {
                 int s = random.nextInt(29) % (29 - 10 + 1) + 10;
                 int m = random.nextInt(12) % (12 - 11 + 1) + 11;
-                asyncTask.getAllmovieInit(urlBase, String.valueOf(i), s, m);
+                asyncTask.getAiDianyingAllmovieInit(urlBase, String.valueOf(i), s, m);
             }
 
             return AjaxResult.success("表入库成功");

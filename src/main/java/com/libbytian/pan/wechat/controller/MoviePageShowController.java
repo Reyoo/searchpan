@@ -1,7 +1,6 @@
 package com.libbytian.pan.wechat.controller;
 
 import com.libbytian.pan.system.common.AjaxResult;
-import com.libbytian.pan.system.model.SystemKeywordModel;
 import com.libbytian.pan.system.model.SystemTemDetailsModel;
 import com.libbytian.pan.system.model.SystemUserModel;
 import com.libbytian.pan.system.service.ISystemTemDetailsService;

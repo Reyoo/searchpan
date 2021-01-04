@@ -1,7 +1,8 @@
-package com.libbytian.pan.wechat.service.aidianying;
+package com.libbytian.pan.crawler.service.aidianying;
 
 import com.libbytian.pan.system.model.MovieNameAndUrlModel;
 import com.libbytian.pan.system.service.IMovieNameAndUrlService;
+import com.libbytian.pan.system.service.impl.InvalidUrlCheckingService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
@@ -40,6 +41,7 @@ public class AiDianyingService {
     private final IMovieNameAndUrlService iMovieNameAndUrlService;
     private final RestTemplate restTemplate;
     private final RedisTemplate redisTemplate;
+    private final InvalidUrlCheckingService invalidUrlCheckingService;
 
 
     @Value("${user.agent}")
@@ -149,8 +151,10 @@ public class AiDianyingService {
                     movieNameAndUrlModelList.add(movieNameAndUrlModel);
                 }
             }
-            iMovieNameAndUrlService.addOrUpdateMovieUrls(movieNameAndUrlModelList, "url_movie_aidianying");
-            redisTemplate.opsForHash().putIfAbsent("aidianying", searchMovieName, movieNameAndUrlModelList);
+            List<MovieNameAndUrlModel> couldUseMovieUrl = new ArrayList<>();
+            //存入数据库 做可链接校验
+            couldUseMovieUrl = invalidUrlCheckingService.checkUrlMethod("url_movie_aidianying", couldUseMovieUrl);
+            redisTemplate.opsForHash().putIfAbsent("aidianying", searchMovieName, couldUseMovieUrl);
 
         } catch (Exception e) {
             log.error(e.getMessage());
