@@ -34,7 +34,7 @@ import java.util.Set;
 public class UnReadService {
 
     private final IMovieNameAndUrlService iMovieNameAndUrlService;
-    private InvalidUrlCheckingService invalidUrlCheckingService;
+    private final InvalidUrlCheckingService invalidUrlCheckingService;
     private final RestTemplate restTemplate;
     private final RedisTemplate redisTemplate;
 
@@ -170,6 +170,7 @@ public class UnReadService {
             }
 
             //判断URL 可用性  可用则插入更新 否则则删除
+
             List<MovieNameAndUrlModel> couldUseMovieUrl = invalidUrlCheckingService.checkUrlMethod("url_movie_unread", movieNameAndUrlModelList);
             redisTemplate.opsForHash().putIfAbsent("unreadmovie", searchMovieName, couldUseMovieUrl);
 

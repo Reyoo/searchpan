@@ -38,7 +38,6 @@ import java.util.Set;
 public class AiDianyingService {
 
 
-    private final IMovieNameAndUrlService iMovieNameAndUrlService;
     private final RestTemplate restTemplate;
     private final RedisTemplate redisTemplate;
     private final InvalidUrlCheckingService invalidUrlCheckingService;
