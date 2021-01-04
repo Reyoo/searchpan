@@ -100,7 +100,7 @@ public class AsyncTask {
             List<MovieNameAndUrlModel> movieNameAndUrlModelList = new ArrayList<>();
             if (StrUtil.isNotBlank(movieNameAndUrlModel.getMovieName())& StrUtil.isNotBlank(movieNameAndUrlModel.getWangPanPassword())) {
                 movieNameAndUrlModelList.add(movieNameAndUrlModel);
-                iMovieNameAndUrlService.addOrUpdateMovieUrls(movieNameAndUrlModelList,"url_movie_unread");
+                iMovieNameAndUrlService.addOrUpdateMovieUrls(movieNameAndUrlModelList,"url_movie_aidianying");
                 log.info("插入成功 -》 " + movieNameAndUrlModel.getMovieUrl());
             }
 

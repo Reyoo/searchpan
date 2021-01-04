@@ -24,7 +24,6 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-@TableName("url_movie")
 public class MovieNameAndUrlModel extends Model<MovieNameAndUrlModel> {
 
     /**

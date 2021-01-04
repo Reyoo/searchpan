@@ -78,7 +78,7 @@ public class CrawlerWebInfoController {
 
             String urlBase = stringBuffer.toString();
 
-            for (int i = 31836; i <= 31838; i++) {
+            for (int i = 1; i <= 30000; i++) {
 
                 int s = random.nextInt(29) % (29 - 10 + 1) + 10;
                 int m = random.nextInt(12) % (12 - 11 + 1) + 11;
