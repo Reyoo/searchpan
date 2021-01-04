@@ -49,10 +49,10 @@ public class CrawlerWebInfoController {
             //循环调用 接口  p =1  到99999 存入库中
             StringBuffer stringBuffer = new StringBuffer();
             stringBuffer.append(unreadUrl);
-            stringBuffer.append("/?p=");
+            stringBuffer.append("?p=");
             String urlBase = stringBuffer.toString();
 
-            for(int i =0 ; i <=90000; i ++ ){
+            for(int i =1000 ; i <=100000; i ++ ){
                 System.out.println(urlBase + i);
                 asyncTask.getUnreadAllmovieInit(urlBase +i);
             }

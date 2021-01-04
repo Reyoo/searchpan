@@ -3,6 +3,7 @@ package com.libbytian.pan.crawler.service.unread;
 import com.libbytian.pan.system.model.MovieNameAndUrlModel;
 import com.libbytian.pan.system.service.IMovieNameAndUrlService;
 import com.libbytian.pan.system.service.impl.InvalidUrlCheckingService;
+import com.libbytian.pan.system.util.UserAgentUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
@@ -38,17 +39,14 @@ public class UnReadService {
     private final RestTemplate restTemplate;
     private final RedisTemplate redisTemplate;
 
-    @Value("${user.agent}")
-    String userAgent;
-
 
     @Value("${user.unread.weiduyingdan}")
     String unreadUrl;
 
 
-
     /**
      * 获取百度网盘
+     *
      * @param url
      * @return
      */
@@ -57,6 +55,10 @@ public class UnReadService {
         try {
 
             HttpHeaders requestHeaders = new HttpHeaders();
+            String userAgent = UserAgentUtil.randomUserAgent();
+            System.out.println("***********************");
+            System.out.println(userAgent);
+            System.out.println("***********************");
             requestHeaders.add("User-Agent", userAgent);
             HttpEntity<String> requestEntity = new HttpEntity<String>(null, requestHeaders);
             ResponseEntity<String> resultResponseEntity = this.restTemplate.exchange(
@@ -69,35 +71,38 @@ public class UnReadService {
                 System.out.println("=========================================");
                 Document document = Jsoup.parse(html);
                 String name = document.getElementsByTag("title").first().text();
-                System.out.println("******");
-                System.out.println(name);
-                System.out.println("******");
 
-                String[] arr = name.split(" – ");
-                name = arr[0];
-                Element element = document.select("div[class=entry-content]").get(0);
-                ;
-//                String wangpan = element.select("p").select("strong").select("a").get(0).text();
+                String linkhref = null;
+                Elements attr = document.getElementsByTag("p");
+                for (Element element : attr) {
 
-                String lianjie = element.select("p").select("strong").select("a").attr("href");
+                    for (Element aTag : element.getElementsByTag("a")) {
 
-                Elements pages = element.select("p");
+                         linkhref = aTag.attr("href");
+                        if (linkhref.startsWith("https://pan.baidu.com/")) {
+                            log.info("这里已经拿到要爬取的url : " + linkhref);
+                            movieNameAndUrlModel.setWangPanUrl(linkhref);
+                            System.out.println(linkhref);
+                        } else {
+                            continue;
+                        }
+                    }
 
+                    if (element.text().contains("密码")) {
+                        movieNameAndUrlModel.setWangPanPassword(element.text());
+                        System.out.println(element.text());
+                        break;
+                    }
+
+                    if (element.text().contains("提取码")) {
+                        movieNameAndUrlModel.setWangPanPassword(element.text());
+                        System.out.println(element.text());
+                        break;
+                    }
+                }
                 movieNameAndUrlModel.setMovieUrl(url);
                 movieNameAndUrlModel.setMovieName(name);
-                movieNameAndUrlModel.setWangPanUrl(lianjie);
-                for (Element page : pages) {
-
-                    if (page.toString().contains("提取码")) {
-                        movieNameAndUrlModel.setWangPanPassword(page.text());
-                        break;
-                    }
-                    if (page.toString().contains("密码")) {
-                        movieNameAndUrlModel.setWangPanPassword(page.text());
-                        break;
-                    }
-
-                }
+                movieNameAndUrlModel.setWangPanUrl(linkhref);
             }
             return movieNameAndUrlModel;
         } catch (
@@ -120,7 +125,7 @@ public class UnReadService {
         LocalTime begin = LocalTime.now();
         Set<String> movieList = new HashSet<>();
         HttpHeaders requestHeaders = new HttpHeaders();
-        requestHeaders.add("User-Agent", userAgent);
+        requestHeaders.add("User-Agent", UserAgentUtil.randomUserAgent());
         HttpEntity<String> requestEntity = new HttpEntity<String>(null, requestHeaders);
         ResponseEntity<String> resultResponseEntity = this.restTemplate.exchange(
                 String.format(url),

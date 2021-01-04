@@ -3,6 +3,7 @@ package com.libbytian.pan.crawler.service.aidianying;
 import com.libbytian.pan.system.model.MovieNameAndUrlModel;
 import com.libbytian.pan.system.service.IMovieNameAndUrlService;
 import com.libbytian.pan.system.service.impl.InvalidUrlCheckingService;
+import com.libbytian.pan.system.util.UserAgentUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
@@ -43,8 +44,7 @@ public class AiDianyingService {
     private final InvalidUrlCheckingService invalidUrlCheckingService;
 
 
-    @Value("${user.agent}")
-    String userAgent;
+
 
     @Value("${user.lxxh.aidianying}")
     String lxxhUrl;
@@ -53,7 +53,7 @@ public class AiDianyingService {
         Set aiDianYingNormalUrlSet = new HashSet();
         String url = lxxhUrl + "/?s=" + searchMovieName;
         HttpHeaders requestHeaders = new HttpHeaders();
-        requestHeaders.add("User-Agent", userAgent);
+        requestHeaders.add("User-Agent", UserAgentUtil.randomUserAgent());
         HttpEntity<String> requestEntity = new HttpEntity<String>(null, requestHeaders);
         ResponseEntity<String> resultResponseEntity = this.restTemplate.exchange(
                 String.format(url),
@@ -88,7 +88,7 @@ public class AiDianyingService {
         try {
             movieNameAndUrlModel.setMovieUrl(url);
             HttpHeaders requestHeaders = new HttpHeaders();
-            requestHeaders.add("User-Agent", userAgent);
+            requestHeaders.add("User-Agent", UserAgentUtil.randomUserAgent());
             HttpEntity<String> requestEntity = new HttpEntity<String>(null, requestHeaders);
             ResponseEntity<String> resultResponseEntity = this.restTemplate.exchange(
                     String.format(url),

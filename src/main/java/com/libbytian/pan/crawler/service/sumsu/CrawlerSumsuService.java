@@ -2,6 +2,7 @@ package com.libbytian.pan.crawler.service.sumsu;
 
 import com.libbytian.pan.system.model.MovieNameAndUrlModel;
 import com.libbytian.pan.system.service.IMovieNameAndUrlService;
+import com.libbytian.pan.system.util.UserAgentUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.client.HttpClient;
@@ -34,8 +35,7 @@ public class CrawlerSumsuService {
 
     private final IMovieNameAndUrlService movieNameAndUrlService;
 
-    @Value("${user.agent}")
-    String userAgent;
+
 
     @Value("${user.sumsu.url}")
     String url;
@@ -51,7 +51,7 @@ public class CrawlerSumsuService {
         LocalTime begin = LocalTime.now();
         List<MovieNameAndUrlModel> movieList = new ArrayList<>();
         HttpHeaders requestHeaders = new HttpHeaders();
-        requestHeaders.add("User-Agent", userAgent);
+        requestHeaders.add("User-Agent", UserAgentUtil.randomUserAgent());
         requestHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
         MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
         map.add("formhash", "a07b2e14");
@@ -118,7 +118,7 @@ public class CrawlerSumsuService {
             for (String sumsuUrl : urls) {
                 System.out.println(sumsuUrl);
                 HttpHeaders requestSumsuHeaders = new HttpHeaders();
-                requestSumsuHeaders.add("User-Agent", userAgent);
+                requestSumsuHeaders.add("User-Agent", UserAgentUtil.randomUserAgent());
                 HttpEntity<String> requestSumsuEntity = new HttpEntity(null, requestSumsuHeaders);
                 ResponseEntity<String> resultSumsuResponseEntity = this.restTemplate.exchange(
                         sumsuUrl,
@@ -191,7 +191,7 @@ public class CrawlerSumsuService {
                 String url = "http://520.sumsu.cn/forum.php?mod=viewthread&tid=" + times + "&highlight=%BD%AB%BE%FC&mobile=2";
                 System.out.println(url);
                 HttpHeaders requestSumsuHeaders = new HttpHeaders();
-                requestSumsuHeaders.add("User-Agent", userAgent);
+                requestSumsuHeaders.add("User-Agent", UserAgentUtil.randomUserAgent());
                 HttpEntity<String> requestSumsuEntity = new HttpEntity(null, requestSumsuHeaders);
                 ResponseEntity<String> resultSumsuResponseEntity = this.restTemplate.exchange(
                         url,

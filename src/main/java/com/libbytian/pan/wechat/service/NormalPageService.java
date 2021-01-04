@@ -3,6 +3,7 @@ package com.libbytian.pan.wechat.service;
 
 import com.libbytian.pan.system.common.AjaxResult;
 import com.libbytian.pan.system.model.MovieNameAndUrlModel;
+import com.libbytian.pan.system.util.UserAgentUtil;
 import lombok.RequiredArgsConstructor;
 
 import lombok.extern.slf4j.Slf4j;
@@ -39,17 +40,12 @@ public class NormalPageService {
     private final RestTemplate restTemplate;
 
 
-    @Value("${user.agent}")
-    String userAgent;
-
-
-
     public MovieNameAndUrlModel getMovieLoops(String url) {
         MovieNameAndUrlModel movieNameAndUrlModel = new MovieNameAndUrlModel();
         try {
 
             HttpHeaders requestHeaders = new HttpHeaders();
-            requestHeaders.add("User-Agent", userAgent);
+            requestHeaders.add("User-Agent", UserAgentUtil.randomUserAgent());
             HttpEntity<String> requestEntity = new HttpEntity<String>(null, requestHeaders);
             ResponseEntity<String> resultResponseEntity = this.restTemplate.exchange(
                     String.format(url),
@@ -108,7 +104,7 @@ public class NormalPageService {
     public MovieNameAndUrlModel getMoviePanUrl2(MovieNameAndUrlModel movieNameAndUrlModel) {
 
         HttpHeaders requestHeaders = new HttpHeaders();
-        requestHeaders.add("User-Agent", userAgent);
+        requestHeaders.add("User-Agent", UserAgentUtil.randomUserAgent());
         HttpEntity<String> requestEntity = new HttpEntity<String>(null, requestHeaders);
         ResponseEntity<String> resultResponseEntity = this.restTemplate.exchange(
                 String.format(movieNameAndUrlModel.getMovieUrl()),
@@ -160,7 +156,7 @@ public class NormalPageService {
 
         movieNameAndUrlModel.setMovieUrl(url);
         HttpHeaders requestHeaders = new HttpHeaders();
-        requestHeaders.add("User-Agent", userAgent);
+        requestHeaders.add("User-Agent", UserAgentUtil.randomUserAgent());
         HttpEntity<String> requestEntity = new HttpEntity<String>(null, requestHeaders);
 
         ResponseEntity<String> resultResponseEntity = this.restTemplate.exchange(
