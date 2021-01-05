@@ -72,7 +72,7 @@ public class UnReadService {
                 System.out.println("=========================================");
                 Document document = Jsoup.parse(html);
                 String name = document.getElementsByTag("title").first().text();
-                if(name.contains("– 未读影单")){
+                if (name.contains("– 未读影单")) {
                     name = name.split("– 未读影单")[0].trim();
                 }
 
@@ -80,7 +80,7 @@ public class UnReadService {
                 Elements attr = document.getElementsByTag("p");
                 for (Element element : attr) {
 
-                    if(StrUtil.isBlank(linkhref)){
+                    if (StrUtil.isBlank(linkhref)) {
                         for (Element aTag : element.getElementsByTag("a")) {
                             linkhref = aTag.attr("href");
                             if (linkhref.startsWith("https://pan.baidu.com/")) {
@@ -94,34 +94,77 @@ public class UnReadService {
                         }
                     }
 
+                    if (linkhref.contains("https://pan.baidu.com/")) {
+                        if (element.text().contains("密码:")) {
+                            movieNameAndUrlModel.setWangPanPassword(element.text());
+                            System.out.println(element.text());
+                            break;
+                        }
 
+                        if (element.text().contains("密码：")) {
+                            movieNameAndUrlModel.setWangPanPassword(element.text());
+                            System.out.println(element.text());
+                            break;
+                        }
 
+                        if (element.text().contains("提取码:")) {
+                            movieNameAndUrlModel.setWangPanPassword(element.text());
+                            System.out.println(element.text());
+                            break;
+                        }
 
-
-                    if (element.text().contains("密码:")) {
-                        movieNameAndUrlModel.setWangPanPassword(element.text());
-                        System.out.println(element.text());
-                        break;
-                    }
-
-                    if (element.text().contains("密码：")) {
-                        movieNameAndUrlModel.setWangPanPassword(element.text());
-                        System.out.println(element.text());
-                        break;
-                    }
-
-                    if (element.text().contains("提取码:")) {
-                        movieNameAndUrlModel.setWangPanPassword(element.text());
-                        System.out.println(element.text());
-                        break;
-                    }
-
-                    if (element.text().contains("提取码：")) {
-                        movieNameAndUrlModel.setWangPanPassword(element.text());
-                        System.out.println(element.text());
-                        break;
+                        if (element.text().contains("提取码：")) {
+                            movieNameAndUrlModel.setWangPanPassword(element.text());
+                            System.out.println(element.text());
+                            break;
+                        }
                     }
                 }
+
+                //第二种情况解析 如果是<strong> 标签
+                if (!linkhref.contains("https://pan.baidu.com/")) {
+                    Elements strongAttr = document.getElementsByTag("strong");
+                    for (Element innerAttr : strongAttr) {
+                        for (Element aTag : innerAttr.getElementsByTag("a")) {
+                            linkhref = aTag.attr("href");
+                            if (linkhref.startsWith("https://pan.baidu.com/")) {
+                                log.info("这里已经拿到要爬取的url : " + linkhref);
+                                movieNameAndUrlModel.setWangPanUrl(linkhref);
+                                System.out.println(linkhref);
+                                break;
+                            } else {
+                                continue;
+                            }
+                        }
+                        if (linkhref.contains("https://pan.baidu.com/")) {
+                            break;
+                        }
+                    }
+
+                    Elements divAttrs = document.getElementsByTag("div");
+
+                    for (Element dirAttr : divAttrs) {
+                            System.out.println(dirAttr.text());
+                            if(dirAttr.text().contains("密码")){
+                                String passwd = dirAttr.text().replace("\n","");
+                                System.out.println(passwd);
+                                if(passwd.contains("密码：")){
+                                    passwd = passwd.split("密码：")[1];
+                                    if(passwd.contains(" ")){
+                                        passwd = passwd.split(" ")[0];
+                                    }
+                                }
+                                if(passwd.length()<10){
+                                    movieNameAndUrlModel.setWangPanPassword(passwd);
+                                    break;
+                                }else{
+                                    continue;
+                                }
+
+                            }
+                    }
+                }
+
                 movieNameAndUrlModel.setMovieUrl(url);
                 movieNameAndUrlModel.setMovieName(name);
                 movieNameAndUrlModel.setWangPanUrl(linkhref);
