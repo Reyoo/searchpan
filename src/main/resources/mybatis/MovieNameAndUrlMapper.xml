@@ -40,11 +40,11 @@
 
     <insert id="insertMovieUrls"  statementType="STATEMENT">
         INSERT INTO  ${tableName}
-        (movie_name,movie_url,wangpan_url,wangpan_passwd)
+        (movie_name,movie_url,wangpan_url,wangpan_passwd,updatetime)
         VALUES
         <foreach collection="list" item="movieNameAndUrlModels" separator=",">
             (${movieNameAndUrlModels.movieName}, ${movieNameAndUrlModels.movieUrl},
-            ${movieNameAndUrlModels.wangPanUrl},${movieNameAndUrlModels.wangPanPassword})
+            ${movieNameAndUrlModels.wangPanUrl},${movieNameAndUrlModels.wangPanPassword} , now())
         </foreach>
     </insert>
 
@@ -52,9 +52,9 @@
 
     <insert id="insertMovieUrl" parameterType="com.libbytian.pan.system.model.MovieNameAndUrlModel" statementType="STATEMENT">
         INSERT INTO  ${tableName}
-            (movie_name, movie_url, wangpan_url, wangpan_passwd)
+            (movie_name, movie_url, wangpan_url, wangpan_passwd,updatetime)
         VALUES (${"'"+movieNameAndUrlModel.movieName+"'"}, ${"'"+movieNameAndUrlModel.movieUrl+"'"},
-                ${"'"+movieNameAndUrlModel.wangPanUrl+"'"}, ${"'"+movieNameAndUrlModel.wangPanPassword+"'"})
+                ${"'"+movieNameAndUrlModel.wangPanUrl+"'"}, ${"'"+movieNameAndUrlModel.wangPanPassword+"'"},now())
 
     </insert>
 
@@ -79,6 +79,7 @@
             <if test="movieNameAndUrlModel.wangPanPassword != null and movieNameAndUrlModel.wangPanPassword != ''">
                 wangpan_passwd =${"'"+movieNameAndUrlModel.wangPanPassword+"'"},
             </if>
+            updatetime = now()
         </trim>
         WHERE
         movie_name =${"'"+movieNameAndUrlModel.movieName+"'"}

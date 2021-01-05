@@ -80,8 +80,8 @@ public class AsyncTask {
 
         StringBuffer stringBuffer = new StringBuffer(url);
 
-//        int sleept=(int) (Math.random()*(5-1+1)+1);
-//        Thread.sleep(sleept);
+        int sleept=(int) (Math.random()*(5-1+1)+1);
+        Thread.sleep(sleept);
 
         MovieNameAndUrlModel movieNameAndUrlModel = unReadService.getUnReadMovieLoops(url);
         List<MovieNameAndUrlModel> movieNameAndUrlModelList = new ArrayList<>();

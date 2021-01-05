@@ -180,7 +180,7 @@ public class NormalPageService {
                 for (Element aTag : element.getElementsByTag("a")) {
 
                     String linkhref = aTag.attr("href");
-                    if (linkhref.startsWith("https://pan.baidu.com/")) {
+                    if (linkhref.startsWith("pan.baidu.com")) {
                         log.info("这里已经拿到要爬取的url : " + linkhref);
                         movieNameAndUrlModel.setWangPanUrl(linkhref);
                         System.out.println(linkhref);
