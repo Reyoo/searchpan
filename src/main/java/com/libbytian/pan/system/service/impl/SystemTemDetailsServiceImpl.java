@@ -158,6 +158,7 @@ public class SystemTemDetailsServiceImpl extends ServiceImpl<SystemTemDetailsMap
         systemTemDetailsModel.setCreatetime(LocalDateTime.now());
         systemTemDetailsModel.setTemdetailsId(UUID.randomUUID().toString());
         systemTemDetailsModel.setTemdetailsstatus(false);
+        systemTemDetailsModel.setEnableFlag(true);
 
         //插入模板详情表
         int result = systemTemDetailsMapper.insert(systemTemDetailsModel);
@@ -280,7 +281,7 @@ public class SystemTemDetailsServiceImpl extends ServiceImpl<SystemTemDetailsMap
         //新增模板设置默认关键字
         List<SystemTemDetailsModel> detailist = new ArrayList<>();
 
-        SystemTemDetailsModel focus = new SystemTemDetailsModel();
+        SystemTemDetailsModel secretKey = new SystemTemDetailsModel();
         SystemTemDetailsModel sleepDetails = new SystemTemDetailsModel();
         SystemTemDetailsModel headAdvert = new SystemTemDetailsModel();
         SystemTemDetailsModel endAdvert = new SystemTemDetailsModel();
@@ -288,7 +289,6 @@ public class SystemTemDetailsServiceImpl extends ServiceImpl<SystemTemDetailsMap
         SystemTemDetailsModel hideReply = new SystemTemDetailsModel();
         SystemTemDetailsModel headWeb = new SystemTemDetailsModel();
         SystemTemDetailsModel endWeb = new SystemTemDetailsModel();
-        SystemTemDetailsModel preserveContent = new SystemTemDetailsModel();
 
 
         sleepDetails.setKeyword("维护内容");
@@ -384,9 +384,10 @@ public class SystemTemDetailsServiceImpl extends ServiceImpl<SystemTemDetailsMap
         endWeb.setKeywordToValue("web页面底部提示内容");
         endWeb.setShowOrder(7);
 
-        preserveContent.setKeyword("维护内容");
-        preserveContent.setKeywordToValue("维护期间回复内容");
-        preserveContent.setShowOrder(8);
+
+        secretKey.setKeyword("秘钥回复");
+        secretKey.setKeywordToValue("粉丝口令回复内容");
+        secretKey.setShowOrder(8);
 
 
         detailist.add(sleepDetails);
@@ -396,7 +397,7 @@ public class SystemTemDetailsServiceImpl extends ServiceImpl<SystemTemDetailsMap
         detailist.add(hideReply);
         detailist.add(headWeb);
         detailist.add(endWeb);
-        detailist.add(preserveContent);
+        detailist.add(secretKey);
 
 
 /**
@@ -439,6 +440,17 @@ public class SystemTemDetailsServiceImpl extends ServiceImpl<SystemTemDetailsMap
 
 
         return 0;
+    }
+
+
+    /**
+     * 删除用户模板下详情
+     * @param temdetailsId
+     * @return
+     */
+    @Override
+    public int deleteTemplateDetails(List<String> temdetailsId) {
+       return systemTemDetailsMapper.deleteTemplateDetails(temdetailsId);
     }
 
 }

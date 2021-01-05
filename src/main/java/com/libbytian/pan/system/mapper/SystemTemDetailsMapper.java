@@ -17,7 +17,7 @@ import java.util.List;
 @Mapper
 public interface SystemTemDetailsMapper extends BaseMapper<SystemTemDetailsModel> {
 
-    @Select("SELECT td.templatedetails_id AS temdetailsId,templatedetails_keyword AS keyword,templatedetails_value AS keywordToValue,td.createtime,templatedetails_status AS temdetailsstatus " +
+    @Select("SELECT td.templatedetails_id AS temdetailsId,templatedetails_keyword AS keyword,templatedetails_value AS keywordToValue,td.createtime,templatedetails_status AS temdetailsstatus ,show_order AS showOrder , enable_flag AS enableFlag " +
             "FROM sys_temdetails td " +
             "LEFT JOIN tem_temdetails tt " +
             "ON td.templatedetails_id = tt.templatedetails_id " +
@@ -38,6 +38,8 @@ public interface SystemTemDetailsMapper extends BaseMapper<SystemTemDetailsModel
     int insertSystemTemDetails(SystemTemDetailsModel systemTemDetailsModels);
 
     int deleteTemplateDetailsByUser(SystemUserModel systemUserModel);
+
+    int deleteTemplateDetails(List<String> temdetailsId);
 
 
 

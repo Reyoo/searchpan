@@ -19,7 +19,8 @@
          d.templatedetails_value AS keywordToValue,
          d.createtime AS createtime,
          d.templatedetails_status AS temdetailsstatus,
-         d.show_order AS showOrder
+         d.show_order AS showOrder,
+
     </sql>
 
 
@@ -121,6 +122,7 @@
         WHERE st.template_status = 1
         AND u.user_name = #{username}
         AND d.templatedetails_keyword = #{keyword}
+        AND d.show_order != 0
     </select>
 
 
@@ -199,6 +201,22 @@
             )
     </delete>
 
+
+
+    <!-- 批量删除 -->
+    <delete id="deleteTemplateDetails" parameterType="String" >
+        DELETE
+        FROM
+            sys_temdetails
+        WHERE
+        templatedetails_id in
+        <foreach collection="list" item="temdetailsId" separator="," open="(" close=")">
+            #{temdetailsId,jdbcType=VARCHAR}
+        </foreach>
+        and
+        show_order = 0
+
+    </delete>
 
 
 </mapper>

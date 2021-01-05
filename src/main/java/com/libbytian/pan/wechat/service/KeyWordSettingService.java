@@ -44,7 +44,7 @@ public class KeyWordSettingService {
          * 关键词 隐藏判断
          * 空格作为区分
          */
-        if (secretContent != null) {
+        if (secretContent.getEnableFlag()) {
             //隐藏的片名以空格分隔，获取隐藏片名的数组
             String[] str = secretContent.getKeywordToValue().split(" ");
 
@@ -52,7 +52,9 @@ public class KeyWordSettingService {
                 //判断传入的 片名 是否在隐藏资源中
                 if (s.equals(searchName)) {
                     stringBuffer.setLength(0);
-                    stringBuffer.append(secretReply.getKeywordToValue());
+                    if (secretReply.getEnableFlag()){
+                        stringBuffer.append(secretReply.getKeywordToValue());
+                    }
                     break;
                 }
             }
@@ -96,7 +98,10 @@ public class KeyWordSettingService {
             //如果当前时间在维护期内，返回维护内容
             if (nowTime.after(beginTime) && nowTime.before(endTime) || "00:00".equals(userStart) && "00:00".equals(userEnd)) {
                 stringBuffer.setLength(0);
-                stringBuffer.append(preserveContent.getKeywordToValue());
+                if (preserveContent.getEnableFlag()){
+                    stringBuffer.append(preserveContent.getKeywordToValue());
+                }
+
             }
         }
 

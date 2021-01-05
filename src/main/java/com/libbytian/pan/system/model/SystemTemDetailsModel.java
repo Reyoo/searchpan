@@ -31,13 +31,14 @@ public class  SystemTemDetailsModel extends Model<SystemTemDetailsModel> {
     private static final long serialVersionUID = 1L;
 
 
-    public SystemTemDetailsModel(String temdetailsId, String keyword, String keywordToValue, LocalDateTime createtime, Boolean temdetailsstatus, Integer showOrder) {
+    public SystemTemDetailsModel(String temdetailsId, String keyword, String keywordToValue, LocalDateTime createtime, Boolean temdetailsstatus, Integer showOrder , Boolean enableFlag) {
         this.temdetailsId = temdetailsId;
         this.keyword = keyword;
         this.keywordToValue = keywordToValue;
         this.createtime = createtime;
         this.temdetailsstatus = temdetailsstatus;
         this.showOrder = showOrder;
+        this.enableFlag = enableFlag;
     }
 
     /**
@@ -78,6 +79,15 @@ public class  SystemTemDetailsModel extends Model<SystemTemDetailsModel> {
      */
     @TableField("show_order")
     private Integer showOrder;
+
+    /**
+     * 启用禁用
+     * false 禁用
+     * true 启用
+     */
+    @TableField("enable_flag")
+    private Boolean enableFlag;
+
 
 
     /**

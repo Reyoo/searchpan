@@ -50,4 +50,7 @@ public interface ISystemTemDetailsService extends IService<SystemTemDetailsModel
      */
     int  dropTemplateDetailsByUser(SystemUserModel systemUserModel) throws Exception;
 
+
+    int deleteTemplateDetails(List<String> temdetailsId);
+
 }
