@@ -52,7 +52,7 @@ public class CrawlerWebInfoController {
             stringBuffer.append("/?p=");
             String urlBase = stringBuffer.toString();
 
-            for(int i =100 ; i <=10000; i ++ ){
+            for(int i =61005 ; i <=70000; i ++ ){
                 System.out.println(urlBase + i);
                 asyncTask.getUnreadAllmovieInit(urlBase +i);
             }
@@ -106,7 +106,7 @@ public class CrawlerWebInfoController {
         try {
 //            http://520.sumsu.cn/forum.php?mod=viewthread&tid=20252&highlight=%87%E5%C2%E8
 
-            for(int i = 12370 ; i <=20000;i++){
+            for(int i = 40001 ; i <=60000;i++){
 //                int num=(int) (Math.random()*(5000-1000+1000)+1000);
 //                Thread.sleep(num);
                 crawlerSumsuService.firstInitTidSumsuUrl(i);

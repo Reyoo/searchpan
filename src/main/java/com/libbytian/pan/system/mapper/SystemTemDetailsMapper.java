@@ -23,7 +23,7 @@ public interface SystemTemDetailsMapper extends BaseMapper<SystemTemDetailsModel
             "ON td.templatedetails_id = tt.templatedetails_id " +
             "WHERE tt.template_id =#{templateId} " +
             "ORDER BY " +
-            "td.templatedetails_status DESC,td.createtime DESC , td.show_order")
+            "td.templatedetails_status DESC,td.createtime DESC ")
     IPage<SystemTemDetailsModel> selectTemDetailsPage(Page page, String templateId);
 
 

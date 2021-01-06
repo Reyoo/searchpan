@@ -297,19 +297,19 @@ public class SystemTemDetailsServiceImpl extends ServiceImpl<SystemTemDetailsMap
 
         headAdvert.setKeyword("头部广告");
         headAdvert.setKeywordToValue("微信回复头部广告（删除可去掉）");
-        headAdvert.setShowOrder(2);
+        headAdvert.setShowOrder(1);
 
         endAdvert.setKeyword("底部广告");
         endAdvert.setKeywordToValue("微信回复底部广告（删除可去掉）");
-        endAdvert.setShowOrder(3);
+        endAdvert.setShowOrder(1);
 
         hideResource.setKeyword("隐藏资源");
         hideResource.setKeywordToValue("隐藏资源名称");
-        hideResource.setShowOrder(4);
+        hideResource.setShowOrder(1);
 
         hideReply.setKeyword("隐藏回复");
         hideReply.setKeywordToValue("隐藏资源后返回给粉丝内容");
-        hideReply.setShowOrder(5);
+        hideReply.setShowOrder(1);
 
         headWeb.setKeyword("头部提示web");
         headWeb.setKeywordToValue("<style type=\"text/css\">\n" +
@@ -378,16 +378,16 @@ public class SystemTemDetailsServiceImpl extends ServiceImpl<SystemTemDetailsMap
                 "<div style=\"clear:both;width:100%;margin-top:5px;background:rgba(238,174,238,1);height:30px;line-height:30px;text-align:center;color:#fff;font-size: 13px;\">增值服务:稀有资源有偿代找 加微信: <span style=\"color:red;\">自定义微信</span></div>\n" +
                 "</a>");
 
-        headWeb.setShowOrder(6);
+        headWeb.setShowOrder(1);
 
         endWeb.setKeyword("底部提示web");
         endWeb.setKeywordToValue("web页面底部提示内容");
-        endWeb.setShowOrder(7);
+        endWeb.setShowOrder(1);
 
 
         secretKey.setKeyword("秘钥回复");
         secretKey.setKeywordToValue("粉丝口令回复内容");
-        secretKey.setShowOrder(8);
+        secretKey.setShowOrder(1);
 
 
         detailist.add(sleepDetails);

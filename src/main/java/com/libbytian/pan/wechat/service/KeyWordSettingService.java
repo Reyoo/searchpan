@@ -64,8 +64,8 @@ public class KeyWordSettingService {
 
         /**
          * 关键词 维护判断
-         * 00：00-00：00全天维护
-         * 其他相同起始时间为全天放开
+         * 00：00-00：00全天开放
+         * 其他相同起始时间为全天维护
          */
 
         //维护时间
@@ -95,8 +95,8 @@ public class KeyWordSettingService {
                 endTime.add(Calendar.DATE, 1);
             }
 
-            //如果当前时间在维护期内，返回维护内容
-            if (nowTime.after(beginTime) && nowTime.before(endTime) || "00:00".equals(userStart) && "00:00".equals(userEnd)) {
+            //如果当前时间在维护期内，返回维护内容,开始=结束 全天维护
+            if (nowTime.after(beginTime) && nowTime.before(endTime) || userStart.equals(endTime)) {
                 stringBuffer.setLength(0);
                 if (preserveContent.getEnableFlag()){
                     stringBuffer.append(preserveContent.getKeywordToValue());

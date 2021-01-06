@@ -214,7 +214,7 @@ public class WxPortalController {
                 stringBuffer.append("&type=mobile");
                 stringBuffer.append("\">[");
                 stringBuffer.append(searchName);
-                stringBuffer.append("]关键词已获取，点击查看是否找到该内容</a>");
+                stringBuffer.append("]U+1f3ac关键词已获取，点击查看是否找到该内容</a>");
                 if (lastModel.getEnableFlag()) {
                     stringBuffer.append("\r\n");
                     stringBuffer.append("\r\n");

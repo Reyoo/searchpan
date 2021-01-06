@@ -110,7 +110,7 @@ public class SystemUserServiceImpl extends ServiceImpl<SystemUserMapper, SystemU
         String encode = encoder.encode(user.getPassword());
         user.setPassword(encode);
         LocalDateTime time = LocalDateTime.now();
-        //激活到期时间 + 7天
+        //激活到期时间 + 3天
         user.setActTime(time.plusDays(3L));
         //新增用户
         int insertFlag = systemUserMapper.insertSystemUser(user);
@@ -152,8 +152,9 @@ public class SystemUserServiceImpl extends ServiceImpl<SystemUserMapper, SystemU
             SystemKeywordModel systemKeywordModel = new SystemKeywordModel();
             systemKeywordModel.setUserSafeKey("http://51.findfish.top/wechat/portal/" + Base64.getEncoder().encodeToString(user.getUsername().getBytes())+"/" + appId);
             systemKeywordModel.setKeywordId(templateId);
+            //00:00-00：00 默认全天开
             systemKeywordModel.setStartTime("00:00");
-            systemKeywordModel.setEndTime("24:00");
+            systemKeywordModel.setEndTime("00:00");
             systemKeywordModel.setAppId(appId);
             //新增用户 信息类 插入关键字表
             keywordService.addkeyword(systemKeywordModel);

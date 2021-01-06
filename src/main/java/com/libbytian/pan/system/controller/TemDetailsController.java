@@ -147,7 +147,7 @@ public class TemDetailsController {
                 systemTmplToTmplDetailsService.dropTemplateAndDetails(temdetailsId);
                 return AjaxResult.success("删除成功");
             } else {
-                return AjaxResult.success("该字段为系统保留字段，不允许删除");
+                return AjaxResult.error("该字段为系统保留字段，不允许删除");
             }
         } catch (Exception e) {
             log.error(e.getMessage());

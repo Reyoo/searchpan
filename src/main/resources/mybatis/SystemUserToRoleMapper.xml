@@ -67,7 +67,7 @@
         FROM
             sys_user_role
         WHERE
-                user_id =#{userId},
+                user_id =#{userId}
     </delete>
 
 
