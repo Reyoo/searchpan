@@ -31,4 +31,7 @@ public interface SystemTemplateMapper extends BaseMapper<SystemTemplateModel> {
     int deleteTemplateByUser(SystemUserModel systemUserModel);
 
 
+    SystemTemplateModel getTemplateById(String temdetailsId);
+
+
 }

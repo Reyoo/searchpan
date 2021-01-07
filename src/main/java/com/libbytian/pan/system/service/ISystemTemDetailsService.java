@@ -28,7 +28,7 @@ public interface ISystemTemDetailsService extends IService<SystemTemDetailsModel
     int exportExceltoDb(String filename, InputStream inputStream, String templateId) throws Exception;
 
 
-     void exportTemDetails(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, @RequestParam String templateId)  throws Exception;
+     void exportTemDetails(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse,  List<String> temdetailsIds)  throws Exception;
 
     /**
      * 根据用户信息获取 启用状态的模板详细List

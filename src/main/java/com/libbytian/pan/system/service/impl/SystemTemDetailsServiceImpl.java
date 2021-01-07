@@ -177,26 +177,21 @@ public class SystemTemDetailsServiceImpl extends ServiceImpl<SystemTemDetailsMap
      * 导出excel
      *
      * @param httpServletRequest
-     * @param templateId
+     * @param temdetailsIds
      * @throws Exception
      */
     @Override
-    public void exportTemDetails(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, String templateId) throws Exception {
+    public void exportTemDetails(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, List<String> temdetailsIds) throws Exception {
 
-        //1 拿着模板号 先去关联表中取出所有模板详细ID
-        QueryWrapper queryWrapper = new QueryWrapper();
-        queryWrapper.eq("template_id", templateId);
-        List<SystemTemToTemdetail> systemTemToTemdetails = new ArrayList<>();
-        systemTemToTemdetails = iSystemTmplToTmplDetailsService.list(queryWrapper);
-        //2. 获取所有详细ID list
-        List<String> detailsIdList = systemTemToTemdetails.stream().map(SystemTemToTemdetail::getTemplatedetailsid).collect(Collectors.toList());
         //得到了详细数据
-        List<SystemTemDetailsModel> systemTemDetailsModelList = this.listByIds(detailsIdList);
+        List<SystemTemDetailsModel> systemTemDetailsModelList = this.listByIds(temdetailsIds);
+
         //excel标题
         String title[] = {"id", "question", "answer", "userid", "date_time", "isTop"};
         //excel文件名
+        String temdetailsId =temdetailsIds.get(0);
+        SystemTemplateModel systemTemplateModel = iSystemTemplateService.getTemplateById(temdetailsId);
 
-        SystemTemplateModel systemTemplateModel = iSystemTemplateService.getById(templateId);
         //sheet名
         String sheetName = systemTemplateModel.getTemplatename();
         String fileName = sheetName + ".xls";
@@ -293,23 +288,23 @@ public class SystemTemDetailsServiceImpl extends ServiceImpl<SystemTemDetailsMap
 
         sleepDetails.setKeyword("维护内容");
         sleepDetails.setKeywordToValue("维护时间内回复内容");
-        sleepDetails.setShowOrder(1);
+
 
         headAdvert.setKeyword("头部广告");
         headAdvert.setKeywordToValue("微信回复头部广告（删除可去掉）");
-        headAdvert.setShowOrder(1);
+
 
         endAdvert.setKeyword("底部广告");
         endAdvert.setKeywordToValue("微信回复底部广告（删除可去掉）");
-        endAdvert.setShowOrder(1);
+
 
         hideResource.setKeyword("隐藏资源");
         hideResource.setKeywordToValue("隐藏资源名称");
-        hideResource.setShowOrder(1);
+
 
         hideReply.setKeyword("隐藏回复");
         hideReply.setKeywordToValue("隐藏资源后返回给粉丝内容");
-        hideReply.setShowOrder(1);
+
 
         headWeb.setKeyword("头部提示web");
         headWeb.setKeywordToValue("<style type=\"text/css\">\n" +
@@ -378,17 +373,13 @@ public class SystemTemDetailsServiceImpl extends ServiceImpl<SystemTemDetailsMap
                 "<div style=\"clear:both;width:100%;margin-top:5px;background:rgba(238,174,238,1);height:30px;line-height:30px;text-align:center;color:#fff;font-size: 13px;\">增值服务:稀有资源有偿代找 加微信: <span style=\"color:red;\">自定义微信</span></div>\n" +
                 "</a>");
 
-        headWeb.setShowOrder(1);
 
         endWeb.setKeyword("底部提示web");
         endWeb.setKeywordToValue("web页面底部提示内容");
-        endWeb.setShowOrder(1);
 
 
         secretKey.setKeyword("秘钥回复");
         secretKey.setKeywordToValue("粉丝口令回复内容");
-        secretKey.setShowOrder(1);
-
 
         detailist.add(sleepDetails);
         detailist.add(headAdvert);
@@ -407,6 +398,9 @@ public class SystemTemDetailsServiceImpl extends ServiceImpl<SystemTemDetailsMap
             SystemTemDetailsModel details = detailist.get(i);
             details.setTemdetailsId(UUID.randomUUID().toString());
             details.setCreatetime(LocalDateTime.now());
+            details.setTemdetailsstatus(true);
+            details.setEnableFlag(false);
+            details.setShowOrder(1);
             systemTemDetailsMapper.insertSystemTemDetails(details);
             //用户模板绑定模板详情
             SystemTemToTemdetail temToTemdetail = SystemTemToTemdetail.builder().templateid(templateId).templatedetailsid(details.getTemdetailsId()).build();

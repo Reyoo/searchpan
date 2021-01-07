@@ -35,4 +35,6 @@ public interface SystemUserMapper extends BaseMapper<SystemUserModel> {
 
     SystemUserModel getUserById(SystemUserModel systemUserModel);
 
+
+
 }

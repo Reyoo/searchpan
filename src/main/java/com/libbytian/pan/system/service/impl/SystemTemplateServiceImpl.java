@@ -80,4 +80,14 @@ public class SystemTemplateServiceImpl extends ServiceImpl<SystemTemplateMapper,
         return systemTemplateMapper.deleteTemplateByUser(systemUserModel);
     }
 
+    /**
+     * 根据模板详情ID获取模板名称
+     * @param temdetailsId
+     * @return
+     */
+    @Override
+    public SystemTemplateModel getTemplateById(String temdetailsId) {
+        return systemTemplateMapper.getTemplateById(temdetailsId);
+    }
+
 }

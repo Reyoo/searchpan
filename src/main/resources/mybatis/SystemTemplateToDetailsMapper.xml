@@ -33,11 +33,15 @@
 
     <!-- 批量删除 -->
     <delete id="deleteTemplateAndDetails">
-        DELETE FROM tem_temdetails WHERE templatedetails_id IN
+        DELETE FROM tem_temdetails
+        WHERE templatedetails_id IN
+       (select templatedetails_id FROM sys_temdetails WHERE templatedetails_id IN
         <foreach collection="list" item="templateDetailsList" separator="," open="(" close=")">
             #{templateDetailsList,jdbcType=VARCHAR}
         </foreach>
+        AND show_order = 0 )
     </delete>
+
 
 
     <delete id="deleteFindFishTempToTempDetailsByUser" parameterType="com.libbytian.pan.system.model.SystemUserModel">

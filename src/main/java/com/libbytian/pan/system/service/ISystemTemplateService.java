@@ -33,4 +33,11 @@ public interface ISystemTemplateService extends IService<SystemTemplateModel> {
       */
      int dropTemplateByUser(SystemUserModel systemUserModel) throws  Exception;
 
+     /**
+      * 根据模板详情ID获取模板名称
+      * @param temdetailsId
+      * @return
+      */
+     public SystemTemplateModel getTemplateById(String temdetailsId);
+
 }

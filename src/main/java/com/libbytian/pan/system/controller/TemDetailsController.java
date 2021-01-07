@@ -4,10 +4,11 @@ import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.libbytian.pan.system.common.AjaxResult;
-import com.libbytian.pan.system.model.SystemRecordSensitiveModel;
+
 import com.libbytian.pan.system.model.SystemTemDetailsModel;
 import com.libbytian.pan.system.service.*;
 import com.libbytian.pan.system.util.CheckStrContainUrlUtil;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -17,7 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.time.LocalDateTime;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -36,6 +37,8 @@ public class TemDetailsController {
     private final ISystemSensitiveWordService iSystemSensitiveWordService;
 
     private final ISystemTmplToTmplDetailsService systemTmplToTmplDetailsService;
+
+
 
 
     /**
@@ -73,9 +76,17 @@ public class TemDetailsController {
 
         try {
             List<SystemTemDetailsModel> result = iSystemTemDetailsService.listTemDetailsObjectsByWord(systemTemDetailsModel);
-            return AjaxResult.success(result);
+
+            if(result.size() > 0){
+                return AjaxResult.success(result);
+            }else {
+                return AjaxResult.error("未搜索到该内容");
+            }
+
         } catch (Exception e) {
-            return AjaxResult.error(e.getMessage());
+            e.printStackTrace();
+            log.error(e.getMessage());
+            return AjaxResult.error("查询错误");
         }
     }
 
@@ -140,7 +151,7 @@ public class TemDetailsController {
      * @return
      */
         @RequestMapping(value = "/removeTemDetails", method = RequestMethod.DELETE)
-    public AjaxResult deleteTemDetails(@RequestBody List<String> temdetailsId) {
+    public AjaxResult deleteTemDetails(@RequestBody  List<String> temdetailsId) {
         try {
             if (iSystemTemDetailsService.deleteTemplateDetails(temdetailsId) >0){
                 //删除关联表   tem_temdetails
@@ -190,14 +201,17 @@ public class TemDetailsController {
      * 导出用户模板详细
      *
      * @param httpServletRequest
-     * @param templateId
+     * @param temdetailsIds
      * @return
      */
-    @RequestMapping(value = "/excelexport/{templateId}", method = RequestMethod.GET)
-    public void exportTemDetails(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, @PathVariable String templateId) {
+    @RequestMapping(value = "/excelexport", method = RequestMethod.POST)
+    public void exportTemDetails(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, @RequestBody List<String> temdetailsIds) {
 
         try {
-            iSystemTemDetailsService.exportTemDetails(httpServletRequest, httpServletResponse, templateId);
+            if (temdetailsIds.size() == 0){
+                return ;
+            }
+            iSystemTemDetailsService.exportTemDetails(httpServletRequest, httpServletResponse, temdetailsIds);
         } catch (Exception e) {
             log.error(e.getMessage());
             e.printStackTrace();

@@ -19,8 +19,7 @@
          d.templatedetails_value AS keywordToValue,
          d.createtime AS createtime,
          d.templatedetails_status AS temdetailsstatus,
-         d.show_order AS showOrder,
-
+         d.show_order AS showOrder
     </sql>
 
 
@@ -89,10 +88,10 @@
         LEFT JOIN tem_temdetails tt ON d.templatedetails_id = tt.templatedetails_id
         <trim prefix="where" prefixOverrides="and|">
             <if test="keyword != null and keyword != ''">
-                AND d.templatedetails_keyword =#{keyword}
+                AND d.templatedetails_keyword like #{keyword}
             </if>
             <if test="keywordToValue != null and keywordToValue != ''">
-                AND d.templatedetails_value =#{keywordToValue}
+                AND d.templatedetails_value like #{keywordToValue}
             </if>
             <if test="templateId != null and templateId != ''">
                 AND tt.template_id =#{templateId}
@@ -144,13 +143,20 @@
             <if test="createtime != null">
                 createtime,
             </if>
-            <if test="temdetailsstatus != null">
-                temdetailsstatus,
-            </if>
 
             <if test="showOrder != null">
                 show_order,
             </if>
+
+            <if test="enableFlag != null">
+                enable_flag,
+            </if>
+
+            <if test="temdetailsstatus != null">
+                templatedetails_status,
+            </if>
+
+
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="temdetailsId != null">
@@ -169,14 +175,17 @@
                 #{createtime,jdbcType=VARCHAR},
             </if>
 
-            <if test="temdetailsstatus != null">
-                #{temdetailsstatus,jdbcType=VARCHAR},
-            </if>
-
             <if test="showOrder != null">
                 #{showOrder,jdbcType=VARCHAR},
             </if>
 
+            <if test="enableFlag != null">
+                #{enableFlag},
+            </if>
+
+            <if test="temdetailsstatus != null">
+                #{temdetailsstatus},
+            </if>
 
         </trim>
     </insert>

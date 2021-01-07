@@ -93,4 +93,16 @@
     </delete>
 
 
+
+    <!-- 查询详情ID对应的模板-->
+    <select id="getTemplateById" parameterType="String" resultType="com.libbytian.pan.system.model.SystemTemplateModel">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM sys_template t
+        LEFT JOIN tem_temdetails tt
+        ON t.template_id = tt.template_id
+        LEFT JOIN sys_temdetails td ON tt.templatedetails_id = td.templatedetails_id
+        WHERE td.templatedetails_id = #{temdetailsId}
+    </select>
+
 </mapper>
