@@ -8,6 +8,7 @@ import com.libbytian.pan.system.security.model.ResultExceptionModel;
 import com.libbytian.pan.system.security.provider.JwtUser;
 import com.libbytian.pan.system.service.ISystemRoleService;
 import com.libbytian.pan.system.service.ISystemUserService;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 import java.util.List;
@@ -52,6 +54,7 @@ public class JwtUserDetailServiceImpl implements UserDetailsService {
      * @return
      * @throws UsernameNotFoundException
      */
+    @SneakyThrows
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
@@ -64,6 +67,9 @@ public class JwtUserDetailServiceImpl implements UserDetailsService {
 
         SystemUserModel userModel = new SystemUserModel();
         userModel.setUsername(username);
+        userModel.setLastLoginTime(LocalDateTime.now());
+        iSystemUserService.updateUser(userModel);
+
         SystemUserModel systemUserModel = iSystemUserService.getUser(userModel);
 
         if (systemUserModel == null){

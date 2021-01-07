@@ -42,7 +42,7 @@ public class SystemUserServiceImpl extends ServiceImpl<SystemUserMapper, SystemU
 
     private final SystemUserMapper systemUserMapper;
     private final SystemTemplateMapper systemTemplateMapper;
-    private final SystemTemToTemDetailsMapper systemTemToTemDetailsMapper ;
+    private final SystemTemToTemDetailsMapper systemTemToTemDetailsMapper;
 
     private final SystemUserToTemplateMapper systemUserToTemplateMapper;
 
@@ -143,14 +143,13 @@ public class SystemUserServiceImpl extends ServiceImpl<SystemUserMapper, SystemU
             systemTemDetailsService.defaultSave(templateId);
 
 
-
             String appId = user.getAppId();
-            if(StrUtil.isBlank(appId)){
+            if (StrUtil.isBlank(appId)) {
                 appId = "limits";
             }
 
             SystemKeywordModel systemKeywordModel = new SystemKeywordModel();
-            systemKeywordModel.setUserSafeKey("http://51.findfish.top/wechat/portal/" + Base64.getEncoder().encodeToString(user.getUsername().getBytes())+"/" + appId);
+            systemKeywordModel.setUserSafeKey("http://51.findfish.top/wechat/portal/" + Base64.getEncoder().encodeToString(user.getUsername().getBytes()) + "/" + appId);
             systemKeywordModel.setKeywordId(templateId);
             //00:00-00：00 默认全天开
             systemKeywordModel.setStartTime("00:00");
@@ -174,36 +173,34 @@ public class SystemUserServiceImpl extends ServiceImpl<SystemUserMapper, SystemU
      * @param user
      */
     @Override
-    public void removeUserAll(SystemUserModel user) throws  Exception{
+    public void removeUserAll(SystemUserModel user) throws Exception {
 
 
+        //删除模板详细
+        log.info("删除模板详细");
+        systemTemDetailsMapper.deleteTemplateDetailsByUser(user);
+        //删除模板表
+        log.info("刪除模板表");
+        systemTemplateMapper.deleteTemplateByUser(user);
+        //删除模板与模板详细关联表
+        systemTemToTemDetailsMapper.deleteFindFishTempToTempDetailsByUser(user);
+        //删除用户模板关联表
+        log.info("刪除用户模板关联表");
+        systemUserToTemplateMapper.deleteUserToTemplateByUserId(user);
 
-            //删除模板详细
-            log.info("删除模板详细");
-            systemTemDetailsMapper.deleteTemplateDetailsByUser(user);
-            //删除模板表
-            log.info("刪除模板表");
-            systemTemplateMapper.deleteTemplateByUser(user);
-            //删除模板与模板详细关联表
-            systemTemToTemDetailsMapper.deleteFindFishTempToTempDetailsByUser(user);
-            //删除用户模板关联表
-            log.info("刪除用户模板关联表");
-            systemUserToTemplateMapper.deleteUserToTemplateByUserId(user);
-
-            //删除用户角色关联表中数据
-            log.info("删除角色关联表");
-            userToRoleMapper.deleteUserRoleByUserModel(user);
-            //删除用户关键词
-            log.info("刪除用户关键词");
-            systemKeywordMapper.deleteKeywordByUser(user);
+        //删除用户角色关联表中数据
+        log.info("删除角色关联表");
+        userToRoleMapper.deleteUserRoleByUserModel(user);
+        //删除用户关键词
+        log.info("刪除用户关键词");
+        systemKeywordMapper.deleteKeywordByUser(user);
 //            删除用户关键词关联表
-            log.info("删除用户关键词关联表");
-            systemUserToKeywordMapper.deleteUserToKeywordByUser(user);
+        log.info("删除用户关键词关联表");
+        systemUserToKeywordMapper.deleteUserToKeywordByUser(user);
 //            删除用户表
 
-            log.info("删除用户表");
-            systemUserMapper.deleteSysUserByUser(user);
-
+        log.info("删除用户表");
+        systemUserMapper.deleteSysUserByUser(user);
 
 
 //        2、删除模板
@@ -216,52 +213,21 @@ public class SystemUserServiceImpl extends ServiceImpl<SystemUserMapper, SystemU
 
 
     @Override
-    public SystemUserModel updateUser(SystemUserModel user) throws Exception {
+    public int updateUser(SystemUserModel user) throws Exception {
 
-        if (user.getUserId().isEmpty()) {
+        if (user.getUsername().isEmpty()) {
             throw new Exception("用户名不能为空");
         }
-        if (user.getActTime() != null) {
-            LocalDateTime actTime = systemUserMapper.getUser(user).getActTime();
 
-            //如果有传入续费时长，则更新到期时间
-            if (user.getActrange() != null && user.getActrange() > 0) {
-                //获取当前时间
-                LocalDateTime nowtime = LocalDateTime.now();
-
-                //已过期，到期时间在当前时间之前
-                if (actTime == null || actTime.isBefore(nowtime)) {
-                    nowtime = nowtime.plus(user.getActrange(), ChronoUnit.MONTHS);
-                } else {
-                    nowtime = actTime.plus(user.getActrange(), ChronoUnit.MONTHS);
-                }
-                //更新到期时间
-                user.setActTime(nowtime);
-            }
+        if(user.getPassword()!=null || StrUtil.isNotBlank(user.getPassword())){
+            BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+            String encode = encoder.encode(user.getPassword());
+            user.setPassword(encode);
         }
 
+        return systemUserMapper.updateUserById(user);
 
-        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-        String encode = encoder.encode(user.getPassword());
 
-        /**
-         * HuangS
-         * 新建个对象，拿对象的用户名去查,不带入传入的mobile(因传入的mobile数据库可能没有，会造成查询userID为null)
-         */
-        SystemUserModel userModel = new SystemUserModel();
-        userModel.setUsername(user.getUsername());
-
-        SystemUserModel olduser = systemUserMapper.getUser(userModel);
-//        SystemUserModel olduser = systemUserMapper.getUser(user);
-        user.setUserId(olduser.getUserId());
-        user.setPassword(encode);
-        boolean result = this.saveOrUpdate(user);
-        if (result) {
-            SystemUserToRole userToRole = SystemUserToRole.builder().userId(user.getUserId()).roleId("ROLE_NORMAL").build();
-            userToRoleService.save(userToRole);
-        }
-
-        return user;
     }
 
 
@@ -283,7 +249,7 @@ public class SystemUserServiceImpl extends ServiceImpl<SystemUserMapper, SystemU
                 queryWrapper.eq("user_mobile", systemUserModel.getMobile());
             }
             if (systemUserModel.getLastLoginTime() != null) {
-                queryWrapper.eq("user_last_login_time", systemUserModel.getLastLoginTime());
+                queryWrapper.eq("user_lastlogin_time", systemUserModel.getLastLoginTime());
             }
             if (systemUserModel.getCreateTime() != null) {
                 queryWrapper.eq("createtime", systemUserModel.getCreateTime());

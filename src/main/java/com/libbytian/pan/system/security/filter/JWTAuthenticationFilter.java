@@ -10,10 +10,14 @@ import com.libbytian.pan.system.exception.ImageCodeException;
 import com.libbytian.pan.system.model.SystemUserModel;
 import com.libbytian.pan.system.security.model.AuthenticationSuccessModel;
 import com.libbytian.pan.system.security.provider.JwtUser;
+import com.libbytian.pan.system.service.ISystemUserService;
 import com.libbytian.pan.system.util.JwtTokenUtils;
 
+import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 
 import org.springframework.security.core.Authentication;
@@ -25,7 +29,7 @@ import org.springframework.security.web.authentication.AbstractAuthenticationPro
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-
+import org.springframework.stereotype.Component;
 
 
 import javax.servlet.FilterChain;
@@ -34,6 +38,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+import java.time.LocalDateTime;
 import java.util.Set;
 
 /**
@@ -41,7 +46,6 @@ import java.util.Set;
  */
 
 @Slf4j
-
 public class JWTAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
 
     private ThreadLocal<Integer> threadLocal = new ThreadLocal<>();
@@ -51,26 +55,28 @@ public class JWTAuthenticationFilter extends AbstractAuthenticationProcessingFil
         super(new AntPathRequestMatcher("/login/signin", "POST"));
     }
 
+    @SneakyThrows
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request,
                                                 HttpServletResponse response) throws AuthenticationException {
 
-            String userName = request.getParameter("username");
-            String password = request.getParameter("password");
-            String rememberMeStat = request.getParameter("rememberMe");
-            UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(userName, password);
-            usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetails(request));
-            threadLocal.set(rememberMeStat == null ? 0 : Integer.valueOf(rememberMeStat));
-            Authentication authenticatedToken = this.getAuthenticationManager().authenticate(usernamePasswordAuthenticationToken);
-            return authenticatedToken;
+        String userName = request.getParameter("username");
+        String password = request.getParameter("password");
+        String rememberMeStat = request.getParameter("rememberMe");
+        UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(userName, password);
+        usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetails(request));
+        threadLocal.set(rememberMeStat == null ? 0 : Integer.valueOf(rememberMeStat));
+        Authentication authenticatedToken = this.getAuthenticationManager().authenticate(usernamePasswordAuthenticationToken);
+
+        return authenticatedToken;
 
     }
-
 
 
     /**
      * 成功验证后调用的方法
      * 如果验证成功，就生成token并返回
+     *
      * @param request
      * @param response
      * @param chain
@@ -95,7 +101,7 @@ public class JWTAuthenticationFilter extends AbstractAuthenticationProcessingFil
         authenticationSuccessModel.setUsername(authentication.getName());
         authenticationSuccessModel.setToken(JwtTokenUtils.TOKEN_PREFIX + token);
         authenticationSuccessModel.setStatus(200);
-        if (roles.contains("ROLE_ADMIN")){
+        if (roles.contains("ROLE_ADMIN")) {
             //登录到系统管理
             authenticationSuccessModel.setRoute("index/userManagement");
             response.getWriter().write(JSON.toJSONString(authenticationSuccessModel));
@@ -104,7 +110,7 @@ public class JWTAuthenticationFilter extends AbstractAuthenticationProcessingFil
         /**
          * 付费用户
          */
-        if (roles.contains("ROLE_PAYUSER")){
+        if (roles.contains("ROLE_PAYUSER")) {
             //登录到cms管理
             authenticationSuccessModel.setRoute("mainManagement");
             response.getWriter().write(JSON.toJSONString(authenticationSuccessModel));
@@ -113,14 +119,13 @@ public class JWTAuthenticationFilter extends AbstractAuthenticationProcessingFil
 //        /**
 //         * 未付费用户 HuangS
 //         */
-        if (roles.contains("ROLE_NORMAL")){
+        if (roles.contains("ROLE_NORMAL")) {
             //登录到cms管理
             authenticationSuccessModel.setRoute("mainManagement");
             //移除token值
 //            authenticationSuccessModel.setToken(null);
             response.getWriter().write(JSON.toJSONString(authenticationSuccessModel));
         }
-
 
 
         response.setHeader("token", JwtTokenUtils.TOKEN_PREFIX + token);

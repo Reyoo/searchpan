@@ -56,7 +56,7 @@ public interface ISystemUserService extends IService<SystemUserModel> {
     void removeUserAll(SystemUserModel user) throws Exception;
 
 
-    SystemUserModel updateUser(SystemUserModel user) throws Exception;
+    int updateUser(SystemUserModel user) throws Exception;
 
     IPage<SystemUserModel> findConditionByPage(Page<SystemUserModel> page, SystemUserModel user) throws Exception;
 

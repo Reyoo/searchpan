@@ -71,6 +71,7 @@ public class CustomerWebSecurityConfigurerAdapter extends WebSecurityConfigurerA
                 .exceptionHandling().authenticationEntryPoint(new CustomAuthenticationEntryPoint())
                 //添加无权限时的处理
                 .accessDeniedHandler(new LoginAccessDeineHandler())
+
                 .and()
                 //禁用session
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)

@@ -65,7 +65,7 @@ public class SystemUserModel extends Model<SystemUserModel>   {
     /**
      * 最后修改时间
      */
-    @TableField("user_last_login_time")
+    @TableField("user_lastlogin_time")
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     private LocalDateTime lastLoginTime;
@@ -78,6 +78,13 @@ public class SystemUserModel extends Model<SystemUserModel>   {
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     private LocalDateTime createTime;
 
+    /**
+     * 接口调用最后时间
+     */
+    @TableField("call_time")
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    private LocalDateTime callTime;
 
 
 
@@ -95,11 +102,7 @@ public class SystemUserModel extends Model<SystemUserModel>   {
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     private LocalDateTime actTime;
 
-    /**
-     * 激活时长
-     */
-    @TableField("act_range")
-    private Integer actrange;
+
 
     /**
      * 用户付费状态（0：白嫖用户 ，1：付费用户）
@@ -113,6 +116,13 @@ public class SystemUserModel extends Model<SystemUserModel>   {
      */
     @TableField("allowremove")
     private Boolean allowremove;
+
+
+
+
+
+
+
 
 
 

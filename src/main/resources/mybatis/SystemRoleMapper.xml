@@ -98,7 +98,7 @@
                 AND u.user_mobile =#{mobile}
             </if>
             <if test="lastLoginTime != null">
-                AND u.user_last_login_time =#{lastLoginTime}
+                AND u.user_lastlogin_time =#{lastLoginTime}
             </if>
             <if test="createTime != null ">
                 AND u.createTime =#{createTime}
@@ -109,9 +109,7 @@
             <if test="actTime != null">
                 AND u.act_time =#{actTime}
             </if>
-            <if test="actrange != null and actrange != ''">
-                AND u.act_range =#{actrange}
-            </if>
+
         </trim>
 
     </select>

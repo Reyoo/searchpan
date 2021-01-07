@@ -22,6 +22,7 @@ import org.dom4j.*;
 import org.dom4j.io.SAXReader;
 import org.springframework.web.bind.annotation.*;
 import java.io.ByteArrayInputStream;
+import java.time.LocalDateTime;
 import java.util.*;
 
 /**
@@ -135,8 +136,13 @@ public class WxPortalController {
         /**
          * 获取用户名绑定的模板
          */
+
         SystemUserModel systemUserModel = new SystemUserModel();
         systemUserModel.setUsername(username);
+        systemUserModel.setCallTime(LocalDateTime.now());
+
+        //获取用调用接口时间
+        iSystemUserService.updateUser(systemUserModel);
 
         SystemTemDetailsModel headModel = iSystemTemDetailsService.getUserKeywordDetail(username, TemplateKeyword.TOP_ADVS);
         SystemTemDetailsModel lastModel = iSystemTemDetailsService.getUserKeywordDetail(username, TemplateKeyword.TAIL_ADVS);

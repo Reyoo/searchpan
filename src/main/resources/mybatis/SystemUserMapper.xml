@@ -8,11 +8,12 @@
         <result column="user_name" property="username"/>
         <result column="user_mobile" property="mobile"/>
         <result column="user_password" property="password"/>
-        <result column="user_last_login_time" property="lastLoginTime"/>
-        <result column="createTime" property="createTime"/>
+        <result column="user_lastlogin_time" property="lastLoginTime"/>
+        <result column="createtime" property="createTime"/>
         <result column="act_time" property="actTime"/>
-        <result column="act_range" property="actrange"/>
         <result column="user_flag" property="userFlag"/>
+        <result column="call_time" property="callTime"/>
+        <result column="status" property="status"/>
     </resultMap>
 
 
@@ -22,13 +23,14 @@
          user_name AS username,
          user_mobile AS mobile ,
          user_password AS password,
-         user_last_login_time AS lastLoginTime,
-         createTime,
+         user_lastlogin_time AS lastLoginTime,
+         createtime AS createTime,
          status,
          act_time AS actTime,
-         act_range AS actrange,
          user_flag AS userFlag,
-         allowremove AS allowremove
+         allowremove AS allowremove,
+         call_time AS callTime
+
     </sql>
 
 
@@ -47,28 +49,21 @@
             <if test="mobile != null and mobile != ''">
                 AND u.user_mobile =#{mobile}
             </if>
-            <if test="lastLoginTime != null and lastLoginTime != ''">
-                AND u.user_last_login_time =#{lastLoginTime}
-            </if>
-            <if test="createTime != null and createTime != ''">
+
+            <if test="createTime != null">
                 AND u.createTime =#{createTime}
             </if>
             <if test="status != null and status != ''">
                 AND u.status =#{status}
             </if>
-            <if test="actTime != null and actTime != ''">
+            <if test="actTime != null ">
                 AND u.act_time =#{actTime}
-            </if>
-            <if test="actrange != null and actrange != ''">
-                AND u.act_range =#{actrange}
-            </if>
-            <if test="userFlag != null and userFlag != ''">
-                AND u.user_flag =#{userFlag}
             </if>
 
             <if test="userFlag != null and userFlag != ''">
                 AND u.user_flag =#{userFlag}
             </if>
+
 
             <if test="allowremove != null and allowremove != ''">
                 AND u.allowremove =#{allowremove}
@@ -92,21 +87,19 @@
             <if test="mobile != null and mobile != ''">
                 AND u.user_mobile =#{mobile}
             </if>
-            <if test="lastLoginTime != null and lastLoginTime != ''">
-                AND u.user_last_login_time =#{lastLoginTime}
+            <if test="lastLoginTime != null ">
+                AND u.user_lastlogin_time =#{lastLoginTime}
             </if>
-            <if test="createTime != null and createTime != ''">
+            <if test="createTime != null ">
                 AND u.createTime =#{createTime}
             </if>
             <if test="status != null and status != ''">
                 AND u.status =#{status}
             </if>
-            <if test="actTime != null and actTime != ''">
+            <if test="actTime != null">
                 AND u.act_time =#{actTime}
             </if>
-            <if test="actrange != null and actrange != ''">
-                AND u.act_range =#{actrange}
-            </if>
+
             <if test="userFlag != null and userFlag != ''">
                 AND u.user_flag =#{userFlag}
             </if>
@@ -140,21 +133,19 @@
             <if test="mobile != null and mobile != ''">
                 AND u.user_mobile =#{mobile}
             </if>
-            <if test="lastLoginTime != null and lastLoginTime != ''">
-                AND u.user_last_login_time =#{lastLoginTime}
+            <if test="lastLoginTime != null">
+                AND u.user_lastlogin_time =#{lastLoginTime}
             </if>
-            <if test="createTime != null and createTime != ''">
+            <if test="createTime != null ">
                 AND u.createTime =#{createTime}
             </if>
             <if test="status != null and status != ''">
                 AND u.status =#{status}
             </if>
-            <if test="actTime != null and actTime != ''">
+            <if test="actTime != null ">
                 AND u.act_time =#{actTime}
             </if>
-            <if test="actrange != null and actrange != ''">
-                AND u.act_range =#{actrange}
-            </if>
+
             <if test="userFlag != null and userFlag != ''">
                 AND u.user_flag =#{userFlag}
             </if>
@@ -186,7 +177,7 @@
             </if>
 
             <if test="lastLoginTime != null">
-                user_last_login_time,
+                user_lastlogin_time,
             </if>
 
             <if test="createTime != null">
@@ -201,9 +192,6 @@
                 act_time,
             </if>
 
-            <if test="actrange != null">
-                act_range,
-            </if>
 
             <if test="userFlag != null">
                 user_flag,
@@ -249,9 +237,6 @@
                 #{actTime,jdbcType=TIMESTAMP},
             </if>
 
-            <if test="actrange != null">
-                #{actrange,jdbcType=INTEGER},
-            </if>
 
             <if test="userFlag != null">
                 #{userFlag,jdbcType=TINYINT},
@@ -287,6 +272,52 @@
 
     </select>
 
+
+
+    <update id="updateUserById" parameterType="com.libbytian.pan.system.model.SystemUserModel">
+        UPDATE
+        sys_user
+        <trim prefix="set" suffixOverrides=",">
+
+            <if test="mobile != null and mobile != ''">
+                user_mobile =#{mobile},
+            </if>
+
+            <if test="password != null and password != ''">
+                user_password =#{password},
+            </if>
+
+            <if test="lastLoginTime != null ">
+                user_lastlogin_time =#{lastLoginTime},
+            </if>
+
+            <if test="createTime != null  ">
+                createtime =#{createTime},
+            </if>
+
+            <if test="callTime != null ">
+                call_time =#{callTime},
+            </if>
+
+            <if test="status != null  ">
+                status =#{status},
+            </if>
+
+            <if test="actTime != null ">
+                act_time =#{actTime},
+            </if>
+
+            <if test="userFlag != null  and  userFlag != ''">
+                user_flag =#{userFlag},
+            </if>
+
+            <if test="allowremove != null  and allowremove != ''">
+                allowremove =#{allowremove},
+            </if>
+        </trim>
+        WHERE
+        user_name =#{username}
+    </update>
 
 
 </mapper>
