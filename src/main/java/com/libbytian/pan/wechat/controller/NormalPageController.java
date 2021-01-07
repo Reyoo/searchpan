@@ -88,6 +88,11 @@ public class NormalPageController {
         return AjaxResult.success(movieNameAndUrls);
     }
 
+    /**
+     * 未完成
+     * @param name
+     * @return
+     */
     @GetMapping("lili")
     public AjaxResult getLiliMovie(@RequestParam String name) {
         try {
