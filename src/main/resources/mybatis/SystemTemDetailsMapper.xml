@@ -19,7 +19,8 @@
          d.templatedetails_value AS keywordToValue,
          d.createtime AS createtime,
          d.templatedetails_status AS temdetailsstatus,
-         d.show_order AS showOrder
+         d.show_order AS showOrder,
+         d.enable_flag AS enableFlag
     </sql>
 
 

@@ -191,6 +191,7 @@ public class WxPortalController {
                         //传入秘钥+" "+片名，然后截取
                         int idx = searchContent.lastIndexOf(" ");
                         searchName = searchContent.substring(idx + 1);
+                        break;
 
                     }
                 }
@@ -200,6 +201,9 @@ public class WxPortalController {
                  * 关键字 头部广告 headModel.getKeywordToValue()
                  * 关键字 底部广告 lastModel.getKeywordToValue()
                  */
+
+                log.error(headModel.getEnableFlag());
+                System.out.println(headModel.getEnableFlag());
 
                 if (headModel.getEnableFlag()) {
                     stringBuffer.append(headModel.getKeywordToValue());
@@ -214,7 +218,7 @@ public class WxPortalController {
                 stringBuffer.append("&type=mobile");
                 stringBuffer.append("\">[");
                 stringBuffer.append(searchName);
-                stringBuffer.append("]U+1f3ac关键词已获取，点击查看是否找到该内容</a>");
+                stringBuffer.append("]关键词已获取，点击查看查询结果</a>");
                 if (lastModel.getEnableFlag()) {
                     stringBuffer.append("\r\n");
                     stringBuffer.append("\r\n");
@@ -264,6 +268,8 @@ public class WxPortalController {
 
         return null;
     }
+
+
 
 
 }
