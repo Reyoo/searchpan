@@ -5,6 +5,7 @@ import com.libbytian.pan.system.model.SystemTemDetailsModel;
 import com.libbytian.pan.system.model.SystemUserModel;
 import com.libbytian.pan.system.service.ISystemTemDetailsService;
 import com.libbytian.pan.system.model.MovieNameAndUrlModel;
+import com.libbytian.pan.wechat.constant.TemplateKeyword;
 import com.libbytian.pan.wechat.service.AsyncSearchCachedServiceImpl;
 import com.libbytian.pan.wechat.service.NormalPageService;
 import lombok.RequiredArgsConstructor;
@@ -56,13 +57,26 @@ public class MoviePageShowController {
             List<SystemTemDetailsModel> systemdetails = iSystemTemDetailsService.getTemDetailsWithUser(systemUserModel);
             Map map = new HashMap();
 
+            SystemTemDetailsModel headWeb = iSystemTemDetailsService.getUserKeywordDetail(username, TemplateKeyword.HEAD_WEB);
+            SystemTemDetailsModel endWeb = iSystemTemDetailsService.getUserKeywordDetail(username, TemplateKeyword.END_WEB);
+
             for (SystemTemDetailsModel systemTemDetailsModel : systemdetails) {
 
-                if (systemTemDetailsModel.getKeyword().equals("头部提示web")) {
+//                if (headWeb.getEnableFlag()) {
+//
+//                    map.put("head", headWeb.getKeywordToValue());
+//                }
+//                if (systemTemDetailsModel.getKeyword().equals("底部提示web")) {
+//                    systemTemDetailsModel.setKeyword("1");
+//                    map.put("foot", endWeb.getKeywordToValue());
+//                }
+
+
+                if (systemTemDetailsModel.getKeyword().equals("头部提示web") && systemTemDetailsModel.getEnableFlag()) {
                     systemTemDetailsModel.setKeyword("0");
                     map.put("head", systemTemDetailsModel);
                 }
-                if (systemTemDetailsModel.getKeyword().equals("底部提示web")) {
+                if (systemTemDetailsModel.getKeyword().equals("底部提示web") && systemTemDetailsModel.getEnableFlag()) {
                     systemTemDetailsModel.setKeyword("1");
                     map.put("foot", systemTemDetailsModel);
                 }
@@ -130,7 +144,8 @@ public class MoviePageShowController {
             movieNameAndUrlModels = asyncSearchCachedService.searchWord(searchName.trim(), search);
 
             if (movieNameAndUrlModels.size() == 0) {
-                return AjaxResult.hide("全网搜 '" + searchName + "' 中 挖坑埋点土数个一二三四五，再点一次大厅");
+                return AjaxResult.hide("未找到该资源");
+//                return AjaxResult.hide("全网搜 '" + searchName + "' 中 挖坑埋点土数个一二三四五，再点一次大厅");
             }
             return AjaxResult.success(movieNameAndUrlModels);
         } catch (Exception e) {

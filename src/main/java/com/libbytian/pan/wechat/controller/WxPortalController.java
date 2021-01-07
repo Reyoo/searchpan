@@ -163,12 +163,17 @@ public class WxPortalController {
                 System.out.println( inMessage.getAllFieldsMap());
 
                 String searchWord = inMessage.getContent().trim();
+//                -----------------------------------------------------------
+                int idx = searchWord.lastIndexOf(" ");
+                String searchName = searchWord.substring(idx + 1);
+
+//                -------------------------------------------------------------
                 List<String> crawlerNames = new ArrayList<>();
                 crawlerNames.add("aidianying");
                 crawlerNames.add("unreadmovie");
                 crawlerNames.add("sumsu");
 
-                asyncSearchCachedService.searchAsyncWord(crawlerNames, searchWord);
+                asyncSearchCachedService.searchAsyncWord(crawlerNames, searchName);
                 WxMpXmlOutMessage outMessage = this.route(inMessage);
 
 
@@ -176,40 +181,12 @@ public class WxPortalController {
                     return "";
                 }
                 StringBuffer stringBuffer = new StringBuffer();
-                // 准备数据并解析。
-                byte[] bytes = requestBody.getBytes("UTF-8");
-                //1.创建Reader对象
-                SAXReader reader = new SAXReader();
-                //2.加载xml
-                Document document = reader.read(new ByteArrayInputStream(bytes));
-                //3.获取根节点
-                Element rootElement = document.getRootElement();
-                Iterator iterator = rootElement.elementIterator();
-                String searchContent = "";
-                String searchName = "";
-
-
-                while (iterator.hasNext()) {
-                    Element stu = (Element) iterator.next();
-                    if (stu.getName().equals("Content")) {
-                        List<Node> attributes = stu.content();
-                        searchContent = attributes.get(0).getText();
-                        //传入秘钥+" "+片名，然后截取
-                        int idx = searchContent.lastIndexOf(" ");
-                        searchName = searchContent.substring(idx + 1);
-                        break;
-
-                    }
-                }
 
                 /**
                  * 响应内容
                  * 关键字 头部广告 headModel.getKeywordToValue()
                  * 关键字 底部广告 lastModel.getKeywordToValue()
                  */
-
-                log.error(headModel.getEnableFlag());
-                System.out.println(headModel.getEnableFlag());
 
                 if (headModel.getEnableFlag()) {
                     stringBuffer.append(headModel.getKeywordToValue());
@@ -231,7 +208,7 @@ public class WxPortalController {
                     stringBuffer.append(lastModel.getKeywordToValue());
                 }
 
-               stringBuffer =  keyWordSettingService.Setting(username,searchName ,stringBuffer ,searchContent);
+               stringBuffer =  keyWordSettingService.Setting(username,searchName ,stringBuffer ,searchWord);
 
                 Thread.sleep(1500);
                 outMessage = WxMpXmlOutTextMessage.TEXT()

@@ -21,6 +21,10 @@ public class TemplateKeyword {
 
     public static final String PRESERVE_CONTENT = "维护内容";
 
+    public static final String HEAD_WEB = "头部提示web";
+
+    public static final String END_WEB = "底部提示web";
+
 
 
 

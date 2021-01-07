@@ -32,7 +32,7 @@ public class KeyWordSettingService {
     private final ISystemKeywordService systemKeywordService;
 
 
-    public StringBuffer Setting(String username ,String searchName ,StringBuffer stringBuffer ,String searchContent) throws ParseException {
+    public StringBuffer Setting(String username ,String searchName ,StringBuffer stringBuffer ,String searchContent) throws ParseException, InterruptedException {
 
         SystemTemDetailsModel secretContent = iSystemTemDetailsService.getUserKeywordDetail(username, TemplateKeyword.SECRET_CONTENT);
         SystemTemDetailsModel secretReply = iSystemTemDetailsService.getUserKeywordDetail(username, TemplateKeyword.SECRET_REPLY);
@@ -72,7 +72,7 @@ public class KeyWordSettingService {
         String userStart = systemKeywordModel.getStartTime();
         String userEnd = systemKeywordModel.getEndTime();
 
-        if (!"00:00".equals(userStart) && !"00:00".equals(userEnd)) {
+        if (!"00:00".equals(userStart) || !"00:00".equals(userEnd)) {
 
             SimpleDateFormat df = new SimpleDateFormat("HH:mm");
             Date dateStart = df.parse(userStart);
@@ -114,11 +114,13 @@ public class KeyWordSettingService {
          */
         String fansKey = systemKeywordModel.getFansKey();
 
-        if (StringUtils.isNotBlank(fansKey) && !searchContent.contains(fansKey)) {
+        if (StringUtils.isNotBlank(fansKey) && !searchContent.contains(fansKey) && ! fansKey.equals("000000") ) {
 
             stringBuffer.setLength(0);
-            if (StringUtils.isNotBlank(fansKey)) {
+            if (keyContent.getEnableFlag()) {
                 stringBuffer.append(keyContent.getKeywordToValue());
+            }else {
+                Thread.sleep(5000);
             }
         }
 
