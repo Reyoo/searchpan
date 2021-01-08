@@ -57,36 +57,22 @@ public class MoviePageShowController {
             List<SystemTemDetailsModel> systemdetails = iSystemTemDetailsService.getTemDetailsWithUser(systemUserModel);
             Map map = new HashMap();
 
-            SystemTemDetailsModel headWeb = iSystemTemDetailsService.getUserKeywordDetail(username, TemplateKeyword.HEAD_WEB);
-            SystemTemDetailsModel endWeb = iSystemTemDetailsService.getUserKeywordDetail(username, TemplateKeyword.END_WEB);
-
             for (SystemTemDetailsModel systemTemDetailsModel : systemdetails) {
-
-//                if (headWeb.getEnableFlag()) {
-//
-//                    map.put("head", headWeb.getKeywordToValue());
-//                }
-//                if (systemTemDetailsModel.getKeyword().equals("底部提示web")) {
-//                    systemTemDetailsModel.setKeyword("1");
-//                    map.put("foot", endWeb.getKeywordToValue());
-//                }
-
-
                 if (systemTemDetailsModel.getKeyword().equals("头部提示web") && systemTemDetailsModel.getEnableFlag()) {
                     systemTemDetailsModel.setKeyword("0");
                     map.put("head", systemTemDetailsModel);
+                }else{
+                    map.put("head",null);
                 }
+
                 if (systemTemDetailsModel.getKeyword().equals("底部提示web") && systemTemDetailsModel.getEnableFlag()) {
                     systemTemDetailsModel.setKeyword("1");
                     map.put("foot", systemTemDetailsModel);
+                }else {
+                    map.put("foot", null);
                 }
             }
-
-            if (map.size() > 0) {
                 return AjaxResult.success(map);
-            } else {
-                return AjaxResult.success();
-            }
         } catch (Exception e) {
             e.printStackTrace();
             return AjaxResult.error(e.getMessage());

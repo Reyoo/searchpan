@@ -210,7 +210,7 @@ public class WxPortalController {
 
                stringBuffer =  keyWordSettingService.Setting(username,searchName ,stringBuffer ,searchWord);
 
-                Thread.sleep(1500);
+                Thread.sleep(1200);
                 outMessage = WxMpXmlOutTextMessage.TEXT()
                         .toUser(inMessage.getFromUser())
                         .fromUser(inMessage.getToUser())
