@@ -162,6 +162,7 @@ public class WxPortalController {
                 System.out.println( wxService.getUserService());
                 System.out.println( inMessage.getAllFieldsMap());
 
+
                 String searchWord = inMessage.getContent().trim();
 //                -----------------------------------------------------------
                 int idx = searchWord.lastIndexOf(" ");
@@ -180,8 +181,8 @@ public class WxPortalController {
                 if (outMessage == null) {
                     return "";
                 }
-                StringBuffer stringBuffer = new StringBuffer();
 
+                StringBuffer stringBuffer = new StringBuffer();
                 /**
                  * 响应内容
                  * 关键字 头部广告 headModel.getKeywordToValue()

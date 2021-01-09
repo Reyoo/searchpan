@@ -32,7 +32,7 @@ public class KeyWordSettingService {
     private final ISystemKeywordService systemKeywordService;
 
 
-    public StringBuffer Setting(String username ,String searchName ,StringBuffer stringBuffer ,String searchContent) throws ParseException, InterruptedException {
+    public StringBuffer Setting(String username, String searchName, StringBuffer stringBuffer, String searchWord) throws ParseException, InterruptedException {
 
         SystemTemDetailsModel secretContent = iSystemTemDetailsService.getUserKeywordDetail(username, TemplateKeyword.SECRET_CONTENT);
         SystemTemDetailsModel secretReply = iSystemTemDetailsService.getUserKeywordDetail(username, TemplateKeyword.SECRET_REPLY);
@@ -52,9 +52,9 @@ public class KeyWordSettingService {
                 //判断传入的 片名 是否在隐藏资源中
                 if (s.equals(searchName)) {
                     stringBuffer.setLength(0);
-                    if (secretReply.getEnableFlag()){
+                    if (secretReply.getEnableFlag()) {
                         stringBuffer.append(secretReply.getKeywordToValue());
-                    }else {
+                    } else {
                         Thread.sleep(5000);
                     }
                     break;
@@ -63,7 +63,6 @@ public class KeyWordSettingService {
         }
 
         SystemKeywordModel systemKeywordModel = systemKeywordService.getKeywordByUser(username);
-
 
 
         /**
@@ -76,39 +75,25 @@ public class KeyWordSettingService {
         String userStart = systemKeywordModel.getStartTime();
         String userEnd = systemKeywordModel.getEndTime();
 
-        SimpleDateFormat df = new SimpleDateFormat("HH:mm");
-        Date dateStart = df.parse(userStart);
-        Date dateEnd = df.parse(userEnd);
-
-        //当前时间
-        Date now = df.parse(df.format(new Date()));
-
-        Calendar nowTime = Calendar.getInstance();
-        nowTime.setTime(now);
-
-        Calendar beginTime = Calendar.getInstance();
-        beginTime.setTime(dateStart);
-
-        Calendar endTime = Calendar.getInstance();
-        endTime.setTime(dateEnd);
+        String fansKey = systemKeywordModel.getFansKey();
 
         if (!"00:00".equals(userStart) || !"00:00".equals(userEnd)) {
 
-//            SimpleDateFormat df = new SimpleDateFormat("HH:mm");
-//            Date dateStart = df.parse(userStart);
-//            Date dateEnd = df.parse(userEnd);
-//
-//            //当前时间
-//            Date now = df.parse(df.format(new Date()));
-//
-//            Calendar nowTime = Calendar.getInstance();
-//            nowTime.setTime(now);
-//
-//            Calendar beginTime = Calendar.getInstance();
-//            beginTime.setTime(dateStart);
-//
-//            Calendar endTime = Calendar.getInstance();
-//            endTime.setTime(dateEnd);
+            SimpleDateFormat df = new SimpleDateFormat("HH:mm");
+            Date dateStart = df.parse(userStart);
+            Date dateEnd = df.parse(userEnd);
+
+            //当前时间
+            Date now = df.parse(df.format(new Date()));
+
+            Calendar nowTime = Calendar.getInstance();
+            nowTime.setTime(now);
+
+            Calendar beginTime = Calendar.getInstance();
+            beginTime.setTime(dateStart);
+
+            Calendar endTime = Calendar.getInstance();
+            endTime.setTime(dateEnd);
 
             //如果开始时间 > 结束时间，跨天 给结束时间加一天
             if (beginTime.after(endTime)) {
@@ -117,51 +102,26 @@ public class KeyWordSettingService {
 
             //如果当前时间在维护期内，返回维护内容,开始=结束 全天维护
             if (nowTime.after(beginTime) && nowTime.before(endTime) || userStart.equals(endTime)) {
-                stringBuffer.setLength(0);
-                if (preserveContent.getEnableFlag()){
-                    stringBuffer.append(preserveContent.getKeywordToValue());
-                }
-//                else{
-//                    Thread.sleep(5000);
-//                }
-            }
-        }
 
 
-        /**
-         * HuangS
-         * 关键词 判断秘钥
-         * 最简单实现
-         * 判断传入的关键词中是否包含秘钥
-         */
-        String fansKey = systemKeywordModel.getFansKey();
+                //维护期内判断秘钥功能
+                if (!searchWord.contains(fansKey) && ! fansKey.equals("000000") ) {
 
-        if (!searchContent.contains(fansKey) && ! fansKey.equals("000000")) {
-
-            stringBuffer.setLength(0);
-
-            if (keyContent.getEnableFlag()){
-                stringBuffer.append(keyContent.getKeywordToValue());
-            }else {
-
-                //如果在维护期内 并且秘钥内容为关闭状态 回复维护内容
-                if (nowTime.after(beginTime) && nowTime.before(endTime) || userStart.equals(endTime)){
-                    if (preserveContent.getEnableFlag()){
-                        stringBuffer.append(preserveContent.getKeywordToValue());
+                    if (keyContent.getEnableFlag()) {
+                        stringBuffer.setLength(0);
+                        stringBuffer.append(keyContent.getKeywordToValue());
+                    }else {
+                        if (preserveContent.getEnableFlag()){
+                            stringBuffer.setLength(0);
+                            stringBuffer.append(preserveContent.getKeywordToValue());
+                        }else {
+                            Thread.sleep(5000);
+                        }
                     }
-
-                }else {
-                    Thread.sleep(5000);
                 }
-            }
 
-            //维护内容关闭
-            if (!preserveContent.getEnableFlag()){
-                Thread.sleep(5000);
             }
-
         }
-
         return stringBuffer;
     }
 
