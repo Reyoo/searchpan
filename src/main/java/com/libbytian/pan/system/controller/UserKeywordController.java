@@ -1,6 +1,7 @@
 package com.libbytian.pan.system.controller;
 
 
+import cn.hutool.core.util.StrUtil;
 import com.libbytian.pan.system.common.AjaxResult;
 import com.libbytian.pan.system.model.SystemKeywordModel;
 import com.libbytian.pan.system.model.SystemUserModel;
@@ -45,7 +46,13 @@ public class UserKeywordController {
     public AjaxResult updateUserKeyword(HttpServletRequest httpRequest, @RequestBody(required = true) SystemKeywordModel systemKeywordModel) {
 
         try {
-            String userSafeKey ="http://51.findfish.top/wechat/portal/"+ Base64.getEncoder().encodeToString(httpRequest.getRemoteUser().getBytes())+  "/" + systemKeywordModel.getAppId();
+            String userSafeKey = null;
+            if(StrUtil.isEmpty(systemKeywordModel.getAppId())){
+                userSafeKey = "http://51.findfish.top/wechat/portal/"+ Base64.getEncoder().encodeToString(httpRequest.getRemoteUser().getBytes())+  "/" +"请填写appid";
+                systemKeywordModel.setAppId("请填写appid");
+            }else{
+                userSafeKey= "http://51.findfish.top/wechat/portal/"+ Base64.getEncoder().encodeToString(httpRequest.getRemoteUser().getBytes())+  "/" + systemKeywordModel.getAppId();
+            }
 
             systemKeywordModel.setUserSafeKey(userSafeKey);
 
