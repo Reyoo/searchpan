@@ -29,14 +29,13 @@ public class UserKeywordController {
     private final ISystemKeywordService iSystemKeywordService;
 
 
-
     @RequestMapping(value = "/list/{username}", method = RequestMethod.GET)
     public AjaxResult getUserKeywordByUser(@PathVariable String username) {
 
         try {
             return AjaxResult.success(iSystemKeywordService.getKeywordByUser(username));
         } catch (Exception e) {
-            log.error( "error -> " + e.getMessage());
+            log.error("error -> " + e.getMessage());
             return AjaxResult.error(e.getMessage());
         }
     }
@@ -44,18 +43,16 @@ public class UserKeywordController {
 
     @RequestMapping(value = "/fresh", method = RequestMethod.PATCH)
     public AjaxResult updateUserKeyword(HttpServletRequest httpRequest, @RequestBody(required = true) SystemKeywordModel systemKeywordModel) {
-
+        String userSafeKey = null;
         try {
-            String userSafeKey = null;
-            if(StrUtil.isEmpty(systemKeywordModel.getAppId())){
-                userSafeKey = "http://51.findfish.top/wechat/portal/"+ Base64.getEncoder().encodeToString(httpRequest.getRemoteUser().getBytes())+  "/" +"请填写appid";
-                systemKeywordModel.setAppId("请填写appid");
+
+            if (StrUtil.isEmpty(systemKeywordModel.getAppId())) {
+                userSafeKey = "http://51.findfish.top/wechat/portal/" + Base64.getEncoder().encodeToString(httpRequest.getRemoteUser().getBytes()) + "/" + "请填写appID";
+                systemKeywordModel.setUserSafeKey(userSafeKey);
             }else{
-                userSafeKey= "http://51.findfish.top/wechat/portal/"+ Base64.getEncoder().encodeToString(httpRequest.getRemoteUser().getBytes())+  "/" + systemKeywordModel.getAppId();
+                userSafeKey = "http://51.findfish.top/wechat/portal/" + Base64.getEncoder().encodeToString(httpRequest.getRemoteUser().getBytes()) + "/" + systemKeywordModel.getAppId();
+                systemKeywordModel.setUserSafeKey(userSafeKey);
             }
-
-            systemKeywordModel.setUserSafeKey(userSafeKey);
-
             iSystemKeywordService.updateKeyword(systemKeywordModel);
             return AjaxResult.success("update is success !!! ");
         } catch (Exception e) {
@@ -63,7 +60,6 @@ public class UserKeywordController {
             return AjaxResult.error(e.getMessage());
         }
     }
-
 
 
 }

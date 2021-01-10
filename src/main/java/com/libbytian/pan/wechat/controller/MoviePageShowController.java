@@ -71,15 +71,22 @@ public class MoviePageShowController {
                 }
             }
 
+            Map keynullMap = new HashMap();
+            keynullMap.put("keywordToValue","");
 
-
-            if(systemdetails.size()==0){
-                Map keynullMap = new HashMap();
-                keynullMap.put("keywordToValue","");
-//                map.put("head", "{\"keywordToValue\":\"\"}");
+            if(map.size()==0){
                 map.put("head", keynullMap);
                 map.put("foot", keynullMap);
             }
+
+            if(map.containsKey("head")&&!map.containsKey("foot")){
+                map.put("foot", keynullMap);
+            }
+            if(!map.containsKey("head")&&map.containsKey("foot")){
+                map.put("head", keynullMap);
+            }
+
+
 
 
                 return AjaxResult.success(map);

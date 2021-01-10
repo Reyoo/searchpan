@@ -202,12 +202,14 @@ public class AsyncSearchCachedServiceImpl {
 
             case "unreadmovie":
                 return "url_movie_unread";
+            case "sumsu":
+                return "url_movie_sumsu";
 
             default:
                 break;
 
         }
-        return null;
+        return "getTableName";
     }
 
     /**
