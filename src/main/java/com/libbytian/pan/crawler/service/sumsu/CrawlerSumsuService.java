@@ -75,9 +75,9 @@ public class CrawlerSumsuService {
 
         if (resultResponseEntity.getStatusCode() == HttpStatus.OK) {
             String html = resultResponseEntity.getBody();
-            System.out.println("==================");
-            System.out.println(html);
-            System.out.println("==================");
+//            System.out.println("==================");
+//            System.out.println(html);
+//            System.out.println("==================");
             Document doc = Jsoup.parse(html);
 
             Elements elements = doc.select("li").select("a");
@@ -116,7 +116,7 @@ public class CrawlerSumsuService {
 
 
             for (String sumsuUrl : urls) {
-                System.out.println(sumsuUrl);
+//                System.out.println(sumsuUrl);
                 HttpHeaders requestSumsuHeaders = new HttpHeaders();
                 requestSumsuHeaders.add("User-Agent", UserAgentUtil.randomUserAgent());
                 HttpEntity<String> requestSumsuEntity = new HttpEntity(null, requestSumsuHeaders);
@@ -126,9 +126,9 @@ public class CrawlerSumsuService {
 
                 if (resultSumsuResponseEntity.getStatusCode() == HttpStatus.OK) {
                     String tidHtml = resultSumsuResponseEntity.getBody();
-                    System.out.println("*****");
-                    System.out.println(tidHtml);
-                    System.out.println("*****");
+//                    System.out.println("*****");
+//                    System.out.println(tidHtml);
+//                    System.out.println("*****");
                     Document tidDoc = Jsoup.parse(tidHtml);
 
                     if( tidDoc.title().contains("404")){
@@ -142,7 +142,7 @@ public class CrawlerSumsuService {
                     for (Element link : elements) {
                         String linkhref = link.attr("href");
                         if (linkhref.startsWith("https://pan.baidu.com")) {
-                            System.out.println("--------------------------------");
+//                            System.out.println("--------------------------------");
                             MovieNameAndUrlModel movieNameAndUrlModel = new MovieNameAndUrlModel();
                             String baiPan = link.attr("href").toString();
                             movieNameAndUrlModel.setWangPanUrl(baiPan);
@@ -189,7 +189,7 @@ public class CrawlerSumsuService {
         List<MovieNameAndUrlModel> movieNameAndUrlModels = new ArrayList<>();
         try {
                 String url = "http://520.sumsu.cn/forum.php?mod=viewthread&tid=" + times + "&highlight=%BD%AB%BE%FC&mobile=2";
-                System.out.println(url);
+//                System.out.println(url);
                 HttpHeaders requestSumsuHeaders = new HttpHeaders();
                 requestSumsuHeaders.add("User-Agent", UserAgentUtil.randomUserAgent());
                 HttpEntity<String> requestSumsuEntity = new HttpEntity(null, requestSumsuHeaders);
@@ -200,8 +200,8 @@ public class CrawlerSumsuService {
                 if (resultSumsuResponseEntity.getStatusCode() == HttpStatus.OK) {
                     String tidHtml = resultSumsuResponseEntity.getBody();
 
-                    System.out.println(tidHtml);
-                    System.out.println("************");
+//                    System.out.println(tidHtml);
+//                    System.out.println("************");
                     Document tidDoc = Jsoup.parse(tidHtml);
                     if( tidDoc.title().contains("404")){
                         return movieNameAndUrlModels;

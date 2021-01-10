@@ -58,9 +58,9 @@ public class UnReadService {
             movieNameAndUrlModel.setMovieUrl(url);
             HttpHeaders requestHeaders = new HttpHeaders();
             String userAgent = UserAgentUtil.randomUserAgent();
-            System.out.println("***********************");
-            System.out.println(userAgent);
-            System.out.println("***********************");
+//            System.out.println("***********************");
+//            System.out.println(userAgent);
+//            System.out.println("***********************");
             requestHeaders.add("User-Agent", userAgent);
             HttpEntity<String> requestEntity = new HttpEntity<String>(null, requestHeaders);
             ResponseEntity<String> resultResponseEntity = this.restTemplate.exchange(
@@ -69,9 +69,9 @@ public class UnReadService {
             String wangPanUrl = null;
             if (resultResponseEntity.getStatusCode() == HttpStatus.OK) {
                 String html = resultResponseEntity.getBody();
-                System.out.println("=========================================");
-                System.out.println(html);
-                System.out.println("=========================================");
+//                System.out.println("=========================================");
+//                System.out.println(html);
+//                System.out.println("=========================================");
                 Document document = Jsoup.parse(html);
                 String name = document.getElementsByTag("title").first().text();
 
@@ -87,25 +87,25 @@ public class UnReadService {
 
                     if (passwdelement.text().contains("密码:")) {
                         movieNameAndUrlModel.setWangPanPassword(passwdelement.text());
-                        System.out.println(passwdelement.text());
+//                        System.out.println(passwdelement.text());
                         break;
                     }
 
                     if (passwdelement.text().contains("密码：")) {
                         movieNameAndUrlModel.setWangPanPassword(passwdelement.text());
-                        System.out.println(passwdelement.text());
+//                        System.out.println(passwdelement.text());
                         break;
                     }
 
                     if (passwdelement.text().contains("提取码:")) {
                         movieNameAndUrlModel.setWangPanPassword(passwdelement.text());
-                        System.out.println(passwdelement.text());
+//                        System.out.println(passwdelement.text());
                         break;
                     }
 
                     if (passwdelement.text().contains("提取码：")) {
                         movieNameAndUrlModel.setWangPanPassword(passwdelement.text());
-                        System.out.println(passwdelement.text());
+//                        System.out.println(passwdelement.text());
                         break;
                     }
                 }
@@ -190,9 +190,9 @@ public class UnReadService {
                 HttpMethod.GET, requestEntity, String.class);
         if (resultResponseEntity.getStatusCode() == HttpStatus.OK) {
             String html = resultResponseEntity.getBody();
-            System.out.println("==================");
-            System.out.println(html);
-            System.out.println("==================");
+//            System.out.println("==================");
+//            System.out.println(html);
+//            System.out.println("==================");
             Document doc = Jsoup.parse(html);
             Elements elements = doc.select("article");
 

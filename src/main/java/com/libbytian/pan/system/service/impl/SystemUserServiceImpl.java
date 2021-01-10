@@ -255,7 +255,7 @@ public class SystemUserServiceImpl extends ServiceImpl<SystemUserMapper, SystemU
                 queryWrapper.eq("createtime", systemUserModel.getCreateTime());
             }
 
-            System.out.println(systemUserModel.getStatus());
+//            System.out.println(systemUserModel.getStatus());
             if (systemUserModel.getStatus() != null) {
                 queryWrapper.eq("status", systemUserModel.getStatus());
             }

@@ -42,7 +42,7 @@ public class ClientProxyBasicSocks {
         ResponseEntity<String> resultResponseEntity = restTemplate.exchange(
                 String.format(url),
                 HttpMethod.GET, requestEntity, String.class);
-        System.out.println(resultResponseEntity.getBody());
+//        System.out.println(resultResponseEntity.getBody());
 
 
     }

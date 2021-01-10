@@ -148,7 +148,7 @@ public class SystemRoleImpl extends ServiceImpl<SystemRoleMapper, SystemRoleMode
 
         try {
             SystemRoleModel roleModel = getRoles(systemRoleModel);
-            System.out.println(roleModel.getAllowremove());
+//            System.out.println(roleModel.getAllowremove());
             if (roleModel.getAllowremove()) {
                 return Boolean.TRUE;
             }

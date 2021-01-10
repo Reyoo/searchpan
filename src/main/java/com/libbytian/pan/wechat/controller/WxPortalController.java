@@ -159,8 +159,8 @@ public class WxPortalController {
                 // 明文传输的消息
                 WxMpXmlMessage inMessage = WxMpXmlMessage.fromXml(requestBody);
 
-                System.out.println( wxService.getUserService());
-                System.out.println( inMessage.getAllFieldsMap());
+//                System.out.println( wxService.getUserService());
+//                System.out.println( inMessage.getAllFieldsMap());
 
 
                 String searchWord = inMessage.getContent().trim();
@@ -218,7 +218,7 @@ public class WxPortalController {
                         .content(stringBuffer.toString()).build();
 
                 out = outMessage.toXml();
-                System.out.println(out);
+//                System.out.println(out);
 
             } else if ("aes".equalsIgnoreCase(encType)) {
                 // aes加密的消息

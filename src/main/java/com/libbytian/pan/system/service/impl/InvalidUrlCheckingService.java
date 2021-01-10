@@ -80,7 +80,7 @@ public class InvalidUrlCheckingService {
         Document document = Jsoup.connect(url).get();
         String title = document.title();
         //获取html中的标题
-        System.out.println("title :"+title);
+//        System.out.println("title :"+title);
         if("百度网盘-链接不存在".contains(title)||"页面不存在".contains(title)){
             return true;
         }

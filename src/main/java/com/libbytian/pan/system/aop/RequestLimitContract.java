@@ -90,9 +90,9 @@ public class RequestLimitContract {
 
                     hashOps.putIfAbsent(RequestLimitConstant.WHITELIST, ipAddress, initrequestLimitModel);
                     redisTemplate.boundValueOps(RequestLimitConstant.WHITELIST).expire(limit.frameTime(),TimeUnit.SECONDS);
-                    System.out.println("----------------------------------------------");
-                    System.out.println(redisTemplate.boundHashOps(RequestLimitConstant.WHITELIST).getExpire());
-                    System.out.println("----------------------------------------------");
+//                    System.out.println("----------------------------------------------");
+//                    System.out.println(redisTemplate.boundHashOps(RequestLimitConstant.WHITELIST).getExpire());
+//                    System.out.println("----------------------------------------------");
                     return result;
                 }else{
                     RequestLimitModel hasDatarequestLimitModel = (RequestLimitModel) redisTemplate.boundHashOps(RequestLimitConstant.WHITELIST).get(ipAddress);

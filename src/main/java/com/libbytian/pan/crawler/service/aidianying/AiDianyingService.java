@@ -59,9 +59,9 @@ public class AiDianyingService {
                 HttpMethod.GET, requestEntity, String.class);
         if (resultResponseEntity.getStatusCode() == HttpStatus.OK) {
             String html = resultResponseEntity.getBody();
-            System.out.println("=========================================");
+/*            System.out.println("=========================================");
             System.out.println(html);
-            System.out.println("=========================================");
+            System.out.println("=========================================");*/
             Document document = Jsoup.parse(html);
 
 
@@ -95,15 +95,15 @@ public class AiDianyingService {
                     HttpMethod.GET, requestEntity, String.class);
             if (resultResponseEntity.getStatusCode() == HttpStatus.OK) {
                 String html = resultResponseEntity.getBody();
-                System.out.println("=========================================");
+/*                System.out.println("=========================================");
                 System.out.println(html);
-                System.out.println("=========================================");
+                System.out.println("=========================================");*/
                 Document document = Jsoup.parse(html);
                 String name = document.getElementsByTag("title").first().text();
                 movieNameAndUrlModel.setMovieName(name);
-                System.out.println("******");
-                System.out.println(name);
-                System.out.println("******");
+//                System.out.println("******");
+//                System.out.println(name);
+//                System.out.println("******");
 
 
 
@@ -140,7 +140,7 @@ public class AiDianyingService {
                             log.info("这里已经拿到要爬取的url : " + linkhref);
                             movieNameAndUrlModel.setWangPanUrl(linkhref);
                             movieNameAndUrlModel.setWangPanPassword("密码：LXXH");
-                            System.out.println(linkhref);
+//                            System.out.println(linkhref);
                             break;
                         } else {
                             continue;
@@ -165,7 +165,7 @@ public class AiDianyingService {
                     }
                 }
 
-                System.out.println("-----------------");
+//                System.out.println("-----------------");
             }
             return movieNameAndUrlModel;
         } catch (Exception e) {
