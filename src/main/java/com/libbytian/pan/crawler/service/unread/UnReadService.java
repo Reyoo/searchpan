@@ -35,7 +35,7 @@ import java.util.Set;
 @Slf4j
 public class UnReadService {
 
-    private final IMovieNameAndUrlService iMovieNameAndUrlService;
+    private final IMovieNameAndUrlService movieNameAndUrlService;
     private final InvalidUrlCheckingService invalidUrlCheckingService;
     private final RestTemplate restTemplate;
     private final RedisTemplate redisTemplate;
@@ -232,10 +232,16 @@ public class UnReadService {
                 }
             }
 
-            //判断URL 可用性  可用则插入更新 否则则删除
+            //判断URL 可用性  可用则插入更新 否则则删除  摘掉百度校验！！！！！！！！！！！！！！！！！！！！
+//
+//            List<MovieNameAndUrlModel> couldUseMovieUrl = invalidUrlCheckingService.checkUrlMethod("url_movie_unread", movieNameAndUrlModelList);
+//            redisTemplate.opsForHash().putIfAbsent("unreadmovie", searchMovieName, couldUseMovieUrl);
+            /**
+             * 摘掉 百度校验 版本
+             */
+            movieNameAndUrlService.addOrUpdateMovieUrls(movieNameAndUrlModelList,"url_movie_unread");
+            redisTemplate.opsForHash().putIfAbsent("unreadmovie", searchMovieName, movieNameAndUrlModelList);
 
-            List<MovieNameAndUrlModel> couldUseMovieUrl = invalidUrlCheckingService.checkUrlMethod("url_movie_unread", movieNameAndUrlModelList);
-            redisTemplate.opsForHash().putIfAbsent("unreadmovie", searchMovieName, couldUseMovieUrl);
 
         } catch (Exception e) {
             log.error(e.getMessage());

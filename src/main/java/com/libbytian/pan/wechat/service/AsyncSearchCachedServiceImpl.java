@@ -41,7 +41,6 @@ public class AsyncSearchCachedServiceImpl {
 
     private final IMovieNameAndUrlService movieNameAndUrlService;
 
-    private final NormalPageService normalPageService;
 
 
     private final CrawlerSumsuService crawlerSumsuService;
@@ -155,9 +154,12 @@ public class AsyncSearchCachedServiceImpl {
 
             //如果redis中存在
             if (movieNameAndMovieList != null && movieNameAndMovieList.size() > 0) {
-                List<MovieNameAndUrlModel> movieNameAndUrlModels = invalidUrlCheckingService.checkUrlMethod(getTableName(crawlerName), movieNameAndMovieList);
+//                List<MovieNameAndUrlModel> movieNameAndUrlModels = invalidUrlCheckingService.checkUrlMethod(getTableName(crawlerName), movieNameAndMovieList);
                 //将有效连接更新到redis中
-                redisTemplate.opsForHash().putIfAbsent(crawlerName, searchMovieName, movieNameAndUrlModels);
+
+                movieNameAndUrlService.addOrUpdateMovieUrls(movieNameAndMovieList,getTableName(crawlerName));
+                redisTemplate.opsForHash().putIfAbsent(crawlerName, searchMovieName, movieNameAndMovieList);
+
 
 
             } else {
@@ -230,8 +232,10 @@ public class AsyncSearchCachedServiceImpl {
             movieNameAndUrlModels = movieNameAndUrlService.findMovieUrl(tableName, searchMovieName);
 //            如果数据库中存在
             if (movieNameAndUrlModels != null && movieNameAndUrlModels.size() > 0) {
-//               校验URL
-                movieNameAndUrlModels = invalidUrlCheckingService.checkUrlMethod(tableName, movieNameAndUrlModels);
+//               校验URL 摘掉 URL 校验
+//                movieNameAndUrlModels = invalidUrlCheckingService.checkUrlMethod(tableName, movieNameAndUrlModels);
+                movieNameAndUrlService.addOrUpdateMovieUrls(movieNameAndUrlModels,tableName);
+
                 //记录到redis
                 redisTemplate.opsForHash().putIfAbsent(crawlerName, searchMovieName, movieNameAndUrlModels);
 

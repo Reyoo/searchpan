@@ -43,6 +43,7 @@ public class AiDianyingService {
     private final RestTemplate restTemplate;
     private final RedisTemplate redisTemplate;
     private final InvalidUrlCheckingService invalidUrlCheckingService;
+    private final IMovieNameAndUrlService movieNameAndUrlService;
 
 
     @Value("${user.lxxh.aidianying}")
@@ -192,10 +193,18 @@ public class AiDianyingService {
                     movieNameAndUrlModelList.add(movieNameAndUrlModel);
                 }
             }
-            List<MovieNameAndUrlModel> couldUseMovieUrl = new ArrayList<>();
-            //存入数据库 做可链接校验
-            couldUseMovieUrl = invalidUrlCheckingService.checkUrlMethod("url_movie_aidianying", couldUseMovieUrl);
-            redisTemplate.opsForHash().putIfAbsent("aidianying", searchMovieName, couldUseMovieUrl);
+//            List<MovieNameAndUrlModel> couldUseMovieUrl = new ArrayList<>();
+//            //存入数据库 做可链接校验
+//            couldUseMovieUrl = invalidUrlCheckingService.checkUrlMethod("url_movie_aidianying", couldUseMovieUrl);
+//            redisTemplate.opsForHash().putIfAbsent("aidianying", searchMovieName, couldUseMovieUrl);
+
+            /**
+             * 摘掉 百度校验
+             */
+            movieNameAndUrlService.addOrUpdateMovieUrls(movieNameAndUrlModelList,"url_movie_aidianying");
+            redisTemplate.opsForHash().putIfAbsent("aidianying", searchMovieName, movieNameAndUrlModelList);
+
+
 
         } catch (Exception e) {
             log.error(e.getMessage());
