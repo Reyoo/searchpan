@@ -62,14 +62,14 @@ public class MoviePageShowController {
                     systemTemDetailsModel.setKeyword("0");
                     map.put("head", systemTemDetailsModel);
                 }else{
-                    map.put("head",null);
+                    map.put("head","keywordToValue:\"\'");
                 }
 
                 if (systemTemDetailsModel.getKeyword().equals("底部提示web") && systemTemDetailsModel.getEnableFlag()) {
                     systemTemDetailsModel.setKeyword("1");
                     map.put("foot", systemTemDetailsModel);
                 }else {
-                    map.put("foot", null);
+                    map.put("foot", "keywordToValue:\"\'");
                 }
             }
                 return AjaxResult.success(map);
