@@ -398,7 +398,7 @@ public class SystemTemDetailsServiceImpl extends ServiceImpl<SystemTemDetailsMap
             SystemTemDetailsModel details = detailist.get(i);
             details.setTemdetailsId(UUID.randomUUID().toString());
             details.setCreatetime(LocalDateTime.now());
-            details.setTemdetailsstatus(true);
+            details.setTemdetailsstatus(false);
             details.setEnableFlag(false);
             details.setShowOrder(1);
             systemTemDetailsMapper.insertSystemTemDetails(details);
