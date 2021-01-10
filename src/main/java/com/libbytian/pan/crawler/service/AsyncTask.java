@@ -57,8 +57,8 @@ public class AsyncTask {
         stringBuffer.append(s);
         stringBuffer.append("/");
         url = stringBuffer.toString();
-            int sleept=(int) (Math.random()*(5-1+1)+1);
-            Thread.sleep(sleept);
+//            int sleept=(int) (Math.random()*(5-1+1)+1);
+//            Thread.sleep(sleept);
 //            http://www.lxxh7.com/随机/随机/93687LjLXH.html#comments
             System.out.println(url + num + "LjLXH.html");
             MovieNameAndUrlModel movieNameAndUrlModel = aiDianyingService.getMovieLoopsAiDianying(url + num +"LjLXH.html");

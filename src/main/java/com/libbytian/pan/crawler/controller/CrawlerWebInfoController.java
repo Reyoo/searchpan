@@ -81,9 +81,9 @@ public class CrawlerWebInfoController {
             StringBuffer stringBuffer = new StringBuffer();
             stringBuffer.append(lxxhUrl);
             String urlBase = stringBuffer.toString();
-            for (int i = 1; i <= 100; i++) {
-                int s = random.nextInt(29) % (29 - 10 + 1) + 10;
-                int m = random.nextInt(12) % (12 - 11 + 1) + 11;
+            for (int i = 782; i <= 782 ; i++) {
+                int s = random.nextInt(53) % (53 - 20 + 1) + 20;
+                int m = random.nextInt(22) % (22 - 12 + 1) + 12;
                 asyncTask.getAiDianyingAllmovieInit(urlBase, String.valueOf(i), s, m);
             }
 

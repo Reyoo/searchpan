@@ -1,5 +1,6 @@
 package com.libbytian.pan.crawler.service.aidianying;
 
+import cn.hutool.core.util.StrUtil;
 import com.libbytian.pan.system.model.MovieNameAndUrlModel;
 import com.libbytian.pan.system.service.IMovieNameAndUrlService;
 import com.libbytian.pan.system.service.impl.InvalidUrlCheckingService;
@@ -44,8 +45,6 @@ public class AiDianyingService {
     private final InvalidUrlCheckingService invalidUrlCheckingService;
 
 
-
-
     @Value("${user.lxxh.aidianying}")
     String lxxhUrl;
 
@@ -66,7 +65,8 @@ public class AiDianyingService {
             Document document = Jsoup.parse(html);
 
 
-            Elements attr = document.getElementsByClass("entry-thumb entry-cover");;
+            Elements attr = document.getElementsByClass("entry-thumb entry-cover");
+            ;
             for (Element element : attr) {
                 aiDianYingNormalUrlSet.add(element.attr("href").trim());
             }
@@ -105,15 +105,20 @@ public class AiDianyingService {
                 System.out.println(name);
                 System.out.println("******");
 
+
+
+                /* 完整爬取 比较消耗资源
                 Elements attr = document.getElementsByTag("p");
                 for (Element element : attr) {
-                    for (Element aTag : element.getElementsByTag("a")) {
-
+                    for (Element aTag : element.getElementsByTag("span").select("a")) {
+                        System.out.println(aTag.text());
                         String linkhref = aTag.attr("href");
-                        if (linkhref.startsWith("pan.baidu.com")) {
+                        if (linkhref.contains("pan.baidu.com")) {
                             log.info("这里已经拿到要爬取的url : " + linkhref);
                             movieNameAndUrlModel.setWangPanUrl(linkhref);
                             System.out.println(linkhref);
+
+
                         } else {
                             continue;
                         }
@@ -123,7 +128,43 @@ public class AiDianyingService {
                         movieNameAndUrlModel.setWangPanPassword(element.text().split("【")[0].split(" ")[1]);
                         break;
                     }
+                }*/
+
+
+//                第一种情况
+                Elements attr = document.getElementsByTag("p").select("span");
+                for (Element element : attr) {
+                    for (Element aTag : element.getElementsByTag("a")) {
+                        String linkhref = aTag.attr("href");
+                        if (linkhref.contains("pan.baidu.com")) {
+                            log.info("这里已经拿到要爬取的url : " + linkhref);
+                            movieNameAndUrlModel.setWangPanUrl(linkhref);
+                            movieNameAndUrlModel.setWangPanPassword("密码：LXXH");
+                            System.out.println(linkhref);
+                            break;
+                        } else {
+                            continue;
+                        }
+                    }
+
                 }
+//                第二种情况 span标签 里没有 url
+                if(StrUtil.isBlank(movieNameAndUrlModel.getWangPanUrl())){
+                    Elements urlFinals = document.getElementsByTag("p").select("a");
+                    for(Element urlFianl: urlFinals){
+                        String linkhref = urlFianl.attr("href");
+                        if (linkhref.contains("pan.baidu.com")) {
+                            log.info("这里已经拿到要爬取的url : " + linkhref);
+                            movieNameAndUrlModel.setWangPanUrl(linkhref);
+                            movieNameAndUrlModel.setWangPanPassword("密码：LXXH");
+                            System.out.println(linkhref);
+                            break;
+                        } else {
+                            continue;
+                        }
+                    }
+                }
+
                 System.out.println("-----------------");
             }
             return movieNameAndUrlModel;
@@ -134,6 +175,7 @@ public class AiDianyingService {
 
     /**
      * 根据电影名获取爱电影的百度盘资源
+     *
      * @param searchMovieName
      * @return
      */
