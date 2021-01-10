@@ -61,17 +61,27 @@ public class MoviePageShowController {
                 if (systemTemDetailsModel.getKeyword().equals("头部提示web") && systemTemDetailsModel.getEnableFlag()) {
                     systemTemDetailsModel.setKeyword("0");
                     map.put("head", systemTemDetailsModel);
-                }else{
-                    map.put("head",null);
+                    continue;
                 }
 
                 if (systemTemDetailsModel.getKeyword().equals("底部提示web") && systemTemDetailsModel.getEnableFlag()) {
                     systemTemDetailsModel.setKeyword("1");
                     map.put("foot", systemTemDetailsModel);
-                }else {
-                    map.put("foot", null);
+                    continue;
                 }
             }
+
+
+
+            if(systemdetails.size()==0){
+                Map keynullMap = new HashMap();
+                keynullMap.put("keywordToValue","");
+//                map.put("head", "{\"keywordToValue\":\"\"}");
+                map.put("head", keynullMap);
+                map.put("foot", keynullMap);
+            }
+
+
                 return AjaxResult.success(map);
         } catch (Exception e) {
             e.printStackTrace();
