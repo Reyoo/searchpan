@@ -145,7 +145,7 @@ public class SystemUserServiceImpl extends ServiceImpl<SystemUserMapper, SystemU
 
             String appId = user.getAppId();
             if (StrUtil.isBlank(appId)) {
-                appId = "limits";
+                appId = "请填写appID";
             }
 
             SystemKeywordModel systemKeywordModel = new SystemKeywordModel();
