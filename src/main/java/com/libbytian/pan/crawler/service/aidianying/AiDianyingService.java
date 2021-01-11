@@ -18,6 +18,8 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -49,28 +51,66 @@ public class AiDianyingService {
     @Value("${user.lxxh.aidianying}")
     String lxxhUrl;
 
-    public Set<String> getNormalUrlAidianying(String searchMovieName) {
-        Set aiDianYingNormalUrlSet = new HashSet();
-        String url = lxxhUrl + "/?s=" + searchMovieName;
-        HttpHeaders requestHeaders = new HttpHeaders();
-        requestHeaders.add("User-Agent", UserAgentUtil.randomUserAgent());
-        HttpEntity<String> requestEntity = new HttpEntity<String>(null, requestHeaders);
-        ResponseEntity<String> resultResponseEntity = this.restTemplate.exchange(
-                String.format(url),
-                HttpMethod.GET, requestEntity, String.class);
-        if (resultResponseEntity.getStatusCode() == HttpStatus.OK) {
-            String html = resultResponseEntity.getBody();
-/*            System.out.println("=========================================");
-            System.out.println(html);
-            System.out.println("=========================================");*/
-            Document document = Jsoup.parse(html);
 
+    public void saveOrFreshRealMovieUrl(String searchMovieName) {
 
-            Elements attr = document.getElementsByClass("entry-thumb entry-cover");
-            ;
-            for (Element element : attr) {
-                aiDianYingNormalUrlSet.add(element.attr("href").trim());
+        try {
+
+        ArrayList<MovieNameAndUrlModel> movieNameAndUrlModelList = new ArrayList();
+        Set<String> movieUrlInLxxh = getNormalUrlAidianying(searchMovieName);
+        //说明搜索到了 url 电影路径
+        if (movieUrlInLxxh.size() > 0) {
+            for (String url : movieUrlInLxxh) {
+                //由于包含模糊查询、这里记录到数据库中做插入更新操作
+                MovieNameAndUrlModel movieNameAndUrlModel = getMovieLoopsAiDianying(url);
+                movieNameAndUrlModelList.add(movieNameAndUrlModel);
             }
+        }
+
+        movieNameAndUrlService.addOrUpdateMovieUrls(movieNameAndUrlModelList,"url_movie_aidianying");
+        redisTemplate.opsForHash().putIfAbsent("aidianying", searchMovieName, movieNameAndUrlModelList);
+
+
+        }catch (Exception e){
+            log.error("searchMovieName --> " +searchMovieName);
+            log.error("AiDianyingService.saveOrFreshRealMovieUrl()  ->" +e.getMessage());
+        }
+
+    }
+
+
+    /**
+     * 新版本获取关键词搜索爬虫第一步
+     *
+     * @param searchMovieName
+     * @return
+     */
+    public Set<String> getNormalUrlAidianying(String searchMovieName) {
+        Set<String> aiDianYingNormalUrlSet = new HashSet();
+        try {
+            String movieEncodeStr = URLEncoder.encode(searchMovieName, "UTF8");
+
+            String url = lxxhUrl + "/?s=" + movieEncodeStr;
+
+            ResponseEntity<String> resultResponseEntity = getHttpHeader(url, this.restTemplate);
+            if (resultResponseEntity.getStatusCode() == HttpStatus.OK) {
+                String html = resultResponseEntity.getBody();
+                System.out.println("=========================================");
+                System.out.println(html);
+                System.out.println("=========================================");
+                Document document = Jsoup.parse(html);
+
+                Elements attr = document.getElementsByTag("h2").select("a");
+
+                for (Element element : attr) {
+                    System.out.println(element.attr("href").trim());
+                    aiDianYingNormalUrlSet.add(element.attr("href").trim());
+                }
+
+            }
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            e.printStackTrace();
         }
 
         return aiDianYingNormalUrlSet;
@@ -78,13 +118,57 @@ public class AiDianyingService {
 
 
     /**
-     * 爱电影  第二次传ID调用
+     * 最新版本   二次获取 爬取的电影   http://www.zhimaruanjian.com/
+     * @param secondUrlLxxh
+     * @return
+     */
+    public MovieNameAndUrlModel getMovieLoopsAiDianying(String secondUrlLxxh) {
+        MovieNameAndUrlModel movieNameAndUrlModel = null;
+        try {
+            movieNameAndUrlModel.setMovieUrl(secondUrlLxxh);
+            HttpHeaders requestHeaders = new HttpHeaders();
+            requestHeaders.add("User-Agent", UserAgentUtil.randomUserAgent());
+            HttpEntity<String> requestEntity = new HttpEntity<String>(null, requestHeaders);
+            ResponseEntity<String> resultResponseEntity = this.restTemplate.exchange(
+                    secondUrlLxxh.trim(),
+                    HttpMethod.GET, requestEntity, String.class);
+            if (resultResponseEntity.getStatusCode() == HttpStatus.OK) {
+                String html = resultResponseEntity.getBody();
+                System.out.println("=========================================");
+                System.out.println(html);
+                System.out.println("=========================================");
+                Document document = Jsoup.parse(html);
+                String name = document.getElementsByTag("title").first().text();
+                movieNameAndUrlModel.setMovieName(name);
+//                System.out.println("******");
+//                System.out.println(name);
+//                System.out.println("******");
+            }
+        }catch (Exception e){
+            log.error(e.getMessage());
+            e.getMessage();
+        }
+        return movieNameAndUrlModel;
+    }
+
+
+    public static ResponseEntity getHttpHeader(String url, RestTemplate restTemplate) {
+        HttpHeaders requestHeaders = new HttpHeaders();
+        requestHeaders.add("User-Agent", UserAgentUtil.randomUserAgent());
+        HttpEntity<String> requestEntity = new HttpEntity<String>(null, requestHeaders);
+        ResponseEntity<String> resultResponseEntity = restTemplate.exchange(
+                url,
+                HttpMethod.GET, requestEntity, String.class);
+        return resultResponseEntity;
+    }
+    /**
+     * 爱电影  第二次传ID调用  老版本
      * http://www.lxxh7.com/随机/随机/93687LjLXH.html#comments
      *
      * @param url
      * @return
      */
-    public MovieNameAndUrlModel getMovieLoopsAiDianying(String url) {
+   /* public MovieNameAndUrlModel getMovieLoopsAiDianying(String url) {
         MovieNameAndUrlModel movieNameAndUrlModel = new MovieNameAndUrlModel();
         try {
             movieNameAndUrlModel.setMovieUrl(url);
@@ -96,9 +180,9 @@ public class AiDianyingService {
                     HttpMethod.GET, requestEntity, String.class);
             if (resultResponseEntity.getStatusCode() == HttpStatus.OK) {
                 String html = resultResponseEntity.getBody();
-/*                System.out.println("=========================================");
+*//*                System.out.println("=========================================");
                 System.out.println(html);
-                System.out.println("=========================================");*/
+                System.out.println("=========================================");*//*
                 Document document = Jsoup.parse(html);
                 String name = document.getElementsByTag("title").first().text();
                 movieNameAndUrlModel.setMovieName(name);
@@ -108,7 +192,7 @@ public class AiDianyingService {
 
 
 
-                /* 完整爬取 比较消耗资源
+                *//* 完整爬取 比较消耗资源
                 Elements attr = document.getElementsByTag("p");
                 for (Element element : attr) {
                     for (Element aTag : element.getElementsByTag("span").select("a")) {
@@ -129,7 +213,7 @@ public class AiDianyingService {
                         movieNameAndUrlModel.setWangPanPassword(element.text().split("【")[0].split(" ")[1]);
                         break;
                     }
-                }*/
+                }*//*
 
 
 //                第一种情况
@@ -172,7 +256,7 @@ public class AiDianyingService {
         } catch (Exception e) {
             return movieNameAndUrlModel;
         }
-    }
+    }*/
 
     /**
      * 根据电影名获取爱电影的百度盘资源
@@ -180,7 +264,7 @@ public class AiDianyingService {
      * @param searchMovieName
      * @return
      */
-    public List<MovieNameAndUrlModel> getAiDianYingCrawlerResult(String searchMovieName) {
+  /*  public List<MovieNameAndUrlModel> getAiDianYingCrawlerResult(String searchMovieName) {
 
         List<MovieNameAndUrlModel> movieNameAndUrlModelList = new ArrayList<>();
         Set<String> set = getNormalUrlAidianying(searchMovieName);
@@ -198,9 +282,8 @@ public class AiDianyingService {
 //            couldUseMovieUrl = invalidUrlCheckingService.checkUrlMethod("url_movie_aidianying", couldUseMovieUrl);
 //            redisTemplate.opsForHash().putIfAbsent("aidianying", searchMovieName, couldUseMovieUrl);
 
-            /**
-             * 摘掉 百度校验
-             */
+
+
             movieNameAndUrlService.addOrUpdateMovieUrls(movieNameAndUrlModelList,"url_movie_aidianying");
             redisTemplate.opsForHash().putIfAbsent("aidianying", searchMovieName, movieNameAndUrlModelList);
 
@@ -212,7 +295,8 @@ public class AiDianyingService {
 
         return movieNameAndUrlModelList;
 
-    }
+    }*/
 
 
+//    }
 }

@@ -53,20 +53,20 @@ public class NormalPageController {
      * @param name
      * @return
      */
-    @GetMapping("/lxxh/search")
-//    @RequestLimit(count = 3, frameTime = 2, lockTime = 30)
-    public AjaxResult getLxxhdMovie(@RequestParam String name){
-
-        try {
-
-            List<MovieNameAndUrlModel> arrayList =aiDianyingService.getAiDianYingCrawlerResult(name);
-            movieNameAndUrlService.addOrUpdateMovieUrls(arrayList,"url_movie_aidianying");
-            return AjaxResult.success(arrayList);
-        } catch (Exception e){
-            return AjaxResult.error(e.getMessage());
-        }
-
-    }
+//    @GetMapping("/lxxh/search")
+////    @RequestLimit(count = 3, frameTime = 2, lockTime = 30)
+//    public AjaxResult getLxxhdMovie(@RequestParam String name){
+//
+//        try {
+//
+//          List<MovieNameAndUrlModel> arrayList =aiDianyingService.getAiDianYingCrawlerResult(name);
+//          movieNameAndUrlService.addOrUpdateMovieUrls(arrayList,"url_movie_aidianying");
+//            return AjaxResult.success(arrayList);
+//        } catch (Exception e){
+//            return AjaxResult.error(e.getMessage());
+//        }
+//
+//    }
 
 
 

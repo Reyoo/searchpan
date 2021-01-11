@@ -134,6 +134,15 @@ public class WxPortalController {
         String username = new String(decoder.decode(verification), "UTF-8");
 
         /**
+         * 更新用户 接口调用时间
+         */
+
+
+
+
+
+
+        /**
          * 获取用户名绑定的模板
          */
 

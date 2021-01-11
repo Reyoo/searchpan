@@ -29,7 +29,6 @@ import org.springframework.security.web.authentication.AbstractAuthenticationPro
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-import org.springframework.stereotype.Component;
 
 
 import javax.servlet.FilterChain;
@@ -38,7 +37,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-import java.time.LocalDateTime;
 import java.util.Set;
 
 /**

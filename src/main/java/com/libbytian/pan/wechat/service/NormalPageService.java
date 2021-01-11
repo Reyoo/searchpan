@@ -1,6 +1,7 @@
 package com.libbytian.pan.wechat.service;
 
 
+import com.libbytian.pan.crawler.service.aidianying.AiDianyingService;
 import com.libbytian.pan.system.common.AjaxResult;
 import com.libbytian.pan.system.model.MovieNameAndUrlModel;
 import com.libbytian.pan.system.util.UserAgentUtil;
@@ -44,12 +45,9 @@ public class NormalPageService {
         MovieNameAndUrlModel movieNameAndUrlModel = new MovieNameAndUrlModel();
         try {
 
-            HttpHeaders requestHeaders = new HttpHeaders();
-            requestHeaders.add("User-Agent", UserAgentUtil.randomUserAgent());
-            HttpEntity<String> requestEntity = new HttpEntity<String>(null, requestHeaders);
-            ResponseEntity<String> resultResponseEntity = this.restTemplate.exchange(
-                    String.format(url),
-                    HttpMethod.GET, requestEntity, String.class);
+            AiDianyingService.getHttpHeader(url, this.restTemplate);
+            ResponseEntity<String> resultResponseEntity = AiDianyingService.getHttpHeader(url, this.restTemplate);
+
             if (resultResponseEntity.getStatusCode() == HttpStatus.OK) {
                 String html = resultResponseEntity.getBody();
 //                System.out.println("=========================================");
@@ -155,13 +153,8 @@ public class NormalPageService {
         MovieNameAndUrlModel movieNameAndUrlModel = new MovieNameAndUrlModel();
 
         movieNameAndUrlModel.setMovieUrl(url);
-        HttpHeaders requestHeaders = new HttpHeaders();
-        requestHeaders.add("User-Agent", UserAgentUtil.randomUserAgent());
-        HttpEntity<String> requestEntity = new HttpEntity<String>(null, requestHeaders);
-
-        ResponseEntity<String> resultResponseEntity = this.restTemplate.exchange(
-                String.format(url),
-                HttpMethod.GET, requestEntity, String.class);
+        AiDianyingService.getHttpHeader(url, this.restTemplate);
+        ResponseEntity<String> resultResponseEntity = AiDianyingService.getHttpHeader(url, this.restTemplate);
 
         if (resultResponseEntity.getStatusCode() == HttpStatus.OK) {
             String html = resultResponseEntity.getBody();

@@ -40,4 +40,6 @@ public interface SystemUserMapper extends BaseMapper<SystemUserModel> {
 
 
 
+    int updateSysUserById(SystemUserModel systemUserModel);
+
 }

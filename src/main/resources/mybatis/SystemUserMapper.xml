@@ -273,6 +273,44 @@
     </select>
 
 
+    <update id="updateSysUserById" parameterType="com.libbytian.pan.system.model.SystemUserModel">
+        UPDATE
+        sys_user
+        <trim prefix="set" suffixOverrides=",">
+
+            <if test="username != null and username != ''">
+                user_name =#{username},
+            </if>
+            <if test="mobile != null and mobile != ''">
+                user_mobile =#{mobile},
+            </if>
+
+            <if test="user_password != null and user_password != ''">
+                password =#{user_password},
+            </if>
+
+            <if test="lastLoginTime != null and lastLoginTime != ''">
+                user_last_login_time =#{lastLoginTime},
+            </if>
+
+            <if test="createTime != null and createTime != '' ">
+                createtime =#{createTime},
+            </if>
+
+
+            <if test="status != null and status != '' ">
+                status =#{status},
+            </if>
+
+
+
+        </trim>
+        WHERE
+        user_id =#{userId}
+
+    </update>
+
+
 
     <update id="updateUserById" parameterType="com.libbytian.pan.system.model.SystemUserModel">
         UPDATE

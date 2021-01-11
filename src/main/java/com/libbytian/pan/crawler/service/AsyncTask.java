@@ -56,18 +56,18 @@ public class AsyncTask {
         stringBuffer.append("/");
         stringBuffer.append(s);
         stringBuffer.append("/");
-        url = stringBuffer.toString();
-//            int sleept=(int) (Math.random()*(5-1+1)+1);
-//            Thread.sleep(sleept);
-//            http://www.lxxh7.com/随机/随机/93687LjLXH.html#comments
-            System.out.println(url + num + "LjLXH.html");
-            MovieNameAndUrlModel movieNameAndUrlModel = aiDianyingService.getMovieLoopsAiDianying(url + num +"LjLXH.html");
-            List<MovieNameAndUrlModel> movieNameAndUrlModelList = new ArrayList<>();
-            if (StrUtil.isNotBlank(movieNameAndUrlModel.getMovieName())& StrUtil.isNotBlank(movieNameAndUrlModel.getWangPanPassword())) {
-                movieNameAndUrlModelList.add(movieNameAndUrlModel);
-                iMovieNameAndUrlService.addOrUpdateMovieUrls(movieNameAndUrlModelList,"url_movie_aidianying");
-                log.info("插入成功 -》 " + movieNameAndUrlModel.getMovieUrl());
-            }
+//        url = stringBuffer.toString();
+////            int sleept=(int) (Math.random()*(5-1+1)+1);
+////            Thread.sleep(sleept);
+////            http://www.lxxh7.com/随机/随机/93687LjLXH.html#comments
+//            System.out.println(url + num + "LjLXH.html");
+//            MovieNameAndUrlModel movieNameAndUrlModel = aiDianyingService.getMovieLoopsAiDianying(url + num +"LjLXH.html");
+//            List<MovieNameAndUrlModel> movieNameAndUrlModelList = new ArrayList<>();
+//            if (StrUtil.isNotBlank(movieNameAndUrlModel.getMovieName())& StrUtil.isNotBlank(movieNameAndUrlModel.getWangPanPassword())) {
+//                movieNameAndUrlModelList.add(movieNameAndUrlModel);
+//                iMovieNameAndUrlService.addOrUpdateMovieUrls(movieNameAndUrlModelList,"url_movie_aidianying");
+//                log.info("插入成功 -》 " + movieNameAndUrlModel.getMovieUrl());
+//            }
     }
 
 
@@ -79,7 +79,7 @@ public class AsyncTask {
     public void getUnreadAllmovieInit(String url) throws Exception {
 
         StringBuffer stringBuffer = new StringBuffer(url);
-
+//
 //        int sleept=(int) (Math.random()*(5000-1000+1000)+1000);
 //        Thread.sleep(sleept);
 

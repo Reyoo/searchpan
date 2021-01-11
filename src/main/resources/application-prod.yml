@@ -115,6 +115,8 @@ user:
     url: http://520.sumsu.cn/search.php?mod=forum
   lili:
     url: http://y.yuanxiao.net.cn
+  lili:
+    url: http://www.loveqindy.com
 temp:
   filrooet: 'D:/'
   filePath: /temp

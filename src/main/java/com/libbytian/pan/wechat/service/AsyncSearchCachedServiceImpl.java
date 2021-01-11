@@ -246,10 +246,10 @@ public class AsyncSearchCachedServiceImpl {
 
                 if ("aidianying".equals(crawlerName)) {
                     //爱电影 查询并存入数据库 更新redis
-                    List<MovieNameAndUrlModel> aiDianyingList = aiDianyingService.getAiDianYingCrawlerResult(searchMovieName);
+//                    List<MovieNameAndUrlModel> aiDianyingList = aiDianyingService.getAiDianYingCrawlerResult(searchMovieName);
 
 //                    redisTemplate.opsForHash().putIfAbsent(crawlerName, searchMovieName, aiDianyingList);
-                    innerMovieList = aiDianyingList;
+//                    innerMovieList = aiDianyingList;
 
                 } else if ("unreadmovie".equals(crawlerName)) {
                     List<MovieNameAndUrlModel> unreadUrls = unReadService.getUnReadCrawlerResult(searchMovieName);
@@ -262,7 +262,7 @@ public class AsyncSearchCachedServiceImpl {
                 } else {
 
                     //爱电影
-                    List<MovieNameAndUrlModel> aiDianyingList = aiDianyingService.getAiDianYingCrawlerResult(searchMovieName);
+//                    List<MovieNameAndUrlModel> aiDianyingList = aiDianyingService.getAiDianYingCrawlerResult(searchMovieName);
                     //未读影单
                     List<MovieNameAndUrlModel> unreadUrls = unReadService.getUnReadCrawlerResult(searchMovieName);
 
@@ -271,7 +271,7 @@ public class AsyncSearchCachedServiceImpl {
                     sumsuMovieList = crawlerSumsuService.getSumsuUrl(searchMovieName);
                     redisTemplate.opsForHash().putIfAbsent("sumsu", searchMovieName, sumsuMovieList);
 
-                    innerMovieList.addAll(aiDianyingList);
+//                    innerMovieList.addAll(aiDianyingList);
                     innerMovieList.addAll(unreadUrls);
                     innerMovieList.addAll(sumsuMovieList);
                 }

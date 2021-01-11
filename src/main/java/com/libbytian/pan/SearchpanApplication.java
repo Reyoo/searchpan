@@ -1,23 +1,25 @@
 package com.libbytian.pan;
 
-import com.alibaba.fastjson.support.spring.FastJsonRedisSerializer;
+
+import org.apache.http.HttpHost;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.HttpClient;
+import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.impl.client.LaxRedirectStrategy;
 import org.springframework.boot.SpringApplication;
+
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
-import org.springframework.data.redis.connection.RedisConnectionFactory;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.serializer.StringRedisSerializer;
+
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.HashMap;
 
 @SpringBootApplication
 @EnableCaching
@@ -29,11 +31,30 @@ public class SearchpanApplication {
 		SpringApplication.run(SearchpanApplication.class, args);
 	}
 
-	@Bean
+/*	@Bean
 	public RestTemplate restTemplate(){
 	SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
-		factory.setConnectTimeout(600000);
-		factory.setReadTimeout(20000);
+		factory.setConnectTimeout(60000);
+		factory.setReadTimeout(5000);
+		return new RestTemplate(factory);
+	}*/
+
+
+	@Bean
+	public RestTemplate restTemplate() throws Exception {
+
+		final String proxyUrl = "42.54.159.22";
+		final int port = 4235;
+
+		HttpHost myProxy = new HttpHost(proxyUrl, port);
+		HttpClientBuilder clientBuilder = HttpClientBuilder.create();
+
+		clientBuilder.setProxy(myProxy).disableCookieManagement();
+
+		HttpClient httpClient = clientBuilder.build();
+		HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory();
+		factory.setHttpClient(httpClient);
+
 		return new RestTemplate(factory);
 	}
 

@@ -1,6 +1,7 @@
 package com.libbytian.pan.crawler.controller;
 
 import com.libbytian.pan.crawler.service.AsyncTask;
+import com.libbytian.pan.crawler.service.aidianying.AiDianyingService;
 import com.libbytian.pan.system.common.AjaxResult;
 import com.libbytian.pan.crawler.service.sumsu.CrawlerSumsuService;
 import com.libbytian.pan.crawler.service.unread.UnReadService;
@@ -8,10 +9,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpRequest;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
+import java.io.UnsupportedEncodingException;
 import java.util.Random;
 
 /**
@@ -56,17 +61,12 @@ public class CrawlerWebInfoController {
                 System.out.println(urlBase + i);
                 asyncTask.getUnreadAllmovieInit(urlBase +i);
             }
-
 //            unReadService.getUnReadCrawlerResult("战狼");
-
-
             return AjaxResult.success("表入库成功");
         } catch (Exception e) {
             return AjaxResult.error("表入库失败");
         }
-
     }
-
 
 
     /**
@@ -119,5 +119,16 @@ public class CrawlerWebInfoController {
 
     }
 
+
+
+    private final AiDianyingService aiDianyingService;
+
+    @RequestMapping(value = "/getall/1/{movieName}", method = RequestMethod.GET)
+    public AjaxResult getXXXX(HttpServletRequest httpRequest, @PathVariable String movieName) throws UnsupportedEncodingException {
+        System.out.println(httpRequest.getRemoteHost());
+        aiDianyingService.getNormalUrlAidianying(movieName);
+            return AjaxResult.success("表入库成功");
+
+    }
 
 }

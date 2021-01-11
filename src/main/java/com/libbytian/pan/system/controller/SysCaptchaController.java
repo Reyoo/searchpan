@@ -54,10 +54,10 @@ public class SysCaptchaController  {
     /**
      * 验证码生成
      */
-    @GetMapping(value = "/captchaImage")
-    public AjaxResult getKaptchaImage(HttpServletRequest request, HttpServletResponse response) {
+    @GetMapping(value = "/captchaImage" ,produces = {"application/json;charset=UTF-8"})
+    public AjaxResult getKaptchaImage() {
 
-        log.info("begin captcha/captchaImage ");
+
         LocalDateTime now = LocalDateTime.now();
         ServletOutputStream out = null;
         try {

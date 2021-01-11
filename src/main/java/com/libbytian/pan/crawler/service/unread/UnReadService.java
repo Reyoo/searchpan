@@ -1,6 +1,7 @@
 package com.libbytian.pan.crawler.service.unread;
 
 import cn.hutool.core.util.StrUtil;
+import com.libbytian.pan.crawler.service.aidianying.AiDianyingService;
 import com.libbytian.pan.system.model.MovieNameAndUrlModel;
 import com.libbytian.pan.system.service.IMovieNameAndUrlService;
 import com.libbytian.pan.system.service.impl.InvalidUrlCheckingService;
@@ -182,12 +183,9 @@ public class UnReadService {
         String url = unreadUrl + "/?s=" + movieName;
         LocalTime begin = LocalTime.now();
         Set<String> movieList = new HashSet<>();
-        HttpHeaders requestHeaders = new HttpHeaders();
-        requestHeaders.add("User-Agent", UserAgentUtil.randomUserAgent());
-        HttpEntity<String> requestEntity = new HttpEntity<String>(null, requestHeaders);
-        ResponseEntity<String> resultResponseEntity = this.restTemplate.exchange(
-                String.format(url),
-                HttpMethod.GET, requestEntity, String.class);
+        AiDianyingService.getHttpHeader(url, this.restTemplate);
+        ResponseEntity<String> resultResponseEntity = AiDianyingService.getHttpHeader(url, this.restTemplate);
+
         if (resultResponseEntity.getStatusCode() == HttpStatus.OK) {
             String html = resultResponseEntity.getBody();
 //            System.out.println("==================");
