@@ -70,7 +70,6 @@ public class AsyncSearchCachedServiceImpl {
     public List<MovieNameAndUrlModel> searchWord(String searchMovieText, String search) throws Exception {
 
         List<MovieNameAndUrlModel> movieNameAndUrlModels = new ArrayList<>();
-
         switch (search) {
             case "a":
                 //从爱电影获取资源返回aidianying
@@ -84,9 +83,8 @@ public class AsyncSearchCachedServiceImpl {
 
 //                    如果数据库中也没有 则从新爬取一遍
                     if (movieNameAndUrlModels == null || movieNameAndUrlModels.size() == 0) {
-
+                        crawlerAndSaveUrl(searchMovieText, "aidianying");
                     }
-
 
                     redisTemplate.opsForHash().putIfAbsent("aidianying", searchMovieText, movieNameAndUrlModels);
                     redisTemplate.expire(searchMovieText, 60, TimeUnit.SECONDS);
@@ -105,6 +103,12 @@ public class AsyncSearchCachedServiceImpl {
                     movieNameAndUrlModels = movieNameAndUrlMapper.selectMovieUrlByLikeName("url_movie_unread", searchMovieText);
 //                    校验暂时不做了 速度慢
 //                    invalidUrlCheckingService.checkUrlMethod("url_movie_unread", movieNameAndUrlModels);
+
+                    //数据库中也不存在 则重新爬取
+                    if (movieNameAndUrlModels == null || movieNameAndUrlModels.size() == 0) {
+                        crawlerAndSaveUrl(searchMovieText, "unreadmovie");
+                    }
+
                     redisTemplate.opsForHash().putIfAbsent("unreadmovie", searchMovieText, movieNameAndUrlModels);
                     redisTemplate.expire(searchMovieText, 60, TimeUnit.SECONDS);
                     return movieNameAndUrlModels;
@@ -119,6 +123,12 @@ public class AsyncSearchCachedServiceImpl {
                 if (movieNameAndUrlModels == null || movieNameAndUrlModels.size() == 0) {
                     //从数据库里拿
                     movieNameAndUrlModels = movieNameAndUrlMapper.selectMovieUrlByLikeName("url_movie_sumsu", searchMovieText);
+
+                    //数据库中也不存在 则重新爬取
+                    if (movieNameAndUrlModels == null || movieNameAndUrlModels.size() == 0) {
+                        crawlerAndSaveUrl(searchMovieText, "sumsu");
+                    }
+
                     redisTemplate.opsForHash().putIfAbsent("sumsu", searchMovieText, movieNameAndUrlModels);
                     redisTemplate.expire(searchMovieText, 60, TimeUnit.SECONDS);
 //                    校验先不做了
@@ -151,11 +161,11 @@ public class AsyncSearchCachedServiceImpl {
 
         try {
             if (hasTableName) {
-                crawlerAndSaveUrl(searchMovieName, getTableName(crawlerName), crawlerName);
+                crawlerAndSaveUrl(searchMovieName, crawlerName);
             } else {
-                crawlerAndSaveUrl(searchMovieName, "url_movie_aidianying", "aidianying");
-                crawlerAndSaveUrl(searchMovieName, "url_movie_unread", "unreadmovie");
-                crawlerAndSaveUrl(searchMovieName, "url_movie_sumsu", "sumsu");
+                crawlerAndSaveUrl(searchMovieName, "aidianying");
+                crawlerAndSaveUrl(searchMovieName, "unreadmovie");
+                crawlerAndSaveUrl(searchMovieName, "sumsu");
             }
 
         } catch (Exception e) {
@@ -189,21 +199,14 @@ public class AsyncSearchCachedServiceImpl {
     }
 
     /**
-     * redis 不存在 去数据库查询的过程 同时更新redis
+     * redis  全部重新爬取
      *
      * @param searchMovieName
-     * @param tableName
      * @param crawlerName
      * @return
      */
 
-//    @Async
-    public void crawlerAndSaveUrl(String searchMovieName, String tableName, String crawlerName) throws Exception {
-        List<MovieNameAndUrlModel> movieNameAndUrlModels = new ArrayList<>();
-
-        //如果数据库不存在, 重新爬虫，如果爬取到结果则保存到mysql 中， 如果没爬取到结果将redis设置为null;
-        List<MovieNameAndUrlModel> innerMovieList = new ArrayList();
-        MovieNameAndUrlModel movieNameAndUrl = null;
+    public void crawlerAndSaveUrl(String searchMovieName, String crawlerName) throws Exception {
 
         if ("aidianying".equals(crawlerName)) {
             //爱电影 查询并存入数据库 更新redis
@@ -216,14 +219,12 @@ public class AsyncSearchCachedServiceImpl {
         } else if ("sumsu".equals(crawlerName)) {
             crawlerSumsuService.getSumsuUrl(searchMovieName);
         } else {
-            List<MovieNameAndUrlModel> aiDianyingList = aiDianyingService.saveOrFreshRealMovieUrl(searchMovieName);
+            aiDianyingService.saveOrFreshRealMovieUrl(searchMovieName);
             //未读影单
-            List<MovieNameAndUrlModel> unreadUrls = unReadService.getUnReadCrawlerResult(searchMovieName);
+            unReadService.getUnReadCrawlerResult(searchMovieName);
             //社区动力
-            List<MovieNameAndUrlModel> sumsuMovieList = crawlerSumsuService.getSumsuUrl(searchMovieName);
-            innerMovieList.addAll(aiDianyingList);
-            innerMovieList.addAll(unreadUrls);
-            innerMovieList.addAll(sumsuMovieList);
+            crawlerSumsuService.getSumsuUrl(searchMovieName);
+
         }
 
     }

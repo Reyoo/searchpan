@@ -49,46 +49,6 @@ public class NormalPageController {
 
 
     /**
-     * 接口有问题
-     * @param name
-     * @return
-     */
-//    @GetMapping("/lxxh/search")
-////    @RequestLimit(count = 3, frameTime = 2, lockTime = 30)
-//    public AjaxResult getLxxhdMovie(@RequestParam String name){
-//
-//        try {
-//
-//          List<MovieNameAndUrlModel> arrayList =aiDianyingService.getAiDianYingCrawlerResult(name);
-//          movieNameAndUrlService.addOrUpdateMovieUrls(arrayList,"url_movie_aidianying");
-//            return AjaxResult.success(arrayList);
-//        } catch (Exception e){
-//            return AjaxResult.error(e.getMessage());
-//        }
-//
-//    }
-
-
-
-    @GetMapping("search")
-//    @RequestLimit(count = 3, frameTime = 2, lockTime = 30)
-    public AjaxResult getAllMovie(@RequestParam String name){
-        List<MovieNameAndUrlModel> movieNameAndUrls =unReadService.getUnReadCrawlerResult(name);
-
-        return AjaxResult.success(movieNameAndUrls);
-    }
-
-
-
-    @GetMapping("sumsu")
-//    @RequestLimit(count = 3, frameTime = 2, lockTime = 30)
-    public AjaxResult getSumsuMovie(@RequestParam String searchMovieName) throws Exception{
-        List<MovieNameAndUrlModel> realMovieList = new ArrayList();
-        List<MovieNameAndUrlModel> movieNameAndUrls =crawlerSumsuService.getSumsuUrl(searchMovieName);
-        return AjaxResult.success(movieNameAndUrls);
-    }
-
-    /**
      * 未完成
      * @param name
      * @return

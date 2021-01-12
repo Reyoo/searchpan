@@ -216,7 +216,7 @@ public class UnReadService {
      * @param searchMovieName
      * @return
      */
-    public List<MovieNameAndUrlModel> getUnReadCrawlerResult(String searchMovieName) {
+    public void getUnReadCrawlerResult(String searchMovieName) {
 
         List<MovieNameAndUrlModel> movieNameAndUrlModelList = new ArrayList<>();
         Set<String> set = getNormalUnReadUrl(searchMovieName);
@@ -237,14 +237,13 @@ public class UnReadService {
             /**
              * 摘掉 百度校验 版本
              */
-            movieNameAndUrlService.addOrUpdateMovieUrls(movieNameAndUrlModelList,"url_movie_unread");
+            movieNameAndUrlService.addOrUpdateMovieUrls(movieNameAndUrlModelList, "url_movie_unread");
             redisTemplate.opsForHash().putIfAbsent("unreadmovie", searchMovieName, movieNameAndUrlModelList);
 
 
         } catch (Exception e) {
             log.error(e.getMessage());
         }
-        return movieNameAndUrlModelList;
 
     }
 

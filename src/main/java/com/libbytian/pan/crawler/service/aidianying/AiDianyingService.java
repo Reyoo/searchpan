@@ -54,7 +54,7 @@ public class AiDianyingService {
     String lxxhUrl;
 
 
-    public ArrayList<MovieNameAndUrlModel> saveOrFreshRealMovieUrl(String searchMovieName) {
+    public void saveOrFreshRealMovieUrl(String searchMovieName) {
         ArrayList<MovieNameAndUrlModel> movieNameAndUrlModelList = new ArrayList();
         try {
 
@@ -75,7 +75,7 @@ public class AiDianyingService {
             log.error("searchMovieName --> " + searchMovieName);
             log.error("AiDianyingService.saveOrFreshRealMovieUrl()  ->" + e.getMessage());
         }
-        return movieNameAndUrlModelList;
+
     }
 
 
@@ -89,60 +89,28 @@ public class AiDianyingService {
         Set<String> aiDianYingNormalUrlSet = new HashSet();
         try {
             String movieEncodeStr = URLEncoder.encode(searchMovieName, "UTF8");
-
             String url = lxxhUrl + "/?s=" + movieEncodeStr;
-
-//            ResponseEntity<String> resultResponseEntity = getHttpHeader(url, this.restTemplate);
-//            if (resultResponseEntity.getStatusCode() == HttpStatus.OK) {
-//                String html = resultResponseEntity.getBody();
-//                System.out.println("=========================================");
-//                System.out.println(html);
-//                System.out.println("=========================================");
             Connection.Response response = Jsoup.connect(url).userAgent(UserAgentUtil.randomUserAgent()).timeout(5000).referrer("http://www.lxxh7.com").followRedirects(true).execute();
             System.out.println(response.url());
 
 
             if (!response.url().toString().contains("/?s=")) {
-                getMovieLoopsAiDianying(response.url().toString());
+                aiDianYingNormalUrlSet.add(response.url().toString());
             } else {
-
-
                 Document document = Jsoup.connect(response.url().toString()).userAgent(UserAgentUtil.randomUserAgent()).timeout(5000).referrer("http://www.lxxh7.com").followRedirects(false).get();
                 System.out.println(document.text());
                 System.out.println(document.body());
                 System.out.println(document.outerHtml());
-
                 Elements attr = document.getElementsByTag("h2").select("a");
                 for (Element element : attr) {
                     System.out.println(element.attr("href").trim());
                     aiDianYingNormalUrlSet.add(element.attr("href").trim());
                 }
             }
-//            ResponseEntity<String> resultResponseEntity = getHttpHeader(response.url().toString(), this.restTemplate);
-//            if (resultResponseEntity.getStatusCode() == HttpStatus.OK) {
-//                String html = resultResponseEntity.getBody();
-//                System.out.println("=========================================");
-//                System.out.println(html);
-//                System.out.println("=========================================");
-//                Document innerDocument = Jsoup.parse(html);
-//
-//
-//                Elements attr = innerDocument.getElementsByTag("h2").select("a");
-//
-//                for (Element element : attr) {
-//                    System.out.println(element.attr("href").trim());
-//                    aiDianYingNormalUrlSet.add(element.attr("href").trim());
-//                }
-//            }
-
-
-        } catch (
-                Exception e) {
+        } catch (Exception e) {
             log.error(e.getMessage());
-
             e.printStackTrace();
         }
-
         return aiDianYingNormalUrlSet;
     }
 
@@ -157,13 +125,6 @@ public class AiDianyingService {
         MovieNameAndUrlModel movieNameAndUrlModel = new MovieNameAndUrlModel();
         try {
             movieNameAndUrlModel.setMovieUrl(secondUrlLxxh);
-//            HttpHeaders requestHeaders = new HttpHeaders();
-//            requestHeaders.add("User-Agent", UserAgentUtil.randomUserAgent());
-//            HttpEntity<String> requestEntity = new HttpEntity<String>(null, requestHeaders);
-//            ResponseEntity<String> resultResponseEntity = this.restTemplate.exchange(
-//                    secondUrlLxxh.trim(),
-//                    HttpMethod.GET, requestEntity, String.class);
-//            if (resultResponseEntity.getStatusCode() == HttpStatus.OK) {
 
             Document document = Jsoup.connect(secondUrlLxxh).userAgent(UserAgentUtil.randomUserAgent()).timeout(5000).referrer("http://www.lxxh7.com").get();
             String name = document.getElementsByTag("title").first().text();
