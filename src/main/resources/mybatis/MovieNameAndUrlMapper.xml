@@ -73,6 +73,10 @@
         ${tableName}
         <trim prefix="set" suffixOverrides=",">
 
+            <if test="movieNameAndUrlModel.movieUrl != null and movieNameAndUrlModel.movieUrl != ''">
+                movie_url =${"'"+movieNameAndUrlModel.movieUrl+"'"},
+            </if>
+
             <if test="movieNameAndUrlModel.wangPanUrl != null and movieNameAndUrlModel.wangPanUrl != ''">
                 wangpan_url =${"'"+movieNameAndUrlModel.wangPanUrl+"'"},
             </if>

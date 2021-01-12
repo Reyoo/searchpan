@@ -33,11 +33,12 @@ public class InvalidUrlCheckingService {
 
     /**
      * 判断是否失效、失效则数据库中删除
+     *
      * @param movieNameAndUrlModels
      * @return
      * @throws Exception
      */
-    public List<MovieNameAndUrlModel> checkUrlMethod(String tableName ,List<MovieNameAndUrlModel> movieNameAndUrlModels) throws Exception {
+    public List<MovieNameAndUrlModel> checkUrlMethod(String tableName, List<MovieNameAndUrlModel> movieNameAndUrlModels) throws Exception {
 
         List<MovieNameAndUrlModel> couldBeFindUrls = new ArrayList<>();
         if (movieNameAndUrlModels == null || movieNameAndUrlModels.size() == 0) {
@@ -47,24 +48,27 @@ public class InvalidUrlCheckingService {
 
             for (MovieNameAndUrlModel movieNameAndUrlModel : movieNameAndUrlModels) {
                 String wangPanUrl = movieNameAndUrlModel.getWangPanUrl();
-                if(StrUtil.isBlank(wangPanUrl)){
+                if (StrUtil.isBlank(wangPanUrl)) {
                     continue;
                 }
                 Document document = Jsoup.connect(wangPanUrl).get();
                 String title = document.title();
                 //获取html中的标题
                 log.info("title--> :" + title + " 网盘URL --> " + wangPanUrl + " 原资源 --> " + movieNameAndUrlModel.getMovieUrl());
-                if (!"百度网盘-链接不存在".contains(title) || !"页面不存在".contains(title)) {
+                if (title.contains("链接不存在")) {
                     //Redis 暂时不做处理
                     //插入更新
+
+                    movieNameAndUrlService.dropMovieUrl(tableName, movieNameAndUrlModel);
+                } else if (title.contains("页面不存在")) {
+                    movieNameAndUrlService.dropMovieUrl(tableName, movieNameAndUrlModel);
+                } else {
                     couldBeFindUrls.add(movieNameAndUrlModel);
-                }else {
-                    movieNameAndUrlService.dropMovieUrl(tableName,movieNameAndUrlModel);
                 }
             }
 
             //插入更新可用数据
-            movieNameAndUrlService.addOrUpdateMovieUrls(couldBeFindUrls,tableName);
+            movieNameAndUrlService.addOrUpdateMovieUrls(couldBeFindUrls, tableName);
 
 
             log.info("校验完毕");
@@ -73,21 +77,18 @@ public class InvalidUrlCheckingService {
     }
 
 
-
-    public boolean checkUrlByUrlStr(String url) throws Exception{
+    public boolean checkUrlByUrlStr(String url) throws Exception {
 
         //从URL加载HTML
         Document document = Jsoup.connect(url).get();
         String title = document.title();
         //获取html中的标题
 //        System.out.println("title :"+title);
-        if("百度网盘-链接不存在".contains(title)||"页面不存在".contains(title)){
+        if ("百度网盘-链接不存在".contains(title) || "页面不存在".contains(title)) {
             return true;
         }
         return false;
     }
-
-
 
 
 }

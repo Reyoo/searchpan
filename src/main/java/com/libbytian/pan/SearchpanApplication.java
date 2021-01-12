@@ -31,31 +31,31 @@ public class SearchpanApplication {
 		SpringApplication.run(SearchpanApplication.class, args);
 	}
 
-/*	@Bean
+	@Bean
 	public RestTemplate restTemplate(){
 	SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
 		factory.setConnectTimeout(60000);
 		factory.setReadTimeout(5000);
 		return new RestTemplate(factory);
-	}*/
-
-
-	@Bean
-	public RestTemplate restTemplate() throws Exception {
-
-		final String proxyUrl = "42.54.159.22";
-		final int port = 4235;
-
-		HttpHost myProxy = new HttpHost(proxyUrl, port);
-		HttpClientBuilder clientBuilder = HttpClientBuilder.create();
-
-		clientBuilder.setProxy(myProxy).disableCookieManagement();
-
-		HttpClient httpClient = clientBuilder.build();
-		HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory();
-		factory.setHttpClient(httpClient);
-
-		return new RestTemplate(factory);
 	}
+
+
+//	@Bean
+//	public RestTemplate restTemplate() throws Exception {
+//
+//		final String proxyUrl = "42.54.159.22";
+//		final int port = 4235;
+//
+//		HttpHost myProxy = new HttpHost(proxyUrl, port);
+//		HttpClientBuilder clientBuilder = HttpClientBuilder.create();
+//
+//		clientBuilder.setProxy(myProxy).disableCookieManagement();
+//
+//		HttpClient httpClient = clientBuilder.build();
+//		HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory();
+//		factory.setHttpClient(httpClient);
+//
+//		return new RestTemplate(factory);
+//	}
 
 }

@@ -154,7 +154,7 @@ public class AsyncSearchCachedServiceImpl {
 
             //如果redis中存在
             if (movieNameAndMovieList != null && movieNameAndMovieList.size() > 0) {
-//                List<MovieNameAndUrlModel> movieNameAndUrlModels = invalidUrlCheckingService.checkUrlMethod(getTableName(crawlerName), movieNameAndMovieList);
+                List<MovieNameAndUrlModel> movieNameAndUrlModels = invalidUrlCheckingService.checkUrlMethod(getTableName(crawlerName), movieNameAndMovieList);
                 //将有效连接更新到redis中
 
                 movieNameAndUrlService.addOrUpdateMovieUrls(movieNameAndMovieList,getTableName(crawlerName));
@@ -246,10 +246,10 @@ public class AsyncSearchCachedServiceImpl {
 
                 if ("aidianying".equals(crawlerName)) {
                     //爱电影 查询并存入数据库 更新redis
-//                    List<MovieNameAndUrlModel> aiDianyingList = aiDianyingService.getAiDianYingCrawlerResult(searchMovieName);
+                    List<MovieNameAndUrlModel> aiDianyingList = aiDianyingService.saveOrFreshRealMovieUrl(searchMovieName);
 
-//                    redisTemplate.opsForHash().putIfAbsent(crawlerName, searchMovieName, aiDianyingList);
-//                    innerMovieList = aiDianyingList;
+                    redisTemplate.opsForHash().putIfAbsent(crawlerName, searchMovieName, aiDianyingList);
+                    innerMovieList = aiDianyingList;
 
                 } else if ("unreadmovie".equals(crawlerName)) {
                     List<MovieNameAndUrlModel> unreadUrls = unReadService.getUnReadCrawlerResult(searchMovieName);
@@ -261,8 +261,7 @@ public class AsyncSearchCachedServiceImpl {
 
                 } else {
 
-                    //爱电影
-//                    List<MovieNameAndUrlModel> aiDianyingList = aiDianyingService.getAiDianYingCrawlerResult(searchMovieName);
+                    List<MovieNameAndUrlModel> aiDianyingList = aiDianyingService.saveOrFreshRealMovieUrl(searchMovieName);
                     //未读影单
                     List<MovieNameAndUrlModel> unreadUrls = unReadService.getUnReadCrawlerResult(searchMovieName);
 
@@ -271,7 +270,7 @@ public class AsyncSearchCachedServiceImpl {
                     sumsuMovieList = crawlerSumsuService.getSumsuUrl(searchMovieName);
                     redisTemplate.opsForHash().putIfAbsent("sumsu", searchMovieName, sumsuMovieList);
 
-//                    innerMovieList.addAll(aiDianyingList);
+                    innerMovieList.addAll(aiDianyingList);
                     innerMovieList.addAll(unreadUrls);
                     innerMovieList.addAll(sumsuMovieList);
                 }

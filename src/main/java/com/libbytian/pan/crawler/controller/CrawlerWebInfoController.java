@@ -126,7 +126,7 @@ public class CrawlerWebInfoController {
     @RequestMapping(value = "/getall/1/{movieName}", method = RequestMethod.GET)
     public AjaxResult getXXXX(HttpServletRequest httpRequest, @PathVariable String movieName) throws UnsupportedEncodingException {
         System.out.println(httpRequest.getRemoteHost());
-        aiDianyingService.getNormalUrlAidianying(movieName);
+        aiDianyingService.saveOrFreshRealMovieUrl(movieName);
             return AjaxResult.success("表入库成功");
 
     }
