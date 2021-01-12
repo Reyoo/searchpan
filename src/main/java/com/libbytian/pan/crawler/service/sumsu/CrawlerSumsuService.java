@@ -14,6 +14,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.*;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
@@ -25,6 +26,7 @@ import java.time.Duration;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
@@ -32,6 +34,7 @@ import java.util.List;
 public class CrawlerSumsuService {
     private final RestTemplate restTemplate;
 
+    private final RedisTemplate redisTemplate;
 
     private final IMovieNameAndUrlService movieNameAndUrlService;
 
@@ -98,6 +101,8 @@ public class CrawlerSumsuService {
 
             if (firstSearchUrls.size() > 0) {
                 movieList =  getTidSumsuUrl(firstSearchUrls);
+                redisTemplate.opsForHash().putIfAbsent("sumsu", movieName, movieList);
+                redisTemplate.expire(movieName, 10, TimeUnit.SECONDS);
 
             }
 
@@ -170,6 +175,7 @@ public class CrawlerSumsuService {
 
                     }
                     movieNameAndUrlService.addOrUpdateMovieUrls(movieNameAndUrlModels, "url_movie_sumsu");
+
                 }
             }
         } catch (Exception e) {

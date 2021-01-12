@@ -179,7 +179,7 @@ public class WxPortalController {
 
 
 //                这个地方做修改 从redis 中拿 如果没有 则从数据库中拿 如果都没有直接返回空 。爬虫慢慢做
-                asyncSearchCachedService.searchAsyncWord(searchName);
+                asyncSearchCachedService.searchAsyncWord(searchName,false,null);
 
                 WxMpXmlOutMessage outMessage = this.route(inMessage);
 

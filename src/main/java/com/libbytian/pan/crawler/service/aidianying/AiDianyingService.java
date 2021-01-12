@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 
 /**
@@ -68,6 +69,7 @@ public class AiDianyingService {
             }
             movieNameAndUrlService.addOrUpdateMovieUrls(movieNameAndUrlModelList, "url_movie_aidianying");
             redisTemplate.opsForHash().putIfAbsent("aidianying", searchMovieName, movieNameAndUrlModelList);
+            redisTemplate.expire(searchMovieName, 60, TimeUnit.SECONDS);
 
         } catch (Exception e) {
             log.error("searchMovieName --> " + searchMovieName);

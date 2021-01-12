@@ -59,14 +59,12 @@ public class SysCaptchaController  {
 
 
         LocalDateTime now = LocalDateTime.now();
-        ServletOutputStream out = null;
+//        ServletOutputStream out = null;
         try {
-            ArrayList typeList = new ArrayList();
-            typeList.add("math");
-            typeList.add("char");
+//            ArrayList typeList = new ArrayList();
+//            typeList.add("math");
+//            typeList.add("char");
 
-//            int index = (int) (Math.random() * typeList.size());
-//            String type= (String)typeList.get(index);
             String type = "char";
             String capStr;
             String code = null;
