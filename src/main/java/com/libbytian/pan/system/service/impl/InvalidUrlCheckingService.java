@@ -58,8 +58,9 @@ public class InvalidUrlCheckingService {
                 if (title.contains("链接不存在")) {
                     //Redis 暂时不做处理
                     //插入更新
-
+//                    失效删除 重新爬取一次
                     movieNameAndUrlService.dropMovieUrl(tableName, movieNameAndUrlModel);
+
                 } else if (title.contains("页面不存在")) {
                     movieNameAndUrlService.dropMovieUrl(tableName, movieNameAndUrlModel);
                 } else {

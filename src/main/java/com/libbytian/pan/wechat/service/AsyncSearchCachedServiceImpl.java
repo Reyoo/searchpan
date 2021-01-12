@@ -42,7 +42,6 @@ public class AsyncSearchCachedServiceImpl {
     private final IMovieNameAndUrlService movieNameAndUrlService;
 
 
-
     private final CrawlerSumsuService crawlerSumsuService;
 
     private final MovieNameAndUrlMapper movieNameAndUrlMapper;
@@ -141,52 +140,16 @@ public class AsyncSearchCachedServiceImpl {
      * @Description: 根据待搜索的来源和电影名搜索并存入redis  crawlerNames 对应tableName
      */
     @Async
-    public void searchAsyncWord(List<String> crawlerNames, String searchMovieName) throws Exception {
+    public void searchAsyncWord(String searchMovieName) {
 
-        if (crawlerNames.size() == 0) {
-            throw new Exception("要获取的资源名不能为空");
+        try {
+            crawlerAndSaveUrl(searchMovieName, "url_movie_aidianying", "aidianying");
+            crawlerAndSaveUrl(searchMovieName, "url_movie_unread", "unreadmovie");
+            crawlerAndSaveUrl(searchMovieName, "url_movie_sumsu", "sumsu");
+        } catch (Exception e) {
+            log.error(e.getMessage());
+
         }
-
-        for (String crawlerName : crawlerNames) {
-            //查询redis 中的资源
-            List<MovieNameAndUrlModel> movieNameAndMovieList = new ArrayList<>();
-            movieNameAndMovieList = (List<MovieNameAndUrlModel>) redisTemplate.opsForHash().get(crawlerName, searchMovieName);
-
-            //如果redis中存在
-            if (movieNameAndMovieList != null && movieNameAndMovieList.size() > 0) {
-                List<MovieNameAndUrlModel> movieNameAndUrlModels = invalidUrlCheckingService.checkUrlMethod(getTableName(crawlerName), movieNameAndMovieList);
-                //将有效连接更新到redis中
-
-                movieNameAndUrlService.addOrUpdateMovieUrls(movieNameAndMovieList,getTableName(crawlerName));
-                redisTemplate.opsForHash().putIfAbsent(crawlerName, searchMovieName, movieNameAndMovieList);
-
-
-
-            } else {
-//                否则Redis中不存在 //重新爬虫 存入到mysql和redis中
-                switch (crawlerName) {
-
-                    case "aidianying":
-                        crawlerAndSaveUrl(searchMovieName, "url_movie_aidianying", crawlerName);
-                        break;
-
-                    case "unreadmovie":
-                        crawlerAndSaveUrl(searchMovieName, "url_movie_unread", crawlerName);
-                        break;
-
-                    case "sumsu":
-                        crawlerAndSaveUrl(searchMovieName, "url_movie_sumsu", crawlerName);
-                        break;
-                    default:
-                        crawlerAndSaveUrl(searchMovieName, "url_movie_aidianying", crawlerName);
-                        crawlerAndSaveUrl(searchMovieName, "url_movie_unread", crawlerName);
-                        crawlerAndSaveUrl(searchMovieName, "url_movie_sumsu", crawlerName);
-                        break;
-
-                }
-            }
-        }
-
     }
 
 
@@ -234,7 +197,7 @@ public class AsyncSearchCachedServiceImpl {
             if (movieNameAndUrlModels != null && movieNameAndUrlModels.size() > 0) {
 //               校验URL 摘掉 URL 校验
 //                movieNameAndUrlModels = invalidUrlCheckingService.checkUrlMethod(tableName, movieNameAndUrlModels);
-                movieNameAndUrlService.addOrUpdateMovieUrls(movieNameAndUrlModels,tableName);
+                movieNameAndUrlService.addOrUpdateMovieUrls(movieNameAndUrlModels, tableName);
 
                 //记录到redis
                 redisTemplate.opsForHash().putIfAbsent(crawlerName, searchMovieName, movieNameAndUrlModels);
