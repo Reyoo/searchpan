@@ -51,23 +51,23 @@ public class AiDianyingService {
     private final RedisTemplate redisTemplate;
     private final InvalidUrlCheckingService invalidUrlCheckingService;
     private final IMovieNameAndUrlService movieNameAndUrlService;
-
+    private final GetProxyService getProxyService;
 
 
     @Value("${user.lxxh.aidianying}")
     String lxxhUrl;
 
 
-    public void saveOrFreshRealMovieUrl(String searchMovieName,String proxyIp,int proxyPort) {
+    public void saveOrFreshRealMovieUrl(String searchMovieName, String proxyIp, int proxyPort) {
         ArrayList<MovieNameAndUrlModel> movieNameAndUrlModelList = new ArrayList();
         try {
 
-            Set<String> movieUrlInLxxh = getNormalUrlAidianying(searchMovieName,proxyIp,proxyPort);
+            Set<String> movieUrlInLxxh = getNormalUrlAidianying(searchMovieName, proxyIp, proxyPort);
             //说明搜索到了 url 电影路径
             if (movieUrlInLxxh.size() > 0) {
                 for (String url : movieUrlInLxxh) {
                     //由于包含模糊查询、这里记录到数据库中做插入更新操作
-                    MovieNameAndUrlModel movieNameAndUrlModel = getMovieLoopsAiDianying(url,proxyIp,proxyPort);
+                    MovieNameAndUrlModel movieNameAndUrlModel = getMovieLoopsAiDianying(url, proxyIp, proxyPort);
                     movieNameAndUrlModelList.add(movieNameAndUrlModel);
                 }
             }
@@ -89,7 +89,7 @@ public class AiDianyingService {
      * @param searchMovieName
      * @return
      */
-    public Set<String> getNormalUrlAidianying(String searchMovieName,String proxyIp,int proxyPort) {
+    public Set<String> getNormalUrlAidianying(String searchMovieName, String proxyIp, int proxyPort) {
         Set<String> aiDianYingNormalUrlSet = new HashSet();
 
         try {
@@ -112,7 +112,7 @@ public class AiDianyingService {
             if (!response.url().toString().contains("/?s=")) {
                 aiDianYingNormalUrlSet.add(response.url().toString());
             } else {
-                Document document = Jsoup.connect(response.url().toString()).userAgent(UserAgentUtil.randomUserAgent()).timeout(10000).referrer("http://www.lxxh7.com").followRedirects(false).get();
+                Document document = Jsoup.connect(response.url().toString()).proxy(proxyIp, proxyPort).userAgent(UserAgentUtil.randomUserAgent()).timeout(10000).referrer("http://www.lxxh7.com").followRedirects(false).get();
                 System.out.println(document.text());
                 System.out.println(document.body());
                 System.out.println(document.outerHtml());
@@ -123,7 +123,7 @@ public class AiDianyingService {
                 }
             }
         } catch (Exception e) {
-//            getProxyService.removeUnableProxy(proxyIp+ ":" +proxyPort);
+            getProxyService.removeUnableProxy(proxyIp + ":" + proxyPort);
             log.error(e.getMessage());
         }
         return aiDianYingNormalUrlSet;
@@ -136,7 +136,7 @@ public class AiDianyingService {
      * @param secondUrlLxxh
      * @return
      */
-    public MovieNameAndUrlModel getMovieLoopsAiDianying(String secondUrlLxxh,String proxyIp,int proxyPort) {
+    public MovieNameAndUrlModel getMovieLoopsAiDianying(String secondUrlLxxh, String proxyIp, int proxyPort) {
         MovieNameAndUrlModel movieNameAndUrlModel = new MovieNameAndUrlModel();
 
 
@@ -188,7 +188,7 @@ public class AiDianyingService {
             }
 
         } catch (Exception e) {
-//            getProxyService.removeUnableProxy(ipAndPort);
+            getProxyService.removeUnableProxy(proxyIp + ":" + proxyPort);
             log.error(e.getMessage());
             e.getMessage();
         }

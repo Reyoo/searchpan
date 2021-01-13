@@ -1,5 +1,6 @@
 package com.libbytian.pan.wechat.controller;
 
+import com.libbytian.pan.proxy.service.GetProxyService;
 import com.libbytian.pan.system.common.AjaxResult;
 import com.libbytian.pan.system.model.SystemTemDetailsModel;
 import com.libbytian.pan.system.model.SystemUserModel;
@@ -39,6 +40,7 @@ public class MoviePageShowController {
 
     private final AsyncSearchCachedServiceImpl asyncSearchCachedService;
     private final ISystemTemDetailsService iSystemTemDetailsService;
+    private final GetProxyService getProxyService;
     private final NormalPageService normalPageService;
 
     /**
@@ -143,8 +145,12 @@ public class MoviePageShowController {
         List<MovieNameAndUrlModel> movieNameAndUrlModels = new ArrayList<>();
         try {
 
+      ;
+            String ipAndPort = getProxyService.getProxyIpFromRemote();
+            String proxyIp = ipAndPort.split(":")[0];
+            int proxyPort = Integer.valueOf(ipAndPort.split(":")[1]);
 //            根据不同入参 给参数
-            movieNameAndUrlModels = asyncSearchCachedService.searchWord(searchName.trim(), search);
+            movieNameAndUrlModels = asyncSearchCachedService.searchWord(searchName.trim(), search,proxyIp,proxyPort);
 
             if (movieNameAndUrlModels.size() == 0) {
                 return AjaxResult.hide("未找到该资源");

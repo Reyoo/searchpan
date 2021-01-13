@@ -67,7 +67,7 @@ public class AsyncSearchCachedServiceImpl {
      * @return
      * @throws Exception
      */
-    public List<MovieNameAndUrlModel> searchWord(String searchMovieText, String search) throws Exception {
+    public List<MovieNameAndUrlModel> searchWord(String searchMovieText, String search,String proxyIp,int proxyPort) throws Exception {
 
         List<MovieNameAndUrlModel> movieNameAndUrlModels = new ArrayList<>();
         switch (search) {
@@ -83,7 +83,7 @@ public class AsyncSearchCachedServiceImpl {
 
 //                    如果数据库中也没有 则从新爬取一遍
                     if (movieNameAndUrlModels == null || movieNameAndUrlModels.size() == 0) {
-                        crawlerAndSaveUrl(searchMovieText, "aidianying");
+                        crawlerAndSaveUrl(searchMovieText, "aidianying",proxyIp,proxyPort);
                     }
 
                     redisTemplate.opsForHash().putIfAbsent("aidianying", searchMovieText, movieNameAndUrlModels);
@@ -106,7 +106,7 @@ public class AsyncSearchCachedServiceImpl {
 
                     //数据库中也不存在 则重新爬取
                     if (movieNameAndUrlModels == null || movieNameAndUrlModels.size() == 0) {
-                        crawlerAndSaveUrl(searchMovieText, "unreadmovie");
+                        crawlerAndSaveUrl(searchMovieText, "unreadmovie",proxyIp,proxyPort);
                     }
 
                     redisTemplate.opsForHash().putIfAbsent("unreadmovie", searchMovieText, movieNameAndUrlModels);
@@ -126,7 +126,7 @@ public class AsyncSearchCachedServiceImpl {
 
                     //数据库中也不存在 则重新爬取
                     if (movieNameAndUrlModels == null || movieNameAndUrlModels.size() == 0) {
-                        crawlerAndSaveUrl(searchMovieText, "sumsu");
+                        crawlerAndSaveUrl(searchMovieText, "sumsu",proxyIp,proxyPort);
                     }
 
                     redisTemplate.opsForHash().putIfAbsent("sumsu", searchMovieText, movieNameAndUrlModels);
@@ -162,11 +162,11 @@ public class AsyncSearchCachedServiceImpl {
 
         try {
             if (hasTableName) {
-                crawlerAndSaveUrl(searchMovieName, crawlerName);
+                crawlerAndSaveUrl(searchMovieName, crawlerName,proxyIp,proxyPort);
             } else {
-                crawlerAndSaveUrl(searchMovieName, "aidianying");
-//                crawlerAndSaveUrl(searchMovieName, "unreadmovie");
-//                crawlerAndSaveUrl(searchMovieName, "sumsu");
+                crawlerAndSaveUrl(searchMovieName, "aidianying",proxyIp,proxyPort);
+                crawlerAndSaveUrl(searchMovieName, "unreadmovie",proxyIp,proxyPort);
+                crawlerAndSaveUrl(searchMovieName, "sumsu",proxyIp,proxyPort);
             }
 
         } catch (Exception e) {

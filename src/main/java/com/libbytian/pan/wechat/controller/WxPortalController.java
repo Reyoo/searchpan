@@ -1,5 +1,6 @@
 package com.libbytian.pan.wechat.controller;
 
+import com.libbytian.pan.proxy.service.GetProxyService;
 import com.libbytian.pan.system.model.SystemTemDetailsModel;
 import com.libbytian.pan.system.model.SystemUserModel;
 import com.libbytian.pan.system.service.ISystemKeywordService;
@@ -39,19 +40,21 @@ public class WxPortalController {
     private final WxMpService wxService;
     private final WxMpMessageRouter messageRouter;
 
-    private final SubscribeHandler subscribeHandler;
+    //首次关注 需要开发编写新接口
+//    private final SubscribeHandler subscribeHandler;
 
     private final ISystemTemDetailsService iSystemTemDetailsService;
     private final ISystemUserService iSystemUserService;
     private final AsyncSearchCachedServiceImpl asyncSearchCachedService;
-
     private final ISystemKeywordService systemKeywordService;
-
     private final KeyWordSettingService keyWordSettingService;
 
 
+    private final GetProxyService getProxyService;
+
+
     final Base64.Decoder decoder = Base64.getDecoder();
-    final Base64.Encoder encoder = Base64.getEncoder();
+
 
 
     /**
@@ -131,6 +134,7 @@ public class WxPortalController {
         //解析传入的username,拿到user,查询对应模板
         String username = new String(decoder.decode(verification), "UTF-8");
 
+
         SystemUserModel systemUserModel = new SystemUserModel();
         systemUserModel.setUsername(username);
         systemUserModel.setCallTime(LocalDateTime.now());
@@ -156,6 +160,13 @@ public class WxPortalController {
 //                -----------------------------------------------------------
                 int idx = searchWord.lastIndexOf(" ");
                 String searchName = searchWord.substring(idx + 1);
+
+                //设置代理IP PORT
+                String ipAndPort = getProxyService.getProxyIpFromRemote();
+                String proxyIp = ipAndPort.split(":")[0];
+                int proxyPort = Integer.valueOf(ipAndPort.split(":")[1]);
+
+                asyncSearchCachedService.searchAsyncWord(searchName,false,null,proxyIp,proxyPort);
 
 
 //                这个地方做修改 从redis 中拿 如果没有 则从数据库中拿 如果都没有直接返回空 。爬虫慢慢做
@@ -205,7 +216,6 @@ public class WxPortalController {
 
                 out = outMessage.toXml();
 
-                asyncSearchCachedService.searchAsyncWord(searchName,false,null);
 
 
             } else if ("aes".equalsIgnoreCase(encType)) {

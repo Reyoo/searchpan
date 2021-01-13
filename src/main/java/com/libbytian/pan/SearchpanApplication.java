@@ -30,17 +30,17 @@ import org.springframework.web.client.RestTemplate;
 public class SearchpanApplication {
 
 
-	public static void main(String[] args) {
-		SpringApplication.run(SearchpanApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(SearchpanApplication.class, args);
+    }
 
-	@Bean
-	public RestTemplate restTemplate(){
-	SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
-		factory.setConnectTimeout(60000);
-		factory.setReadTimeout(10000);
-		return new RestTemplate(factory);
-	}
+    @Bean
+    public RestTemplate restTemplate() {
+        SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
+        factory.setConnectTimeout(60000);
+        factory.setReadTimeout(10000);
+        return new RestTemplate(factory);
+    }
 
 
 //	@Bean
