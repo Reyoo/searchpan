@@ -2,6 +2,7 @@ package com.libbytian.pan.wechat.service;
 
 
 import com.libbytian.pan.crawler.service.aidianying.AiDianyingService;
+import com.libbytian.pan.proxy.service.GetProxyService;
 import com.libbytian.pan.system.common.AjaxResult;
 import com.libbytian.pan.system.model.MovieNameAndUrlModel;
 import com.libbytian.pan.system.util.UserAgentUtil;
@@ -40,13 +41,19 @@ import java.util.List;
 public class NormalPageService {
     private final RestTemplate restTemplate;
 
+    private final GetProxyService getProxyService;
+
 
     public MovieNameAndUrlModel getMovieLoops(String url) {
         MovieNameAndUrlModel movieNameAndUrlModel = new MovieNameAndUrlModel();
+
+        String ipAndPort = getProxyService.getProxyIpFromRemote();
+        String proxyIp = ipAndPort.split(":")[0];
+        int proxyPort = Integer.valueOf(ipAndPort.split(":")[1]);
+
         try {
 
-            AiDianyingService.getHttpHeader(url, this.restTemplate);
-            ResponseEntity<String> resultResponseEntity = AiDianyingService.getHttpHeader(url, this.restTemplate);
+            ResponseEntity<String> resultResponseEntity = AiDianyingService.getHttpHeader(url, this.restTemplate, proxyIp, proxyPort);
 
             if (resultResponseEntity.getStatusCode() == HttpStatus.OK) {
                 String html = resultResponseEntity.getBody();
@@ -87,16 +94,10 @@ public class NormalPageService {
             return movieNameAndUrlModel;
         } catch (Exception e) {
             log.error(e.getMessage());
+            getProxyService.removeUnableProxy(ipAndPort);
             return movieNameAndUrlModel;
         }
     }
-
-
-
-
-
-
-
 
 
     public MovieNameAndUrlModel getMoviePanUrl2(MovieNameAndUrlModel movieNameAndUrlModel) {
@@ -145,52 +146,59 @@ public class NormalPageService {
 
     /**
      * 莉莉
+     *
      * @param url
      * @return
      */
     public MovieNameAndUrlModel getMovieLoopsLiLi(String url) {
 
+        String ipAndPort = getProxyService.getProxyIpFromRemote();
+        String proxyIp = ipAndPort.split(":")[0];
+        int proxyPort = Integer.valueOf(ipAndPort.split(":")[1]);
+
+
         MovieNameAndUrlModel movieNameAndUrlModel = new MovieNameAndUrlModel();
 
         movieNameAndUrlModel.setMovieUrl(url);
-        AiDianyingService.getHttpHeader(url, this.restTemplate);
-        ResponseEntity<String> resultResponseEntity = AiDianyingService.getHttpHeader(url, this.restTemplate);
 
-        if (resultResponseEntity.getStatusCode() == HttpStatus.OK) {
-            String html = resultResponseEntity.getBody();
+        try {
+
+
+            ResponseEntity<String> resultResponseEntity = AiDianyingService.getHttpHeader(url, this.restTemplate, proxyIp, proxyPort);
+
+            if (resultResponseEntity.getStatusCode() == HttpStatus.OK) {
+                String html = resultResponseEntity.getBody();
 //                System.out.println("=========================================");
 //                System.out.println(html);
+                log.info(html);
 //                System.out.println("=========================================");
-            Document document = Jsoup.parse(html);
-            String name = document.getElementsByTag("title").first().text();
-            movieNameAndUrlModel.setMovieName(name);
-//            System.out.println("******");
-//            System.out.println(name);
-//            System.out.println("******");
+                Document document = Jsoup.parse(html);
+                String name = document.getElementsByTag("title").first().text();
+                movieNameAndUrlModel.setMovieName(name);
 
-            Elements attr = document.getElementsByTag("p");
-            for (Element element : attr) {
-                for (Element aTag : element.getElementsByTag("a")) {
 
-                    String linkhref = aTag.attr("href");
-                    if (linkhref.startsWith("pan.baidu.com")) {
-                        log.info("这里已经拿到要爬取的url : " + linkhref);
-                        movieNameAndUrlModel.setWangPanUrl(linkhref);
-//                        System.out.println(linkhref);
+                Elements attr = document.getElementsByTag("p");
+                for (Element element : attr) {
+                    for (Element aTag : element.getElementsByTag("a")) {
+
+                        String linkhref = aTag.attr("href");
+                        if (linkhref.startsWith("pan.baidu.com")) {
+                            log.info("这里已经拿到要爬取的url : " + linkhref);
+                            movieNameAndUrlModel.setWangPanUrl(linkhref);
+                        }
+
                     }
-
+                    if (element.text().contains("密码")) {
+                        movieNameAndUrlModel.setWangPanPassword(element.text().split("【")[0].split(" ")[1]);
+                    }
                 }
-                if (element.text().contains("密码")) {
-                    movieNameAndUrlModel.setWangPanPassword(element.text().split("【")[0].split(" ")[1]);
-                }
-            }
 //            System.out.println("-----------------");
+            }
+            return movieNameAndUrlModel;
+        } catch (Exception e) {
+            getProxyService.removeUnableProxy(ipAndPort);
+            log.error(e.getMessage());
+            return movieNameAndUrlModel;
         }
-        return movieNameAndUrlModel;
-
-
     }
-
-
-
 }

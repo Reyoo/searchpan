@@ -156,16 +156,17 @@ public class AsyncSearchCachedServiceImpl {
      * @return
      * @Description: 根据待搜索的来源和电影名搜索并存入redis  crawlerNames 对应tableName
      */
-    @Async
-    public void searchAsyncWord(String searchMovieName, Boolean hasTableName, String crawlerName) {
+
+
+    public void searchAsyncWord(String searchMovieName, Boolean hasTableName, String crawlerName,String proxyIp,int proxyPort) {
 
         try {
             if (hasTableName) {
                 crawlerAndSaveUrl(searchMovieName, crawlerName);
             } else {
                 crawlerAndSaveUrl(searchMovieName, "aidianying");
-                crawlerAndSaveUrl(searchMovieName, "unreadmovie");
-                crawlerAndSaveUrl(searchMovieName, "sumsu");
+//                crawlerAndSaveUrl(searchMovieName, "unreadmovie");
+//                crawlerAndSaveUrl(searchMovieName, "sumsu");
             }
 
         } catch (Exception e) {
@@ -190,7 +191,6 @@ public class AsyncSearchCachedServiceImpl {
                 return "url_movie_unread";
             case "sumsu":
                 return "url_movie_sumsu";
-
             default:
                 break;
 
@@ -206,25 +206,21 @@ public class AsyncSearchCachedServiceImpl {
      * @return
      */
 
-    public void crawlerAndSaveUrl(String searchMovieName, String crawlerName) throws Exception {
+    public void crawlerAndSaveUrl(String searchMovieName, String crawlerName,String proxyIp,int proxyPort) {
 
-        if ("aidianying".equals(crawlerName)) {
-            //爱电影 查询并存入数据库 更新redis
-            aiDianyingService.saveOrFreshRealMovieUrl(searchMovieName);
+        try {
+            if ("aidianying".equals(crawlerName)) {
+                //爱电影 查询并存入数据库 更新redis
+                aiDianyingService.saveOrFreshRealMovieUrl(searchMovieName,proxyIp,proxyPort);
 
-        } else if ("unreadmovie".equals(crawlerName)) {
-            unReadService.getUnReadCrawlerResult(searchMovieName);
+            } else if ("unreadmovie".equals(crawlerName)) {
+                unReadService.getUnReadCrawlerResult(searchMovieName);
+            } else if ("sumsu".equals(crawlerName)) {
+                crawlerSumsuService.getSumsuUrl(searchMovieName);
+            }
 
-
-        } else if ("sumsu".equals(crawlerName)) {
-            crawlerSumsuService.getSumsuUrl(searchMovieName);
-        } else {
-            aiDianyingService.saveOrFreshRealMovieUrl(searchMovieName);
-            //未读影单
-            unReadService.getUnReadCrawlerResult(searchMovieName);
-            //社区动力
-            crawlerSumsuService.getSumsuUrl(searchMovieName);
-
+        } catch (Exception e) {
+            log.error(e.getMessage());
         }
 
     }

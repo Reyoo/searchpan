@@ -2,6 +2,7 @@ package com.libbytian.pan.crawler.service.unread;
 
 import cn.hutool.core.util.StrUtil;
 import com.libbytian.pan.crawler.service.aidianying.AiDianyingService;
+import com.libbytian.pan.proxy.service.GetProxyService;
 import com.libbytian.pan.system.model.MovieNameAndUrlModel;
 import com.libbytian.pan.system.service.IMovieNameAndUrlService;
 import com.libbytian.pan.system.service.impl.InvalidUrlCheckingService;
@@ -16,9 +17,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.*;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.net.InetSocketAddress;
+import java.net.Proxy;
 import java.time.Duration;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -40,6 +44,7 @@ public class UnReadService {
     private final InvalidUrlCheckingService invalidUrlCheckingService;
     private final RestTemplate restTemplate;
     private final RedisTemplate redisTemplate;
+    private final GetProxyService getProxyService;
 
 
     @Value("${user.unread.weiduyingdan}")
@@ -54,25 +59,37 @@ public class UnReadService {
      */
     public MovieNameAndUrlModel getUnReadMovieLoops(String url) {
         MovieNameAndUrlModel movieNameAndUrlModel = new MovieNameAndUrlModel();
-        String linkhref = null;
+
         try {
             movieNameAndUrlModel.setMovieUrl(url);
+
+            String ipAndPort = getProxyService.getProxyIpFromRemote();
+            String proxyIp = ipAndPort.split(":")[0];
+            int proxyPort = Integer.valueOf(ipAndPort.split(":")[1]);
+
             HttpHeaders requestHeaders = new HttpHeaders();
             String userAgent = UserAgentUtil.randomUserAgent();
-//            System.out.println("***********************");
-//            System.out.println(userAgent);
-//            System.out.println("***********************");
+
             requestHeaders.add("User-Agent", userAgent);
             HttpEntity<String> requestEntity = new HttpEntity<String>(null, requestHeaders);
+
+            SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
+            requestFactory.setProxy(
+                    //设置代理服务
+                    new Proxy(
+                            Proxy.Type.HTTP,
+                            new InetSocketAddress(proxyIp, proxyPort)
+                    )
+            );
+            this.restTemplate.setRequestFactory(requestFactory);
+
             ResponseEntity<String> resultResponseEntity = this.restTemplate.exchange(
                     String.format(url),
                     HttpMethod.GET, requestEntity, String.class);
             String wangPanUrl = null;
             if (resultResponseEntity.getStatusCode() == HttpStatus.OK) {
                 String html = resultResponseEntity.getBody();
-//                System.out.println("=========================================");
-//                System.out.println(html);
-//                System.out.println("=========================================");
+
                 Document document = Jsoup.parse(html);
                 String name = document.getElementsByTag("title").first().text();
 
@@ -88,25 +105,25 @@ public class UnReadService {
 
                     if (passwdelement.text().contains("密码:")) {
                         movieNameAndUrlModel.setWangPanPassword(passwdelement.text());
-//                        System.out.println(passwdelement.text());
+
                         break;
                     }
 
                     if (passwdelement.text().contains("密码：")) {
                         movieNameAndUrlModel.setWangPanPassword(passwdelement.text());
-//                        System.out.println(passwdelement.text());
+
                         break;
                     }
 
                     if (passwdelement.text().contains("提取码:")) {
                         movieNameAndUrlModel.setWangPanPassword(passwdelement.text());
-//                        System.out.println(passwdelement.text());
+
                         break;
                     }
 
                     if (passwdelement.text().contains("提取码：")) {
                         movieNameAndUrlModel.setWangPanPassword(passwdelement.text());
-//                        System.out.println(passwdelement.text());
+
                         break;
                     }
                 }
@@ -180,33 +197,31 @@ public class UnReadService {
      */
     public Set<String> getNormalUnReadUrl(String movieName) {
 
-        String url = unreadUrl + "/?s=" + movieName;
-        LocalTime begin = LocalTime.now();
         Set<String> movieList = new HashSet<>();
-        AiDianyingService.getHttpHeader(url, this.restTemplate);
-        ResponseEntity<String> resultResponseEntity = AiDianyingService.getHttpHeader(url, this.restTemplate);
+        String url = unreadUrl + "/?s=" + movieName;
+        String ipAndPort = getProxyService.getProxyIpFromRemote();
+        String proxyIp = ipAndPort.split(":")[0];
+        int proxyPort = Integer.valueOf(ipAndPort.split(":")[1]);
+        try {
 
-        if (resultResponseEntity.getStatusCode() == HttpStatus.OK) {
-            String html = resultResponseEntity.getBody();
-//            System.out.println("==================");
-//            System.out.println(html);
-//            System.out.println("==================");
-            Document doc = Jsoup.parse(html);
-            Elements elements = doc.select("article");
+            ResponseEntity<String> resultResponseEntity = AiDianyingService.getHttpHeader(url, this.restTemplate, proxyIp, proxyPort);
+            if (resultResponseEntity.getStatusCode() == HttpStatus.OK) {
+                String html = resultResponseEntity.getBody();
 
-
-            for (Element element : elements) {
-//                MovieNameAndUrlModel movieNameAndUrl = new MovieNameAndUrlModel();
-//                movieNameAndUrl.setMovieName(element.select("a").get(1).text());
-                movieList.add(element.select("a").attr("href"));
-//                movieList.add(movieNameAndUrl);
+                log.info(html);
+                Document doc = Jsoup.parse(html);
+                Elements elements = doc.select("article");
+                for (Element element : elements) {
+                    movieList.add(element.select("a").attr("href"));
+                }
             }
-
+            return movieList;
+        } catch (Exception e) {
+            getProxyService.removeUnableProxy(ipAndPort);
+            log.error(e.getMessage());
+            return movieList;
         }
-        LocalTime end = LocalTime.now();
-        Duration duration = Duration.between(begin, end);
-        System.out.println("接口请求 ---- > Duration: " + duration);
-        return movieList;
+
     }
 
 
@@ -217,11 +232,9 @@ public class UnReadService {
      * @return
      */
     public void getUnReadCrawlerResult(String searchMovieName) {
-
         List<MovieNameAndUrlModel> movieNameAndUrlModelList = new ArrayList<>();
-        Set<String> set = getNormalUnReadUrl(searchMovieName);
-
         try {
+            Set<String> set = getNormalUnReadUrl(searchMovieName);
             if (set.size() > 0) {
                 for (String url : set) {
                     //由于包含模糊查询、这里记录到数据库中做插入更新操作

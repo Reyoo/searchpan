@@ -50,14 +50,12 @@ public class CrawlerSumsuService {
      */
     public void getSumsuUrl(String movieName) throws Exception {
         List<String> firstSearchUrls = new ArrayList<>();
-        LocalTime begin = LocalTime.now();
         List<MovieNameAndUrlModel> movieList = new ArrayList<>();
         HttpHeaders requestHeaders = new HttpHeaders();
         requestHeaders.add("User-Agent", UserAgentUtil.randomUserAgent());
         requestHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
         MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
         map.add("formhash", "a07b2e14");
-
         map.add("srchtxt", movieName);
         map.add("searchsubmit", "yes");
 
@@ -73,7 +71,6 @@ public class CrawlerSumsuService {
         ResponseEntity<String> resultResponseEntity = this.restTemplate.exchange(
                 String.format(url),
                 HttpMethod.POST, requestEntity, String.class);
-
 
         if (resultResponseEntity.getStatusCode() == HttpStatus.OK) {
             String html = resultResponseEntity.getBody();
@@ -91,19 +88,15 @@ public class CrawlerSumsuService {
             if (firstSearchUrls.size() > 0) {
                 movieList = getTidSumsuUrl(firstSearchUrls);
                 redisTemplate.opsForHash().putIfAbsent("sumsu", movieName, movieList);
-                redisTemplate.expire(movieName, 10, TimeUnit.SECONDS);
+
             }
         }
 
     }
 
-
     public List<MovieNameAndUrlModel> getTidSumsuUrl(List<String> urls) {
-
         List<MovieNameAndUrlModel> movieNameAndUrlModels = new ArrayList<>();
         try {
-
-
             for (String sumsuUrl : urls) {
 //                System.out.println(sumsuUrl);
                 HttpHeaders requestSumsuHeaders = new HttpHeaders();
@@ -159,7 +152,8 @@ public class CrawlerSumsuService {
 
                     }
                     movieNameAndUrlService.addOrUpdateMovieUrls(movieNameAndUrlModels, "url_movie_sumsu");
-
+//                    redisTemplate.opsForHash().putIfAbsent("sumsu", movieName, movieNameAndUrlModels);
+//                    redisTemplate.expire(movieName, 10, TimeUnit.SECONDS);
                 }
             }
         } catch (Exception e) {

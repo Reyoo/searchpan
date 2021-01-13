@@ -109,7 +109,6 @@ public class WxPortalController {
 
 
     @RequestMapping(path = "/{verification}/{appId}", method = RequestMethod.POST, produces = "application/xml; charset=UTF-8")
-//    @Async
     public String post(
             @PathVariable String verification,
             @PathVariable String appId,
@@ -129,27 +128,12 @@ public class WxPortalController {
 //            throw new IllegalArgumentException(String.format("未找到对应appid=[%s]的配置，请核实！", appId));
 //        }
 
-
         //解析传入的username,拿到user,查询对应模板
         String username = new String(decoder.decode(verification), "UTF-8");
-
-        /**
-         * 更新用户 接口调用时间
-         */
-
-
-
-
-
-
-        /**
-         * 获取用户名绑定的模板
-         */
 
         SystemUserModel systemUserModel = new SystemUserModel();
         systemUserModel.setUsername(username);
         systemUserModel.setCallTime(LocalDateTime.now());
-
         //获取用调用接口时间
         iSystemUserService.updateUser(systemUserModel);
 
@@ -168,10 +152,6 @@ public class WxPortalController {
                 // 明文传输的消息
                 WxMpXmlMessage inMessage = WxMpXmlMessage.fromXml(requestBody);
 
-//                System.out.println( wxService.getUserService());
-//                System.out.println( inMessage.getAllFieldsMap());
-
-
                 String searchWord = inMessage.getContent().trim();
 //                -----------------------------------------------------------
                 int idx = searchWord.lastIndexOf(" ");
@@ -179,7 +159,8 @@ public class WxPortalController {
 
 
 //                这个地方做修改 从redis 中拿 如果没有 则从数据库中拿 如果都没有直接返回空 。爬虫慢慢做
-                asyncSearchCachedService.searchAsyncWord(searchName,false,null);
+
+
 
                 WxMpXmlOutMessage outMessage = this.route(inMessage);
 
@@ -223,7 +204,9 @@ public class WxPortalController {
                         .content(stringBuffer.toString()).build();
 
                 out = outMessage.toXml();
-//                System.out.println(out);
+
+                asyncSearchCachedService.searchAsyncWord(searchName,false,null);
+
 
             } else if ("aes".equalsIgnoreCase(encType)) {
                 // aes加密的消息
