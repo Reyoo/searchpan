@@ -158,6 +158,7 @@ public class AsyncSearchCachedServiceImpl {
      */
 
 
+    @Async
     public void searchAsyncWord(String searchMovieName, Boolean hasTableName, String crawlerName,String proxyIp,int proxyPort) {
 
         try {
