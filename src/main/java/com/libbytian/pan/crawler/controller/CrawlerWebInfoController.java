@@ -127,7 +127,7 @@ public class CrawlerWebInfoController {
     private final AiDianyingService aiDianyingService;
 
     @RequestMapping(value = "/getall/1/{movieName}", method = RequestMethod.GET)
-    public AjaxResult getXXXX(HttpServletRequest httpRequest, @PathVariable String movieName) throws UnsupportedEncodingException {
+    public AjaxResult getXXXX(@PathVariable(name = "movieName") String movieName)   {
         String ipAndPort = getProxyService.getProxyIpFromRemote();
 //        String ipAndPort = getProxyService.getProxyIp();
         String ip = ipAndPort.split(":")[0];

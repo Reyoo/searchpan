@@ -22,10 +22,9 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-import java.net.InetSocketAddress;
-import java.net.Proxy;
-import java.net.URLEncoder;
+import java.net.*;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -56,19 +55,19 @@ public class AiDianyingService {
     String lxxhUrl;
 
 
-
     @Async("crawler-Executor")
     public void saveOrFreshRealMovieUrl(String searchMovieName, String proxyIp, int proxyPort) {
         log.info("-------------->开始爬取爱电影<--------------------");
         ArrayList<MovieNameAndUrlModel> movieNameAndUrlModelList = new ArrayList();
         try {
 
-            Set<String> movieUrlInLxxh = getNormalUrlAidianying(searchMovieName, proxyIp, proxyPort);
+            String userAgent = UserAgentUtil.randomUserAgent();
+            Set<String> movieUrlInLxxh = getNormalUrlAidianying(searchMovieName,userAgent, proxyIp, proxyPort);
             //说明搜索到了 url 电影路径
             if (movieUrlInLxxh.size() > 0) {
                 for (String url : movieUrlInLxxh) {
                     //由于包含模糊查询、这里记录到数据库中做插入更新操作
-                    MovieNameAndUrlModel movieNameAndUrlModel = getMovieLoopsAiDianying(url, proxyIp, proxyPort);
+                    MovieNameAndUrlModel movieNameAndUrlModel = getMovieLoopsAiDianying(url, userAgent,proxyIp, proxyPort);
                     movieNameAndUrlModelList.add(movieNameAndUrlModel);
                 }
             }
@@ -92,63 +91,48 @@ public class AiDianyingService {
      * @param searchMovieName
      * @return
      */
-    public Set<String> getNormalUrlAidianying(String searchMovieName, String proxyIp, int proxyPort) {
+    public Set<String> getNormalUrlAidianying(String searchMovieName,String userAgent, String proxyIp, int proxyPort) {
         Set<String> aiDianYingNormalUrlSet = new HashSet();
-        String userAgent = UserAgentUtil.randomUserAgent();
+
         try {
 
-            String url = lxxhUrl + "/?s=" + searchMovieName;
+            String urlAiDianying = lxxhUrl + "/?s=" + searchMovieName;
 
-            //获取到cookie
-            Connection.Response response = Jsoup.connect(url)
-                    .proxy(proxyIp, proxyPort)
-                    .userAgent(userAgent)
-                    .timeout(20000)
-//                    .referrer("http://www.lxxh7.com")
-//                    .header("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9")
-                    .header("Cache-Control", "max-age=0")
-                    .header("Accept-Encoding", "gzip, deflate, sdch")
-                    .header("Accept-Language", "zh-CN,zh;q=0.8")
-                    .method(Connection.Method.GET)
-                    .followRedirects(true).execute();
+            System.setProperty("http.proxyHost", proxyIp);
+            System.setProperty("http.proxyPort", String.valueOf(proxyPort));
+            URL url = new URL(urlAiDianying);
+            URLConnection connection = url.openConnection();
+            connection.setRequestProperty("User-Agent", userAgent);
+//            connection.setRequestProperty("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9");
+            connection.setRequestProperty("Host", "www.lxxh7.com");
+            connection.setRequestProperty("Upgrade-Insecure-Requests", "1");
+            connection.setRequestProperty("Cache-Control", "max-age=0");
+            connection.setConnectTimeout(18000);
+            connection.connect();
+            InputStream inputStream = connection.getInputStream();
+            byte[] bytes = new byte[1024];
+            StringBuffer stringBuffer = new StringBuffer();
+            while (inputStream.read(bytes) >= 0) {
+                stringBuffer.append(new String(bytes));
+                System.out.println(stringBuffer.toString());
+            }
 
 
-
-
-
-
-            if (!response.url().toString().contains("/?s=")) {
-                aiDianYingNormalUrlSet.add(response.url().toString());
-            } else {
-
-                Connection.Response SecondResponse = Jsoup.connect(url)
-                        .proxy(proxyIp, proxyPort)
-                        .userAgent(userAgent)
-                        .timeout(20000)
-                        .header("Cache-Control", "max-age=0")
-                        .header("Accept-Encoding", "gzip, deflate, sdch")
-                        .header("Accept-Language", "zh-CN,zh;q=0.8")
-                        .method(Connection.Method.GET)
-                        .followRedirects(true).execute();
-
-                Document document = Jsoup.connect(SecondResponse.url().toString())
-                        .proxy(proxyIp, proxyPort)
-                        .userAgent(userAgent)
-//                        .cookies (convertCookie("CNZZDATA1277388696=1654295708-1610238448-%7C1610607655; UM_distinctid=176e9d99671152-02e58705fc43aa8-5463787d-5a900-176e9d996722"))
-                        .timeout(12000)
-                        .followRedirects(true).get();
-                log.info("爱电影----------->begin<-----------------");
-                System.out.println(document.body());
-                log.info("爱电影----------->end<-----------------");
-                Elements attr = document.getElementsByTag("h2").select("a");
-                for (Element element : attr) {
-                    System.out.println(element.attr("href").trim());
-                    aiDianYingNormalUrlSet.add(element.attr("href").trim());
-                }
+            Document document = Jsoup.parse(stringBuffer.toString());
+            //解析h2 标签 如果有herf 则取出来,否者 直接获取百度盘
+            Elements attr = document.getElementsByTag("h2").select("a");
+            for (Element element : attr) {
+                System.out.println(element.attr("href").trim());
+                aiDianYingNormalUrlSet.add(element.attr("href").trim());
+            }
+            //直接获取百度网盘
+            if(attr.size() <= 0){
+                aiDianYingNormalUrlSet.add(urlAiDianying);
             }
         } catch (Exception e) {
             getProxyService.removeUnableProxy(proxyIp + ":" + proxyPort);
             log.error(e.getMessage());
+            e.printStackTrace();
         }
         return aiDianYingNormalUrlSet;
     }
@@ -160,32 +144,41 @@ public class AiDianyingService {
      * @param secondUrlLxxh
      * @return
      */
-    public MovieNameAndUrlModel getMovieLoopsAiDianying(String secondUrlLxxh, String proxyIp, int proxyPort) {
+    public MovieNameAndUrlModel getMovieLoopsAiDianying(String secondUrlLxxh,String userAgent , String proxyIp, int proxyPort) {
         MovieNameAndUrlModel movieNameAndUrlModel = new MovieNameAndUrlModel();
 
-        Document document = null;
+
+        StringBuffer stringBuffer = new StringBuffer();
         try {
             movieNameAndUrlModel.setMovieUrl(secondUrlLxxh);
 
-             document = Jsoup.connect(secondUrlLxxh)
-                    .proxy(proxyIp, proxyPort)
-                    .userAgent(UserAgentUtil.randomUserAgent())
-                    .header("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9")
-                    .header("Cache-Control", "max-age=0")
-                    .header("Upgrade-Insecure-Requests", "1")
-                    .timeout(10000)
-                    .referrer(secondUrlLxxh)
-                    .get();
-        }catch (Exception e){
-            log.error("getMovieLoopsAiDianying" +"secondUrlLxxh"  + secondUrlLxxh + "errorInfo ->"  +e.getMessage());
+            URL url = new URL(secondUrlLxxh);
+            URLConnection connection = url.openConnection();
+            connection.setRequestProperty("User-Agent", userAgent);
+//            connection.setRequestProperty("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9");
+            connection.setRequestProperty("Host", "www.lxxh7.com");
+            connection.setRequestProperty("Upgrade-Insecure-Requests", "1");
+            connection.setRequestProperty("Cache-Control", "max-age=0");
+            connection.setConnectTimeout(18000);
+            connection.connect();
+            InputStream inputStream = connection.getInputStream();
+            byte[] bytes = new byte[1024];
+
+            while (inputStream.read(bytes) >= 0) {
+                stringBuffer.append(new String(bytes));
+                System.out.println(stringBuffer.toString());
+            }
+        } catch (Exception e) {
+            log.error("getMovieLoopsAiDianying" + "secondUrlLxxh" + secondUrlLxxh + "errorInfo ->" + e.getMessage());
             getProxyService.removeUnableProxy(proxyIp + ":" + proxyPort);
             return movieNameAndUrlModel;
         }
+
         try {
+            Document document = Jsoup.parse(stringBuffer.toString());
             String name = document.getElementsByTag("title").first().text();
             movieNameAndUrlModel.setMovieName(name);
             log.info("爱电影第二部----> begin <--------------------");
-
             log.info(document.body().toString());
             log.info("爱电影第二部----> end <--------------------");
             Elements attr = document.getElementsByTag("p").select("span");
@@ -253,8 +246,9 @@ public class AiDianyingService {
     public HashMap<String, String> convertCookie(String cookie) {
         HashMap<String, String> cookiesMap = new HashMap<String, String>();
         String[] items = cookie.trim().split(";");
-        for (String item:items) {
-        cookiesMap.put(item.split("=")[0], item.split("=")[1]);}
+        for (String item : items) {
+            cookiesMap.put(item.split("=")[0], item.split("=")[1]);
+        }
         return cookiesMap;
     }
     /**
