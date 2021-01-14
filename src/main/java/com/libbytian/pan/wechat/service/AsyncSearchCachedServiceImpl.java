@@ -67,7 +67,7 @@ public class AsyncSearchCachedServiceImpl {
      * @return
      * @throws Exception
      */
-    public List<MovieNameAndUrlModel> searchWord(String searchMovieText, String search,String proxyIp,int proxyPort) throws Exception {
+    public List<MovieNameAndUrlModel> searchWord(String searchMovieText, String search) throws Exception {
 
         List<MovieNameAndUrlModel> movieNameAndUrlModels = new ArrayList<>();
         switch (search) {

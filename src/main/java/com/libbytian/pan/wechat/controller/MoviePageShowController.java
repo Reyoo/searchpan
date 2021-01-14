@@ -151,13 +151,11 @@ public class MoviePageShowController {
     @RequestMapping(path = "/movie/{search}/{fishEncryption}/{searchName}", method = RequestMethod.GET)
     public AjaxResult getMovieList(@PathVariable String search, @PathVariable String fishEncryption, @PathVariable String searchName) {
         List<MovieNameAndUrlModel> movieNameAndUrlModels = new ArrayList<>();
-        String ipAndPort = getProxyService.getProxyIpFromRemote();
-        String proxyIp = ipAndPort.split(":")[0];
-        int proxyPort = Integer.valueOf(ipAndPort.split(":")[1]);
+
         try {
 
 //            根据不同入参 给参数
-            movieNameAndUrlModels = asyncSearchCachedService.searchWord(searchName.trim(), search, proxyIp, proxyPort);
+            movieNameAndUrlModels = asyncSearchCachedService.searchWord(searchName.trim(), search);
 
 
             if (movieNameAndUrlModels.size() == 0) {
