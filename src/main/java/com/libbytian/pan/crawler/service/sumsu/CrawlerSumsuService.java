@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.*;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -48,7 +49,7 @@ public class CrawlerSumsuService {
      * @param movieName
      * @return
      */
-    public void getSumsuUrl(String movieName) throws Exception {
+    public void getSumsuUrl(String movieName)   {
         List<String> firstSearchUrls = new ArrayList<>();
         List<MovieNameAndUrlModel> movieList = new ArrayList<>();
         HttpHeaders requestHeaders = new HttpHeaders();
@@ -87,7 +88,7 @@ public class CrawlerSumsuService {
             log.info("查询电影名为---> " + movieName + "  第一层次查询完,进入第二次查询获取网盘url");
             if (firstSearchUrls.size() > 0) {
                 movieList = getTidSumsuUrl(firstSearchUrls);
-                redisTemplate.opsForHash().putIfAbsent("sumsu", movieName, movieList);
+                redisTemplate.opsForHash().put("sumsu", movieName, movieList);
 
             }
         }
@@ -152,7 +153,7 @@ public class CrawlerSumsuService {
 
                     }
                     movieNameAndUrlService.addOrUpdateMovieUrls(movieNameAndUrlModels, "url_movie_sumsu");
-//                    redisTemplate.opsForHash().putIfAbsent("sumsu", movieName, movieNameAndUrlModels);
+//                    redisTemplate.opsForHash().put("sumsu", movieName, movieNameAndUrlModels);
 //                    redisTemplate.expire(movieName, 10, TimeUnit.SECONDS);
                 }
             }

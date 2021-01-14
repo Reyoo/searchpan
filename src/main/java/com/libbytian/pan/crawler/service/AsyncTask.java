@@ -83,7 +83,7 @@ public class AsyncTask {
 //        int sleept=(int) (Math.random()*(5000-1000+1000)+1000);
 //        Thread.sleep(sleept);
 
-        MovieNameAndUrlModel movieNameAndUrlModel = unReadService.getUnReadMovieLoops(url);
+        MovieNameAndUrlModel movieNameAndUrlModel = unReadService.getUnReadMovieLoops(url,"123",123);
         List<MovieNameAndUrlModel> movieNameAndUrlModelList = new ArrayList<>();
         if (StrUtil.isNotBlank(movieNameAndUrlModel.getMovieName())& StrUtil.isNotBlank(movieNameAndUrlModel.getWangPanPassword())) {
             movieNameAndUrlModelList.add(movieNameAndUrlModel);

@@ -1,6 +1,7 @@
 package com.libbytian.pan.proxy.service;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.libbytian.pan.proxy.model.ProxyIpAndPortModel;
 import com.libbytian.pan.system.util.UserAgentUtil;
@@ -11,12 +12,14 @@ import org.apache.http.impl.client.LaxRedirectStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.http.*;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.Random;
 
 /**
@@ -31,28 +34,30 @@ public class GetProxyService {
 
     private final RedisTemplate redisTemplate;
 
-    private  final RestTemplate restTemplate;
+    private final RestTemplate restTemplate;
 
-
-    /**
-     * 这个可以 但是就是慢
-     */
-    public void getProxyIp() {
-        System.out.println(redisTemplate.randomKey());
-        System.out.println(        redisTemplate.keys("use_proxy").size());
-        ArrayList<String> list = new ArrayList(redisTemplate.opsForHash().keys("use_proxy") );
-        int randomIndex = new Random().nextInt(list.size());
-        String randomItem = list.get(randomIndex);
-        System.out.println(randomItem);
-    }
+//
+//    /**
+//     * 这个可以 但是就是慢
+//     */
+//    public String getProxyIp() {
+//        System.out.println(redisTemplate.randomKey());
+//        System.out.println(redisTemplate.keys("use_proxy").size());
+//        ArrayList<String> list = new ArrayList(redisTemplate.opsForHash().keys("use_proxy"));
+//        int randomIndex = new Random().nextInt(list.size());
+//        String randomItem = list.get(randomIndex);
+//        System.out.println(randomItem);
+//        return randomItem;
+//    }
 
 
     /**
      * 远程调用 获取ip
+     *
      * @return
      */
-    @Bean
-    public String getProxyIpFromRemote(){
+
+    public String getProxyIpFromRemote() {
         HttpHeaders requestHeaders = new HttpHeaders();
 
         HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory();
@@ -69,16 +74,30 @@ public class GetProxyService {
         requestHeaders.add("Cache-Control", "max-age=0");
 
         HttpEntity<String> httpEntity = new HttpEntity<>(requestHeaders);
-        ResponseEntity<String> resultResponseEntity = this.restTemplate.exchange("http://127.0.0.1:5010/get", HttpMethod.GET,httpEntity, String.class);
-        ProxyIpAndPortModel proxyIpAndPortModel = JSONObject.parseObject(resultResponseEntity.getBody(),ProxyIpAndPortModel.class);
+        ResponseEntity<String> resultResponseEntity = this.restTemplate.exchange("http://127.0.0.1:5010/get", HttpMethod.GET, httpEntity, String.class);
+        ProxyIpAndPortModel proxyIpAndPortModel = JSONObject.parseObject(resultResponseEntity.getBody(), ProxyIpAndPortModel.class);
         System.out.println(proxyIpAndPortModel.getProxy());
         return proxyIpAndPortModel.getProxy();
     }
 
 
-    public  void removeUnableProxy(String ipAndPort){
-        redisTemplate.opsForHash().delete("use_proxy", ipAndPort);
-//        直接从数据从删除
+    public void removeUnableProxy(String ipAndPort) {
+
+//        this.redisTemplate.setHashValueSerializer(new StringRedisSerializer());
+
+//        String map = (String)  this.redisTemplate.opsForHash().get("use_proxy", ipAndPort);
+//        ProxyIpAndPortModel proxyIpAndPortModel = JSONObject.parseObject(map, ProxyIpAndPortModel.class);
+//
+//        //        失败次数大于10次
+//        if (proxyIpAndPortModel.getFail_count() >= 10) {
+            redisTemplate.opsForHash().delete("use_proxy", ipAndPort);
+//        } else {
+//            int count = proxyIpAndPortModel.getFail_count() + 1;
+//            proxyIpAndPortModel.setFail_count(count);
+//            Object obj = JSON.toJSON(proxyIpAndPortModel);
+//            redisTemplate.opsForHash().put("use_proxy", ipAndPort, obj.toString());
+//        }
+
     }
 
 }
