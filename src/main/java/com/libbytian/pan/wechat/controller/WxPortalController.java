@@ -174,17 +174,19 @@ public class WxPortalController {
 
 
                 //设置代理IP PORT
-//                String ipAndPort = getProxyService.getProxyIpFromRemote();
+                String ipAndPort = getProxyService.getProxyIpFromRemote();
 //                String ipAndPort = getProxyService.getProxyIp();
-//                String proxyIp = ipAndPort.split(":")[0];
-//                int proxyPort = Integer.valueOf(ipAndPort.split(":")[1]);
+                String proxyIp = ipAndPort.split(":")[0];
+                int proxyPort = Integer.valueOf(ipAndPort.split(":")[1]);
 
 
+                aiDianyingService.saveOrFreshRealMovieUrl(searchName, proxyIp, proxyPort);
+//            log.info("开始执行 unread");
+                unReadService.getUnReadCrawlerResult(searchName, proxyIp, proxyPort);
+
+                crawlerSumsuService.getSumsuUrl(searchName,proxyIp,proxyPort);
 
 
-//                aiDianyingService.saveOrFreshRealMovieUrl(searchName, proxyIp, proxyPort);
-//                unReadService.getUnReadCrawlerResult(searchName, proxyIp, proxyPort);
-//                crawlerSumsuService.getSumsuUrl(searchName);
 
 
 //                这个地方做修改 从redis 中拿 如果没有 则从数据库中拿 如果都没有直接返回空 。爬虫慢慢做

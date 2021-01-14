@@ -57,8 +57,9 @@ public class AiDianyingService {
 
 
 
-//    @Async("taskExecutor")
+    @Async("crawler-Executor")
     public void saveOrFreshRealMovieUrl(String searchMovieName, String proxyIp, int proxyPort) {
+        log.info("-------------->开始爬取爱电影<--------------------");
         ArrayList<MovieNameAndUrlModel> movieNameAndUrlModelList = new ArrayList();
         try {
 
@@ -110,15 +111,8 @@ public class AiDianyingService {
                     .header("Accept-Language", "zh-CN,zh;q=0.8")
                     .method(Connection.Method.GET)
                     .followRedirects(true).execute();
-//            Connection conn = Jsoup.connect(url);
-//            conn.method(Connection.Method.GET);
-//            conn.followRedirects(false);
-//            Connection.Response response = conn.execute();
-//            System.out.println(response.cookies());
-//            System.out.println(response.url());
 
 
-            Map<String,String> map  = response.cookies();
 
 
 
@@ -126,16 +120,26 @@ public class AiDianyingService {
             if (!response.url().toString().contains("/?s=")) {
                 aiDianYingNormalUrlSet.add(response.url().toString());
             } else {
-                Document document = Jsoup.connect(response.url().toString())
+
+                Connection.Response SecondResponse = Jsoup.connect(url)
+                        .proxy(proxyIp, proxyPort)
+                        .userAgent(userAgent)
+                        .timeout(20000)
+                        .header("Cache-Control", "max-age=0")
+                        .header("Accept-Encoding", "gzip, deflate, sdch")
+                        .header("Accept-Language", "zh-CN,zh;q=0.8")
+                        .method(Connection.Method.GET)
+                        .followRedirects(true).execute();
+
+                Document document = Jsoup.connect(SecondResponse.url().toString())
                         .proxy(proxyIp, proxyPort)
                         .userAgent(userAgent)
 //                        .cookies (convertCookie("CNZZDATA1277388696=1654295708-1610238448-%7C1610607655; UM_distinctid=176e9d99671152-02e58705fc43aa8-5463787d-5a900-176e9d996722"))
                         .timeout(12000)
-                        .followRedirects(false).get();
-
-
-                System.out.println(document.text());
+                        .followRedirects(true).get();
+                log.info("爱电影----------->begin<-----------------");
                 System.out.println(document.body());
+                log.info("爱电影----------->end<-----------------");
                 Elements attr = document.getElementsByTag("h2").select("a");
                 for (Element element : attr) {
                     System.out.println(element.attr("href").trim());
@@ -144,9 +148,7 @@ public class AiDianyingService {
             }
         } catch (Exception e) {
             getProxyService.removeUnableProxy(proxyIp + ":" + proxyPort);
-
             log.error(e.getMessage());
-            e.printStackTrace();
         }
         return aiDianYingNormalUrlSet;
     }
@@ -172,17 +174,20 @@ public class AiDianyingService {
                     .header("Cache-Control", "max-age=0")
                     .header("Upgrade-Insecure-Requests", "1")
                     .timeout(10000)
-                    .referrer("http://www.lxxh7.com")
+                    .referrer(secondUrlLxxh)
                     .get();
         }catch (Exception e){
             log.error("getMovieLoopsAiDianying" +"secondUrlLxxh"  + secondUrlLxxh + "errorInfo ->"  +e.getMessage());
+            getProxyService.removeUnableProxy(proxyIp + ":" + proxyPort);
             return movieNameAndUrlModel;
         }
         try {
             String name = document.getElementsByTag("title").first().text();
             movieNameAndUrlModel.setMovieName(name);
+            log.info("爱电影第二部----> begin <--------------------");
 
             log.info(document.body().toString());
+            log.info("爱电影第二部----> end <--------------------");
             Elements attr = document.getElementsByTag("p").select("span");
             for (Element element : attr) {
                 for (Element aTag : element.getElementsByTag("a")) {
@@ -216,9 +221,7 @@ public class AiDianyingService {
             }
 
         } catch (Exception e) {
-            getProxyService.removeUnableProxy(proxyIp + ":" + proxyPort);
-            log.error(e.getMessage());
-            e.getMessage();
+            log.error("getMovieLoopsAiDianying --> parse error " + e.getMessage());
         }
         return movieNameAndUrlModel;
     }

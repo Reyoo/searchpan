@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -38,6 +39,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 @Slf4j
 @RequestMapping("/fantasy")
+@EnableAsync
 public class MoviePageShowController {
 
     final Base64.Decoder decoder = Base64.getDecoder();
@@ -156,10 +158,6 @@ public class MoviePageShowController {
 
 //            根据不同入参 给参数
             movieNameAndUrlModels = asyncSearchCachedService.searchWord(searchName.trim(), search, proxyIp, proxyPort);
-
-//            aiDianyingService.saveOrFreshRealMovieUrl(searchName, proxyIp, proxyPort);
-//            log.info("开始执行 unread");
-//            unReadService.getUnReadCrawlerResult(searchName, proxyIp, proxyPort);
 
 
             if (movieNameAndUrlModels.size() == 0) {
