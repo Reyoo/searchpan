@@ -66,8 +66,9 @@ public class AiDianyingService {
         try {
             String urlAiDianying = lxxhUrl + "/?s=" + searchMovieName;
             log.info(urlAiDianying);
-//            System.setProperty("http.proxyHost", proxyIp);
-//            System.setProperty("http.proxyPort", String.valueOf(proxyPort));
+            System.getProperties().setProperty("proxySet", "true");
+            System.setProperty("http.proxyHost", proxyIp);
+            System.setProperty("http.proxyPort", String.valueOf(proxyPort));
             System.setProperty("http.maxRedirects", "1");
             URL url = new URL(urlAiDianying);
             URLConnection connection = url.openConnection();
@@ -159,8 +160,9 @@ public class AiDianyingService {
 
             String urlAiDianying = lxxhUrl + "/?s=" + searchMovieName;
             System.setProperty("http.maxRedirects", "3");
-//            System.setProperty("http.proxyHost", proxyIp);
-//            System.setProperty("http.proxyPort", String.valueOf(proxyPort));
+            System.getProperties().setProperty("proxySet", "true");
+            System.setProperty("http.proxyHost", proxyIp);
+            System.setProperty("http.proxyPort", String.valueOf(proxyPort));
             URL url = new URL(urlAiDianying);
             URLConnection connection = url.openConnection();
             connection.setRequestProperty("User-Agent", "Mozilla/5.0 (iPhone; CPU iPhone OS 14_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 MicroMessenger/7.0.21(0x17001522) NetType/WIFI Language/zh_CN");
