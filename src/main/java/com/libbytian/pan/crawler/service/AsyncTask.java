@@ -1,7 +1,9 @@
 package com.libbytian.pan.crawler.service;
 
 import cn.hutool.core.util.StrUtil;
+import com.libbytian.pan.crawler.service.sumsu.CrawlerSumsuService;
 import com.libbytian.pan.crawler.service.unread.UnReadService;
+import com.libbytian.pan.proxy.service.GetProxyService;
 import com.libbytian.pan.system.model.MovieNameAndUrlModel;
 import com.libbytian.pan.system.service.IMovieNameAndUrlService;
 import com.libbytian.pan.wechat.service.NormalPageService;
@@ -9,6 +11,7 @@ import com.libbytian.pan.crawler.service.aidianying.AiDianyingService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -29,11 +32,29 @@ import java.util.List;
 public class AsyncTask {
 
 
-    private final NormalPageService normalPageService;
     private final AiDianyingService aiDianyingService;
     private final UnReadService unReadService;
+    private final GetProxyService getProxyService;
+    private final CrawlerSumsuService crawlerSumsuService;
 
     private final IMovieNameAndUrlService iMovieNameAndUrlService;
+
+
+
+
+    @Async("crawler-Executor")
+    public void crawlerMovie(String searchName){
+        //设置代理IP PORT
+        String ipAndPort = getProxyService.getProxyIpFromRemote();
+//                String ipAndPort = getProxyService.getProxyIp();
+        String proxyIp = ipAndPort.split(":")[0];
+        int proxyPort = Integer.valueOf(ipAndPort.split(":")[1]);
+
+        aiDianyingService.saveOrFreshRealMovieUrl(searchName, proxyIp, proxyPort);
+        unReadService.getUnReadCrawlerResult(searchName, proxyIp, proxyPort);
+        crawlerSumsuService.getSumsuUrl(searchName,proxyIp,proxyPort);
+    }
+
 
 
 

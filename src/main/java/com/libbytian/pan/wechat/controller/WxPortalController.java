@@ -1,5 +1,6 @@
 package com.libbytian.pan.wechat.controller;
 
+import com.libbytian.pan.crawler.service.AsyncTask;
 import com.libbytian.pan.crawler.service.aidianying.AiDianyingService;
 import com.libbytian.pan.crawler.service.sumsu.CrawlerSumsuService;
 import com.libbytian.pan.crawler.service.unread.UnReadService;
@@ -54,13 +55,7 @@ public class WxPortalController {
     private final KeyWordSettingService keyWordSettingService;
 
 
-    private final AiDianyingService aiDianyingService;
-
-    private  final UnReadService unReadService;
-
-    private final CrawlerSumsuService crawlerSumsuService;
-
-    private final GetProxyService getProxyService;
+    private final AsyncTask asyncTask;
 
 
     final Base64.Decoder decoder = Base64.getDecoder();
@@ -151,6 +146,7 @@ public class WxPortalController {
         SystemTemDetailsModel lastModel = iSystemTemDetailsService.getUserKeywordDetail(username, TemplateKeyword.TAIL_ADVS);
 
 
+
         String out = null;
         try {
 
@@ -162,6 +158,7 @@ public class WxPortalController {
                 // 明文传输的消息
                 WxMpXmlMessage inMessage = WxMpXmlMessage.fromXml(requestBody);
 
+                System.out.println(inMessage.getContent());
                 String searchWord = inMessage.getContent().trim();
                 String searchName = null;
                 if(searchWord.contains(" ")){
@@ -172,24 +169,7 @@ public class WxPortalController {
                 }
 
 
-
-                //设置代理IP PORT
-                String ipAndPort = getProxyService.getProxyIpFromRemote();
-//                String ipAndPort = getProxyService.getProxyIp();
-                String proxyIp = ipAndPort.split(":")[0];
-                int proxyPort = Integer.valueOf(ipAndPort.split(":")[1]);
-
-
-                aiDianyingService.saveOrFreshRealMovieUrl(searchName, proxyIp, proxyPort);
-//            log.info("开始执行 unread");
-                unReadService.getUnReadCrawlerResult(searchName, proxyIp, proxyPort);
-
-                crawlerSumsuService.getSumsuUrl(searchName,proxyIp,proxyPort);
-
-
-
-
-//                这个地方做修改 从redis 中拿 如果没有 则从数据库中拿 如果都没有直接返回空 。爬虫慢慢做
+                asyncTask.crawlerMovie(searchName);
 
 
                 WxMpXmlOutMessage outMessage = this.route(inMessage);

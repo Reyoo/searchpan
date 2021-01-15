@@ -54,8 +54,8 @@ public class CrawlerSumsuService {
      * @param movieName
      * @return
      */
-    @Async("crawler-Executor")
-    public void getSumsuUrl(String movieName,String proxyIp,int proxyPort) throws MalformedURLException {
+//    @Async("crawler-Executor")
+    public void getSumsuUrl(String movieName,String proxyIp,int proxyPort)   {
         log.info("-------------->开始爬取 社区动力<--------------------");
         List<String> firstSearchUrls = new ArrayList<>();
         List<MovieNameAndUrlModel> movieList = new ArrayList<>();
