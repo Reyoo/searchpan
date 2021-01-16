@@ -55,7 +55,8 @@ public class InvalidUrlCheckingService {
                 if (StrUtil.isBlank(wangPanUrl)) {
                     continue;
                 }
-                Document document = Jsoup.connect(wangPanUrl).proxy(proxyIp,proxyPort).get();
+//                Document document = Jsoup.connect(wangPanUrl).proxy(proxyIp,proxyPort).get();
+                Document document = Jsoup.connect(wangPanUrl).get();
                 String title = document.title();
                 //获取html中的标题
                 log.info("title--> :" + title + " 网盘URL --> " + wangPanUrl + " 原资源 --> " + movieNameAndUrlModel.getMovieUrl());
