@@ -25,6 +25,7 @@ import me.chanjar.weixin.mp.bean.message.WxMpXmlOutTextMessage;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.*;
 import org.dom4j.io.SAXReader;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.ByteArrayInputStream;
@@ -53,6 +54,7 @@ public class WxPortalController {
     private final AsyncSearchCachedServiceImpl asyncSearchCachedService;
     private final ISystemKeywordService systemKeywordService;
     private final KeyWordSettingService keyWordSettingService;
+    private final RedisTemplate redisTemplate;
 
 
     private final AsyncTask asyncTask;
@@ -168,7 +170,7 @@ public class WxPortalController {
 
                 asyncTask.crawlerMovie(searchName);
 
-                //从Redis中取出所有key,判断是否存在粉丝传入内容
+                //从Redis中取出所有key,判断是传入内容是否为敏感词
                 if (redisTemplate.boundHashOps("SensitiveWord").keys().contains(searchName)){
                     return "";
                 }
