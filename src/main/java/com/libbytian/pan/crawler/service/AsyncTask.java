@@ -42,11 +42,10 @@ public class AsyncTask {
 
 
 
-    @Async("crawler-Executor")
-    public void crawlerMovie(String searchName){
+    @Async("crawler-Executor")    public void crawlerMovie(String searchName){
         //设置代理IP PORT
-        String ipAndPort = getProxyService.getProxyIpFromRemote();
-//                String ipAndPort = getProxyService.getProxyIp();
+//        String ipAndPort = getProxyService.getProxyIpFromRemote();
+         String ipAndPort = getProxyService.getProxyIp();
         String proxyIp = ipAndPort.split(":")[0];
         int proxyPort = Integer.valueOf(ipAndPort.split(":")[1]);
 

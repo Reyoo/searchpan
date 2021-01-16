@@ -40,15 +40,15 @@ public class GetProxyService {
 //    /**
 //     * 这个可以 但是就是慢
 //     */
-//    public String getProxyIp() {
-//        System.out.println(redisTemplate.randomKey());
-//        System.out.println(redisTemplate.keys("use_proxy").size());
-//        ArrayList<String> list = new ArrayList(redisTemplate.opsForHash().keys("use_proxy"));
-//        int randomIndex = new Random().nextInt(list.size());
-//        String randomItem = list.get(randomIndex);
-//        System.out.println(randomItem);
-//        return randomItem;
-//    }
+    public String getProxyIp() {
+        System.out.println(redisTemplate.randomKey());
+        System.out.println(redisTemplate.keys("use_proxy").size());
+        ArrayList<String> list = new ArrayList(redisTemplate.opsForHash().keys("use_proxy"));
+        int randomIndex = new Random().nextInt(list.size());
+        String randomItem = list.get(randomIndex);
+        System.out.println(randomItem);
+        return randomItem;
+    }
 
 
     /**
