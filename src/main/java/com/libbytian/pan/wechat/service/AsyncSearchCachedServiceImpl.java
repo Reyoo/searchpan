@@ -38,18 +38,9 @@ public class AsyncSearchCachedServiceImpl {
 
     private final RedisTemplate redisTemplate;
 
-    private final InvalidUrlCheckingService invalidUrlCheckingService;
-
-    private final IMovieNameAndUrlService movieNameAndUrlService;
-
-
-    private final CrawlerSumsuService crawlerSumsuService;
-
     private final MovieNameAndUrlMapper movieNameAndUrlMapper;
 
-    private final AiDianyingService aiDianyingService;
 
-    private final UnReadService unReadService;
 
 
     @Value("${user.unread.weiduyingdan}")

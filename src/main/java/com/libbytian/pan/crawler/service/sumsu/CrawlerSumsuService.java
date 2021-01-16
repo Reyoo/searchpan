@@ -2,6 +2,7 @@ package com.libbytian.pan.crawler.service.sumsu;
 
 import com.libbytian.pan.system.model.MovieNameAndUrlModel;
 import com.libbytian.pan.system.service.IMovieNameAndUrlService;
+import com.libbytian.pan.system.service.impl.InvalidUrlCheckingService;
 import com.libbytian.pan.system.util.UserAgentUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -43,6 +44,8 @@ public class CrawlerSumsuService {
     private final RedisTemplate redisTemplate;
 
     private final IMovieNameAndUrlService movieNameAndUrlService;
+
+    private final InvalidUrlCheckingService invalidUrlCheckingService;
 
 
     @Value("${user.sumsu.url}")
@@ -95,7 +98,9 @@ public class CrawlerSumsuService {
             }
             log.info("查询电影名为---> " + movieName + "  第一层次查询完,进入第二次查询获取网盘url");
             if (firstSearchUrls.size() > 0) {
-                movieList = getTidSumsuUrl(firstSearchUrls);
+                movieList = getTidSumsuUrl(firstSearchUrls,proxyIp,proxyPort);
+
+
                 redisTemplate.opsForHash().put("sumsu", movieName, movieList);
 
             }
@@ -103,7 +108,7 @@ public class CrawlerSumsuService {
 
     }
 
-    public List<MovieNameAndUrlModel> getTidSumsuUrl(List<String> urls) {
+    public List<MovieNameAndUrlModel> getTidSumsuUrl(List<String> urls,String proxyIp,int proxyPort) {
         List<MovieNameAndUrlModel> movieNameAndUrlModels = new ArrayList<>();
         try {
             for (String sumsuUrl : urls) {
@@ -158,11 +163,10 @@ public class CrawlerSumsuService {
 
                             movieNameAndUrlModels.add(movieNameAndUrlModel);
                         }
-
                     }
                     movieNameAndUrlService.addOrUpdateMovieUrls(movieNameAndUrlModels, "url_movie_sumsu");
-//                    redisTemplate.opsForHash().put("sumsu", movieName, movieNameAndUrlModels);
-//                    redisTemplate.expire(movieName, 10, TimeUnit.SECONDS);
+                    invalidUrlCheckingService.checkUrlMethod("url_movie_sumsu",movieNameAndUrlModels,proxyIp,Integer.valueOf(proxyPort));
+
                 }
             }
         } catch (Exception e) {
@@ -241,6 +245,8 @@ public class CrawlerSumsuService {
 
                 }
                 movieNameAndUrlService.addOrUpdateMovieUrls(movieNameAndUrlModels, "url_movie_sumsu");
+
+//                invalidUrlCheckingService.checkUrlMethod("url_movie_aidianying",movieNameAndUrlModels,proxyIp,Integer.valueOf(proxyPort));
             }
 
         } catch (Exception e) {

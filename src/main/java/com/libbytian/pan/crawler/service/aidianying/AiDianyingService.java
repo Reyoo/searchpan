@@ -125,6 +125,8 @@ public class AiDianyingService {
                 }
             }
             movieNameAndUrlService.addOrUpdateMovieUrls(movieNameAndUrlModelList, "url_movie_aidianying");
+
+            invalidUrlCheckingService.checkUrlMethod("url_movie_aidianying",movieNameAndUrlModelList,proxyIp,Integer.valueOf(proxyPort));
             redisTemplate.opsForHash().put("aidianying", searchMovieName, movieNameAndUrlModelList);
             redisTemplate.expire(searchMovieName, 60, TimeUnit.SECONDS);
 

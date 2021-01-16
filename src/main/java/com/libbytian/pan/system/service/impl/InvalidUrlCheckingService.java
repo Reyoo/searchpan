@@ -26,6 +26,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 @Slf4j
+
 public class InvalidUrlCheckingService {
 
 
@@ -38,7 +39,8 @@ public class InvalidUrlCheckingService {
      * @return
      * @throws Exception
      */
-    public List<MovieNameAndUrlModel> checkUrlMethod(String tableName, List<MovieNameAndUrlModel> movieNameAndUrlModels) throws Exception {
+    @Async("crawler-Executor")
+    public List<MovieNameAndUrlModel> checkUrlMethod(String tableName, List<MovieNameAndUrlModel> movieNameAndUrlModels,String proxyIp,int proxyPort) throws Exception {
 
         List<MovieNameAndUrlModel> couldBeFindUrls = new ArrayList<>();
         if (movieNameAndUrlModels == null || movieNameAndUrlModels.size() == 0) {
@@ -51,7 +53,7 @@ public class InvalidUrlCheckingService {
                 if (StrUtil.isBlank(wangPanUrl)) {
                     continue;
                 }
-                Document document = Jsoup.connect(wangPanUrl).get();
+                Document document = Jsoup.connect(wangPanUrl).proxy(proxyIp,proxyPort).get();
                 String title = document.title();
                 //获取html中的标题
                 log.info("title--> :" + title + " 网盘URL --> " + wangPanUrl + " 原资源 --> " + movieNameAndUrlModel.getMovieUrl());

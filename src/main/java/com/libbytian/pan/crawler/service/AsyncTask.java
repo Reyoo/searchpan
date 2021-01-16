@@ -42,7 +42,8 @@ public class AsyncTask {
 
 
 
-    @Async("crawler-Executor")    public void crawlerMovie(String searchName){
+    @Async("crawler-Executor")
+    public void crawlerMovie(String searchName){
         //设置代理IP PORT
 //        String ipAndPort = getProxyService.getProxyIpFromRemote();
          String ipAndPort = getProxyService.getProxyIp();
