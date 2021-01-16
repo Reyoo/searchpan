@@ -1,11 +1,13 @@
 package com.libbytian.pan.wechat.controller;
 
+import com.libbytian.pan.system.config.SensitiveWordInit;
 import com.libbytian.pan.system.model.SystemTemDetailsModel;
 import com.libbytian.pan.system.model.SystemUserModel;
 import com.libbytian.pan.system.service.ISystemKeywordService;
 import com.libbytian.pan.system.service.ISystemTemDetailsService;
 
 import com.libbytian.pan.system.service.ISystemUserService;
+import com.libbytian.pan.system.util.sensitive.SensitiveWordEngine;
 import com.libbytian.pan.wechat.constant.TemplateKeyword;
 import com.libbytian.pan.wechat.handler.SubscribeHandler;
 import com.libbytian.pan.wechat.service.AsyncSearchCachedServiceImpl;
@@ -20,6 +22,7 @@ import me.chanjar.weixin.mp.bean.message.WxMpXmlOutTextMessage;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.*;
 import org.dom4j.io.SAXReader;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 import java.io.ByteArrayInputStream;
 import java.time.LocalDateTime;
@@ -48,6 +51,8 @@ public class WxPortalController {
     private final ISystemKeywordService systemKeywordService;
 
     private final KeyWordSettingService keyWordSettingService;
+
+    private final RedisTemplate redisTemplate;
 
 
     final Base64.Decoder decoder = Base64.getDecoder();
@@ -133,14 +138,6 @@ public class WxPortalController {
         //解析传入的username,拿到user,查询对应模板
         String username = new String(decoder.decode(verification), "UTF-8");
 
-        /**
-         * 更新用户 接口调用时间
-         */
-
-
-
-
-
 
         /**
          * 获取用户名绑定的模板
@@ -152,10 +149,6 @@ public class WxPortalController {
 
         //获取用调用接口时间
         iSystemUserService.updateUser(systemUserModel);
-
-        SystemTemDetailsModel headModel = iSystemTemDetailsService.getUserKeywordDetail(username, TemplateKeyword.TOP_ADVS);
-        SystemTemDetailsModel lastModel = iSystemTemDetailsService.getUserKeywordDetail(username, TemplateKeyword.TAIL_ADVS);
-
 
         String out = null;
         try {
@@ -178,6 +171,12 @@ public class WxPortalController {
                 String searchName = searchWord.substring(idx + 1);
 
 
+                //从Redis中取出所有key,判断是否存在粉丝传入内容
+                if (redisTemplate.boundHashOps("SensitiveWord").keys().contains(searchName)){
+                    return "";
+                }
+
+
 //                这个地方做修改 从redis 中拿 如果没有 则从数据库中拿 如果都没有直接返回空 。爬虫慢慢做
                 asyncSearchCachedService.searchAsyncWord(searchName,false,null);
 
@@ -188,11 +187,16 @@ public class WxPortalController {
                 }
 
                 StringBuffer stringBuffer = new StringBuffer();
+
+
                 /**
                  * 响应内容
                  * 关键字 头部广告 headModel.getKeywordToValue()
                  * 关键字 底部广告 lastModel.getKeywordToValue()
                  */
+
+                SystemTemDetailsModel headModel = iSystemTemDetailsService.getUserKeywordDetail(username, TemplateKeyword.TOP_ADVS);
+                SystemTemDetailsModel lastModel = iSystemTemDetailsService.getUserKeywordDetail(username, TemplateKeyword.TAIL_ADVS);
 
                 if (headModel.getEnableFlag()) {
                     stringBuffer.append(headModel.getKeywordToValue());

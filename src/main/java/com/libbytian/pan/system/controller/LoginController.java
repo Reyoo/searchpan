@@ -1,6 +1,7 @@
 package com.libbytian.pan.system.controller;
 
 import com.libbytian.pan.system.common.AjaxResult;
+import com.libbytian.pan.system.model.SystemTemDetailsModel;
 import com.libbytian.pan.system.model.SystemUserModel;
 import com.libbytian.pan.system.service.ISystemUserService;
 import lombok.Data;
@@ -15,6 +16,7 @@ import java.time.LocalDate;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author qisun
@@ -57,14 +59,13 @@ public class LoginController {
             }
             iSystemUserService.register(systemUserModel);
 
-
-
             return AjaxResult.success();
         } catch (Exception e) {
             log.error(e.getMessage());
             return AjaxResult.error(e.getMessage());
         }
     }
+
 
 
 }

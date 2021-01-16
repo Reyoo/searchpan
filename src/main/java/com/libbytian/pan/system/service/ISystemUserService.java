@@ -5,6 +5,7 @@ package com.libbytian.pan.system.service;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.libbytian.pan.system.model.SystemTemDetailsModel;
 import com.libbytian.pan.system.model.SystemTemplateModel;
 import com.libbytian.pan.system.model.SystemUserModel;
 import com.libbytian.pan.system.model.SystemUserToTemplate;
@@ -12,6 +13,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -80,7 +82,6 @@ public interface ISystemUserService extends IService<SystemUserModel> {
 
 
     Boolean checkUserCouldDel(SystemUserModel user) throws Exception;
-
 
 
     int addSystemUser(SystemUserModel systemUserModel ) throws Exception;

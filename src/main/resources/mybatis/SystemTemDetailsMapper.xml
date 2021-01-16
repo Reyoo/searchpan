@@ -131,6 +131,15 @@
         AND d.show_order != 0
     </select>
 
+<!--    查询默认模板详情-->
+    <select id="defultTemDetails"  resultType="com.libbytian.pan.system.model.SystemTemDetailsModel">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM sys_temdetails d
+        WHERE
+        d.show_order = 9
+    </select>
+
 
 
 

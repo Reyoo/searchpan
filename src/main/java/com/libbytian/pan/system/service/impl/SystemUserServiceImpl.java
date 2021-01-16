@@ -22,6 +22,7 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Base64;
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -82,6 +83,9 @@ public class SystemUserServiceImpl extends ServiceImpl<SystemUserMapper, SystemU
         return systemUserMapper.insertSystemUser(systemUserModel);
     }
 
+
+
+
     @Override
     public SystemUserModel getUser(SystemUserModel systemUserModel) {
         return systemUserMapper.getUser(systemUserModel);
@@ -141,6 +145,8 @@ public class SystemUserServiceImpl extends ServiceImpl<SystemUserMapper, SystemU
             userToTemplateService.save(userToTemplate);
             //注册时,在默认模板ID对应模板详情下存入默认关键词
             systemTemDetailsService.defaultSave(templateId);
+
+
 
 
             String appId = user.getAppId();

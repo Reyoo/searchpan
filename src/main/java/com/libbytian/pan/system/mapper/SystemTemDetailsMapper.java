@@ -13,6 +13,7 @@ import org.apache.ibatis.annotations.Select;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 @Mapper
 public interface SystemTemDetailsMapper extends BaseMapper<SystemTemDetailsModel> {
@@ -32,6 +33,8 @@ public interface SystemTemDetailsMapper extends BaseMapper<SystemTemDetailsModel
     List<SystemTemDetailsModel> findTemDetailsByUser(SystemUserModel systemUserModel);
 
     List<SystemTemDetailsModel> listTemDetailsObjectsByWord(SystemTemDetailsModel systemTemDetailsModel);
+
+    List<SystemTemDetailsModel> defultTemDetails();
 
     SystemTemDetailsModel selectUserKeywordDetail(String username,String keyword);
 

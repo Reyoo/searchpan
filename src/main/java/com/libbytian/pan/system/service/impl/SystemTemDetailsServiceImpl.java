@@ -270,137 +270,55 @@ public class SystemTemDetailsServiceImpl extends ServiceImpl<SystemTemDetailsMap
     }
 
     @Override
+
     public void defaultSave(String templateId) {
+
+        List<SystemTemDetailsModel> defultModel = systemTemDetailsMapper.defultTemDetails();
         //待优化
+//        //新增模板设置默认关键字
+//        List<SystemTemDetailsModel> detailist = new ArrayList<>();
+//        SystemTemDetailsModel secretKey = new SystemTemDetailsModel();
+//        SystemTemDetailsModel sleepDetails = new SystemTemDetailsModel();
+//        SystemTemDetailsModel headAdvert = new SystemTemDetailsModel();
+//        SystemTemDetailsModel endAdvert = new SystemTemDetailsModel();
+//        SystemTemDetailsModel hideResource = new SystemTemDetailsModel();
+//        SystemTemDetailsModel hideReply = new SystemTemDetailsModel();
+//        SystemTemDetailsModel headWeb = new SystemTemDetailsModel();
+//        SystemTemDetailsModel endWeb = new SystemTemDetailsModel();
+//
+//        sleepDetails.setKeyword("维护内容");
+//        sleepDetails.setKeywordToValue("维护时间内回复内容");
+//        headAdvert.setKeyword("头部广告");
+//        headAdvert.setKeywordToValue("微信回复头部广告（删除可去掉）");
+//        endAdvert.setKeyword("底部广告");
+//        endAdvert.setKeywordToValue("微信回复底部广告（删除可去掉）");
+//        hideResource.setKeyword("隐藏资源");
+//        hideResource.setKeywordToValue("隐藏资源名称");
+//        hideReply.setKeyword("隐藏回复");
+//        hideReply.setKeywordToValue("隐藏资源后返回给粉丝内容");
+//        headWeb.setKeyword("头部提示web");
+//        headWeb.setKeywordToValue("<style type=\"text/css\">\n"
+//        endWeb.setKeyword("底部提示web");
+//        endWeb.setKeywordToValue("web页面底部提示内容");
+//        secretKey.setKeyword("秘钥回复");
+//        secretKey.setKeywordToValue("粉丝口令回复内容");
+//
+//        detailist.add(sleepDetails);
+//        detailist.add(headAdvert);
+//        detailist.add(endAdvert);
+//        detailist.add(hideResource);
+//        detailist.add(hideReply);
+//        detailist.add(headWeb);
+//        detailist.add(endWeb);
+//        detailist.add(secretKey);
 
-        //新增模板设置默认关键字
-        List<SystemTemDetailsModel> detailist = new ArrayList<>();
-
-        SystemTemDetailsModel secretKey = new SystemTemDetailsModel();
-        SystemTemDetailsModel sleepDetails = new SystemTemDetailsModel();
-        SystemTemDetailsModel headAdvert = new SystemTemDetailsModel();
-        SystemTemDetailsModel endAdvert = new SystemTemDetailsModel();
-        SystemTemDetailsModel hideResource = new SystemTemDetailsModel();
-        SystemTemDetailsModel hideReply = new SystemTemDetailsModel();
-        SystemTemDetailsModel headWeb = new SystemTemDetailsModel();
-        SystemTemDetailsModel endWeb = new SystemTemDetailsModel();
-
-
-        sleepDetails.setKeyword("维护内容");
-        sleepDetails.setKeywordToValue("维护时间内回复内容");
-
-
-        headAdvert.setKeyword("头部广告");
-        headAdvert.setKeywordToValue("微信回复头部广告（删除可去掉）");
-
-
-        endAdvert.setKeyword("底部广告");
-        endAdvert.setKeywordToValue("微信回复底部广告（删除可去掉）");
-
-
-        hideResource.setKeyword("隐藏资源");
-        hideResource.setKeywordToValue("隐藏资源名称");
-
-
-        hideReply.setKeyword("隐藏回复");
-        hideReply.setKeywordToValue("隐藏资源后返回给粉丝内容");
-
-
-        headWeb.setKeyword("头部提示web");
-        headWeb.setKeywordToValue("<style type=\"text/css\">\n" +
-                ".bigbox{\n" +
-                "overflow:hidden;\n" +
-                "text-align:center;\n" +
-                "width:100%;\n" +
-                "padding:0px;\n" +
-                "margin:0px;\n" +
-                "max-width:750px;\n" +
-                "min-width:320px;\n" +
-                "margin:0px auto;\n" +
-                "display:block;\n" +
-                "position:relative;\n" +
-                "}\n" +
-                ".smallbox{\n" +
-                "width:100%;\n" +
-                "height:80%;\n" +
-                "background:rgba(238,174,238,0.5);\n" +
-                "position:absolute;\n" +
-                "top:10%;\n" +
-                "}\n" +
-                ".Marpaints-ggwzl{\n" +
-                "color: #fff;\n" +
-                "width:50%;\n" +
-                "padding-top:10%;\n" +
-                "float:left;\n" +
-                "}\n" +
-                ".Marpaints-ggwzr{\n" +
-                "color: #fff;\n" +
-                "width:50%;\n" +
-                "padding-top:10%;\n" +
-                "float:right;\n" +
-                "}\n" +
-                ".supportm{\n" +
-                "display:block;\n" +
-                "background:#FFFFCC;\n" +
-                "color:red;\n" +
-                "margin:5px auto;\n" +
-                "width:50%;\n" +
-                "font-size:3vw;\n" +
-                "padding:2% 1%;\n" +
-                "border:1px #666699 solid ;\n" +
-                "border-radius:2em;\n" +
-                "}\n" +
-                "a{\n" +
-                "color:red;\n" +
-                "text-decoration:none;\n" +
-                "}\n" +
-                "</style>\n" +
-                "<div class=\"bigbox\">\n" +
-                "<img src=\"http://api.mtyqx.cn/tapi/random.php\" style=\"width:100%;display:block;\">\n" +
-                "<div class=\"smallbox\">\n" +
-                "<div class=\"Marpaints-ggwzl\">\n" +
-                "<span style=\"color:yellow;\">温馨提示</span><br/>\n" +
-                "片名请以<a href=\"https://movie.douban.com/chart\">豆瓣</a>为准<br/>\n" +
-                "不要符号、第几季等无用关键词<br/>\n" +
-                "<div class=\"supportm\"><a href=\"https://www.baidu.com\" style=\"display:block;\">自定义跳转</a></div>\n" +
-                "</div>\n" +
-                "<div class=\"Marpaints-ggwzr\">\n" +
-                "<img src=\"https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fdis.myzaker.com%2Fqrcode%2F%3Fd%3Dhttps%253A%252F%252Fapp.myzaker.com%252Fnews%252Farticle.php%253Fpk%253D5fb72849b15ec00a5a00e25e&refer=http%3A%2F%2Fdis.myzaker.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=jpeg?sec=1612343379&t=de23bde8526e816715027b97cac9a2d1\" style=\"width:50%;\"><br/>\n" +
-                "<span style=\"color:yellow;font-size:3vw;\">长按扫码添加作者</span>\n" +
-                "</div>\n" +
-                "</div>\n" +
-                "</div>\n" +
-                "<div style=\"clear:both;width:100%;margin-top:5px;background:rgba(238,174,238,1);height:30px;line-height:30px;text-align:center;color:#fff;font-size: 13px;\">增值服务:稀有资源有偿代找 加微信: <span style=\"color:red;\">自定义微信</span></div>\n" +
-                "</a>");
-
-
-        endWeb.setKeyword("底部提示web");
-        endWeb.setKeywordToValue("web页面底部提示内容");
-
-
-        secretKey.setKeyword("秘钥回复");
-        secretKey.setKeywordToValue("粉丝口令回复内容");
-
-        detailist.add(sleepDetails);
-        detailist.add(headAdvert);
-        detailist.add(endAdvert);
-        detailist.add(hideResource);
-        detailist.add(hideReply);
-        detailist.add(headWeb);
-        detailist.add(endWeb);
-        detailist.add(secretKey);
-
-
-/**
+        /**
  * 需要改成批量插入
  */
-        for (int i = 0; i < detailist.size(); i++) {
-            SystemTemDetailsModel details = detailist.get(i);
+        for (int i = 0; i < defultModel.size(); i++) {
+            SystemTemDetailsModel details = defultModel.get(i);
             details.setTemdetailsId(UUID.randomUUID().toString());
             details.setCreatetime(LocalDateTime.now());
-            details.setTemdetailsstatus(false);
-            details.setEnableFlag(false);
-            details.setShowOrder(1);
             systemTemDetailsMapper.insertSystemTemDetails(details);
             //用户模板绑定模板详情
             SystemTemToTemdetail temToTemdetail = SystemTemToTemdetail.builder().templateid(templateId).templatedetailsid(details.getTemdetailsId()).build();

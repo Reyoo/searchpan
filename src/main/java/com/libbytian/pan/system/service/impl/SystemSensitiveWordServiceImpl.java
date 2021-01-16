@@ -1,16 +1,12 @@
 package com.libbytian.pan.system.service.impl;
 
-import cn.hutool.core.lang.UUID;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.libbytian.pan.system.common.AjaxResult;
 import com.libbytian.pan.system.enums.SensitiveWordsType;
 import com.libbytian.pan.system.mapper.SensitiveWordMapper;
 import com.libbytian.pan.system.model.SystemRecordSensitiveModel;
 import com.libbytian.pan.system.model.SystemTemDetailsModel;
-import com.libbytian.pan.system.model.SystemTemToTemdetail;
 import com.libbytian.pan.system.service.ISystemRecordSensitiveService;
 import com.libbytian.pan.system.service.ISystemSensitiveWordService;
-import com.libbytian.pan.system.service.ISystemTemDetailsService;
 import com.libbytian.pan.system.service.ISystemUserService;
 import com.libbytian.pan.system.util.ReadOrWriteExcelUtil;
 import com.libbytian.pan.system.util.sensitive.SensitiveWordEngine;
@@ -22,12 +18,11 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.io.InputStream;
-import java.lang.reflect.Type;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 /**
@@ -50,6 +45,7 @@ public class SystemSensitiveWordServiceImpl extends ServiceImpl<SensitiveWordMap
 
     private final ISystemUserService iSystemUserService;
 
+    private final RedisTemplate redisTemplate;
 
 
     /**
@@ -59,36 +55,35 @@ public class SystemSensitiveWordServiceImpl extends ServiceImpl<SensitiveWordMap
     @Override
     public Boolean isContaintSensitiveWord(SystemTemDetailsModel systemTemDetailsModel){
         log.info("[通用短信请求]是否包含敏感词验证, 短信内容为: {}", systemTemDetailsModel.getKeyword());
-        Map<String, Object> paramMap = new HashMap<String, Object>();
+
         Boolean boo = false;
+
         try {
+            if (redisTemplate.boundHashOps("SensitiveWord").keys().contains(systemTemDetailsModel.getKeyword())){
+                //敏感词存入记录库
+                SystemRecordSensitiveModel record = new SystemRecordSensitiveModel();
+                record.setRecordSaveTime(LocalDateTime.now());
+                record.setRecordWord(systemTemDetailsModel.getKeyword());
 
-            // 构建敏感词库
+                SensitiveWordModel sensitiveWordModel =  new SensitiveWordModel();
+                sensitiveWordModel.setWord(systemTemDetailsModel.getKeyword());
 
-            // 传入SensitivewordEngine类中的敏感词库
-            SensitiveWordEngine.sensitiveWordMap =  SensitiveWordInit.sensitiveWordMap;
-            boo = SensitiveWordEngine.isContaintSensitiveWord(systemTemDetailsModel.getKeyword(), 2);
+                //查询到type存入记录库
+                SensitiveWordsType type = sensitiveWordMapper.listSensitiveWordObjects(sensitiveWordModel).get(0).getType();
+                record.setRecordType(type);
 
-            //敏感词存入记录库
-            SystemRecordSensitiveModel record = new SystemRecordSensitiveModel();
-            record.setRecordSaveTime(LocalDateTime.now());
-            record.setRecordWord(systemTemDetailsModel.getKeyword());
+                //通过templateId查询到username
+                record.setRecordUsername(iSystemUserService.getUserByUerToTemplate(systemTemDetailsModel.getTemplateId()).getUsername());
 
-            SensitiveWordModel sensitiveWordModel =  new SensitiveWordModel();
-            sensitiveWordModel.setWord(systemTemDetailsModel.getKeyword());
+                iSystemRecordSensitiveService.save(record);
 
-            //查询到type存入记录库
-            SensitiveWordsType type = sensitiveWordMapper.listSensitiveWordObjects(sensitiveWordModel).get(0).getType();
-            record.setRecordType(type);
-
-            //通过templateId查询到username
-            record.setRecordUsername(iSystemUserService.getUserByUerToTemplate(systemTemDetailsModel.getTemplateId()).getUsername());
-
-            iSystemRecordSensitiveService.save(record);
+                boo = true;
+            }
 
         } catch (Exception e) {
             log.error("[通用短信请求]是否包含敏感词验证异常！{}", e.getMessage());
         }
+
         return boo;
     }
 
@@ -107,9 +102,9 @@ public class SystemSensitiveWordServiceImpl extends ServiceImpl<SensitiveWordMap
             // 从数据库中获取敏感词对象集合
             // 初始化敏感词库对象
             // 构建敏感词库
+
             // 传入SensitivewordEngine类中的敏感词库
             SensitiveWordEngine.sensitiveWordMap =  SensitiveWordInit.sensitiveWordMap;
-
             sensitiveWordList = SensitiveWordEngine.getSensitiveWord(systemTemDetailsModel.getKeyword(), 2);
 
             log.info("[通用短信请求]获取敏感词内容, 敏感词为: {}", sensitiveWordList);
