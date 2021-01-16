@@ -87,8 +87,6 @@ public class AsyncSearchCachedServiceImpl {
                 if (movieNameAndUrlModels == null || movieNameAndUrlModels.size() == 0) {
                     //从数据库里拿
                     movieNameAndUrlModels = movieNameAndUrlMapper.selectMovieUrlByLikeName("url_movie_unread", searchMovieText);
-//                    校验暂时不做了 速度慢
-//                    invalidUrlCheckingService.checkUrlMethod("url_movie_unread", movieNameAndUrlModels);
 
                     redisTemplate.opsForHash().put("unreadmovie", searchMovieText, movieNameAndUrlModels);
                     redisTemplate.expire(searchMovieText, 60, TimeUnit.SECONDS);
@@ -108,8 +106,6 @@ public class AsyncSearchCachedServiceImpl {
                     //数据库中也不存在 则重新爬取
                     redisTemplate.opsForHash().put("sumsu", searchMovieText, movieNameAndUrlModels);
                     redisTemplate.expire(searchMovieText, 60, TimeUnit.SECONDS);
-//                    校验先不做了
-//                    invalidUrlCheckingService.checkUrlMethod("url_movie_sumsu", movieNameAndUrlModels)
 
                     return movieNameAndUrlModels;
                 } else {

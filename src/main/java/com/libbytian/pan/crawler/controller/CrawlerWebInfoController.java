@@ -128,8 +128,8 @@ public class CrawlerWebInfoController {
 
     @RequestMapping(value = "/getall/1/{movieName}", method = RequestMethod.GET)
     public AjaxResult getXXXX(@PathVariable(name = "movieName") String movieName)   {
-        String ipAndPort = getProxyService.getProxyIpFromRemote();
-//        String ipAndPort = getProxyService.getProxyIp();
+//        String ipAndPort = getProxyService.getProxyIpFromRemote();
+        String ipAndPort = getProxyService.getProxyIp();
         String ip = ipAndPort.split(":")[0];
         int port = Integer.valueOf(ipAndPort.split(":")[1]);
         aiDianyingService.saveOrFreshRealMovieUrl(movieName,ip,port);

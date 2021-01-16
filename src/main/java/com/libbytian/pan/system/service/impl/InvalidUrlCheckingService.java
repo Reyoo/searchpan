@@ -1,6 +1,7 @@
 package com.libbytian.pan.system.service.impl;
 
 import cn.hutool.core.util.StrUtil;
+import com.libbytian.pan.system.mapper.MovieNameAndUrlMapper;
 import com.libbytian.pan.system.model.MovieNameAndUrlModel;
 import com.libbytian.pan.system.service.IMovieNameAndUrlService;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +32,7 @@ public class InvalidUrlCheckingService {
 
 
     private final IMovieNameAndUrlService movieNameAndUrlService;
+
 
     /**
      * 判断是否失效、失效则数据库中删除
@@ -63,7 +65,7 @@ public class InvalidUrlCheckingService {
 //                    失效删除 重新爬取一次
                     movieNameAndUrlService.dropMovieUrl(tableName, movieNameAndUrlModel);
 
-                } else if (title.contains("页面不存在")) {
+                } else if (title.contains("页面不存在")||title.contains("取消")) {
                     movieNameAndUrlService.dropMovieUrl(tableName, movieNameAndUrlModel);
                 } else {
                     couldBeFindUrls.add(movieNameAndUrlModel);
@@ -72,7 +74,6 @@ public class InvalidUrlCheckingService {
 
             //插入更新可用数据
             movieNameAndUrlService.addOrUpdateMovieUrls(couldBeFindUrls, tableName);
-
 
             log.info("校验完毕");
             return couldBeFindUrls;

@@ -242,15 +242,9 @@ public class UnReadService {
                     MovieNameAndUrlModel movieNameAndUrlModel = getUnReadMovieLoops(url,proxyIp,proxyPort);
                     movieNameAndUrlModelList.add(movieNameAndUrlModel);
                 }
+                invalidUrlCheckingService.checkUrlMethod("url_movie_unread",movieNameAndUrlModelList,proxyIp,Integer.valueOf(proxyPort));
             }
 
-            //判断URL 可用性  可用则插入更新 否则则删除  摘掉百度校验！！！！！！！！！！！！！！！！！！！！
-//
-//            List<MovieNameAndUrlModel> couldUseMovieUrl = invalidUrlCheckingService.checkUrlMethod("url_movie_unread", movieNameAndUrlModelList);
-//            redisTemplate.opsForHash().put("unreadmovie", searchMovieName, couldUseMovieUrl);
-            /**
-             * 摘掉 百度校验 版本
-             */
             movieNameAndUrlService.addOrUpdateMovieUrls(movieNameAndUrlModelList, "url_movie_unread");
             redisTemplate.opsForHash().put("unreadmovie", searchMovieName, movieNameAndUrlModelList);
 

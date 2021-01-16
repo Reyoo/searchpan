@@ -1,6 +1,7 @@
 package com.libbytian.pan.crawler.service.aidianying;
 
 import cn.hutool.core.util.StrUtil;
+import com.libbytian.pan.proxy.service.FindFishUrlConnection;
 import com.libbytian.pan.proxy.service.GetProxyService;
 import com.libbytian.pan.system.model.MovieNameAndUrlModel;
 import com.libbytian.pan.system.service.IMovieNameAndUrlService;
@@ -23,6 +24,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.BufferedInputStream;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.*;
@@ -50,6 +52,7 @@ public class AiDianyingService {
     private final InvalidUrlCheckingService invalidUrlCheckingService;
     private final IMovieNameAndUrlService movieNameAndUrlService;
     private final GetProxyService getProxyService;
+    private final FindFishUrlConnection findFishUrlConnection;
 
 
     @Value("${user.lxxh.aidianying}")
@@ -62,49 +65,28 @@ public class AiDianyingService {
         String userAgent = UserAgentUtil.randomUserAgent();
         Set<String> movieUrlInLxxh = new HashSet();
         log.info("-------------------------开始爬取爱电影 begin ----------------------------");
+        StringBuffer html = new StringBuffer();
 
         try {
             String urlAiDianying = lxxhUrl + "/?s=" + searchMovieName;
             log.info(urlAiDianying);
-            System.getProperties().setProperty("proxySet", "true");
-            System.setProperty("http.proxyHost", proxyIp);
-            System.setProperty("http.proxyPort", String.valueOf(proxyPort));
-            URL url = new URL(urlAiDianying);
-            URLConnection connection = url.openConnection();
-            connection.setRequestProperty("User-Agent", userAgent);
-            connection.setRequestProperty("Upgrade-Insecure-Requests", "1");
-            connection.setRequestProperty("Cache-Control", "max-age=0");
-            connection.setRequestProperty("Connection", "keep-alive");
-            connection.setConnectTimeout(18000);
-            connection.connect();
-            String redirectUrl = connection.getHeaderField("Location");
-            if(redirectUrl != null && !redirectUrl.isEmpty()) {
-                urlAiDianying = redirectUrl;
-                log.info("line 85 -> " + urlAiDianying);
-            }
-
-            @Cleanup InputStream inputStream = connection.getInputStream();
-            byte[] bytes = new byte[1024];
-            StringBuffer stringBuffer = new StringBuffer();
-            while (inputStream.read(bytes) >= 0) {
-                stringBuffer.append(new String(bytes));
-                System.out.println(stringBuffer.toString());
-            }
 
             log.info("-------------------------爱电影 end ----------------------------");
-            Document document = Jsoup.parse(stringBuffer.toString());
+            Document document = Jsoup.parse(findFishUrlConnection.FindFishUrlConnection(proxyIp,proxyPort,urlAiDianying));
             //解析h2 标签 如果有herf 则取出来,否者 直接获取百度盘
             Elements attr = document.getElementsByTag("h2").select("a");
-            for (Element element : attr) {
-                String jumpUrl = element.attr("href").trim();
-                log.info(jumpUrl);
-                if(!jumpUrl.contains(" http://www.lxxh7.com")){
-                    continue;
+            if (attr.size() != 0) {
+                for (Element element : attr) {
+                    String jumpUrl = element.attr("href").trim();
+                    log.info(jumpUrl);
+                    if (!jumpUrl.contains(" http://www.lxxh7.com")) {
+                        continue;
+                    }
+                    movieUrlInLxxh.add(jumpUrl);
                 }
-                movieUrlInLxxh.add(jumpUrl);
             }
             //直接获取百度网盘
-            if (attr.size() <= 0) {
+            if (attr.size() == 0) {
                 movieUrlInLxxh.add(urlAiDianying);
             }
         } catch (Exception e) {
@@ -123,12 +105,11 @@ public class AiDianyingService {
                     MovieNameAndUrlModel movieNameAndUrlModel = getMovieLoopsAiDianying(url, userAgent, proxyIp, proxyPort);
                     movieNameAndUrlModelList.add(movieNameAndUrlModel);
                 }
+                invalidUrlCheckingService.checkUrlMethod("url_movie_aidianying", movieNameAndUrlModelList, proxyIp, Integer.valueOf(proxyPort));
+                movieNameAndUrlService.addOrUpdateMovieUrls(movieNameAndUrlModelList, "url_movie_aidianying");
+                redisTemplate.opsForHash().put("aidianying", searchMovieName, movieNameAndUrlModelList);
+                redisTemplate.expire(searchMovieName, 60, TimeUnit.SECONDS);
             }
-            movieNameAndUrlService.addOrUpdateMovieUrls(movieNameAndUrlModelList, "url_movie_aidianying");
-
-            invalidUrlCheckingService.checkUrlMethod("url_movie_aidianying",movieNameAndUrlModelList,proxyIp,Integer.valueOf(proxyPort));
-            redisTemplate.opsForHash().put("aidianying", searchMovieName, movieNameAndUrlModelList);
-            redisTemplate.expire(searchMovieName, 60, TimeUnit.SECONDS);
 
         } catch (Exception e) {
             getProxyService.removeUnableProxy(proxyIp + ":" + proxyPort);
@@ -157,7 +138,7 @@ public class AiDianyingService {
             System.setProperty("http.proxyPort", String.valueOf(proxyPort));
             URL url = new URL(urlAiDianying);
             URLConnection connection = url.openConnection();
-            connection.setRequestProperty("User-Agent", "Mozilla/5.0 (iPhone; CPU iPhone OS 14_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 MicroMessenger/7.0.21(0x17001522) NetType/WIFI Language/zh_CN");
+            connection.setRequestProperty("User-Agent", userAgent);
             connection.setRequestProperty("Host", "www.lxxh7.com");
             connection.setRequestProperty("Upgrade-Insecure-Requests", "1");
             connection.setRequestProperty("Cache-Control", "max-age=0");
@@ -205,40 +186,11 @@ public class AiDianyingService {
      */
     public MovieNameAndUrlModel getMovieLoopsAiDianying(String secondUrlLxxh, String userAgent, String proxyIp, int proxyPort) {
         MovieNameAndUrlModel movieNameAndUrlModel = new MovieNameAndUrlModel();
+        String result = null;
 
-
-        StringBuffer stringBuffer = new StringBuffer();
-        try {
-            movieNameAndUrlModel.setMovieUrl(secondUrlLxxh);
-            System.getProperties().setProperty("proxySet", "true");
-            System.setProperty("http.proxyHost", proxyIp);
-            System.setProperty("http.proxyPort", String.valueOf(proxyPort));
-            URL url = new URL(secondUrlLxxh);
-            URLConnection connection = url.openConnection();
-//            connection.setRequestProperty("User-Agent", "Mozilla/5.0 (iPhone; CPU iPhone OS 14_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 MicroMessenger/7.0.21(0x17001522) NetType/WIFI Language/zh_CN");
-            connection.setRequestProperty("User-Agent", userAgent);
-//            connection.setRequestProperty("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9");
-            connection.setRequestProperty("Host", "www.lxxh7.com");
-            connection.setRequestProperty("Upgrade-Insecure-Requests", "1");
-            connection.setRequestProperty("Cache-Control", "max-age=0");
-            connection.setRequestProperty("Connection", "keep-alive");
-            connection.setConnectTimeout(18000);
-            connection.connect();
-            InputStream inputStream = connection.getInputStream();
-            byte[] bytes = new byte[1024];
-
-            while (inputStream.read(bytes) >= 0) {
-                stringBuffer.append(new String(bytes));
-                System.out.println(stringBuffer.toString());
-            }
-        } catch (Exception e) {
-            log.error("getMovieLoopsAiDianying ---> " + " secondUrlLxxh " +  secondUrlLxxh + "    errorInfo ->" + e.getMessage());
-            getProxyService.removeUnableProxy(proxyIp + ":" + proxyPort);
-            return movieNameAndUrlModel;
-        }
 
         try {
-            Document document = Jsoup.parse(stringBuffer.toString());
+            Document document = Jsoup.parse(findFishUrlConnection.FindFishUrlConnection(proxyIp,proxyPort,secondUrlLxxh));
             String name = document.getElementsByTag("title").first().text();
             movieNameAndUrlModel.setMovieName(name);
             log.info("爱电影第二部----> begin <--------------------");

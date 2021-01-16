@@ -11,6 +11,7 @@ import com.libbytian.pan.system.service.ISystemKeywordService;
 import com.libbytian.pan.system.service.ISystemTemDetailsService;
 
 import com.libbytian.pan.system.service.ISystemUserService;
+import com.libbytian.pan.system.service.impl.InvalidUrlCheckingService;
 import com.libbytian.pan.wechat.constant.TemplateKeyword;
 import com.libbytian.pan.wechat.handler.SubscribeHandler;
 import com.libbytian.pan.wechat.service.AsyncSearchCachedServiceImpl;
@@ -51,10 +52,9 @@ public class WxPortalController {
 
     private final ISystemTemDetailsService iSystemTemDetailsService;
     private final ISystemUserService iSystemUserService;
-    private final AsyncSearchCachedServiceImpl asyncSearchCachedService;
-    private final ISystemKeywordService systemKeywordService;
     private final KeyWordSettingService keyWordSettingService;
     private final RedisTemplate redisTemplate;
+
 
 
     private final AsyncTask asyncTask;

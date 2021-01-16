@@ -43,6 +43,9 @@ public class MovieNameAndUrlServiceImpl extends ServiceImpl<MovieNameAndUrlMappe
 
         for (MovieNameAndUrlModel movieNameAndUrlModel : movieNameAndUrlModels) {
 
+            if(movieNameAndUrlModel.getMovieName()==null){
+                continue;
+            }
             List<MovieNameAndUrlModel> list = movieNameAndUrlMapper.selectMovieUrlByName(tableName, movieNameAndUrlModel.getMovieName().trim());
             if (list.size() > 0) {
 //                如果查询到数据 则更新
