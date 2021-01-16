@@ -1,13 +1,16 @@
 package com.libbytian.pan.wechat.controller;
 
-import com.libbytian.pan.system.config.SensitiveWordInit;
+import com.libbytian.pan.crawler.service.AsyncTask;
+import com.libbytian.pan.crawler.service.aidianying.AiDianyingService;
+import com.libbytian.pan.crawler.service.sumsu.CrawlerSumsuService;
+import com.libbytian.pan.crawler.service.unread.UnReadService;
+import com.libbytian.pan.proxy.service.GetProxyService;
 import com.libbytian.pan.system.model.SystemTemDetailsModel;
 import com.libbytian.pan.system.model.SystemUserModel;
 import com.libbytian.pan.system.service.ISystemKeywordService;
 import com.libbytian.pan.system.service.ISystemTemDetailsService;
 
 import com.libbytian.pan.system.service.ISystemUserService;
-import com.libbytian.pan.system.util.sensitive.SensitiveWordEngine;
 import com.libbytian.pan.wechat.constant.TemplateKeyword;
 import com.libbytian.pan.wechat.handler.SubscribeHandler;
 import com.libbytian.pan.wechat.service.AsyncSearchCachedServiceImpl;
@@ -22,8 +25,8 @@ import me.chanjar.weixin.mp.bean.message.WxMpXmlOutTextMessage;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.*;
 import org.dom4j.io.SAXReader;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
+
 import java.io.ByteArrayInputStream;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -42,21 +45,20 @@ public class WxPortalController {
     private final WxMpService wxService;
     private final WxMpMessageRouter messageRouter;
 
-    private final SubscribeHandler subscribeHandler;
+    //首次关注 需要开发编写新接口
+//    private final SubscribeHandler subscribeHandler;
 
     private final ISystemTemDetailsService iSystemTemDetailsService;
     private final ISystemUserService iSystemUserService;
     private final AsyncSearchCachedServiceImpl asyncSearchCachedService;
-
     private final ISystemKeywordService systemKeywordService;
-
     private final KeyWordSettingService keyWordSettingService;
 
-    private final RedisTemplate redisTemplate;
+
+    private final AsyncTask asyncTask;
 
 
     final Base64.Decoder decoder = Base64.getDecoder();
-    final Base64.Encoder encoder = Base64.getEncoder();
 
 
     /**
@@ -114,7 +116,6 @@ public class WxPortalController {
 
 
     @RequestMapping(path = "/{verification}/{appId}", method = RequestMethod.POST, produces = "application/xml; charset=UTF-8")
-//    @Async
     public String post(
             @PathVariable String verification,
             @PathVariable String appId,
@@ -130,25 +131,18 @@ public class WxPortalController {
                         + " timestamp=[{}], nonce=[{}], requestBody=[\n{}\n] ",
                 openid, signature, encType, msgSignature, timestamp, nonce, requestBody);
 
-//        if (!this.wxService.switchover(appId)) {
-//            throw new IllegalArgumentException(String.format("未找到对应appid=[%s]的配置，请核实！", appId));
-//        }
-
 
         //解析传入的username,拿到user,查询对应模板
         String username = new String(decoder.decode(verification), "UTF-8");
 
 
-        /**
-         * 获取用户名绑定的模板
-         */
-
         SystemUserModel systemUserModel = new SystemUserModel();
         systemUserModel.setUsername(username);
         systemUserModel.setCallTime(LocalDateTime.now());
-
         //获取用调用接口时间
         iSystemUserService.updateUser(systemUserModel);
+
+
 
         String out = null;
         try {
@@ -161,24 +155,24 @@ public class WxPortalController {
                 // 明文传输的消息
                 WxMpXmlMessage inMessage = WxMpXmlMessage.fromXml(requestBody);
 
-//                System.out.println( wxService.getUserService());
-//                System.out.println( inMessage.getAllFieldsMap());
-
-
+                System.out.println(inMessage.getContent());
                 String searchWord = inMessage.getContent().trim();
-//                -----------------------------------------------------------
-                int idx = searchWord.lastIndexOf(" ");
-                String searchName = searchWord.substring(idx + 1);
+                String searchName = null;
+                if(searchWord.contains(" ")){
+                    int idx = searchWord.lastIndexOf(" ");
+                     searchName = searchWord.substring(idx + 1);
+                }else{
+                    searchName = searchWord;
+                }
 
+
+                asyncTask.crawlerMovie(searchName);
 
                 //从Redis中取出所有key,判断是否存在粉丝传入内容
                 if (redisTemplate.boundHashOps("SensitiveWord").keys().contains(searchName)){
                     return "";
                 }
 
-
-//                这个地方做修改 从redis 中拿 如果没有 则从数据库中拿 如果都没有直接返回空 。爬虫慢慢做
-                asyncSearchCachedService.searchAsyncWord(searchName,false,null);
 
                 WxMpXmlOutMessage outMessage = this.route(inMessage);
 
@@ -187,8 +181,6 @@ public class WxPortalController {
                 }
 
                 StringBuffer stringBuffer = new StringBuffer();
-
-
                 /**
                  * 响应内容
                  * 关键字 头部广告 headModel.getKeywordToValue()
@@ -218,16 +210,16 @@ public class WxPortalController {
                     stringBuffer.append(lastModel.getKeywordToValue());
                 }
 
-               stringBuffer =  keyWordSettingService.Setting(username,searchName ,stringBuffer ,searchWord);
+                stringBuffer = keyWordSettingService.Setting(username, searchName, stringBuffer, searchWord);
 
-                Thread.sleep(1200);
+//                Thread.sleep(1200);
                 outMessage = WxMpXmlOutTextMessage.TEXT()
                         .toUser(inMessage.getFromUser())
                         .fromUser(inMessage.getToUser())
                         .content(stringBuffer.toString()).build();
 
                 out = outMessage.toXml();
-//                System.out.println(out);
+
 
             } else if ("aes".equalsIgnoreCase(encType)) {
                 // aes加密的消息
@@ -261,8 +253,6 @@ public class WxPortalController {
 
         return null;
     }
-
-
 
 
 }

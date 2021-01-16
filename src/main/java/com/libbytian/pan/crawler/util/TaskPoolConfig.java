@@ -2,6 +2,7 @@ package com.libbytian.pan.crawler.util;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
@@ -20,14 +21,14 @@ import java.util.concurrent.Executor;
 @EnableAsync
 public class TaskPoolConfig {
 
-    @Bean("taskExecutor")
+    @Bean("crawler-Executor")
     public Executor taskExecutro(){
         ThreadPoolTaskExecutor taskExecutor = new ThreadPoolTaskExecutor();
         taskExecutor.setCorePoolSize(10);
         taskExecutor.setMaxPoolSize(50);
         taskExecutor.setQueueCapacity(200);
-        taskExecutor.setKeepAliveSeconds(60);
-        taskExecutor.setThreadNamePrefix("taskExecutor--");
+        taskExecutor.setKeepAliveSeconds(120);
+        taskExecutor.setThreadNamePrefix("crawler-Executor--");
         taskExecutor.setWaitForTasksToCompleteOnShutdown(true);
         taskExecutor.setAwaitTerminationSeconds(60);
         return taskExecutor;

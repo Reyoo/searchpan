@@ -2,9 +2,11 @@ package com.libbytian.pan.crawler.service.sumsu;
 
 import com.libbytian.pan.system.model.MovieNameAndUrlModel;
 import com.libbytian.pan.system.service.IMovieNameAndUrlService;
+import com.libbytian.pan.system.service.impl.InvalidUrlCheckingService;
 import com.libbytian.pan.system.util.UserAgentUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.http.HttpHost;
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.LaxRedirectStrategy;
@@ -17,11 +19,16 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.*;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+import java.net.InetSocketAddress;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.time.Duration;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -38,6 +45,8 @@ public class CrawlerSumsuService {
 
     private final IMovieNameAndUrlService movieNameAndUrlService;
 
+    private final InvalidUrlCheckingService invalidUrlCheckingService;
+
 
     @Value("${user.sumsu.url}")
     String url;
@@ -48,22 +57,23 @@ public class CrawlerSumsuService {
      * @param movieName
      * @return
      */
-    public void getSumsuUrl(String movieName) throws Exception {
+//    @Async("crawler-Executor")
+    public void getSumsuUrl(String movieName,String proxyIp,int proxyPort)   {
+        log.info("-------------->开始爬取 社区动力<--------------------");
         List<String> firstSearchUrls = new ArrayList<>();
-        LocalTime begin = LocalTime.now();
         List<MovieNameAndUrlModel> movieList = new ArrayList<>();
         HttpHeaders requestHeaders = new HttpHeaders();
         requestHeaders.add("User-Agent", UserAgentUtil.randomUserAgent());
         requestHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
         MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
         map.add("formhash", "a07b2e14");
-
         map.add("srchtxt", movieName);
         map.add("searchsubmit", "yes");
 
+
         //重定向
         HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory();
-        HttpClient httpClient = HttpClientBuilder.create()
+        HttpClient httpClient = HttpClientBuilder.create().setProxy(new HttpHost(proxyIp,proxyPort))
                 .setRedirectStrategy(new LaxRedirectStrategy())
                 .build();
         factory.setHttpClient(httpClient);
@@ -73,7 +83,6 @@ public class CrawlerSumsuService {
         ResponseEntity<String> resultResponseEntity = this.restTemplate.exchange(
                 String.format(url),
                 HttpMethod.POST, requestEntity, String.class);
-
 
         if (resultResponseEntity.getStatusCode() == HttpStatus.OK) {
             String html = resultResponseEntity.getBody();
@@ -89,21 +98,19 @@ public class CrawlerSumsuService {
             }
             log.info("查询电影名为---> " + movieName + "  第一层次查询完,进入第二次查询获取网盘url");
             if (firstSearchUrls.size() > 0) {
-                movieList = getTidSumsuUrl(firstSearchUrls);
-                redisTemplate.opsForHash().putIfAbsent("sumsu", movieName, movieList);
-                redisTemplate.expire(movieName, 10, TimeUnit.SECONDS);
+                movieList = getTidSumsuUrl(firstSearchUrls,proxyIp,proxyPort);
+
+
+                redisTemplate.opsForHash().put("sumsu", movieName, movieList);
+
             }
         }
 
     }
 
-
-    public List<MovieNameAndUrlModel> getTidSumsuUrl(List<String> urls) {
-
+    public List<MovieNameAndUrlModel> getTidSumsuUrl(List<String> urls,String proxyIp,int proxyPort) {
         List<MovieNameAndUrlModel> movieNameAndUrlModels = new ArrayList<>();
         try {
-
-
             for (String sumsuUrl : urls) {
 //                System.out.println(sumsuUrl);
                 HttpHeaders requestSumsuHeaders = new HttpHeaders();
@@ -156,9 +163,9 @@ public class CrawlerSumsuService {
 
                             movieNameAndUrlModels.add(movieNameAndUrlModel);
                         }
-
                     }
                     movieNameAndUrlService.addOrUpdateMovieUrls(movieNameAndUrlModels, "url_movie_sumsu");
+                    invalidUrlCheckingService.checkUrlMethod("url_movie_sumsu",movieNameAndUrlModels,proxyIp,Integer.valueOf(proxyPort));
 
                 }
             }
@@ -210,7 +217,7 @@ public class CrawlerSumsuService {
 
                 for (Element link : elements) {
                     String linkhref = link.attr("href");
-                    if (linkhref.startsWith("https://pan.baidu.com")) {
+                    if (linkhref.startsWith("pan.baidu.com")) {
                         MovieNameAndUrlModel movieNameAndUrlModel = new MovieNameAndUrlModel();
                         String baiPan = link.attr("href").toString();
                         movieNameAndUrlModel.setWangPanUrl(baiPan);
@@ -238,6 +245,8 @@ public class CrawlerSumsuService {
 
                 }
                 movieNameAndUrlService.addOrUpdateMovieUrls(movieNameAndUrlModels, "url_movie_sumsu");
+
+//                invalidUrlCheckingService.checkUrlMethod("url_movie_aidianying",movieNameAndUrlModels,proxyIp,Integer.valueOf(proxyPort));
             }
 
         } catch (Exception e) {

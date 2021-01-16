@@ -1,5 +1,9 @@
 package com.libbytian.pan.wechat.controller;
 
+import com.libbytian.pan.crawler.service.aidianying.AiDianyingService;
+import com.libbytian.pan.crawler.service.sumsu.CrawlerSumsuService;
+import com.libbytian.pan.crawler.service.unread.UnReadService;
+import com.libbytian.pan.proxy.service.GetProxyService;
 import com.libbytian.pan.system.common.AjaxResult;
 import com.libbytian.pan.system.model.SystemTemDetailsModel;
 import com.libbytian.pan.system.model.SystemUserModel;
@@ -11,6 +15,8 @@ import com.libbytian.pan.wechat.service.NormalPageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -33,13 +39,19 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 @Slf4j
 @RequestMapping("/fantasy")
+@EnableAsync
 public class MoviePageShowController {
 
     final Base64.Decoder decoder = Base64.getDecoder();
 
     private final AsyncSearchCachedServiceImpl asyncSearchCachedService;
     private final ISystemTemDetailsService iSystemTemDetailsService;
+    private final GetProxyService getProxyService;
     private final NormalPageService normalPageService;
+    private final AiDianyingService aiDianyingService;
+    private final UnReadService unReadService;
+    private final CrawlerSumsuService crawlerSumsuService;
+
 
     /**
      * @param fishEncryption
@@ -72,24 +84,22 @@ public class MoviePageShowController {
             }
 
             Map keynullMap = new HashMap();
-            keynullMap.put("keywordToValue","");
+            keynullMap.put("keywordToValue", "");
 
-            if(map.size()==0){
+            if (map.size() == 0) {
                 map.put("head", keynullMap);
                 map.put("foot", keynullMap);
             }
 
-            if(map.containsKey("head")&&!map.containsKey("foot")){
+            if (map.containsKey("head") && !map.containsKey("foot")) {
                 map.put("foot", keynullMap);
             }
-            if(!map.containsKey("head")&&map.containsKey("foot")){
+            if (!map.containsKey("head") && map.containsKey("foot")) {
                 map.put("head", keynullMap);
             }
 
 
-
-
-                return AjaxResult.success(map);
+            return AjaxResult.success(map);
         } catch (Exception e) {
             e.printStackTrace();
             return AjaxResult.error(e.getMessage());
@@ -141,23 +151,20 @@ public class MoviePageShowController {
     @RequestMapping(path = "/movie/{search}/{fishEncryption}/{searchName}", method = RequestMethod.GET)
     public AjaxResult getMovieList(@PathVariable String search, @PathVariable String fishEncryption, @PathVariable String searchName) {
         List<MovieNameAndUrlModel> movieNameAndUrlModels = new ArrayList<>();
+
         try {
 
 //            根据不同入参 给参数
             movieNameAndUrlModels = asyncSearchCachedService.searchWord(searchName.trim(), search);
 
+
             if (movieNameAndUrlModels.size() == 0) {
                 return AjaxResult.hide("未找到该资源");
-//                return AjaxResult.hide("全网搜 '" + searchName + "' 中 挖坑埋点土数个一二三四五，再点一次大厅");
             }
             return AjaxResult.success(movieNameAndUrlModels);
         } catch (Exception e) {
             e.printStackTrace();
             return AjaxResult.hide("全网搜 '" + searchName + "' 中 挖坑埋点土数个一二三四五，再点一次大厅");
         }
-
     }
-
-
-
 }

@@ -25,9 +25,6 @@
 
 
 
-
-
-
     <select id="selectMovieUrlByName" resultType="com.libbytian.pan.system.model.MovieNameAndUrlModel"  statementType="STATEMENT">
         SELECT
         <include refid="Base_Column_List"/>

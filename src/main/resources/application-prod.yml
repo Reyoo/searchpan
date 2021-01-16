@@ -36,9 +36,9 @@ spring:
   # 配置数据源
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://127.0.0.1:33306/findfish?useUnicode=true&characterEncoding=utf-8&serverTimezone=Hongkong
+    url: jdbc:mysql://123.57.130.90:33306/demotyzf?useUnicode=true&characterEncoding=utf-8&serverTimezone=Hongkong
     username: root
-    password: libbytian123QWE!@#
+    password: 123qwe!@#
     type: com.alibaba.druid.pool.DruidDataSource
     filters: stat
     maxActive: 5
@@ -110,7 +110,7 @@ user:
   unread:
     weiduyingdan: http://www.unreadmovie.com
   lxxh:
-    aidianying: http://520.aiyule.top
+    aidianying:  http://www.lxxh7.com
   sumsu:
     url: http://520.sumsu.cn/search.php?mod=forum
   lili:

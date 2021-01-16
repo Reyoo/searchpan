@@ -88,7 +88,7 @@ public class RequestLimitContract {
                     initrequestLimitModel.setTimes(0);
                     HashOperations hashOps = redisTemplate.opsForHash();
 
-                    hashOps.putIfAbsent(RequestLimitConstant.WHITELIST, ipAddress, initrequestLimitModel);
+                    hashOps.put(RequestLimitConstant.WHITELIST, ipAddress, initrequestLimitModel);
                     redisTemplate.boundValueOps(RequestLimitConstant.WHITELIST).expire(limit.frameTime(),TimeUnit.SECONDS);
 //                    System.out.println("----------------------------------------------");
 //                    System.out.println(redisTemplate.boundHashOps(RequestLimitConstant.WHITELIST).getExpire());

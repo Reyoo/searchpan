@@ -2,6 +2,7 @@ package com.libbytian.pan.crawler.controller;
 
 import com.libbytian.pan.crawler.service.AsyncTask;
 import com.libbytian.pan.crawler.service.aidianying.AiDianyingService;
+import com.libbytian.pan.proxy.service.GetProxyService;
 import com.libbytian.pan.system.common.AjaxResult;
 import com.libbytian.pan.crawler.service.sumsu.CrawlerSumsuService;
 import com.libbytian.pan.crawler.service.unread.UnReadService;
@@ -9,7 +10,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpRequest;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -39,6 +39,9 @@ public class CrawlerWebInfoController {
     private final UnReadService unReadService;
 
     private final CrawlerSumsuService crawlerSumsuService;
+
+    private final GetProxyService getProxyService;
+
     @Value("${user.unread.weiduyingdan}")
     String unreadUrl;
     @Value("${user.lxxh.aidianying}")
@@ -124,11 +127,26 @@ public class CrawlerWebInfoController {
     private final AiDianyingService aiDianyingService;
 
     @RequestMapping(value = "/getall/1/{movieName}", method = RequestMethod.GET)
-    public AjaxResult getXXXX(HttpServletRequest httpRequest, @PathVariable String movieName) throws UnsupportedEncodingException {
-        System.out.println(httpRequest.getRemoteHost());
-        aiDianyingService.saveOrFreshRealMovieUrl(movieName);
+    public AjaxResult getXXXX(@PathVariable(name = "movieName") String movieName)   {
+        String ipAndPort = getProxyService.getProxyIpFromRemote();
+//        String ipAndPort = getProxyService.getProxyIp();
+        String ip = ipAndPort.split(":")[0];
+        int port = Integer.valueOf(ipAndPort.split(":")[1]);
+        aiDianyingService.saveOrFreshRealMovieUrl(movieName,ip,port);
             return AjaxResult.success("表入库成功");
 
+    }
+
+
+    @RequestMapping(value = "/getip" ,method = RequestMethod.GET)
+    private void getIp(){
+        getProxyService.getProxyIpFromRemote();
+    }
+
+
+    @RequestMapping(value = "/delete" ,method = RequestMethod.GET)
+    private void deleteIp(){
+        getProxyService.removeUnableProxy("203.198.94.132:80");
     }
 
 }
