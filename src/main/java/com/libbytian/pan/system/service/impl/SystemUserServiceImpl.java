@@ -114,8 +114,8 @@ public class SystemUserServiceImpl extends ServiceImpl<SystemUserMapper, SystemU
         String encode = encoder.encode(user.getPassword());
         user.setPassword(encode);
         LocalDateTime time = LocalDateTime.now();
-        //激活到期时间 + 3天
-        user.setActTime(time.plusDays(3L));
+        //激活到期时间 + 7天
+        user.setActTime(time.plusDays(7L));
         //新增用户
         int insertFlag = systemUserMapper.insertSystemUser(user);
         SystemRoleModel systemRoleModel = new SystemRoleModel();
