@@ -100,6 +100,8 @@ public class KeyWordSettingService {
                 endTime.add(Calendar.DATE, 1);
             }
 
+
+
             //如果当前时间在维护期内，返回维护内容,开始=结束 全天维护
             if (nowTime.after(beginTime) && nowTime.before(endTime) || userStart.equals(endTime)) {
 
@@ -117,6 +119,16 @@ public class KeyWordSettingService {
                         }else {
                             Thread.sleep(5000);
                         }
+                    }
+                }
+                //判断段维护期内 没开秘钥情况
+                if (fansKey.equals("000000")){
+
+                    if (preserveContent.getEnableFlag()){
+                        stringBuffer.setLength(0);
+                        stringBuffer.append(preserveContent.getKeywordToValue());
+                    }else {
+                        Thread.sleep(5000);
                     }
                 }
 

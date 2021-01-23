@@ -44,8 +44,8 @@ public class NormalPageController {
     @Value("${user.sumsu.url}")
     String sumSuUrl;
 
-    @Value(("${user.lili.url}"))
-    String liliUrl;
+    @Value("${user.xiaoyou.yingmiao}")
+    String xiaoyouUrl;
 
 
     /**
@@ -53,11 +53,11 @@ public class NormalPageController {
      * @param name
      * @return
      */
-    @GetMapping("lili")
-    public AjaxResult getLiliMovie(@RequestParam String name) {
+    @GetMapping("xiaoyou")
+    public AjaxResult getXiaoYouMovie(@RequestParam String name) {
         try {
             MovieNameAndUrlModel movieNameAndUrl;
-            movieNameAndUrl = normalPageService.getMovieLoopsLiLi(liliUrl + "/?s=" + name);
+            movieNameAndUrl = normalPageService.getMovieLoopsXiaoYou(xiaoyouUrl + "/?s=" + name);
 
             List<MovieNameAndUrlModel> arrayList = new ArrayList();
             arrayList.add(movieNameAndUrl);

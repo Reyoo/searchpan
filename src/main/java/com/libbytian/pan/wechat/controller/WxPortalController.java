@@ -168,13 +168,13 @@ public class WxPortalController {
                 }
 
 
-                asyncTask.crawlerMovie(searchName);
-
                 //从Redis中取出所有key,判断是传入内容是否为敏感词
                 if (redisTemplate.boundHashOps("SensitiveWord").keys().contains(searchName)){
                     return "";
                 }
 
+
+                asyncTask.crawlerMovie(searchName);
 
                 WxMpXmlOutMessage outMessage = this.route(inMessage);
 

@@ -112,6 +112,23 @@ public class AsyncSearchCachedServiceImpl {
                     return movieNameAndUrlModels;
                 }
 
+
+            case "y":
+//                  从小悠家获取资源
+
+                movieNameAndUrlModels = (List<MovieNameAndUrlModel>) redisTemplate.opsForHash().get("xiaoyoumovie", searchMovieText);
+
+                if (movieNameAndUrlModels == null || movieNameAndUrlModels.size() == 0) {
+                    //从数据库里拿
+                    movieNameAndUrlModels = movieNameAndUrlMapper.selectMovieUrlByLikeName("url_movie_xiaoyou", searchMovieText);
+
+                    redisTemplate.opsForHash().put("xiaoyoumovie", searchMovieText, movieNameAndUrlModels);
+                    redisTemplate.expire(searchMovieText, 60, TimeUnit.SECONDS);
+                    return movieNameAndUrlModels;
+                } else {
+                    return movieNameAndUrlModels;
+                }
+
             default:
                 return movieNameAndUrlModels;
         }

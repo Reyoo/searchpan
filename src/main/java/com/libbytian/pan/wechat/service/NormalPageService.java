@@ -150,7 +150,7 @@ public class NormalPageService {
      * @param url
      * @return
      */
-    public MovieNameAndUrlModel getMovieLoopsLiLi(String url) {
+    public MovieNameAndUrlModel getMovieLoopsXiaoYou(String url) {
 
         String ipAndPort = getProxyService.getProxyIpFromRemote();
         String proxyIp = ipAndPort.split(":")[0];
