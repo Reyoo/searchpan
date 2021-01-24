@@ -21,13 +21,19 @@ import java.util.concurrent.Executor;
 @EnableAsync
 public class TaskPoolConfig {
 
+    public static final int PROCESSORS=Runtime.getRuntime().availableProcessors();
+    //线程最大的空闲存活时间，单位为秒
+    public static final int KEEPALIVETIME=60;
+    //任务缓存队列长度
+    public static final int BLOCKINGQUEUE_LENGTH=500;
+
     @Bean("crawler-Executor")
     public Executor taskExecutro(){
         ThreadPoolTaskExecutor taskExecutor = new ThreadPoolTaskExecutor();
-        taskExecutor.setCorePoolSize(10);
-        taskExecutor.setMaxPoolSize(50);
-        taskExecutor.setQueueCapacity(200);
-        taskExecutor.setKeepAliveSeconds(120);
+        taskExecutor.setCorePoolSize(PROCESSORS * 2);
+        taskExecutor.setMaxPoolSize(PROCESSORS * 4);
+        taskExecutor.setQueueCapacity(BLOCKINGQUEUE_LENGTH);
+        taskExecutor.setKeepAliveSeconds(KEEPALIVETIME);
         taskExecutor.setThreadNamePrefix("crawler-Executor--");
         taskExecutor.setWaitForTasksToCompleteOnShutdown(true);
         taskExecutor.setAwaitTerminationSeconds(60);

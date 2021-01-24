@@ -230,7 +230,7 @@ public class UnReadService {
      * @param searchMovieName
      * @return
      */
-//    @Async("crawler-Executor")
+    @Async("crawler-Executor")
     public void  getUnReadCrawlerResult(String searchMovieName,String proxyIp, int proxyPort) {
         log.info("-------------->开始爬取 未读<--------------------");
         List<MovieNameAndUrlModel> movieNameAndUrlModelList = new ArrayList<>();

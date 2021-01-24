@@ -57,7 +57,7 @@ public class CrawlerSumsuService {
      * @param movieName
      * @return
      */
-//    @Async("crawler-Executor")
+    @Async("crawler-Executor")
     public void getSumsuUrl(String movieName, String proxyIp, int proxyPort) {
         try {
 
