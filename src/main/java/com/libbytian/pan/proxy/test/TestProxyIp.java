@@ -60,7 +60,7 @@ public class TestProxyIp {
 //        System.getProperties().setProperty("http.proxyPort", "80");
 
         //确定代理是否设置成功
-        System.out.println((getHtml("http://www.lxxh7.com/?s=%e6%b3%b0%e5%9d%a6")));
+        System.out.println((getHtml("http://www.lxxh7.com/?s=%e5%90%b8%e8%a1%80%e9%ac%bc%e7%8c%8e%e4%ba%baD")));
 
     }
 

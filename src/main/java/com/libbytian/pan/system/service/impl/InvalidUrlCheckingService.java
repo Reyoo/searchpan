@@ -42,7 +42,7 @@ public class InvalidUrlCheckingService {
      * @throws Exception
      */
     @Async("crawler-Executor")
-    public List<MovieNameAndUrlModel> checkUrlMethod(String tableName, List<MovieNameAndUrlModel> movieNameAndUrlModels,String proxyIp,int proxyPort) throws Exception {
+    public List<MovieNameAndUrlModel> checkUrlMethod(String tableName, List<MovieNameAndUrlModel> movieNameAndUrlModels, String proxyIp, int proxyPort) throws Exception {
 
         List<MovieNameAndUrlModel> couldBeFindUrls = new ArrayList<>();
         if (movieNameAndUrlModels == null || movieNameAndUrlModels.size() == 0) {
@@ -60,13 +60,7 @@ public class InvalidUrlCheckingService {
                 String title = document.title();
                 //获取html中的标题
                 log.info("title--> :" + title + " 网盘URL --> " + wangPanUrl + " 原资源 --> " + movieNameAndUrlModel.getMovieUrl());
-                if (title.contains("链接不存在")) {
-                    //Redis 暂时不做处理
-                    //插入更新
-//                    失效删除 重新爬取一次
-                    movieNameAndUrlService.dropMovieUrl(tableName, movieNameAndUrlModel);
-
-                } else if (title.contains("页面不存在")||title.contains("取消")) {
+                if (title.contains("不存在") || title.contains("取消")) {
                     movieNameAndUrlService.dropMovieUrl(tableName, movieNameAndUrlModel);
                 } else {
                     couldBeFindUrls.add(movieNameAndUrlModel);

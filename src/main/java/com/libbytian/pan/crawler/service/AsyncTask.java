@@ -58,10 +58,11 @@ public class AsyncTask {
         String proxyIp = ipAndPort.split(":")[0];
         int proxyPort = Integer.valueOf(ipAndPort.split(":")[1]);
 
+        aiDianyingService.saveOrFreshRealMovieUrl(searchName, proxyIp, proxyPort);
         xiaoYouService.getXiaoYouCrawlerResult(searchName,proxyIp,proxyPort);
         unReadService.getUnReadCrawlerResult(searchName, proxyIp, proxyPort);
         crawlerSumsuService.getSumsuUrl(searchName,proxyIp,proxyPort);
-        aiDianyingService.saveOrFreshRealMovieUrl(searchName, proxyIp, proxyPort);
+
     }
 
 

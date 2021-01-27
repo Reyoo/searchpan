@@ -59,6 +59,7 @@ public class AiDianyingService {
     String lxxhUrl;
 
 
+    @Async("crawler-Executor")
     public void saveOrFreshRealMovieUrl(String searchMovieName, String proxyIp, int proxyPort) {
 
         ArrayList<MovieNameAndUrlModel> movieNameAndUrlModelList = new ArrayList();
@@ -69,46 +70,103 @@ public class AiDianyingService {
 
         try {
             String urlAiDianying = lxxhUrl + "/?s=" + searchMovieName;
-
             log.info("-------------------------爱电影 end ----------------------------");
-            Document document = Jsoup.parse(findFishUrlConnection.FindFishUrlConnection(proxyIp,proxyPort,urlAiDianying));
+            Document document = Jsoup.parse(findFishUrlConnection.FindFishUrlConnection(proxyIp, proxyPort, urlAiDianying));
             //解析h2 标签 如果有herf 则取出来,否者 直接获取百度盘
             Elements attr = document.getElementsByTag("h2").select("a");
             if (attr.size() != 0) {
                 for (Element element : attr) {
                     String jumpUrl = element.attr("href").trim();
-                    log.info(jumpUrl);
-                    if (!jumpUrl.contains(" http://www.lxxh7.com")) {
-                        continue;
+                    log.info("找到调整爱电影-->" +jumpUrl);
+                    if (jumpUrl.contains(" http://www.lxxh7.com")) {
+                        movieUrlInLxxh.add(jumpUrl);
                     }
-                    movieUrlInLxxh.add(jumpUrl);
                 }
             }
-            //直接获取百度网盘
-            if (attr.size() == 0) {
+            //直接获取百度网盘  这段代码可能有问题
+            if (movieUrlInLxxh.size() == 0) {
                 movieUrlInLxxh.add(urlAiDianying);
             }
-        } catch (Exception e) {
-            getProxyService.removeUnableProxy(proxyIp + ":" + proxyPort);
-            log.error(e.getMessage());
-            e.printStackTrace();
+            MovieNameAndUrlModel movieNameAndUrlModel = new MovieNameAndUrlModel();
 
-        }
-
-        try {
             //说明搜索到了 url 电影路径
-            if (movieUrlInLxxh.size() > 0) {
-                for (String url : movieUrlInLxxh) {
+                for (String secondUrlLxxh : movieUrlInLxxh) {
                     //由于包含模糊查询、这里记录到数据库中做插入更新操作
-                    log.info("爱电影--》" +url);
-                    MovieNameAndUrlModel movieNameAndUrlModel = getMovieLoopsAiDianying(url, userAgent, proxyIp, proxyPort);
-                    movieNameAndUrlModelList.add(movieNameAndUrlModel);
+                    log.info("爱电影--》" + secondUrlLxxh);
+//                    MovieNameAndUrlModel movieNameAndUrlModel = getMovieLoopsAiDianying(url, userAgent, proxyIp, proxyPort);
+
+
+                    StringBuffer stringBuffer = new StringBuffer();
+
+                    movieNameAndUrlModel.setMovieUrl(secondUrlLxxh);
+                    System.getProperties().setProperty("proxySet", "true");
+                    System.setProperty("http.proxyHost", proxyIp);
+                    System.setProperty("http.proxyPort", String.valueOf(proxyPort));
+                    URL url = new URL(secondUrlLxxh);
+                    URLConnection connection = url.openConnection();
+//            connection.setRequestProperty("User-Agent", "Mozilla/5.0 (iPhone; CPU iPhone OS 14_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 MicroMessenger/7.0.21(0x17001522) NetType/WIFI Language/zh_CN");
+                    connection.setRequestProperty("User-Agent", userAgent);
+//            connection.setRequestProperty("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9");
+                    connection.setRequestProperty("Host", "www.lxxh7.com");
+                    connection.setRequestProperty("Upgrade-Insecure-Requests", "1");
+                    connection.setRequestProperty("Cache-Control", "max-age=0");
+                    connection.setRequestProperty("Connection", "keep-alive");
+                    connection.setConnectTimeout(18000);
+                    connection.connect();
+                    InputStream inputStream = connection.getInputStream();
+                    byte[] bytes = new byte[1024];
+
+                    while (inputStream.read(bytes) >= 0) {
+                        stringBuffer.append(new String(bytes));
+                        System.out.println(stringBuffer.toString());
+                    }
+
+
+                    Document secorndDocument = Jsoup.parse(stringBuffer.toString());
+                    String name = secorndDocument.getElementsByTag("title").first().text();
+                    movieNameAndUrlModel.setMovieName(name);
+                    log.info("爱电影第二部----> begin <--------------------");
+                    log.info(secorndDocument.body().toString());
+                    log.info("爱电影第二部----> end <--------------------");
+                    Elements secorndAttr = secorndDocument.getElementsByTag("p").select("span");
+                    for (Element element : secorndAttr) {
+                        for (Element aTag : element.getElementsByTag("a")) {
+                            String linkhref = aTag.attr("href");
+                            if (linkhref.contains("pan.baidu.com")) {
+                                log.info("这里已经拿到要爬取的url : " + linkhref);
+                                movieNameAndUrlModel.setWangPanUrl(linkhref);
+                                movieNameAndUrlModel.setWangPanPassword("密码：LXXH");
+                                break;
+                            } else {
+                                continue;
+                            }
+                        }
+                    }
+//                第二种情况 span标签 里没有 url
+                    if (StrUtil.isBlank(movieNameAndUrlModel.getWangPanUrl())) {
+                        Elements urlFinals = document.getElementsByTag("p").select("a");
+                        for (Element urlFianl : urlFinals) {
+                            String linkhref = urlFianl.attr("href");
+                            if (linkhref.contains("pan.baidu.com")) {
+                                log.info("这里已经拿到要爬取的url : " + linkhref);
+                                movieNameAndUrlModel.setWangPanUrl(linkhref);
+                                movieNameAndUrlModel.setWangPanPassword("密码：LXXH");
+                                System.out.println(linkhref);
+                                break;
+                            } else {
+                                continue;
+                            }
+                        }
+                    }
+
                 }
-                invalidUrlCheckingService.checkUrlMethod("url_movie_aidianying", movieNameAndUrlModelList, proxyIp, Integer.valueOf(proxyPort));
-                movieNameAndUrlService.addOrUpdateMovieUrls(movieNameAndUrlModelList, "url_movie_aidianying");
-                redisTemplate.opsForHash().put("aidianying", searchMovieName, movieNameAndUrlModelList);
-                redisTemplate.expire(searchMovieName, 60, TimeUnit.SECONDS);
-            }
+                movieNameAndUrlModelList.add(movieNameAndUrlModel);
+
+            movieNameAndUrlService.addOrUpdateMovieUrls(movieNameAndUrlModelList, "url_movie_aidianying");
+            invalidUrlCheckingService.checkUrlMethod("url_movie_aidianying", movieNameAndUrlModelList, proxyIp, Integer.valueOf(proxyPort));
+            redisTemplate.opsForHash().put("aidianying", searchMovieName, movieNameAndUrlModelList);
+            redisTemplate.expire(searchMovieName, 60, TimeUnit.SECONDS);
+
 
         } catch (Exception e) {
             getProxyService.removeUnableProxy(proxyIp + ":" + proxyPort);
