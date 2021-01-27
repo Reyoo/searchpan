@@ -69,7 +69,7 @@
             <version>1.0.10.RELEASE</version>
         </dependency>
 
-		
+
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt</artifactId>
@@ -103,7 +103,7 @@
 
         <dependency>
             <groupId>com.github.binarywang</groupId>
-                <artifactId>weixin-java-mp</artifactId>
+            <artifactId>weixin-java-mp</artifactId>
             <version>${weixin-java-mp.version}</version>
         </dependency>
 
@@ -214,12 +214,19 @@
             <groupId>com.github.penggle</groupId>
             <artifactId>kaptcha</artifactId>
             <version>2.3.2</version>
-<!--            <exclusions>
-                <exclusion>
-                    <artifactId>javax.servlet-api</artifactId>
-                    <groupId>javax.servlet</groupId>
-                </exclusion>
-            </exclusions>-->
+        </dependency>
+
+
+        <!--https://blog.csdn.net/p_programmer/article/details/100677391?ops_request_misc=%257B%2522request%255Fid%2522%253A%2522161171693116780269860893%2522%252C%2522scm%2522%253A%252220140713.130102334.pc%255Fall.%2522%257D-->
+        <dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-java</artifactId>
+            <version>3.141.59</version>
+        </dependency>
+        <dependency>
+            <groupId>com.codeborne</groupId>
+            <artifactId>phantomjsdriver</artifactId>
+            <version>1.4.4</version>
         </dependency>
 
 
