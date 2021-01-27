@@ -3,7 +3,7 @@ package com.libbytian.pan.crawler.service;
 import cn.hutool.core.util.StrUtil;
 import com.libbytian.pan.crawler.service.sumsu.CrawlerSumsuService;
 import com.libbytian.pan.crawler.service.unread.UnReadService;
-
+import com.libbytian.pan.crawler.service.xiaoyou.XiaoYouService;
 import com.libbytian.pan.proxy.service.GetProxyService;
 import com.libbytian.pan.system.model.MovieNameAndUrlModel;
 import com.libbytian.pan.system.service.IMovieNameAndUrlService;
@@ -11,9 +11,9 @@ import com.libbytian.pan.wechat.service.NormalPageService;
 import com.libbytian.pan.crawler.service.aidianying.AiDianyingService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
-import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Component;
 
 import java.net.HttpURLConnection;
@@ -32,7 +32,6 @@ import java.util.List;
  */
 @Component
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-@EnableAsync
 @Slf4j
 public class AsyncTask {
 
@@ -41,22 +40,29 @@ public class AsyncTask {
     private final UnReadService unReadService;
     private final GetProxyService getProxyService;
     private final CrawlerSumsuService crawlerSumsuService;
-
+    private final XiaoYouService xiaoYouService;
 
     private final IMovieNameAndUrlService iMovieNameAndUrlService;
 
 
 
+
+    @Async("crawler-Executor")
     public void crawlerMovie(String searchName){
         //设置代理IP PORT
-        String ipAndPort = getProxyService.getProxyIpFromRemote();
-
+//        String ipAndPort = getProxyService.getProxyIpFromRemote();
+         String ipAndPort = getProxyService.getProxyIp();
+         if (StringUtils.isBlank(ipAndPort)){
+             return;
+         }
         String proxyIp = ipAndPort.split(":")[0];
         int proxyPort = Integer.valueOf(ipAndPort.split(":")[1]);
 
         aiDianyingService.saveOrFreshRealMovieUrl(searchName, proxyIp, proxyPort);
+        xiaoYouService.getXiaoYouCrawlerResult(searchName,proxyIp,proxyPort);
         unReadService.getUnReadCrawlerResult(searchName, proxyIp, proxyPort);
         crawlerSumsuService.getSumsuUrl(searchName,proxyIp,proxyPort);
+
     }
 
 
@@ -124,32 +130,32 @@ public class AsyncTask {
      * @param url
      * @throws Exception
      */
-//    public void getXiaoYouAllmovieInit(String url) throws Exception {
+    public void getXiaoYouAllmovieInit(String url) throws Exception {
+
+        StringBuffer stringBuffer = new StringBuffer(url);
 //
-//        StringBuffer stringBuffer = new StringBuffer(url);
-////
-////        int sleept=(int) (Math.random()*(5000-1000+1000)+1000);
-////        Thread.sleep(sleept);
-////        183.160.34.56:23564
-//
-//        //判断是否为404网页
-//        if (exist(url)){
-//            List<MovieNameAndUrlModel> movieNameAndUrlModel = xiaoYouService.getXiaoYouMovieLoops(url,"27.43.187.38",9999);
-//
-//            iMovieNameAndUrlService.addOrUpdateMovieUrls(movieNameAndUrlModel,"url_movie_xiaoyou");
-//        }else {
-//            log.info("该网页404错误");
-//        }
-//
-//
-////            log.info("插入成功 -》 " + movieNameAndUrlModel);
-//
-//    }
+//        int sleept=(int) (Math.random()*(5000-1000+1000)+1000);
+//        Thread.sleep(sleept);
+//        183.160.34.56:23564
+
+        //判断是否为404网页
+        if (exist(url)){
+            List<MovieNameAndUrlModel> movieNameAndUrlModel = xiaoYouService.getXiaoYouMovieLoops(url,"27.43.187.38",9999);
+
+            iMovieNameAndUrlService.addOrUpdateMovieUrls(movieNameAndUrlModel,"url_movie_xiaoyou");
+        }else {
+            log.info("该网页404错误");
+        }
+
+
+//            log.info("插入成功 -》 " + movieNameAndUrlModel);
+
+    }
 
 
 
     //判断是否为404网页
-    private static boolean exist(String url) {
+    public   boolean exist(String url) {
         try {
             URL u = new URL(url);
             HttpURLConnection huc = (HttpURLConnection) u.openConnection();

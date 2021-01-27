@@ -44,10 +44,15 @@ public class GetProxyService {
         System.out.println(redisTemplate.randomKey());
         System.out.println(redisTemplate.keys("use_proxy").size());
         ArrayList<String> list = new ArrayList(redisTemplate.opsForHash().keys("use_proxy"));
-        int randomIndex = new Random().nextInt(list.size());
-        String randomItem = list.get(randomIndex);
-        System.out.println(randomItem);
-        return randomItem;
+        if (list.size()>0){
+            int randomIndex = new Random().nextInt(list.size());
+            String randomItem = list.get(randomIndex-1);
+            System.out.println(randomItem);
+            return randomItem;
+        }else {
+            return "";
+        }
+
     }
 
 

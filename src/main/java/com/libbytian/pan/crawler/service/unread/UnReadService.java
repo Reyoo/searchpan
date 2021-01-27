@@ -198,7 +198,6 @@ public class UnReadService {
         String url = unreadUrl + "/?s=" + movieName;
 
         try {
-
                     Document doc = Jsoup.connect(url).
                     proxy(proxyIp, proxyPort).
                     userAgent(UserAgentUtil.randomUserAgent())
@@ -240,7 +239,10 @@ public class UnReadService {
                 for (String url : set) {
                     //由于包含模糊查询、这里记录到数据库中做插入更新操作
                     MovieNameAndUrlModel movieNameAndUrlModel = getUnReadMovieLoops(url,proxyIp,proxyPort);
-                    movieNameAndUrlModelList.add(movieNameAndUrlModel);
+                    if (movieNameAndUrlModel.getWangPanUrl().contains("pan.baidu.com")){
+                        movieNameAndUrlModelList.add(movieNameAndUrlModel);
+                    }
+
                 }
                 invalidUrlCheckingService.checkUrlMethod("url_movie_unread",movieNameAndUrlModelList,proxyIp,Integer.valueOf(proxyPort));
             }

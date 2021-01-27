@@ -1,5 +1,6 @@
 package com.libbytian.pan.wechat.service;
 
+import com.libbytian.pan.crawler.service.AsyncTask;
 import com.libbytian.pan.system.mapper.MovieNameAndUrlMapper;
 import com.libbytian.pan.system.service.IMovieNameAndUrlService;
 import com.libbytian.pan.system.service.impl.InvalidUrlCheckingService;
@@ -40,6 +41,8 @@ public class AsyncSearchCachedServiceImpl {
 
     private final MovieNameAndUrlMapper movieNameAndUrlMapper;
 
+    private final AsyncTask asyncTask;
+
 
 
 
@@ -62,58 +65,102 @@ public class AsyncSearchCachedServiceImpl {
 
         List<MovieNameAndUrlModel> movieNameAndUrlModels = new ArrayList<>();
         switch (search) {
-            case "a":
+            //a 一号大厅
+            case "x":
                 //从爱电影获取资源返回aidianying
 //                先从redis中获取
 
                 movieNameAndUrlModels = (List<MovieNameAndUrlModel>) redisTemplate.opsForHash().get("aidianying", searchMovieText);
 
-                if (movieNameAndUrlModels == null || movieNameAndUrlModels.size() == 0) {
-//数据库中没有从 mysql 中获取
-                    movieNameAndUrlModels = movieNameAndUrlMapper.selectMovieUrlByLikeName("url_movie_aidianying", searchMovieText);
-                    redisTemplate.opsForHash().put("aidianying", searchMovieText, movieNameAndUrlModels);
-                    redisTemplate.expire(searchMovieText, 60, TimeUnit.SECONDS);
-                    return movieNameAndUrlModels;
-                } else {
-                    return movieNameAndUrlModels;
+                for (MovieNameAndUrlModel movieNameAndUrlModel : movieNameAndUrlModels) {
+                    if (!asyncTask.exist(movieNameAndUrlModel.getWangPanUrl())){
+                        movieNameAndUrlModels = movieNameAndUrlMapper.selectMovieUrlByLikeName("url_movie_aidianying", searchMovieText);
+
+                        for (MovieNameAndUrlModel model : movieNameAndUrlModels) {
+                            if (!asyncTask.exist(model.getWangPanUrl())){
+                                redisTemplate.opsForHash().put("aidianying", searchMovieText, movieNameAndUrlModels);
+                                redisTemplate.expire(searchMovieText, 60, TimeUnit.SECONDS);
+                            }
+                        }
+
+                        return movieNameAndUrlModels;
+                    }else {
+                        return movieNameAndUrlModels;
+                    }
+
                 }
 
 
+//                if (movieNameAndUrlModels == null || movieNameAndUrlModels.size() == 0) {
+////数据库中没有从 mysql 中获取
+//                    movieNameAndUrlModels = movieNameAndUrlMapper.selectMovieUrlByLikeName("url_movie_aidianying", searchMovieText);
+//                    redisTemplate.opsForHash().put("aidianying", searchMovieText, movieNameAndUrlModels);
+//                    redisTemplate.expire(searchMovieText, 60, TimeUnit.SECONDS);
+//                    return movieNameAndUrlModels;
+//                } else {
+//                    return movieNameAndUrlModels;
+//                }
+
+
+                //u 2号大厅
             case "u":
 //                  从未读影单获取资源unreadmovie
+                List<MovieNameAndUrlModel> movieNameAndUrlModels1 = new ArrayList<>();
+                List<MovieNameAndUrlModel> movieNameAndUrlModels2 = new ArrayList<>();
 
-                movieNameAndUrlModels = (List<MovieNameAndUrlModel>) redisTemplate.opsForHash().get("unreadmovie", searchMovieText);
+                movieNameAndUrlModels1 = (List<MovieNameAndUrlModel>) redisTemplate.opsForHash().get("unreadmovie", searchMovieText);
+                movieNameAndUrlModels2 = (List<MovieNameAndUrlModel>) redisTemplate.opsForHash().get("sumsu", searchMovieText);
 
-                if (movieNameAndUrlModels == null || movieNameAndUrlModels.size() == 0) {
+
+                if (movieNameAndUrlModels1 == null || movieNameAndUrlModels1.size() == 0) {
                     //从数据库里拿
-                    movieNameAndUrlModels = movieNameAndUrlMapper.selectMovieUrlByLikeName("url_movie_unread", searchMovieText);
+                    movieNameAndUrlModels1 = movieNameAndUrlMapper.selectMovieUrlByLikeName("url_movie_unread", searchMovieText);
 
-                    redisTemplate.opsForHash().put("unreadmovie", searchMovieText, movieNameAndUrlModels);
+                    redisTemplate.opsForHash().put("unreadmovie", searchMovieText, movieNameAndUrlModels1);
                     redisTemplate.expire(searchMovieText, 60, TimeUnit.SECONDS);
-                    return movieNameAndUrlModels;
-                } else {
-                    return movieNameAndUrlModels;
                 }
+                if (movieNameAndUrlModels2 == null || movieNameAndUrlModels2.size() == 0){
 
-            case "x":
-//                  从 社区动力
-//               从redis 中拿
-
-                movieNameAndUrlModels = movieNameAndUrlMapper.selectMovieUrlByLikeName("url_movie_sumsu", searchMovieText);
-                if (movieNameAndUrlModels == null || movieNameAndUrlModels.size() == 0) {
                     //从数据库里拿
-                    movieNameAndUrlModels = movieNameAndUrlMapper.selectMovieUrlByLikeName("url_movie_sumsu", searchMovieText);
+                    movieNameAndUrlModels2 = movieNameAndUrlMapper.selectMovieUrlByLikeName("url_movie_sumsu", searchMovieText);
                     //数据库中也不存在 则重新爬取
-                    redisTemplate.opsForHash().put("sumsu", searchMovieText, movieNameAndUrlModels);
+                    redisTemplate.opsForHash().put("sumsu", searchMovieText, movieNameAndUrlModels2);
                     redisTemplate.expire(searchMovieText, 60, TimeUnit.SECONDS);
 
-                    return movieNameAndUrlModels;
-                } else {
-                    return movieNameAndUrlModels;
                 }
 
 
-            case "y":
+                movieNameAndUrlModels.addAll(movieNameAndUrlModels1);
+                movieNameAndUrlModels.addAll(movieNameAndUrlModels2);
+
+                return movieNameAndUrlModels;
+
+
+
+//                else {
+//                    return movieNameAndUrlModels;
+//                }
+
+                //x 三号大厅
+//            case "x":
+////                  从 社区动力
+////               从redis 中拿
+//
+//                movieNameAndUrlModels = movieNameAndUrlMapper.selectMovieUrlByLikeName("url_movie_sumsu", searchMovieText);
+//                if (movieNameAndUrlModels == null || movieNameAndUrlModels.size() == 0) {
+//                    //从数据库里拿
+//                    movieNameAndUrlModels = movieNameAndUrlMapper.selectMovieUrlByLikeName("url_movie_sumsu", searchMovieText);
+//                    //数据库中也不存在 则重新爬取
+//                    redisTemplate.opsForHash().put("sumsu", searchMovieText, movieNameAndUrlModels);
+//                    redisTemplate.expire(searchMovieText, 60, TimeUnit.SECONDS);
+//
+//                    return movieNameAndUrlModels;
+//                } else {
+//                    return movieNameAndUrlModels;
+//                }
+
+
+            case "a":
 //                  从小悠家获取资源
 
                 movieNameAndUrlModels = (List<MovieNameAndUrlModel>) redisTemplate.opsForHash().get("xiaoyoumovie", searchMovieText);

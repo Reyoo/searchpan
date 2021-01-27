@@ -2,6 +2,7 @@ package com.libbytian.pan.crawler.controller;
 
 import com.libbytian.pan.crawler.service.AsyncTask;
 import com.libbytian.pan.crawler.service.aidianying.AiDianyingService;
+import com.libbytian.pan.crawler.service.xiaoyou.XiaoYouService;
 import com.libbytian.pan.proxy.service.GetProxyService;
 import com.libbytian.pan.system.common.AjaxResult;
 import com.libbytian.pan.crawler.service.sumsu.CrawlerSumsuService;
@@ -43,7 +44,8 @@ public class CrawlerWebInfoController {
 
     private final GetProxyService getProxyService;
 
-
+    //测试后删除
+    private final XiaoYouService xiaoYouService;
 
     @Value("${user.unread.weiduyingdan}")
     String unreadUrl;
@@ -163,26 +165,26 @@ public class CrawlerWebInfoController {
     /**
      * 调用电影PID 入库 触发接口类
      */
-//    @RequestMapping(value = "/getall/xiaoyou", method = RequestMethod.GET)
-//    public AjaxResult loopgetXiaoYou() {
-//        try {
-//            //http://y.yuanxiao.net.cn/STMP/2020/03/27/26015/
-//            //循环调用 接口  p =1  到99999 存入库中
-//            StringBuffer stringBuffer = new StringBuffer();
-//            stringBuffer.append(xiaoyouUrl);
-//            stringBuffer.append("/STMP/2020/03/27/");
-//            String urlBase = stringBuffer.toString();
-//
-//            for(int i =3487 ; i <=12000; i ++ ){
-//                System.out.println(urlBase + i);
-//                asyncTask.getXiaoYouAllmovieInit(urlBase +i);
-//            }
-////            unReadService.getUnReadCrawlerResult("战狼");
-//            return AjaxResult.success("表入库成功");
-//        } catch (Exception e) {
-//            return AjaxResult.error("表入库失败");
-//        }
-//    }
+    @RequestMapping(value = "/getall/xiaoyou", method = RequestMethod.GET)
+    public AjaxResult loopgetXiaoYou() {
+        try {
+            //http://y.yuanxiao.net.cn/STMP/2020/03/27/26015/
+            //循环调用 接口  p =1  到99999 存入库中
+            StringBuffer stringBuffer = new StringBuffer();
+            stringBuffer.append(xiaoyouUrl);
+            stringBuffer.append("/STMP/2020/03/27/");
+            String urlBase = stringBuffer.toString();
+
+            for(int i =33328 ; i <=40000; i ++ ){
+                System.out.println(urlBase + i);
+                asyncTask.getXiaoYouAllmovieInit(urlBase +i);
+            }
+//            unReadService.getUnReadCrawlerResult("战狼");
+            return AjaxResult.success("表入库成功");
+        } catch (Exception e) {
+            return AjaxResult.error("表入库失败");
+        }
+    }
 
 
 
@@ -193,6 +195,12 @@ public class CrawlerWebInfoController {
     @RequestMapping(value = "/getXiaoyou", method = RequestMethod.GET)
     public void getXiaoYou(String searchName,String proxyIp,int proxyPort) {
 
+
+
+        xiaoYouService.getXiaoYouCrawlerResult(searchName,proxyIp,proxyPort);
+
+        System.out.println("哈哈哈哈哈");
+        System.out.println("嘿嘿嘿嘿");
 
     }
 
