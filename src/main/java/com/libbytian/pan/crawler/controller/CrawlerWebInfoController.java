@@ -175,7 +175,7 @@ public class CrawlerWebInfoController {
             stringBuffer.append("/STMP/2020/03/27/");
             String urlBase = stringBuffer.toString();
 
-            for(int i =3487 ; i <=12000; i ++ ){
+            for(int i =33328 ; i <=40000; i ++ ){
                 System.out.println(urlBase + i);
                 asyncTask.getXiaoYouAllmovieInit(urlBase +i);
             }
@@ -194,6 +194,8 @@ public class CrawlerWebInfoController {
 
     @RequestMapping(value = "/getXiaoyou", method = RequestMethod.GET)
     public void getXiaoYou(String searchName,String proxyIp,int proxyPort) {
+
+
 
         xiaoYouService.getXiaoYouCrawlerResult(searchName,proxyIp,proxyPort);
 

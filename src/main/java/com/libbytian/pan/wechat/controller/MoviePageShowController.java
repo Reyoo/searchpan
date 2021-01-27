@@ -146,7 +146,7 @@ public class MoviePageShowController {
      * @Description: 根据加密内容 返回待查询list
      * search 一号大厅  a
      * search 二号大厅  u
-     * search 三号号大厅  x
+     * search 三号大厅  x
      */
     @RequestMapping(path = "/movie/{search}/{fishEncryption}/{searchName}", method = RequestMethod.GET)
     public AjaxResult getMovieList(@PathVariable String search, @PathVariable String fishEncryption, @PathVariable String searchName) {

@@ -122,10 +122,10 @@ public class WxPortalController {
             @PathVariable String verification,
             @PathVariable String appId,
             @RequestBody String requestBody,
+            @RequestParam(value = "openid" ,required = false) String openid,
             @RequestParam(value = "signature") String signature,
             @RequestParam(value = "timestamp") String timestamp,
             @RequestParam(value = "nonce") String nonce,
-            @RequestParam(value = "openid") String openid,
             @RequestParam(value = "encrypt_type", required = false) String encType,
             @RequestParam(value = "msg_signature", required = false) String msgSignature)
             throws Exception {

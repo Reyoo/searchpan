@@ -11,6 +11,7 @@ import com.libbytian.pan.wechat.service.NormalPageService;
 import com.libbytian.pan.crawler.service.aidianying.AiDianyingService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
@@ -51,13 +52,16 @@ public class AsyncTask {
         //设置代理IP PORT
 //        String ipAndPort = getProxyService.getProxyIpFromRemote();
          String ipAndPort = getProxyService.getProxyIp();
+         if (StringUtils.isBlank(ipAndPort)){
+             return;
+         }
         String proxyIp = ipAndPort.split(":")[0];
         int proxyPort = Integer.valueOf(ipAndPort.split(":")[1]);
 
         xiaoYouService.getXiaoYouCrawlerResult(searchName,proxyIp,proxyPort);
-        aiDianyingService.saveOrFreshRealMovieUrl(searchName, proxyIp, proxyPort);
         unReadService.getUnReadCrawlerResult(searchName, proxyIp, proxyPort);
         crawlerSumsuService.getSumsuUrl(searchName,proxyIp,proxyPort);
+        aiDianyingService.saveOrFreshRealMovieUrl(searchName, proxyIp, proxyPort);
     }
 
 
@@ -150,7 +154,7 @@ public class AsyncTask {
 
 
     //判断是否为404网页
-    private static boolean exist(String url) {
+    public   boolean exist(String url) {
         try {
             URL u = new URL(url);
             HttpURLConnection huc = (HttpURLConnection) u.openConnection();
