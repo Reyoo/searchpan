@@ -4,10 +4,7 @@ import com.libbytian.pan.system.util.UserAgentUtil;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.openqa.selenium.By;
-import org.openqa.selenium.Platform;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.phantomjs.PhantomJSDriver;
 import org.openqa.selenium.phantomjs.PhantomJSDriverService;
@@ -29,9 +26,9 @@ public class PhantomJsTest {
 
 
 
-        String href = "http://www.lxxh7.com/?s=%E9%A3%8E%E5%A3%B0";
-//        String href = "http://www.baidu.com";
-        PhantomJSDriver driver = create();
+//        String href = "http://www.lxxh7.com/?s=%E9%A3%8E%E5%A3%B0";
+        String href = "http://findfish.top";
+        PhantomJSDriver driver = create("");
         //获取csdn主页
         driver.get(href);
         Thread.sleep(1000);
@@ -46,7 +43,11 @@ public class PhantomJsTest {
     }
 
 
-    static PhantomJSDriver create() {
+    static PhantomJSDriver create(String proxyIpAndPort) {
+
+
+        Proxy proxy=new Proxy();
+        proxy.setHttpProxy(proxyIpAndPort);
         DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
         //ssl证书支持
         desiredCapabilities.setCapability("acceptSslCerts", true);
@@ -61,11 +62,14 @@ public class PhantomJsTest {
         desiredCapabilities.setCapability("platformName", "Android");
         //js支持
         desiredCapabilities.setJavascriptEnabled(true);
+
+        desiredCapabilities.setCapability(CapabilityType.PROXY,proxy);
         //驱动支持DesiredCapabilities
         desiredCapabilities.setCapability(PhantomJSDriverService.PHANTOMJS_EXECUTABLE_PATH_PROPERTY,
                 "E:\\phantomjs-2.1.1-windows\\bin\\phantomjs.exe");
         //创建无界面浏览器对象
         PhantomJSDriver driver = new PhantomJSDriver(desiredCapabilities);
+
         //这里注意，把窗口的大小调整为最大，如果不设置可能会出现元素不可用的问题
         driver.manage().window().maximize();
 
