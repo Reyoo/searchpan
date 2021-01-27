@@ -72,44 +72,39 @@ public class AsyncSearchCachedServiceImpl {
 
                 movieNameAndUrlModels = (List<MovieNameAndUrlModel>) redisTemplate.opsForHash().get("aidianying", searchMovieText);
 
-                for (MovieNameAndUrlModel movieNameAndUrlModel : movieNameAndUrlModels) {
-                    if (!asyncTask.exist(movieNameAndUrlModel.getWangPanUrl())){
-                        movieNameAndUrlModels = movieNameAndUrlMapper.selectMovieUrlByLikeName("url_movie_aidianying", searchMovieText);
-
-                        for (MovieNameAndUrlModel model : movieNameAndUrlModels) {
-                            if (!asyncTask.exist(model.getWangPanUrl())){
-                                redisTemplate.opsForHash().put("aidianying", searchMovieText, movieNameAndUrlModels);
-                                redisTemplate.expire(searchMovieText, 60, TimeUnit.SECONDS);
-                            }
-                        }
-
-                        return movieNameAndUrlModels;
-                    }else {
-                        return movieNameAndUrlModels;
-                    }
-
+                                if (movieNameAndUrlModels == null || movieNameAndUrlModels.size() == 0) {
+//数据库中没有从 mysql 中获取
+                    movieNameAndUrlModels = movieNameAndUrlMapper.selectMovieUrlByLikeName("url_movie_aidianying", searchMovieText);
+                    redisTemplate.opsForHash().put("aidianying", searchMovieText, movieNameAndUrlModels);
+                    redisTemplate.expire(searchMovieText, 60, TimeUnit.SECONDS);
+                    return movieNameAndUrlModels;
+                } else {
+                    return movieNameAndUrlModels;
                 }
 
-
-//                if (movieNameAndUrlModels == null || movieNameAndUrlModels.size() == 0) {
-////数据库中没有从 mysql 中获取
-//                    movieNameAndUrlModels = movieNameAndUrlMapper.selectMovieUrlByLikeName("url_movie_aidianying", searchMovieText);
-//                    redisTemplate.opsForHash().put("aidianying", searchMovieText, movieNameAndUrlModels);
-//                    redisTemplate.expire(searchMovieText, 60, TimeUnit.SECONDS);
-//                    return movieNameAndUrlModels;
-//                } else {
-//                    return movieNameAndUrlModels;
-//                }
+//                for (MovieNameAndUrlModel movieNameAndUrlModel : movieNameAndUrlModels) {
+//                    if (!asyncTask.exist(movieNameAndUrlModel.getWangPanUrl())){
+//                        movieNameAndUrlModels = movieNameAndUrlMapper.selectMovieUrlByLikeName("url_movie_aidianying", searchMovieText);
+//
+//                        for (MovieNameAndUrlModel model : movieNameAndUrlModels) {
+//                            if (!asyncTask.exist(model.getWangPanUrl())){
+//                                redisTemplate.opsForHash().put("aidianying", searchMovieText, movieNameAndUrlModels);
+//                                redisTemplate.expire(searchMovieText, 60, TimeUnit.SECONDS);
+//                            }
+//                        }
+//
+//                        return movieNameAndUrlModels;
+//                    }else {
+//                        return movieNameAndUrlModels;
+//                    }
 
 
                 //u 2号大厅
             case "u":
 //                  从未读影单获取资源unreadmovie
-                List<MovieNameAndUrlModel> movieNameAndUrlModels1 = new ArrayList<>();
-                List<MovieNameAndUrlModel> movieNameAndUrlModels2 = new ArrayList<>();
 
-                movieNameAndUrlModels1 = (List<MovieNameAndUrlModel>) redisTemplate.opsForHash().get("unreadmovie", searchMovieText);
-                movieNameAndUrlModels2 = (List<MovieNameAndUrlModel>) redisTemplate.opsForHash().get("sumsu", searchMovieText);
+                List<MovieNameAndUrlModel>  movieNameAndUrlModels1 = (List<MovieNameAndUrlModel>) redisTemplate.opsForHash().get("unreadmovie", searchMovieText);
+                List<MovieNameAndUrlModel>  movieNameAndUrlModels2 = (List<MovieNameAndUrlModel>) redisTemplate.opsForHash().get("sumsu", searchMovieText);
 
 
                 if (movieNameAndUrlModels1 == null || movieNameAndUrlModels1.size() == 0) {

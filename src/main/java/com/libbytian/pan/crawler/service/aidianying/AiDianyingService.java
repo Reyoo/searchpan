@@ -72,13 +72,20 @@ public class AiDianyingService {
             String urlAiDianying = lxxhUrl + "/?s=" + searchMovieName;
             log.info("-------------------------爱电影 end ----------------------------");
             Document document = Jsoup.parse(findFishUrlConnection.FindFishUrlConnection(proxyIp, proxyPort, urlAiDianying));
+
+            //如果未找到，放弃爬取，直接返回
+            if (document.getElementsByClass("entry-title").text().equals("未找到")){
+                log.info("----------------爱电影网站未找到-> "+searchMovieName+" <-放弃爬取---------------");
+                return;
+            }
+
             //解析h2 标签 如果有herf 则取出来,否者 直接获取百度盘
             Elements attr = document.getElementsByTag("h2").select("a");
             if (attr.size() != 0) {
                 for (Element element : attr) {
                     String jumpUrl = element.attr("href").trim();
-                    log.info("找到调整爱电影-->" +jumpUrl);
-                    if (jumpUrl.contains(" http://www.lxxh7.com")) {
+//                    log.info("找到调整爱电影-->" +jumpUrl);
+                    if (jumpUrl.contains("http://www.lxxh7.com")) {
                         movieUrlInLxxh.add(jumpUrl);
                     }
                 }
@@ -87,7 +94,7 @@ public class AiDianyingService {
             if (movieUrlInLxxh.size() == 0) {
                 movieUrlInLxxh.add(urlAiDianying);
             }
-            MovieNameAndUrlModel movieNameAndUrlModel = new MovieNameAndUrlModel();
+//            MovieNameAndUrlModel movieNameAndUrlModel = new MovieNameAndUrlModel();
 
             //说明搜索到了 url 电影路径
                 for (String secondUrlLxxh : movieUrlInLxxh) {
@@ -95,6 +102,7 @@ public class AiDianyingService {
                     log.info("爱电影--》" + secondUrlLxxh);
 //                    MovieNameAndUrlModel movieNameAndUrlModel = getMovieLoopsAiDianying(url, userAgent, proxyIp, proxyPort);
 
+                    MovieNameAndUrlModel movieNameAndUrlModel = new MovieNameAndUrlModel();
 
                     StringBuffer stringBuffer = new StringBuffer();
 
@@ -118,16 +126,18 @@ public class AiDianyingService {
 
                     while (inputStream.read(bytes) >= 0) {
                         stringBuffer.append(new String(bytes));
-                        System.out.println(stringBuffer.toString());
+//                        System.out.println(stringBuffer.toString());
                     }
 
 
-                    Document secorndDocument = Jsoup.parse(stringBuffer.toString());
+                     Document secorndDocument = Jsoup.parse(stringBuffer.toString());
                     String name = secorndDocument.getElementsByTag("title").first().text();
                     movieNameAndUrlModel.setMovieName(name);
                     log.info("爱电影第二部----> begin <--------------------");
-                    log.info(secorndDocument.body().toString());
+//                    log.info(secorndDocument.body().toString());
                     log.info("爱电影第二部----> end <--------------------");
+
+
                     Elements secorndAttr = secorndDocument.getElementsByTag("p").select("span");
                     for (Element element : secorndAttr) {
                         for (Element aTag : element.getElementsByTag("a")) {
@@ -144,7 +154,7 @@ public class AiDianyingService {
                     }
 //                第二种情况 span标签 里没有 url
                     if (StrUtil.isBlank(movieNameAndUrlModel.getWangPanUrl())) {
-                        Elements urlFinals = document.getElementsByTag("p").select("a");
+                        Elements urlFinals = secorndDocument.getElementsByTag("p").select("a");
                         for (Element urlFianl : urlFinals) {
                             String linkhref = urlFianl.attr("href");
                             if (linkhref.contains("pan.baidu.com")) {
@@ -159,13 +169,15 @@ public class AiDianyingService {
                         }
                     }
 
+                    movieNameAndUrlModelList.add(movieNameAndUrlModel);
                 }
-                movieNameAndUrlModelList.add(movieNameAndUrlModel);
 
-            movieNameAndUrlService.addOrUpdateMovieUrls(movieNameAndUrlModelList, "url_movie_aidianying");
-            invalidUrlCheckingService.checkUrlMethod("url_movie_aidianying", movieNameAndUrlModelList, proxyIp, Integer.valueOf(proxyPort));
-            redisTemplate.opsForHash().put("aidianying", searchMovieName, movieNameAndUrlModelList);
-            redisTemplate.expire(searchMovieName, 60, TimeUnit.SECONDS);
+
+                    movieNameAndUrlService.addOrUpdateMovieUrls(movieNameAndUrlModelList, "url_movie_aidianying");
+                    invalidUrlCheckingService.checkUrlMethod("url_movie_aidianying", movieNameAndUrlModelList, proxyIp, Integer.valueOf(proxyPort));
+                    redisTemplate.opsForHash().put("aidianying", searchMovieName, movieNameAndUrlModelList);
+                    redisTemplate.expire(searchMovieName, 60, TimeUnit.SECONDS);
+
 
 
         } catch (Exception e) {
