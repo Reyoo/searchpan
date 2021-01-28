@@ -104,8 +104,8 @@ mybatis-plus:
 
 phantomjs:
   deploy:
-    system: linuxs
-    path:
+    winpath: E:\\phantomjs-2.1.1-windows\\bin\\phantomjs.exe
+    linuxpath: /home/findfish/phantomjs-2.1.1-linux-x86_64/bin/phantomjs
 
 user:
   unread:

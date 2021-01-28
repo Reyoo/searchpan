@@ -56,14 +56,14 @@ public class AiDianyingService {
     String lxxhUrl;
 
 
-    public Set<String> firstFindLxxhUrl(String searchMovieName, String proxyIpAndPort)   {
+    public Set<String> firstFindLxxhUrl(String searchMovieName, String proxyIpAndPort) {
 
 
         Set<String> movieUrlInLxxh = new HashSet();
         String encode = null;
         try {
-             encode = URLEncoder.encode(searchMovieName, "UTF8");
-        }catch (Exception e){
+            encode = URLEncoder.encode(searchMovieName, "UTF8");
+        } catch (Exception e) {
             e.printStackTrace();
         }
         System.out.println(encode);
@@ -149,7 +149,7 @@ public class AiDianyingService {
     }
 
 
-    //    @Async("crawler-Executor")
+    @Async("crawler-Executor")
     public void saveOrFreshRealMovieUrl(String searchMovieName, String proxyIpAndPort) {
         Set<String> movieUrlInLxxh = firstFindLxxhUrl(searchMovieName, proxyIpAndPort);
         ArrayList<MovieNameAndUrlModel> movieNameAndUrlModelList = new ArrayList();
