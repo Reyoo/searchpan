@@ -158,7 +158,6 @@ public class AiDianyingService {
         try {
             for (String secondUrlLxxh : movieUrlInLxxh) {
                 movieNameAndUrlModelList.addAll(getWangPanByLxxh(secondUrlLxxh, proxyIpAndPort));
-                Thread.sleep(1000);
             }
             //由于包含模糊查询、这里记录到数据库中做插入更新操作
             movieNameAndUrlService.addOrUpdateMovieUrls(movieNameAndUrlModelList, "url_movie_aidianying");

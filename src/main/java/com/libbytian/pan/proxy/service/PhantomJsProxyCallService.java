@@ -80,7 +80,7 @@ public class PhantomJsProxyCallService {
         //获取csdn主页
         driver.get(href);
         // 超过8秒即为超时，会抛出Exception
-        driver.manage().timeouts().pageLoadTimeout(10, TimeUnit.SECONDS);
+        driver.manage().timeouts().pageLoadTimeout(60, TimeUnit.SECONDS);
         return driver;
 
     }
