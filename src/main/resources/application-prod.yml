@@ -102,9 +102,12 @@ mybatis-plus:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
     jdbc-type-for-null: 'null'
 
+phantomjs:
+  deploy:
+    system: linuxs
+    path:
 
 user:
-  agent: Mozilla/5.0 (iPhone; CPU iPhone OS 13_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 MicroMessenger/7.0.15(0x17000f28) NetType/WIFI Language/zh_CN
   unread:
     weiduyingdan: http://www.unreadmovie.com
   lxxh:

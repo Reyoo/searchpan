@@ -109,7 +109,10 @@ mybatis-plus:
     jdbc-type-for-null: 'null'
 
 
-
+phantomjs:
+  deploy:
+    winpath: E:\\phantomjs-2.1.1-windows\\bin\\phantomjs.exe
+    linuxpath: E:\\phantomjs-2.1.1-windows\\bin\\phantomjs.exe
 
 user:
   unread:

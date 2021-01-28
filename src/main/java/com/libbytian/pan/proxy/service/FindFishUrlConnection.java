@@ -15,12 +15,12 @@ import java.net.URLConnection;
 public class FindFishUrlConnection {
 
 
-    public String FindFishUrlConnection(String proxyIp, int proxyPort, String crawlerWebUrl) throws IOException {
+    public String findFishUrlConnection(String crawlerWebUrl,String ipAndPort) throws IOException {
         StringBuffer html = new StringBuffer();
         String userAgent = UserAgentUtil.randomUserAgent();
         System.getProperties().setProperty("proxySet", "true");
-        System.setProperty("http.proxyHost", proxyIp);
-        System.setProperty("http.proxyPort", String.valueOf(proxyPort));
+//        System.setProperty("http.proxyHost", proxyIp);
+//        System.setProperty("http.proxyPort", String.valueOf(proxyPort));
         URL url = new URL(crawlerWebUrl);
 
         URLConnection conn = url.openConnection();
