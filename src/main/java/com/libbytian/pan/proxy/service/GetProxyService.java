@@ -41,8 +41,6 @@ public class GetProxyService {
 //     * 这个可以 但是就是慢
 //     */
     public String getProxyIp() {
-        System.out.println(redisTemplate.randomKey());
-        System.out.println(redisTemplate.keys("use_proxy").size());
         ArrayList<String> list = new ArrayList(redisTemplate.opsForHash().keys("use_proxy"));
         if (list.size()>0){
             int randomIndex = new Random().nextInt(list.size());

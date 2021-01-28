@@ -29,7 +29,7 @@ public class PhantomJsTest {
 
 
 
-        String href = "http://www.lxxh7.com/?s=八佰";
+        String href = "http://www.lxxh7.com/?s=%e9%a3%8e%e5%a3%b0";
 //        String href = "http://www.baidu.com";
         PhantomJSDriver driver = create(href);
 

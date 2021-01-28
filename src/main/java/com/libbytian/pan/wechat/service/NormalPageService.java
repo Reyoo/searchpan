@@ -3,6 +3,7 @@ package com.libbytian.pan.wechat.service;
 
 import com.libbytian.pan.crawler.service.aidianying.AiDianyingService;
 import com.libbytian.pan.proxy.service.GetProxyService;
+import com.libbytian.pan.proxy.service.PhantomJsProxyCallService;
 import com.libbytian.pan.system.common.AjaxResult;
 import com.libbytian.pan.system.model.MovieNameAndUrlModel;
 import com.libbytian.pan.system.util.UserAgentUtil;
@@ -14,6 +15,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import org.openqa.selenium.phantomjs.PhantomJSDriver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
@@ -42,106 +44,7 @@ public class NormalPageService {
     private final RestTemplate restTemplate;
 
     private final GetProxyService getProxyService;
-
-
-    public MovieNameAndUrlModel getMovieLoops(String url) {
-        MovieNameAndUrlModel movieNameAndUrlModel = new MovieNameAndUrlModel();
-
-        String ipAndPort = getProxyService.getProxyIpFromRemote();
-        String proxyIp = ipAndPort.split(":")[0];
-        int proxyPort = Integer.valueOf(ipAndPort.split(":")[1]);
-
-        try {
-
-            ResponseEntity<String> resultResponseEntity = AiDianyingService.getHttpHeader(url, this.restTemplate, proxyIp, proxyPort);
-
-            if (resultResponseEntity.getStatusCode() == HttpStatus.OK) {
-                String html = resultResponseEntity.getBody();
-//                System.out.println("=========================================");
-//                System.out.println(html);
-//                System.out.println("=========================================");
-                Document document = Jsoup.parse(html);
-                String name = document.getElementsByTag("title").first().text();
-//                System.out.println("******");
-//                System.out.println(name);
-//                System.out.println("******");
-
-                String[] arr = name.split(" – ");
-                name = arr[0];
-                Element element = document.select("div[class=entry-content]").get(0);
-                ;
-//                String wangpan = element.select("p").select("strong").select("a").get(0).text();
-
-                String lianjie = element.select("p").select("strong").select("a").attr("href");
-
-
-                Elements pages = element.select("p");
-
-
-                movieNameAndUrlModel.setMovieUrl(url);
-                movieNameAndUrlModel.setMovieName(name);
-                movieNameAndUrlModel.setWangPanUrl(lianjie);
-                for (Element page : pages) {
-                    page.getElementsByTag("提取码");
-                    boolean contains1 = page.toString().contains("提取码");
-                    boolean contains2 = page.toString().contains("密码");
-
-                    if (contains1 || contains2) {
-                        movieNameAndUrlModel.setWangPanPassword(page.text());
-                    }
-                }
-            }
-            return movieNameAndUrlModel;
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            getProxyService.removeUnableProxy(ipAndPort);
-            return movieNameAndUrlModel;
-        }
-    }
-
-
-    public MovieNameAndUrlModel getMoviePanUrl2(MovieNameAndUrlModel movieNameAndUrlModel) {
-
-        HttpHeaders requestHeaders = new HttpHeaders();
-        requestHeaders.add("User-Agent", UserAgentUtil.randomUserAgent());
-        HttpEntity<String> requestEntity = new HttpEntity<String>(null, requestHeaders);
-        ResponseEntity<String> resultResponseEntity = this.restTemplate.exchange(
-                String.format(movieNameAndUrlModel.getMovieUrl()),
-                HttpMethod.GET, requestEntity, String.class);
-        if (resultResponseEntity.getStatusCode() == HttpStatus.OK) {
-            String html = resultResponseEntity.getBody();
-            Document document = Jsoup.parse(html);
-            String name = document.getElementsByTag("title").first().text();
-            String[] arr = name.split(" – ");
-            name = arr[0];
-            Element element = document.select("div[class=entry-content]").get(0);
-
-            Elements elements = element.select("p");
-            String lianjie = null;
-            String password = null;
-            for (Element wangpanurl : elements) {
-                boolean contains = wangpanurl.toString().contains("pan.baidu.com");
-                if (contains) {
-                    lianjie = wangpanurl.select("a").attr("href");
-                    movieNameAndUrlModel.setWangPanUrl(lianjie);
-                    break;
-                }
-            }
-
-
-            for (Element el : elements) {
-                boolean contains = el.toString().contains("密码");
-                if (contains) {
-                    String[] arr2 = el.text().split(" ");
-
-                    movieNameAndUrlModel.setWangPanPassword(arr2[1]);
-                    break;
-                }
-            }
-
-        }
-        return movieNameAndUrlModel;
-    }
+    private final PhantomJsProxyCallService phantomJsProxyCallService;
 
 
     /**
@@ -153,47 +56,33 @@ public class NormalPageService {
     public MovieNameAndUrlModel getMovieLoopsXiaoYou(String url) {
 
         String ipAndPort = getProxyService.getProxyIpFromRemote();
-        String proxyIp = ipAndPort.split(":")[0];
-        int proxyPort = Integer.valueOf(ipAndPort.split(":")[1]);
-
-
         MovieNameAndUrlModel movieNameAndUrlModel = new MovieNameAndUrlModel();
-
         movieNameAndUrlModel.setMovieUrl(url);
-
         try {
 
+            PhantomJSDriver phantomJSDriver = phantomJsProxyCallService.create(url, ipAndPort);
+            Document document = Jsoup.parse(phantomJSDriver.getPageSource());
 
-            ResponseEntity<String> resultResponseEntity = AiDianyingService.getHttpHeader(url, this.restTemplate, proxyIp, proxyPort);
-
-            if (resultResponseEntity.getStatusCode() == HttpStatus.OK) {
-                String html = resultResponseEntity.getBody();
-//                System.out.println("=========================================");
-//                System.out.println(html);
-                log.info(html);
-//                System.out.println("=========================================");
-                Document document = Jsoup.parse(html);
-                String name = document.getElementsByTag("title").first().text();
-                movieNameAndUrlModel.setMovieName(name);
+            String name = document.getElementsByTag("title").first().text();
+            movieNameAndUrlModel.setMovieName(name);
 
 
-                Elements attr = document.getElementsByTag("p");
-                for (Element element : attr) {
-                    for (Element aTag : element.getElementsByTag("a")) {
+            Elements attr = document.getElementsByTag("p");
+            for (Element element : attr) {
+                for (Element aTag : element.getElementsByTag("a")) {
 
-                        String linkhref = aTag.attr("href");
-                        if (linkhref.startsWith("pan.baidu.com")) {
-                            log.info("这里已经拿到要爬取的url : " + linkhref);
-                            movieNameAndUrlModel.setWangPanUrl(linkhref);
-                        }
-
+                    String linkhref = aTag.attr("href");
+                    if (linkhref.startsWith("pan.baidu.com")) {
+                        log.info("这里已经拿到要爬取的url : " + linkhref);
+                        movieNameAndUrlModel.setWangPanUrl(linkhref);
                     }
-                    if (element.text().contains("密码")) {
-                        movieNameAndUrlModel.setWangPanPassword(element.text().split("【")[0].split(" ")[1]);
-                    }
+
                 }
-//            System.out.println("-----------------");
+                if (element.text().contains("密码")) {
+                    movieNameAndUrlModel.setWangPanPassword(element.text().split("【")[0].split(" ")[1]);
+                }
             }
+
             return movieNameAndUrlModel;
         } catch (Exception e) {
             getProxyService.removeUnableProxy(ipAndPort);
