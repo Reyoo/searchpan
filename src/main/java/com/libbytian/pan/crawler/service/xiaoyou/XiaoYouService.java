@@ -1,6 +1,7 @@
 package com.libbytian.pan.crawler.service.xiaoyou;
 
 import com.libbytian.pan.proxy.service.GetProxyService;
+import com.libbytian.pan.system.mapper.MovieNameAndUrlMapper;
 import com.libbytian.pan.system.model.MovieNameAndUrlModel;
 import com.libbytian.pan.system.service.IMovieNameAndUrlService;
 import com.libbytian.pan.system.service.impl.InvalidUrlCheckingService;
@@ -50,6 +51,7 @@ public class XiaoYouService {
     private final InvalidUrlCheckingService invalidUrlCheckingService;
     private final IMovieNameAndUrlService movieNameAndUrlService;
     private final GetProxyService getProxyService;
+    private final MovieNameAndUrlMapper movieNameAndUrlMapper;
 
 
 
@@ -67,13 +69,20 @@ public class XiaoYouService {
                     movieNameAndUrlModelList.addAll(getXiaoYouMovieLoops(url,proxyIp,proxyPort));
                 }
 
-                invalidUrlCheckingService.checkUrlMethod("url_movie_xiaoyou",movieNameAndUrlModelList,proxyIp,Integer.valueOf(proxyPort));
-            }
+            //更新前从数据库查询后删除 片名相同但更新中的 无效数据
+            List<MovieNameAndUrlModel>   movieNameAndUrlModels = movieNameAndUrlMapper.selectMovieUrlByLikeName("url_movie_xiaoyou", searchMovieName);
+            invalidUrlCheckingService.checkUrlMethod("url_movie_xiaoyou",movieNameAndUrlModels);
 
+            List<MovieNameAndUrlModel> couldBeFindUrls =  invalidUrlCheckingService.checkUrlMethod("url_movie_xiaoyou",movieNameAndUrlModelList);
+
+            if (couldBeFindUrls != null){
             //存入数据库
-            movieNameAndUrlService.addOrUpdateMovieUrls(movieNameAndUrlModelList, "url_movie_xiaoyou");
+            movieNameAndUrlService.addOrUpdateMovieUrls(couldBeFindUrls, "url_movie_xiaoyou");
             //存入redis
             redisTemplate.opsForHash().put("xiaoyoumovie", searchMovieName, movieNameAndUrlModelList);
+            }
+
+            }
 
 
         } catch (Exception e) {

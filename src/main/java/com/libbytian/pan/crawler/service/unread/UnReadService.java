@@ -3,6 +3,7 @@ package com.libbytian.pan.crawler.service.unread;
 import cn.hutool.core.util.StrUtil;
 import com.libbytian.pan.crawler.service.aidianying.AiDianyingService;
 import com.libbytian.pan.proxy.service.GetProxyService;
+import com.libbytian.pan.system.mapper.MovieNameAndUrlMapper;
 import com.libbytian.pan.system.model.MovieNameAndUrlModel;
 import com.libbytian.pan.system.service.IMovieNameAndUrlService;
 import com.libbytian.pan.system.service.impl.InvalidUrlCheckingService;
@@ -46,6 +47,7 @@ public class UnReadService {
     private final RestTemplate restTemplate;
     private final RedisTemplate redisTemplate;
     private final GetProxyService getProxyService;
+    private final MovieNameAndUrlMapper movieNameAndUrlMapper;
 
 
     @Value("${user.unread.weiduyingdan}")
@@ -244,11 +246,20 @@ public class UnReadService {
                     }
 
                 }
-                invalidUrlCheckingService.checkUrlMethod("url_movie_unread",movieNameAndUrlModelList,proxyIp,Integer.valueOf(proxyPort));
+
+                //更新前从数据库查询后删除 片名相同但更新中的 无效数据
+                List<MovieNameAndUrlModel>   movieNameAndUrlModels = movieNameAndUrlMapper.selectMovieUrlByLikeName("url_movie_unread", searchMovieName);
+                invalidUrlCheckingService.checkUrlMethod("url_movie_unread",movieNameAndUrlModels);
+
+
+                List<MovieNameAndUrlModel>  couldBeFindUrls =  invalidUrlCheckingService.checkUrlMethod("url_movie_unread",movieNameAndUrlModelList);
+
+                //存入数据库
+                movieNameAndUrlService.addOrUpdateMovieUrls(couldBeFindUrls, "url_movie_unread");
+                //存入redis
+                redisTemplate.opsForHash().put("unreadmovie", searchMovieName, couldBeFindUrls);
             }
 
-            movieNameAndUrlService.addOrUpdateMovieUrls(movieNameAndUrlModelList, "url_movie_unread");
-            redisTemplate.opsForHash().put("unreadmovie", searchMovieName, movieNameAndUrlModelList);
 
 
         } catch (Exception e) {

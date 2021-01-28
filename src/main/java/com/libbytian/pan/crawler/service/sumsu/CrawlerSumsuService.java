@@ -1,5 +1,6 @@
 package com.libbytian.pan.crawler.service.sumsu;
 
+import com.libbytian.pan.system.mapper.MovieNameAndUrlMapper;
 import com.libbytian.pan.system.model.MovieNameAndUrlModel;
 import com.libbytian.pan.system.service.IMovieNameAndUrlService;
 import com.libbytian.pan.system.service.impl.InvalidUrlCheckingService;
@@ -46,6 +47,8 @@ public class CrawlerSumsuService {
     private final IMovieNameAndUrlService movieNameAndUrlService;
 
     private final InvalidUrlCheckingService invalidUrlCheckingService;
+
+    private final MovieNameAndUrlMapper movieNameAndUrlMapper;
 
 
     @Value("${user.sumsu.url}")
@@ -102,10 +105,21 @@ public class CrawlerSumsuService {
                 if (firstSearchUrls.size() > 0) {
                     movieList = getTidSumsuUrl(firstSearchUrls, proxyIp, proxyPort);
 
-                    invalidUrlCheckingService.checkUrlMethod("url_movie_sumsu", movieList, proxyIp, Integer.valueOf(proxyPort));
-                    redisTemplate.opsForHash().put("sumsu", movieName, movieList);
+                    //更新前从数据库查询后删除 片名相同但更新中的 无效数据
+                    List<MovieNameAndUrlModel>   movieNameAndUrlModels = movieNameAndUrlMapper.selectMovieUrlByLikeName("url_movie_sumsu", movieName);
+                    invalidUrlCheckingService.checkUrlMethod("url_movie_sumsu",movieNameAndUrlModels);
+
+                List<MovieNameAndUrlModel>  couldBeFindUrls =  invalidUrlCheckingService.checkUrlMethod("url_movie_sumsu", movieList);
+
+                if (couldBeFindUrls != null){
+                    //存入数据库
+                    movieNameAndUrlService.addOrUpdateMovieUrls(couldBeFindUrls, "url_movie_sumsu");
+                    //存入redis
+                    redisTemplate.opsForHash().put("sumsu", movieName, couldBeFindUrls);
+                }
 
                 }
+
             }
         } catch (Exception e) {
             log.error("Sumsu  ->" + e.getMessage());

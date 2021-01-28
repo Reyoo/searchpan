@@ -1,7 +1,6 @@
 package com.libbytian.pan.system.service.impl;
 
 import cn.hutool.core.util.StrUtil;
-import com.libbytian.pan.system.mapper.MovieNameAndUrlMapper;
 import com.libbytian.pan.system.model.MovieNameAndUrlModel;
 import com.libbytian.pan.system.service.IMovieNameAndUrlService;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +11,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,7 +47,7 @@ public class InvalidUrlCheckingService {
      * @throws Exception
      */
     @Async("crawler-Executor")
-    public List<MovieNameAndUrlModel> checkUrlMethod(String tableName, List<MovieNameAndUrlModel> movieNameAndUrlModels, String proxyIp, int proxyPort) throws Exception {
+    public List<MovieNameAndUrlModel> checkUrlMethod(String tableName, List<MovieNameAndUrlModel> movieNameAndUrlModels) throws Exception {
 
         List<MovieNameAndUrlModel> couldBeFindUrls = new ArrayList<>();
         if (movieNameAndUrlModels == null || movieNameAndUrlModels.size() == 0) {
@@ -89,5 +94,20 @@ public class InvalidUrlCheckingService {
         return false;
     }
 
+
+//    public boolean checkUrlByUrlStrNew(String url) throws IOException {
+//
+////从URL加载HTML
+//        Document document = Jsoup.connect(url).get();
+//        document.getElementsByClass("content").;
+//
+//        //获取html中的标题
+////        System.out.println("title :"+title);
+//        if (title.contains("你来晚了，分享文件已经被取消了")|| title.contains("此链接分享内容可能因为涉及侵权") || title.contains("你所访问的页面不存在了")) {
+//            return true;
+//        }
+//        return false;
+//
+//    }
 
 }

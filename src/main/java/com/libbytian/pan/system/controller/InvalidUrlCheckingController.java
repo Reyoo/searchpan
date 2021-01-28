@@ -39,6 +39,7 @@ public class InvalidUrlCheckingController {
         try {
             for (MovieNameAndUrlModel movieNameAndUrlModel : wangPanUrls) {
                 boolean isValid = invalidUrlCheckingService.checkUrlByUrlStr(movieNameAndUrlModel.getWangPanUrl());
+//                boolean isValid = invalidUrlCheckingService.checkUrlByUrlStrNew(movieNameAndUrlModel.getWangPanUrl());
 
                 if (isValid) {
                     return AjaxResult.success("链接失效");

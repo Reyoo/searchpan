@@ -3,6 +3,7 @@ package com.libbytian.pan.crawler.service.aidianying;
 import cn.hutool.core.util.StrUtil;
 import com.libbytian.pan.proxy.service.FindFishUrlConnection;
 import com.libbytian.pan.proxy.service.GetProxyService;
+import com.libbytian.pan.system.mapper.MovieNameAndUrlMapper;
 import com.libbytian.pan.system.model.MovieNameAndUrlModel;
 import com.libbytian.pan.system.service.IMovieNameAndUrlService;
 import com.libbytian.pan.system.service.impl.InvalidUrlCheckingService;
@@ -10,6 +11,7 @@ import com.libbytian.pan.system.util.UserAgentUtil;
 import lombok.Cleanup;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -53,6 +55,7 @@ public class AiDianyingService {
     private final IMovieNameAndUrlService movieNameAndUrlService;
     private final GetProxyService getProxyService;
     private final FindFishUrlConnection findFishUrlConnection;
+    private final MovieNameAndUrlMapper movieNameAndUrlMapper;
 
 
     @Value("${user.lxxh.aidianying}")
@@ -169,15 +172,23 @@ public class AiDianyingService {
                         }
                     }
 
-                    movieNameAndUrlModelList.add(movieNameAndUrlModel);
+                    //如果拿到wangpanUrl，则添加到集合中
+                    if (StringUtils.isNotBlank(movieNameAndUrlModel.getWangPanUrl())){
+                        movieNameAndUrlModelList.add(movieNameAndUrlModel);
+                    }
                 }
 
 
+            //更新前从数据库查询后删除 片名相同但更新中的 无效数据
+            List<MovieNameAndUrlModel>   movieNameAndUrlModels = movieNameAndUrlMapper.selectMovieUrlByLikeName("url_movie_aidianying", searchMovieName);
+            invalidUrlCheckingService.checkUrlMethod("url_movie_aidianying",movieNameAndUrlModels);
+
+            List<MovieNameAndUrlModel> couldBeFindUrls = invalidUrlCheckingService.checkUrlMethod("url_movie_aidianying", movieNameAndUrlModelList);
+                    if (couldBeFindUrls != null){
                     movieNameAndUrlService.addOrUpdateMovieUrls(movieNameAndUrlModelList, "url_movie_aidianying");
-                    invalidUrlCheckingService.checkUrlMethod("url_movie_aidianying", movieNameAndUrlModelList, proxyIp, Integer.valueOf(proxyPort));
                     redisTemplate.opsForHash().put("aidianying", searchMovieName, movieNameAndUrlModelList);
                     redisTemplate.expire(searchMovieName, 60, TimeUnit.SECONDS);
-
+                    }
 
 
         } catch (Exception e) {

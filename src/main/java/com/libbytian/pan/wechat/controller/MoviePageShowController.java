@@ -159,7 +159,7 @@ public class MoviePageShowController {
 
 
             if (movieNameAndUrlModels.size() == 0) {
-                return AjaxResult.hide("未找到该资源");
+                return AjaxResult.hide("未找到该资源，请前往其他大厅查看");
             }
             return AjaxResult.success(movieNameAndUrlModels);
         } catch (Exception e) {

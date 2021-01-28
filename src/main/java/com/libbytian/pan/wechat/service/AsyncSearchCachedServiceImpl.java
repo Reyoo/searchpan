@@ -72,31 +72,16 @@ public class AsyncSearchCachedServiceImpl {
 
                 movieNameAndUrlModels = (List<MovieNameAndUrlModel>) redisTemplate.opsForHash().get("aidianying", searchMovieText);
 
-                                if (movieNameAndUrlModels == null || movieNameAndUrlModels.size() == 0) {
+                if (movieNameAndUrlModels == null || movieNameAndUrlModels.size() == 0) {
 //数据库中没有从 mysql 中获取
                     movieNameAndUrlModels = movieNameAndUrlMapper.selectMovieUrlByLikeName("url_movie_aidianying", searchMovieText);
+
                     redisTemplate.opsForHash().put("aidianying", searchMovieText, movieNameAndUrlModels);
                     redisTemplate.expire(searchMovieText, 60, TimeUnit.SECONDS);
                     return movieNameAndUrlModels;
                 } else {
                     return movieNameAndUrlModels;
                 }
-
-//                for (MovieNameAndUrlModel movieNameAndUrlModel : movieNameAndUrlModels) {
-//                    if (!asyncTask.exist(movieNameAndUrlModel.getWangPanUrl())){
-//                        movieNameAndUrlModels = movieNameAndUrlMapper.selectMovieUrlByLikeName("url_movie_aidianying", searchMovieText);
-//
-//                        for (MovieNameAndUrlModel model : movieNameAndUrlModels) {
-//                            if (!asyncTask.exist(model.getWangPanUrl())){
-//                                redisTemplate.opsForHash().put("aidianying", searchMovieText, movieNameAndUrlModels);
-//                                redisTemplate.expire(searchMovieText, 60, TimeUnit.SECONDS);
-//                            }
-//                        }
-//
-//                        return movieNameAndUrlModels;
-//                    }else {
-//                        return movieNameAndUrlModels;
-//                    }
 
 
                 //u 2号大厅
@@ -130,29 +115,6 @@ public class AsyncSearchCachedServiceImpl {
 
                 return movieNameAndUrlModels;
 
-
-
-//                else {
-//                    return movieNameAndUrlModels;
-//                }
-
-                //x 三号大厅
-//            case "x":
-////                  从 社区动力
-////               从redis 中拿
-//
-//                movieNameAndUrlModels = movieNameAndUrlMapper.selectMovieUrlByLikeName("url_movie_sumsu", searchMovieText);
-//                if (movieNameAndUrlModels == null || movieNameAndUrlModels.size() == 0) {
-//                    //从数据库里拿
-//                    movieNameAndUrlModels = movieNameAndUrlMapper.selectMovieUrlByLikeName("url_movie_sumsu", searchMovieText);
-//                    //数据库中也不存在 则重新爬取
-//                    redisTemplate.opsForHash().put("sumsu", searchMovieText, movieNameAndUrlModels);
-//                    redisTemplate.expire(searchMovieText, 60, TimeUnit.SECONDS);
-//
-//                    return movieNameAndUrlModels;
-//                } else {
-//                    return movieNameAndUrlModels;
-//                }
 
 
             case "a":
