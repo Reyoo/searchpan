@@ -42,7 +42,7 @@ public class InvalidUrlCheckingService {
      * @throws Exception
      */
     @Async("crawler-Executor")
-    public List<MovieNameAndUrlModel> checkUrlMethod(String tableName, List<MovieNameAndUrlModel> movieNameAndUrlModels, String proxyIp, int proxyPort) throws Exception {
+    public List<MovieNameAndUrlModel> checkUrlMethod(String tableName, List<MovieNameAndUrlModel> movieNameAndUrlModels) throws Exception {
 
         List<MovieNameAndUrlModel> couldBeFindUrls = new ArrayList<>();
         if (movieNameAndUrlModels == null || movieNameAndUrlModels.size() == 0) {

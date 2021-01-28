@@ -3,18 +3,18 @@ package com.libbytian.pan.crawler.service.aidianying;
 import cn.hutool.core.util.StrUtil;
 import com.libbytian.pan.proxy.service.FindFishUrlConnection;
 import com.libbytian.pan.proxy.service.GetProxyService;
+import com.libbytian.pan.proxy.service.PhantomJsProxyCallService;
 import com.libbytian.pan.system.model.MovieNameAndUrlModel;
 import com.libbytian.pan.system.service.IMovieNameAndUrlService;
 import com.libbytian.pan.system.service.impl.InvalidUrlCheckingService;
 import com.libbytian.pan.system.util.UserAgentUtil;
-import lombok.Cleanup;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.openqa.selenium.phantomjs.PhantomJSDriver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -24,9 +24,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.io.BufferedInputStream;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.net.*;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -53,26 +51,29 @@ public class AiDianyingService {
     private final IMovieNameAndUrlService movieNameAndUrlService;
     private final GetProxyService getProxyService;
     private final FindFishUrlConnection findFishUrlConnection;
+    private final PhantomJsProxyCallService phantomJsProxyCallService;
 
 
     @Value("${user.lxxh.aidianying}")
     String lxxhUrl;
 
 
-    @Async("crawler-Executor")
-    public void saveOrFreshRealMovieUrl(String searchMovieName, String proxyIp, int proxyPort) {
+//    @Async("crawler-Executor")
+    public void saveOrFreshRealMovieUrl(String searchMovieName,String proxyIpAndPort) {
 
         ArrayList<MovieNameAndUrlModel> movieNameAndUrlModelList = new ArrayList();
-        String userAgent = UserAgentUtil.randomUserAgent();
         Set<String> movieUrlInLxxh = new HashSet();
         log.info("-------------------------开始爬取爱电影 begin ----------------------------");
         StringBuffer html = new StringBuffer();
 
         try {
             String urlAiDianying = lxxhUrl + "/?s=" + searchMovieName;
-            log.info("-------------------------爱电影 end ----------------------------");
-            Document document = Jsoup.parse(findFishUrlConnection.FindFishUrlConnection(proxyIp, proxyPort, urlAiDianying));
 
+
+            //采用phantomJs 无界浏览器形式访问
+            PhantomJSDriver firstBrowserDriver = phantomJsProxyCallService.create(urlAiDianying,proxyIpAndPort);
+            System.out.println(firstBrowserDriver.getPageSource());
+            Document document = Jsoup.parse(firstBrowserDriver.getPageSource());
             //如果未找到，放弃爬取，直接返回
             if (document.getElementsByClass("entry-title").text().equals("未找到")){
                 log.info("----------------爱电影网站未找到-> "+searchMovieName+" <-放弃爬取---------------");
@@ -94,49 +95,23 @@ public class AiDianyingService {
             if (movieUrlInLxxh.size() == 0) {
                 movieUrlInLxxh.add(urlAiDianying);
             }
-//            MovieNameAndUrlModel movieNameAndUrlModel = new MovieNameAndUrlModel();
 
             //说明搜索到了 url 电影路径
                 for (String secondUrlLxxh : movieUrlInLxxh) {
                     //由于包含模糊查询、这里记录到数据库中做插入更新操作
                     log.info("爱电影--》" + secondUrlLxxh);
-//                    MovieNameAndUrlModel movieNameAndUrlModel = getMovieLoopsAiDianying(url, userAgent, proxyIp, proxyPort);
-
                     MovieNameAndUrlModel movieNameAndUrlModel = new MovieNameAndUrlModel();
 
                     StringBuffer stringBuffer = new StringBuffer();
 
                     movieNameAndUrlModel.setMovieUrl(secondUrlLxxh);
-                    System.getProperties().setProperty("proxySet", "true");
-                    System.setProperty("http.proxyHost", proxyIp);
-                    System.setProperty("http.proxyPort", String.valueOf(proxyPort));
-                    URL url = new URL(secondUrlLxxh);
-                    URLConnection connection = url.openConnection();
-//            connection.setRequestProperty("User-Agent", "Mozilla/5.0 (iPhone; CPU iPhone OS 14_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 MicroMessenger/7.0.21(0x17001522) NetType/WIFI Language/zh_CN");
-                    connection.setRequestProperty("User-Agent", userAgent);
-//            connection.setRequestProperty("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9");
-                    connection.setRequestProperty("Host", "www.lxxh7.com");
-                    connection.setRequestProperty("Upgrade-Insecure-Requests", "1");
-                    connection.setRequestProperty("Cache-Control", "max-age=0");
-                    connection.setRequestProperty("Connection", "keep-alive");
-                    connection.setConnectTimeout(18000);
-                    connection.connect();
-                    InputStream inputStream = connection.getInputStream();
-                    byte[] bytes = new byte[1024];
 
-                    while (inputStream.read(bytes) >= 0) {
-                        stringBuffer.append(new String(bytes));
-//                        System.out.println(stringBuffer.toString());
-                    }
+                    //采用phantomJs 无界浏览器形式访问
+                    PhantomJSDriver secorndBrowserDriver = phantomJsProxyCallService.create(secondUrlLxxh,proxyIpAndPort);
+                    Document secorndDocument = Jsoup.parse(secorndBrowserDriver.getPageSource());
 
-
-                     Document secorndDocument = Jsoup.parse(stringBuffer.toString());
                     String name = secorndDocument.getElementsByTag("title").first().text();
                     movieNameAndUrlModel.setMovieName(name);
-                    log.info("爱电影第二部----> begin <--------------------");
-//                    log.info(secorndDocument.body().toString());
-                    log.info("爱电影第二部----> end <--------------------");
-
 
                     Elements secorndAttr = secorndDocument.getElementsByTag("p").select("span");
                     for (Element element : secorndAttr) {
@@ -172,17 +147,14 @@ public class AiDianyingService {
                     movieNameAndUrlModelList.add(movieNameAndUrlModel);
                 }
 
-
                     movieNameAndUrlService.addOrUpdateMovieUrls(movieNameAndUrlModelList, "url_movie_aidianying");
-                    invalidUrlCheckingService.checkUrlMethod("url_movie_aidianying", movieNameAndUrlModelList, proxyIp, Integer.valueOf(proxyPort));
+                    invalidUrlCheckingService.checkUrlMethod("url_movie_aidianying", movieNameAndUrlModelList);
                     redisTemplate.opsForHash().put("aidianying", searchMovieName, movieNameAndUrlModelList);
                     redisTemplate.expire(searchMovieName, 60, TimeUnit.SECONDS);
 
 
-
         } catch (Exception e) {
-            getProxyService.removeUnableProxy(proxyIp + ":" + proxyPort);
-            e.printStackTrace();
+            log.error(e.getMessage());
             log.error("searchMovieName --> " + searchMovieName);
             log.error("AiDianyingService.saveOrFreshRealMovieUrl()  ->" + e.getMessage());
         }

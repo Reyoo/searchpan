@@ -137,9 +137,8 @@ public class CrawlerWebInfoController {
     public AjaxResult getXXXX(@PathVariable(name = "movieName") String movieName)   {
 //        String ipAndPort = getProxyService.getProxyIpFromRemote();
         String ipAndPort = getProxyService.getProxyIp();
-        String ip = ipAndPort.split(":")[0];
-        int port = Integer.valueOf(ipAndPort.split(":")[1]);
-        aiDianyingService.saveOrFreshRealMovieUrl(movieName,ip,port);
+
+        aiDianyingService.saveOrFreshRealMovieUrl(movieName,ipAndPort);
             return AjaxResult.success("表入库成功");
 
     }

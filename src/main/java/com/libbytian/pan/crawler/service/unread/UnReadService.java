@@ -244,7 +244,7 @@ public class UnReadService {
                     }
 
                 }
-                invalidUrlCheckingService.checkUrlMethod("url_movie_unread",movieNameAndUrlModelList,proxyIp,Integer.valueOf(proxyPort));
+                invalidUrlCheckingService.checkUrlMethod("url_movie_unread",movieNameAndUrlModelList);
             }
 
             movieNameAndUrlService.addOrUpdateMovieUrls(movieNameAndUrlModelList, "url_movie_unread");

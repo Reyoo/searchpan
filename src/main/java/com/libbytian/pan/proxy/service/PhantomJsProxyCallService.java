@@ -1,20 +1,22 @@
-package com.libbytian.pan.proxy.test;
+package com.libbytian.pan.proxy.service;
 
 import com.libbytian.pan.system.util.UserAgentUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.openqa.selenium.By;
-import org.openqa.selenium.Platform;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.phantomjs.PhantomJSDriver;
 import org.openqa.selenium.phantomjs.PhantomJSDriverService;
 import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Component;
 
-import java.util.List;
+import java.io.Serializable;
+
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -22,26 +24,32 @@ import java.util.concurrent.TimeUnit;
  * @date: 2021-01-27
  * @Description:
  */
-public class PhantomJsTest {
-
-    public static void main(String[] args) throws InterruptedException {
-//        System.setProperty("webdriver.chrome.driver", "F:\\git_workspaces\\crawler\\driver\\chromedriver.exe");
-
+@Slf4j
+@Component
+public class PhantomJsProxyCallService {
 
 
-        String href = "http://www.lxxh7.com/?s=八佰";
-//        String href = "http://www.baidu.com";
-        PhantomJSDriver driver = create(href);
+    @Value("${phantomjs.deploy.linuxpath}")
+    String deployLinuxPath;
 
+    @Value("${phantomjs.deploy.winpath}")
+    String deployWindowsPath;
 
-        Document document = Jsoup.parse(driver.getPageSource());
-        System.out.println(document.body());
-
-
+    public static boolean isWindowsOS() {
+        boolean isWindowsOS = false;
+        // 注：这里的system，系统指的是 JRE (runtime)system，不是指 OS
+        String osName = System.getProperty("os.name");
+        if (osName.toLowerCase().indexOf("windows") > -1) {
+            isWindowsOS = true;
+        }
+        return isWindowsOS;
     }
 
 
-    static PhantomJSDriver create(String href) {
+    public  PhantomJSDriver create(String href,String proxyIpAndPort) {
+
+        Proxy proxy = new Proxy();
+        proxy.setHttpProxy(proxyIpAndPort);
         DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
         //ssl证书支持
         desiredCapabilities.setCapability("acceptSslCerts", true);
@@ -51,24 +59,28 @@ public class PhantomJsTest {
         desiredCapabilities.setCapability("cssSelectorsEnabled", true);
         desiredCapabilities.setCapability(PhantomJSDriverService.PHANTOMJS_PAGE_SETTINGS_PREFIX + "userAgent",
                 UserAgentUtil.randomUserAgent());
-//        desiredCapabilities.setPlatform(new Platform();
         desiredCapabilities.setCapability(CapabilityType.BROWSER_NAME, "Safari");
         desiredCapabilities.setCapability("platformName", "Android");
         //js支持
         desiredCapabilities.setJavascriptEnabled(true);
+
+        desiredCapabilities.setCapability(CapabilityType.PROXY, proxy);
         //驱动支持DesiredCapabilities
-        desiredCapabilities.setCapability(PhantomJSDriverService.PHANTOMJS_EXECUTABLE_PATH_PROPERTY,
-                "E:\\phantomjs-2.1.1-windows\\bin\\phantomjs.exe");
+        //如果是windows系统
+        if(isWindowsOS()){
+            desiredCapabilities.setCapability(PhantomJSDriverService.PHANTOMJS_EXECUTABLE_PATH_PROPERTY,deployWindowsPath);
+        }else{
+            desiredCapabilities.setCapability(PhantomJSDriverService.PHANTOMJS_EXECUTABLE_PATH_PROPERTY,deployLinuxPath);
+        }
+
         //创建无界面浏览器对象
         PhantomJSDriver driver = new PhantomJSDriver(desiredCapabilities);
         //这里注意，把窗口的大小调整为最大，如果不设置可能会出现元素不可用的问题
         driver.manage().window().maximize();
         //获取csdn主页
         driver.get(href);
-
         // 超过8秒即为超时，会抛出Exception
-        driver.manage().timeouts().pageLoadTimeout(8, TimeUnit.SECONDS);
-
+        driver.manage().timeouts().pageLoadTimeout(10, TimeUnit.SECONDS);
         return driver;
 
     }

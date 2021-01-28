@@ -102,7 +102,7 @@ public class CrawlerSumsuService {
                 if (firstSearchUrls.size() > 0) {
                     movieList = getTidSumsuUrl(firstSearchUrls, proxyIp, proxyPort);
 
-                    invalidUrlCheckingService.checkUrlMethod("url_movie_sumsu", movieList, proxyIp, Integer.valueOf(proxyPort));
+                    invalidUrlCheckingService.checkUrlMethod("url_movie_sumsu", movieList);
                     redisTemplate.opsForHash().put("sumsu", movieName, movieList);
 
                 }

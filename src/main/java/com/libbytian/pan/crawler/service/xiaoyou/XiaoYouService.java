@@ -67,7 +67,7 @@ public class XiaoYouService {
                     movieNameAndUrlModelList.addAll(getXiaoYouMovieLoops(url,proxyIp,proxyPort));
                 }
 
-                invalidUrlCheckingService.checkUrlMethod("url_movie_xiaoyou",movieNameAndUrlModelList,proxyIp,Integer.valueOf(proxyPort));
+                invalidUrlCheckingService.checkUrlMethod("url_movie_xiaoyou",movieNameAndUrlModelList);
             }
 
             //存入数据库
