@@ -1,20 +1,12 @@
 package com.libbytian.pan.wechat.controller;
 
 import com.libbytian.pan.crawler.service.AsyncTask;
-import com.libbytian.pan.crawler.service.aidianying.AiDianyingService;
-import com.libbytian.pan.crawler.service.sumsu.CrawlerSumsuService;
-import com.libbytian.pan.crawler.service.unread.UnReadService;
-import com.libbytian.pan.proxy.service.GetProxyService;
 import com.libbytian.pan.system.model.SystemTemDetailsModel;
 import com.libbytian.pan.system.model.SystemUserModel;
-import com.libbytian.pan.system.service.ISystemKeywordService;
 import com.libbytian.pan.system.service.ISystemTemDetailsService;
-
+import com.libbytian.pan.system.service.ISystemUserSearchMovieService;
 import com.libbytian.pan.system.service.ISystemUserService;
-import com.libbytian.pan.system.service.impl.InvalidUrlCheckingService;
 import com.libbytian.pan.wechat.constant.TemplateKeyword;
-import com.libbytian.pan.wechat.handler.SubscribeHandler;
-import com.libbytian.pan.wechat.service.AsyncSearchCachedServiceImpl;
 import com.libbytian.pan.wechat.service.KeyWordSettingService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -24,14 +16,11 @@ import me.chanjar.weixin.mp.bean.message.WxMpXmlMessage;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlOutMessage;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlOutTextMessage;
 import org.apache.commons.lang3.StringUtils;
-import org.dom4j.*;
-import org.dom4j.io.SAXReader;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.ByteArrayInputStream;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.Base64;
 
 /**
  * @author sun7127
@@ -54,6 +43,7 @@ public class WxPortalController {
     private final ISystemUserService iSystemUserService;
     private final KeyWordSettingService keyWordSettingService;
     private final RedisTemplate redisTemplate;
+    private final ISystemUserSearchMovieService iSystemUserSearchMovieService;
 
 
 
@@ -167,6 +157,10 @@ public class WxPortalController {
                     searchName = searchWord;
                 }
 
+                /**
+                 * 统计用户查询记录
+                 */
+                iSystemUserSearchMovieService.userSearchMovieCountInFindfish(searchName);
 
                 //从Redis中取出所有key,判断是传入内容是否为敏感词
                 if (redisTemplate.boundHashOps("SensitiveWord").keys().contains(searchName)){
@@ -174,7 +168,7 @@ public class WxPortalController {
                 }
 
 
-                asyncTask.crawlerMovie(searchName);
+//                asyncTask.crawlerMovie(searchName);
 
                 WxMpXmlOutMessage outMessage = this.route(inMessage);
 

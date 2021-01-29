@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.libbytian.pan.system.mapper.SystemUserSearchMovieMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.libbytian.pan.system.model.SystemUserSearchMovieModel">
+        <id column="search_name" property="searchName"/>
+        <result column="search_times" property="searchTimes"/>
+        <result column="last_searchtime" property="lastSearchTime"/>
+        <result column="search_allowed" property="searchAllowed"/>
+    </resultMap>
+
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        search_name
+        AS searchName,
+         search_times AS searchTimes,
+         last_searchtime AS lastSearchTime,
+         search_allowed AS searchAllowed
+    </sql>
+
+
+    <!--新增用户关键词搜索-->
+    <insert id="insertUserSearchMovie" parameterType="com.libbytian.pan.system.model.SystemUserSearchMovieModel">
+        INSERT INTO user_movie_search
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="searchName != null">
+                search_name,
+            </if>
+            <if test="searchTimes != null">
+                search_times,
+            </if>
+            <if test="lastSearchTime != null">
+                last_searchtime,
+            </if>
+            <if test="searchAllowed != null">
+                search_allowed,
+            </if>
+        </trim>
+
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="searchName != null">
+                #{searchName,jdbcType=VARCHAR},
+            </if>
+
+            <if test="searchTimes != null">
+                #{searchTimes,jdbcType=BIGINT},
+            </if>
+
+            <if test="lastSearchTime != null">
+                #{lastSearchTime,jdbcType=TIMESTAMP},
+            </if>
+
+            <if test="searchAllowed != null">
+                #{searchAllowed,jdbcType=TINYINT},
+            </if>
+        </trim>
+    </insert>
+
+
+    <!--根据主键查询 词条-->
+    <select id="getUserSearchMovieBySearchName" parameterType="java.lang.String"
+            resultType="com.libbytian.pan.system.model.SystemUserSearchMovieModel">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM user_movie_search
+        WHERE
+        search_name = #{searchName}
+    </select>
+
+
+    <update id="updateUserSearchMovie" parameterType="com.libbytian.pan.system.model.SystemUserSearchMovieModel">
+        UPDATE
+        user_movie_search
+        <trim prefix="set" suffixOverrides=",">
+
+            <if test="searchTimes != null">
+                search_times =  #{searchTimes,jdbcType=BIGINT},
+            </if>
+            <if test="lastSearchTime != null">
+                last_searchtime =     #{lastSearchTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="searchAllowed != null">
+                search_allowed =#{searchAllowed,jdbcType=TINYINT},
+            </if>
+
+        </trim>
+        WHERE
+        search_name =#{searchName}
+    </update>
+
+    <!--根据主键查询 词条-->
+    <select id="listUserSearchMovieBySearchDateRange" parameterType="java.lang.String"
+            resultType="com.libbytian.pan.system.model.SystemUserSearchMovieModel">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM user_movie_search
+        WHERE
+        last_searchtime  <![CDATA[ >= ]]>  #{startTime}
+        AND
+        last_searchtime  <![CDATA[ <= ]]>  #{endTime}
+    </select>
+
+
+</mapper>
