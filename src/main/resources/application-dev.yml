@@ -42,9 +42,9 @@ spring:
 #    username: root
 #    password: libbytian123QWE!@#
 
-    url: jdbc:mysql://123.57.130.90:33306/demotyzf?useUnicode=true&characterEncoding=utf-8&serverTimezone=Hongkong
+    url: jdbc:mysql://114.116.229.225:33306/findfish?useUnicode=true&characterEncoding=utf-8&serverTimezone=Hongkong
     username: root
-    password: 123qwe!@#
+    password: libbytian123QWE!@#
 
     type: com.alibaba.druid.pool.DruidDataSource
     filters: stat
