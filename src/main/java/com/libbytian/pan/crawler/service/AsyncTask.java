@@ -1,14 +1,13 @@
 package com.libbytian.pan.crawler.service;
 
 import cn.hutool.core.util.StrUtil;
+import com.libbytian.pan.crawler.service.aidianying.AiDianyingService;
 import com.libbytian.pan.crawler.service.sumsu.CrawlerSumsuService;
 import com.libbytian.pan.crawler.service.unread.UnReadService;
 import com.libbytian.pan.crawler.service.xiaoyou.XiaoYouService;
 import com.libbytian.pan.proxy.service.GetProxyService;
 import com.libbytian.pan.system.model.MovieNameAndUrlModel;
 import com.libbytian.pan.system.service.IMovieNameAndUrlService;
-import com.libbytian.pan.wechat.service.NormalPageService;
-import com.libbytian.pan.crawler.service.aidianying.AiDianyingService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -50,8 +49,7 @@ public class AsyncTask {
     @Async("crawler-Executor")
     public void crawlerMovie(String searchName){
         //设置代理IP PORT
-//        String ipAndPort = getProxyService.getProxyIpFromRemote();
-         String ipAndPort = getProxyService.getProxyIp();
+        String ipAndPort = getProxyService.getProxyIpFromRemote();
          if (StringUtils.isBlank(ipAndPort)){
              return;
          }

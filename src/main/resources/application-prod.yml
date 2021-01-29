@@ -41,8 +41,8 @@ spring:
     password: 123qwe!@#
     type: com.alibaba.druid.pool.DruidDataSource
     filters: stat
-    maxActive: 5
-    initialSize: 1
+    maxActive: 50
+    initialSize: 20
     maxWait: 60000
     minIdle: 1
     timeBetweenEvictionRunsMillis: 60000

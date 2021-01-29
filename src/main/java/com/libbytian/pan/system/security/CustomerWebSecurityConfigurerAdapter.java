@@ -3,6 +3,7 @@ package com.libbytian.pan.system.security;
 
 import com.libbytian.pan.system.security.filter.JWTAuthenticationFilter;
 import com.libbytian.pan.system.security.filter.ValidateCodeFilter;
+import com.libbytian.pan.system.security.filter.XssFilter;
 import com.libbytian.pan.system.security.handle.LoginAccessDeineHandler;
 import com.libbytian.pan.system.security.point.CustomAuthenticationEntryPoint;
 import com.libbytian.pan.system.security.provider.JwtUserDetailServiceImpl;
@@ -17,6 +18,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.csrf.CsrfFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
@@ -52,16 +54,13 @@ public class CustomerWebSecurityConfigurerAdapter extends WebSecurityConfigurerA
 
         JWTAuthenticationFilter jwtAuthenticationFilter = new JWTAuthenticationFilter();
         jwtAuthenticationFilter.setAuthenticationManager(this.authenticationManagerBean());
-
-
         http
                 .authorizeRequests()
                 //访问白名单
                 .anyRequest().access("@accessDecisionService.hasPermission(request , authentication)")
                 .and()
-
-                //自定义验证
-
+                .addFilterAfter(new XssFilter(), CsrfFilter.class)
+        //自定义验证
                 .addFilterAfter(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(validateCodeFilter, JWTAuthenticationFilter.class)
 //                .addFilter(new JWTAuthenticationFilter(authenticationManager()))

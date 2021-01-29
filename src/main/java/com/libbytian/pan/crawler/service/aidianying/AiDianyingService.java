@@ -160,7 +160,6 @@ public class AiDianyingService {
         try {
             for (String secondUrlLxxh : movieUrlInLxxh) {
                 movieNameAndUrlModelList.addAll(getWangPanByLxxh(secondUrlLxxh, proxyIpAndPort));
-                Thread.sleep(1000);
             }
 
             //更新前从数据库查询后删除 片名相同但更新中的 无效数据
