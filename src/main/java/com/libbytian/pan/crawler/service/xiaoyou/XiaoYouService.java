@@ -21,6 +21,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
@@ -58,6 +59,7 @@ public class XiaoYouService {
     @Value("$(user.xiaoyou.yingmiao)")
     String xiaoyouUrl;
 
+    @Async("crawler-Executor")
     public void  getXiaoYouCrawlerResult(String searchMovieName,String proxyIp, int proxyPort) {
         log.info("-------------->开始爬取 影喵儿<--------------------");
         List<MovieNameAndUrlModel> movieNameAndUrlModelList = new ArrayList<>();
@@ -75,11 +77,11 @@ public class XiaoYouService {
 
             List<MovieNameAndUrlModel> couldBeFindUrls =  invalidUrlCheckingService.checkUrlMethod("url_movie_xiaoyou",movieNameAndUrlModelList);
 
-            if (couldBeFindUrls != null){
+            if (couldBeFindUrls.size()>0){
             //存入数据库
             movieNameAndUrlService.addOrUpdateMovieUrls(couldBeFindUrls, "url_movie_xiaoyou");
             //存入redis
-            redisTemplate.opsForHash().put("xiaoyoumovie", searchMovieName, movieNameAndUrlModelList);
+            redisTemplate.opsForHash().put("xiaoyoumovie", searchMovieName, couldBeFindUrls);
             }
 
             }
@@ -191,8 +193,40 @@ public class XiaoYouService {
             String[] arrName = movieName.split("- 小悠家");
             movieName = arrName[0];
 
-            Elements pTagAttr = document.getElementsByTag("p");
+//            ---------------------------------------------------------------------------------------------------
+//            Elements pTagAttr = document.getElementsByClass("entry-content").tagName("div");
+//            for (Element element : pTagAttr) {
+//                if (element.select("a").attr("href").contains("pan.baidu")) {
+//                    MovieNameAndUrlModel movieNameAndUrlModel = new MovieNameAndUrlModel();
+//
+//                    if (element.childNodeSize() == 3){
+//
+//                        //                    String password = element.childNode(2).toString().split("&nbsp; &nbsp; ")[1];
+//                        String password = element.childNode(2).toString().replaceAll("&nbsp;","");
+//
+//                        movieNameAndUrlModel.setWangPanPassword(password);
+//                    }
+//
+//                    //判断片名是否需要拼接
+//                    int indexName = element.childNode(0).toString().indexOf(".视频：");
+//                    if (indexName == -1){
+//                        movieNameAndUrlModel.setMovieName(movieName);
+//                    }else {
+//                        movieNameAndUrlModel.setMovieName(movieName + element.childNode(0).toString().substring(0,indexName));
+//                    }
+//
+//                    movieNameAndUrlModel.setWangPanUrl(element.select("a").attr("href"));
+//                    movieNameAndUrlModel.setMovieUrl(url);
+//                    list.add(movieNameAndUrlModel);
+//                    break;
+//                } else {
+//                    continue;
+//                }
+//
+//            }
+//            -----------------------------------------------------------------------------------------------
 
+            Elements pTagAttr = document.getElementsByTag("p");
             for (Element element : pTagAttr) {
                 if (element.select("a").attr("href").contains("pan.baidu")) {
                     MovieNameAndUrlModel movieNameAndUrlModel = new MovieNameAndUrlModel();
@@ -216,6 +250,7 @@ public class XiaoYouService {
                     movieNameAndUrlModel.setWangPanUrl(element.select("a").attr("href"));
                     movieNameAndUrlModel.setMovieUrl(url);
                     list.add(movieNameAndUrlModel);
+                    break;
                 } else {
                     continue;
                 }

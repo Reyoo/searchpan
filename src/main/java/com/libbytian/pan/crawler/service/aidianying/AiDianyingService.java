@@ -4,6 +4,7 @@ import cn.hutool.core.util.StrUtil;
 import com.libbytian.pan.proxy.service.FindFishUrlConnection;
 import com.libbytian.pan.proxy.service.GetProxyService;
 import com.libbytian.pan.proxy.service.PhantomJsProxyCallService;
+import com.libbytian.pan.system.mapper.MovieNameAndUrlMapper;
 import com.libbytian.pan.system.model.MovieNameAndUrlModel;
 import com.libbytian.pan.system.service.IMovieNameAndUrlService;
 import com.libbytian.pan.system.service.impl.InvalidUrlCheckingService;
@@ -50,6 +51,7 @@ public class AiDianyingService {
     private final InvalidUrlCheckingService invalidUrlCheckingService;
     private final IMovieNameAndUrlService movieNameAndUrlService;
     private final PhantomJsProxyCallService phantomJsProxyCallService;
+    private final MovieNameAndUrlMapper movieNameAndUrlMapper;
 
 
     @Value("${user.lxxh.aidianying}")
@@ -160,11 +162,23 @@ public class AiDianyingService {
                 movieNameAndUrlModelList.addAll(getWangPanByLxxh(secondUrlLxxh, proxyIpAndPort));
                 Thread.sleep(1000);
             }
-            //由于包含模糊查询、这里记录到数据库中做插入更新操作
-            movieNameAndUrlService.addOrUpdateMovieUrls(movieNameAndUrlModelList, "url_movie_aidianying");
-            invalidUrlCheckingService.checkUrlMethod("url_movie_aidianying", movieNameAndUrlModelList);
-            redisTemplate.opsForHash().put("aidianying", searchMovieName, movieNameAndUrlModelList);
-            redisTemplate.expire(searchMovieName, 60, TimeUnit.SECONDS);
+
+            //更新前从数据库查询后删除 片名相同但更新中的 无效数据
+            List<MovieNameAndUrlModel>   movieNameAndUrlModels = movieNameAndUrlMapper.selectMovieUrlByLikeName("url_movie_aidianying", searchMovieName);
+            invalidUrlCheckingService.checkUrlMethod("url_movie_aidianying",movieNameAndUrlModels);
+
+            List<MovieNameAndUrlModel> couldBeFindUrls = invalidUrlCheckingService.checkUrlMethod("url_movie_aidianying", movieNameAndUrlModelList);
+            if (couldBeFindUrls != null){
+                movieNameAndUrlService.addOrUpdateMovieUrls(movieNameAndUrlModelList, "url_movie_aidianying");
+                redisTemplate.opsForHash().put("aidianying", searchMovieName, movieNameAndUrlModelList);
+                redisTemplate.expire(searchMovieName, 60, TimeUnit.SECONDS);
+            }
+//            //由于包含模糊查询、这里记录到数据库中做插入更新操作
+//            movieNameAndUrlService.addOrUpdateMovieUrls(movieNameAndUrlModelList, "url_movie_aidianying");
+//            invalidUrlCheckingService.checkUrlMethod("url_movie_aidianying", movieNameAndUrlModelList);
+//
+//            redisTemplate.opsForHash().put("aidianying", searchMovieName, movieNameAndUrlModelList);
+//            redisTemplate.expire(searchMovieName, 60, TimeUnit.SECONDS);
 
         } catch (Exception e) {
             log.error(e.getMessage());
