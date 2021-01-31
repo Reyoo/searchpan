@@ -3,45 +3,32 @@ package com.libbytian.pan.system.security.filter;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.libbytian.pan.system.common.AjaxResult;
-import com.libbytian.pan.system.exception.ImageCodeException;
-import com.libbytian.pan.system.model.SystemUserModel;
 import com.libbytian.pan.system.security.model.AuthenticationSuccessModel;
 import com.libbytian.pan.system.security.provider.JwtUser;
-import com.libbytian.pan.system.service.ISystemUserService;
 import com.libbytian.pan.system.util.JwtTokenUtils;
-
-import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
-
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
-
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-
 import java.util.Set;
 
+
 /**
- *
+ * 登录用户校验过滤
  */
+
 
 @Slf4j
 public class JWTAuthenticationFilter extends AbstractAuthenticationProcessingFilter {

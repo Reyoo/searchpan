@@ -7,13 +7,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.util.AntPathMatcher;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -45,26 +43,19 @@ public class AccessDecisionService {
          * 注册接口放过
          */
         whiteList.add("/login/register");
-        whiteList.add("/details/**");
-        whiteList.add("/favicon.ico");
-        whiteList.add("/movie/**");
-        whiteList.add("/invalid/**");
-        whiteList.add("/initmovie/**");
-        whiteList.add("/userkey/**");
-        whiteList.add("/home/**");
-        whiteList.add("/user/**");
-        whiteList.add("/fantasy/**");
+        /**
+         * 微信通用接口
+         */
+        whiteList.add("/wechat/portal/**");
 
         /**
          * 验证码接口放过
          */
         whiteList.add("/captcha/captchaImage");
+//        whiteList.add("/userkey/**");
 
-        /**
-         * 付费用户放过。完成项目后应该消掉
-         */
-        whiteList.add("/wechat/**");
         whiteList.add("/fantasy/**");
+
 
         for (String url : whiteList) {
             if (antPathMatcher.match(url, request.getRequestURI())) {

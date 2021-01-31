@@ -15,7 +15,6 @@ server:
 #    port: 8080
 
 
-# Spring Security Default user name and password
 
 spring:
   redis:
