@@ -146,6 +146,8 @@ public class WxPortalController {
 
                 System.out.println(inMessage.getContent());
                 String searchWord = inMessage.getContent().trim();
+
+
                 String searchName = null;
                 if(searchWord.contains(" ")){
                     int idx = searchWord.lastIndexOf(" ");

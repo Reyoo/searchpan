@@ -77,6 +77,11 @@ public class AccessDecisionService {
                 return true;
             }
         }
+
+//        if (auth instanceof AnonymousAuthenticationToken) {
+//            return false;
+//        }
+
         return false;
     }
 

@@ -64,7 +64,43 @@ public class SubscribeHandler extends AbstractHandler {
      */
     private WxMpXmlOutMessage handleSpecial(WxMpXmlMessage wxMessage)
         throws Exception {
-        //TODO
+//        /**
+//         *@Author zcm
+//         *@Email zcm6092@fjdaze.com
+//         *@Description 自动回复 一条消息
+//         *@Date 14:21 2020/4/24
+//         */
+//        //第一句，设置服务器端编码
+//        response.setCharacterEncoding("utf-8");
+//        //第二句，设置浏览器端解码
+//        response.setContentType("text/xml;charset=utf-8");
+//        String str = "你好呀！欢迎来到我的微信公众号。\n\n";
+//        //创建消息文本
+//        WxMpXmlOutTextMessage text = WxMpXmlOutTextMessage.TEXT().toUser(fromUser).fromUser(toUser).content(str).build();
+//        String xml = text.toXml();
+//        PrintWriter out = null;
+//        try {
+//            out = response.getWriter();
+//            out.print(xml);
+//        } catch (IOException e) {
+//            out.close();
+//            out = null;
+//            e.printStackTrace();
+//        }
+//        out.close();
+//        out = null;
+//
+//        //第二条信息  使用客服模式推送
+//        String url = "https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token=" + access_token;
+//        JSONObject object = new JSONObject();
+//        object.put("touser", fromUser);
+//        object.put("msgtype", "image");
+//        JSONObject object1 = new JSONObject();
+//        object1.put("media_id", "WNtGBTNVULve98fkEJWUnDIMZZGlWEpONV2NK50un_U_12211");
+//        object.put("image", object1);
+//        System.out.println("JSONObject:" + object);
+//        HttpUtil.post(url, object.toJSONString());
+
         return null;
     }
 
