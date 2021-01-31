@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.libbytian.pan.system.mapper.SystemNotifyServiceMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.libbytian.pan.system.model.SystemNotifyModel">
+        <id column="id" property="id"/>
+        <result column="notify_text" property="notifyText"/>
+        <result column="modify_date" property="modifyDate"/>
+        <result column="open_notify" property="openNotify"/>
+
+    </resultMap>
+
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id
+        AS id,
+         notify_text AS notifyText,
+         modify_date AS modifyDate ,
+         open_notify AS openNotify
+    </sql>
+
+
+    <select id="listSystemNotify" parameterType="com.libbytian.pan.system.model.SystemNotifyModel"
+            resultType="com.libbytian.pan.system.model.SystemNotifyModel">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM sys_notify
+        <trim prefix="WHERE" prefixOverrides="and|">
+            <if test="id != null and id != ''">
+                AND id= #{id}
+            </if>
+            <if test="notifyText != null and notifyText != ''">
+                AND notify_text =#{notifyText}
+            </if>
+            <if test="modifyDate != null ">
+                AND modify_date =#{modifyDate}
+            </if>
+            <if test="openNotify != null ">
+                AND open_notify =#{openNotify}
+            </if>
+        </trim>
+
+    </select>
+
+
+    <delete id="deleteSystemNoitfy" parameterType="com.libbytian.pan.system.model.SystemNotifyModel">
+
+        DELETE
+        FROM
+        sys_notify
+        <trim prefix="WHERE" prefixOverrides="and|">
+            <if test="id != null and id != ''">
+                AND id= #{id}
+            </if>
+
+            <if test="notifyText != null and notifyText != ''">
+                AND notify_text= #{notifyText}
+            </if>
+            <if test="openNotify != null ">
+                AND open_notify =#{openNotify}
+            </if>
+
+        </trim>
+
+
+    </delete>
+
+
+    <insert id="insertSystemNotify" parameterType="com.libbytian.pan.system.model.SystemNotifyModel">
+        INSERT INTO sys_notify
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null and id != ''">
+                id,
+            </if>
+
+            <if test="notifyText != null and notifyText != ''">
+                notify_text,
+            </if>
+
+            <if test="modifyDate != null ">
+                modify_date,
+            </if>
+
+            <if test="openNotify != null ">
+                open_notify ,
+            </if>
+
+        </trim>
+
+
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+
+            <if test="id != null and id != ''">
+                #{id,jdbcType=VARCHAR},
+            </if>
+
+            <if test="notifyText != null and notifyText != ''">
+                #{notifyText ,jdbcType=VARCHAR},
+            </if>
+
+            <if test="modifyDate != null ">
+                #{modifyDate ,jdbcType=TIMESTAMP},
+            </if>
+
+            <if test="openNotify != null ">
+                #{openNotify ,jdbcType=TINYINT},
+            </if>
+
+
+        </trim>
+
+
+    </insert>
+
+
+    <update id="updateSystemNoitfy" parameterType="com.libbytian.pan.system.model.SystemNotifyModel">
+        UPDATE
+        sys_notify
+        <trim prefix="set" suffixOverrides=",">
+            <if test="notifyText != null and notifyText != ''">
+                notify_text =#{notifyText},
+            </if>
+            <if test="modifyDate != null ">
+                modify_date =#{modifyDate},
+            </if>
+            <if test="openNotify != null ">
+                open_notify =#{openNotify},
+            </if>
+        </trim>
+        WHERE
+        id =#{id}
+    </update>
+
+
+</mapper>

@@ -110,4 +110,28 @@ public class WxMpConfiguration {
         return newRouter;
     }
 
+    protected MenuHandler getMenuHandler() {
+        return this.menuHandler;
+    }
+
+    protected SubscribeHandler getSubscribeHandler() {
+        return this.subscribeHandler;
+    }
+
+//    protected UnsubscribeHandler getUnsubscribeHandler() {
+//        return this.unsubscribeHandler;
+//    }
+//
+//    protected AbstractHandler getLocationHandler() {
+//        return this.locationHandler;
+//    }
+//
+//    protected MsgHandler getMsgHandler() {
+//        return this.msgHandler;
+//    }
+//
+//    protected AbstractHandler getScanHandler() {
+//        return null;
+//    }
+
 }
