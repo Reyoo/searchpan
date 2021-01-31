@@ -19,6 +19,7 @@
         <include refid="Base_Column_List"/>
         FROM  ${tablename}
         WHERE movie_name like  ${"'%"+movieName+"%'"}
+        limit 10
 
     </select>
 

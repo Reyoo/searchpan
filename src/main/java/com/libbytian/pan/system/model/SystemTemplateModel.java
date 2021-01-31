@@ -17,7 +17,9 @@ import java.time.LocalDateTime;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
+@Getter
+@Setter
+@ToString
 @TableName("sys_template")
 public class SystemTemplateModel extends Model<SystemTemplateModel> {
 

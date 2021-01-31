@@ -1,19 +1,11 @@
 package com.libbytian.pan.wechat.service;
 
-import com.libbytian.pan.crawler.service.AsyncTask;
 import com.libbytian.pan.system.mapper.MovieNameAndUrlMapper;
-import com.libbytian.pan.system.service.IMovieNameAndUrlService;
-import com.libbytian.pan.system.service.impl.InvalidUrlCheckingService;
 import com.libbytian.pan.system.model.MovieNameAndUrlModel;
-import com.libbytian.pan.crawler.service.aidianying.AiDianyingService;
-import com.libbytian.pan.crawler.service.sumsu.CrawlerSumsuService;
-import com.libbytian.pan.crawler.service.unread.UnReadService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Component;
 
@@ -41,16 +33,8 @@ public class AsyncSearchCachedServiceImpl {
 
     private final MovieNameAndUrlMapper movieNameAndUrlMapper;
 
-    private final AsyncTask asyncTask;
 
 
-
-
-    @Value("${user.unread.weiduyingdan}")
-    String unreadUrl;
-
-    @Value("${user.lxxh.aidianying}")
-    String lxxhUrl;
 
 
     /**
