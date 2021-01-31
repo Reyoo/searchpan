@@ -3,8 +3,7 @@ package com.libbytian.pan.system.security.model;
 import lombok.Data;
 
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
+
 
 /**
  * @author: QiSun

@@ -1,21 +1,14 @@
 package com.libbytian.pan.wechat.controller;
 
-import com.libbytian.pan.crawler.service.aidianying.AiDianyingService;
-import com.libbytian.pan.crawler.service.sumsu.CrawlerSumsuService;
-import com.libbytian.pan.crawler.service.unread.UnReadService;
-import com.libbytian.pan.proxy.service.GetProxyService;
 import com.libbytian.pan.system.common.AjaxResult;
+import com.libbytian.pan.system.model.MovieNameAndUrlModel;
 import com.libbytian.pan.system.model.SystemTemDetailsModel;
 import com.libbytian.pan.system.model.SystemUserModel;
 import com.libbytian.pan.system.service.ISystemTemDetailsService;
-import com.libbytian.pan.system.model.MovieNameAndUrlModel;
-import com.libbytian.pan.wechat.constant.TemplateKeyword;
 import com.libbytian.pan.wechat.service.AsyncSearchCachedServiceImpl;
-import com.libbytian.pan.wechat.service.NormalPageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -46,11 +39,8 @@ public class MoviePageShowController {
 
     private final AsyncSearchCachedServiceImpl asyncSearchCachedService;
     private final ISystemTemDetailsService iSystemTemDetailsService;
-    private final GetProxyService getProxyService;
-    private final NormalPageService normalPageService;
-    private final AiDianyingService aiDianyingService;
-    private final UnReadService unReadService;
-    private final CrawlerSumsuService crawlerSumsuService;
+
+
 
 
     /**
@@ -120,9 +110,7 @@ public class MoviePageShowController {
 
             List<SystemTemDetailsModel> systemdetails = iSystemTemDetailsService.getTemDetailsWithUser(systemUserModel);
 
-            /**
-             *  searchName 后期要改用模糊查询
-             */
+
             List<SystemTemDetailsModel> memberList = systemdetails.stream().
                     filter(systemTemdetailsModel -> searchName.equals(systemTemdetailsModel.getKeyword())).collect(Collectors.toList());
 

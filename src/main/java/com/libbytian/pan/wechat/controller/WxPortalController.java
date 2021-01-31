@@ -1,6 +1,5 @@
 package com.libbytian.pan.wechat.controller;
 
-import com.libbytian.pan.crawler.service.AsyncTask;
 import com.libbytian.pan.system.model.SystemTemDetailsModel;
 import com.libbytian.pan.system.model.SystemUserModel;
 import com.libbytian.pan.system.service.ISystemTemDetailsService;
@@ -46,8 +45,6 @@ public class WxPortalController {
     private final ISystemUserSearchMovieService iSystemUserSearchMovieService;
 
 
-
-    private final AsyncTask asyncTask;
 
 
     final Base64.Decoder decoder = Base64.getDecoder();

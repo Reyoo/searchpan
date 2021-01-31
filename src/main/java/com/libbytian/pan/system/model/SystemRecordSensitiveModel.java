@@ -3,7 +3,6 @@ package com.libbytian.pan.system.model;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.libbytian.pan.system.config.SensitiveWordInit;
 import com.libbytian.pan.system.enums.SensitiveWordsType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
