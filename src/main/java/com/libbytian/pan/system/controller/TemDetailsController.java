@@ -15,6 +15,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.util.HtmlUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -101,11 +102,13 @@ public class TemDetailsController {
     public AjaxResult addTemDetails(@RequestBody SystemTemDetailsModel systemTemDetailsModel) {
 
         try {
-
             if (iSystemSensitiveWordService.isContaintSensitiveWord(systemTemDetailsModel)) {
 
                 return AjaxResult.error("包含敏感词请重新填写");
             }
+
+            //对前端标签进行转义处理
+            systemTemDetailsModel.setKeywordToValue(HtmlUtils.htmlUnescape(systemTemDetailsModel.getKeywordToValue()));
 
             int result = iSystemTemDetailsService.addTemDetails(systemTemDetailsModel, systemTemDetailsModel.getTemplateId());
             if (result == 1) {
@@ -133,6 +136,8 @@ public class TemDetailsController {
             if (StrUtil.isBlank(systemTemDetailsModel.getTemdetailsId())) {
                 return AjaxResult.error("模板ID不能为空");
             }
+            //修改时，对前端标签进行转义处理
+            systemTemDetailsModel.setKeywordToValue(HtmlUtils.htmlUnescape(systemTemDetailsModel.getKeywordToValue()));
             if (iSystemTemDetailsService.updateById(systemTemDetailsModel)) {
                 return AjaxResult.success();
             } else {
@@ -247,6 +252,7 @@ public class TemDetailsController {
             return AjaxResult.error("无效URL");
         }
     }
+
 
 
 }

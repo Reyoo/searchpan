@@ -103,12 +103,12 @@
             <version>${weixin-java-mp.version}</version>
         </dependency>
 
-        <!--emoji 转换器 https://github.com/binarywang/java-emoji-converter-->
+<!--        &lt;!&ndash;emoji 转换器 https://github.com/binarywang/java-emoji-converter&ndash;&gt;
         <dependency>
             <groupId>com.github.binarywang</groupId>
             <artifactId>java-emoji-converter</artifactId>
             <version>1.0.1</version>
-        </dependency>
+        </dependency>-->
 
         <dependency>
             <groupId>org.springframework.boot</groupId>

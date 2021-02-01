@@ -11,6 +11,8 @@ package com.libbytian.pan.wechat.constant;
  */
 public class TemplateKeyword {
 
+    public static final String First_Like = "首次关注";
+
     public static final String TOP_ADVS = "头部广告";
     public static final String TAIL_ADVS = "底部广告";
 

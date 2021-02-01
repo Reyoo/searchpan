@@ -20,9 +20,7 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
-@Setter
-@ToString
+@Data
 @TableName("sys_temdetails")
 
 public class  SystemTemDetailsModel extends Model<SystemTemDetailsModel> {

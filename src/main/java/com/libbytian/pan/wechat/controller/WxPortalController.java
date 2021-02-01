@@ -144,9 +144,40 @@ public class WxPortalController {
                 // 明文传输的消息
                 WxMpXmlMessage inMessage = WxMpXmlMessage.fromXml(requestBody);
 
-                System.out.println(inMessage.getContent());
-                String searchWord = inMessage.getContent().trim();
 
+                //方法提前
+                StringBuffer stringBuffer = new StringBuffer();
+                WxMpXmlOutMessage outMessage = this.route(inMessage);
+
+                if (outMessage == null) {
+                    return "";
+                }
+
+
+                System.out.println(inMessage.getContent());
+                String searchWord = inMessage.getContent();
+
+                //首次关注
+                if (searchWord== null){
+                    SystemTemDetailsModel firstLike = iSystemTemDetailsService.getUserKeywordDetail(username, TemplateKeyword.First_Like);
+                    if (firstLike.getEnableFlag()){
+                        stringBuffer.append(firstLike.getKeywordToValue());
+                    }else {
+                        Thread.sleep(5000);
+                    }
+
+                    outMessage = WxMpXmlOutTextMessage.TEXT()
+                            .toUser(inMessage.getFromUser())
+                            .fromUser(inMessage.getToUser())
+                            .content(stringBuffer.toString()).build();
+
+                    out = outMessage.toXml();
+
+                    return out;
+                }
+
+
+                searchWord = inMessage.getContent().trim();
 
                 String searchName = null;
                 if(searchWord.contains(" ")){
@@ -169,13 +200,6 @@ public class WxPortalController {
 
 //                asyncTask.crawlerMovie(searchName);
 
-                WxMpXmlOutMessage outMessage = this.route(inMessage);
-
-                if (outMessage == null) {
-                    return "";
-                }
-
-                StringBuffer stringBuffer = new StringBuffer();
                 /**
                  * 响应内容
                  * 关键字 头部广告 headModel.getKeywordToValue()

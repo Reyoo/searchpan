@@ -30,7 +30,7 @@ import static me.chanjar.weixin.mp.constant.WxMpEventConstants.POI_CHECK_NOTIFY;
 @AllArgsConstructor
 @Configuration
 @EnableConfigurationProperties(WxMpProperties.class)
-public class WxMpConfiguration {
+public class  WxMpConfiguration {
     private final LogHandler logHandler;
     private final NullHandler nullHandler;
     private final KfSessionHandler kfSessionHandler;

@@ -44,6 +44,7 @@ public class SystemUserSearchMovieServiceImpl extends ServiceImpl<SystemUserSear
         }else {
             int searcchTimes = systemUserSearchMovieModel.getSearchTimes() + 1;
             systemUserSearchMovieModel.setSearchTimes(searcchTimes);
+            systemUserSearchMovieModel.setLastSearchTime(LocalDateTime.now());
 
             if( updateUserSearchMovie(systemUserSearchMovieModel)){
                 log.info("--> " + searchStr  + "  更新词条插入成功 第" + searcchTimes + "次查询" );
