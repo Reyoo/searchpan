@@ -4,11 +4,11 @@ import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.libbytian.pan.system.common.AjaxResult;
-
 import com.libbytian.pan.system.model.SystemTemDetailsModel;
-import com.libbytian.pan.system.service.*;
+import com.libbytian.pan.system.service.ISystemSensitiveWordService;
+import com.libbytian.pan.system.service.ISystemTemDetailsService;
+import com.libbytian.pan.system.service.ISystemTmplToTmplDetailsService;
 import com.libbytian.pan.system.util.CheckStrContainUrlUtil;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -18,7 +18,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -39,8 +40,6 @@ public class TemDetailsController {
     private final ISystemTmplToTmplDetailsService systemTmplToTmplDetailsService;
 
 
-
-
     /**
      * 根据模板ID查询模板详情
      *
@@ -48,12 +47,19 @@ public class TemDetailsController {
      * @param limit
      * @return
      */
+
+
     @RequestMapping(value = "/getTempWithId", method = RequestMethod.GET)
     public AjaxResult findTemDetails(@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int limit, @RequestParam String templateId) {
+        LocalDateTime begin = LocalDateTime.now();
 
         Page<SystemTemDetailsModel> findpage = new Page<>(page, limit);
         try {
             IPage<SystemTemDetailsModel> result = iSystemTemDetailsService.findTemDetailsPage(findpage, templateId);
+            LocalDateTime end = LocalDateTime.now();
+            System.out.println("=====");
+            System.out.println(Duration.between(begin, end).toMillis());
+            System.out.println("=====");
             return AjaxResult.success(result);
         } catch (Exception e) {
             log.error(e.getMessage());
@@ -67,7 +73,7 @@ public class TemDetailsController {
      * 输入key 或者 value 查询模板ID下模板详情
      * 必传字段 templateid
      * 未分页
-     *
+     * 是否会有分页bug ?  Qi
      * @param systemTemDetailsModel
      * @return
      */
@@ -77,9 +83,9 @@ public class TemDetailsController {
         try {
             List<SystemTemDetailsModel> result = iSystemTemDetailsService.listTemDetailsObjectsByWord(systemTemDetailsModel);
 
-            if(result.size() > 0){
+            if (result.size() > 0) {
                 return AjaxResult.success(result);
-            }else {
+            } else {
                 return AjaxResult.error("未搜索到该内容");
             }
 
@@ -98,7 +104,7 @@ public class TemDetailsController {
      * @return
      */
     @RequestMapping(value = "/add", method = RequestMethod.POST)
-    public AjaxResult addTemDetails(@RequestBody SystemTemDetailsModel systemTemDetailsModel) {
+    public AjaxResult addTemDetails(@RequestBody SystemTemDetailsModel systemTemDetailsModel,HttpServletRequest httpRequest) {
 
         try {
 
@@ -107,12 +113,9 @@ public class TemDetailsController {
                 return AjaxResult.error("包含敏感词请重新填写");
             }
 
-            int result = iSystemTemDetailsService.addTemDetails(systemTemDetailsModel, systemTemDetailsModel.getTemplateId());
-            if (result == 1) {
-                return AjaxResult.success("添加成功");
-            } else {
-                return AjaxResult.error("添加失败！");
-            }
+            iSystemTemDetailsService.addTemDetails(systemTemDetailsModel, systemTemDetailsModel.getTemplateId(),httpRequest.getRemoteUser());
+            return AjaxResult.success("添加成功");
+
         } catch (Exception e) {
             log.error(e.getMessage());
             return AjaxResult.error(e.getMessage());
@@ -127,17 +130,17 @@ public class TemDetailsController {
      * @return
      */
     @RequestMapping(value = "/updateTemDetails", method = RequestMethod.PATCH)
-    public AjaxResult updateTemDetails(@RequestBody SystemTemDetailsModel systemTemDetailsModel) {
+    public AjaxResult updateTemDetails(@RequestBody SystemTemDetailsModel systemTemDetailsModel, HttpServletRequest httpRequest) {
 
         try {
+
             if (StrUtil.isBlank(systemTemDetailsModel.getTemdetailsId())) {
                 return AjaxResult.error("模板ID不能为空");
             }
-            if (iSystemTemDetailsService.updateById(systemTemDetailsModel)) {
-                return AjaxResult.success();
-            } else {
-                return AjaxResult.error("修改失败！");
-            }
+
+            iSystemTemDetailsService.updateTempDetailsWithModel(systemTemDetailsModel, httpRequest.getRemoteUser());
+            return AjaxResult.success("修改成功");
+
         } catch (Exception e) {
             log.error(e.getMessage());
             return AjaxResult.error(e.getMessage());
@@ -150,12 +153,13 @@ public class TemDetailsController {
      * @param
      * @return
      */
-        @RequestMapping(value = "/removeTemDetails", method = RequestMethod.DELETE)
-    public AjaxResult deleteTemDetails(@RequestBody  List<String> temdetailsId) {
+    @RequestMapping(value = "/removeTemDetails", method = RequestMethod.DELETE)
+    public AjaxResult deleteTemDetails(@RequestBody List<String> temdetailsId,HttpServletRequest httpRequest) {
         try {
-            if (iSystemTemDetailsService.deleteTemplateDetails(temdetailsId) >0){
+            if (iSystemTemDetailsService.deleteTemplateDetails(temdetailsId,httpRequest.getRemoteUser()) > 0) {
                 //删除关联表   tem_temdetails
                 systemTmplToTmplDetailsService.dropTemplateAndDetails(temdetailsId);
+
                 return AjaxResult.success("删除成功");
             } else {
                 return AjaxResult.error("该字段为系统保留字段，不允许删除");
@@ -167,7 +171,6 @@ public class TemDetailsController {
     }
 
 
-
     /**
      * 导入excel入库并绑定模板ID
      * 未完成，如果导入数据有关键字，更新关键字。
@@ -176,7 +179,7 @@ public class TemDetailsController {
      * @return
      */
     @RequestMapping(value = "/excelimport", method = RequestMethod.POST)
-    public AjaxResult addTemDetails(@RequestParam("file") MultipartFile multipartFile, @RequestParam String templateId) {
+    public AjaxResult addTemDetails(@RequestParam("file") MultipartFile multipartFile, @RequestParam String templateId,HttpServletRequest httpRequest) {
 
         //判断当前是否存在模板，如果没有模板不允许导入    HuangS
         if (StringUtils.isBlank(templateId)) {
@@ -189,7 +192,7 @@ public class TemDetailsController {
 
         try {
 
-            iSystemTemDetailsService.exportExceltoDb(multipartFile.getOriginalFilename(), multipartFile.getInputStream(), templateId);
+            iSystemTemDetailsService.exportExceltoDb(multipartFile.getOriginalFilename(), multipartFile.getInputStream(), templateId,httpRequest.getRemoteUser());
             return AjaxResult.success();
         } catch (Exception e) {
             log.error(e.getMessage());
@@ -208,8 +211,8 @@ public class TemDetailsController {
     public void exportTemDetails(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, @RequestBody List<String> temdetailsIds) {
 
         try {
-            if (temdetailsIds.size() == 0){
-                return ;
+            if (temdetailsIds.size() == 0) {
+                return;
             }
             iSystemTemDetailsService.exportTemDetails(httpServletRequest, httpServletResponse, temdetailsIds);
         } catch (Exception e) {

@@ -32,7 +32,13 @@ import java.time.LocalDateTime;
 @TableName("sys_user")
 public class SystemUserModel extends Model<SystemUserModel>   {
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -6832900779447088497L;
+
+
+    public SystemUserModel(String username){
+        this.username = username;
+    }
+
     /**
      * 用户主键
      */

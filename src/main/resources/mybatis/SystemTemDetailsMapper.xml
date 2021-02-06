@@ -22,6 +22,112 @@
          d.show_order AS showOrder,
          d.enable_flag AS enableFlag
     </sql>
+    <update id="updateTempDetailsWithModel" parameterType="com.libbytian.pan.system.model.SystemTemDetailsModel">
+        UPDATE
+            sys_temdetails
+        <trim prefix="set" suffixOverrides=",">
+
+            <if test="keyword != null and keyword != ''">
+                templatedetails_keyword =#{keyword},
+            </if>
+            <if test="keywordToValue != null and keywordToValue != ''">
+                templatedetails_value =#{keywordToValue},
+            </if>
+
+            <if test="createtime != null">
+                createtime =#{createtime},
+            </if>
+
+            <if test="temdetailsstatus != null ">
+                templatedetails_status =#{temdetailsstatus},
+            </if>
+
+            <if test="showOrder != null ">
+                show_order =#{showOrder},
+            </if>
+
+            <if test="enableFlag != null  ">
+                enable_flag =#{enableFlag},
+            </if>
+
+        </trim>
+        WHERE
+        templatedetails_id =#{temdetailsId}
+
+    </update>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
     <select id="getTemDetails" parameterType="com.libbytian.pan.system.model.SystemTemplateModel"
@@ -205,7 +311,6 @@
 
         </trim>
     </insert>
-
 
 
 

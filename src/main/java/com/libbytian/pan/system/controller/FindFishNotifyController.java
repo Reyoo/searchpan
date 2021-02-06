@@ -107,8 +107,4 @@ public class FindFishNotifyController {
         }
     }
 
-
-
-
-
 }
