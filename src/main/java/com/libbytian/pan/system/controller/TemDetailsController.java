@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.HtmlUtils;
@@ -49,6 +50,9 @@ public class TemDetailsController {
      * @param limit
      * @return
      */
+
+
+
     @RequestMapping(value = "/getTempWithId", method = RequestMethod.GET)
     public AjaxResult findTemDetails(@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int limit, @RequestParam String templateId) {
 
@@ -137,7 +141,10 @@ public class TemDetailsController {
                 return AjaxResult.error("模板ID不能为空");
             }
             //修改时，对前端标签进行转义处理
+            if(StringUtils.isNotBlank(systemTemDetailsModel.getKeywordToValue())){
+
             systemTemDetailsModel.setKeywordToValue(HtmlUtils.htmlUnescape(systemTemDetailsModel.getKeywordToValue()));
+            }
             if (iSystemTemDetailsService.updateById(systemTemDetailsModel)) {
                 return AjaxResult.success();
             } else {

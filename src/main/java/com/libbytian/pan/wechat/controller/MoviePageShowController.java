@@ -56,6 +56,21 @@ public class MoviePageShowController {
             SystemUserModel systemUserModel = new SystemUserModel();
             systemUserModel.setUsername(username);
 
+//            从redis 中取 渠道 直接复制给list    List<SystemTemDetailsModel> systemdetails  = redisTempalte.getHas()
+//            娶不到  走 sql iSystemTemDetailsService.getTemDetailsWithUser(systemUserModel);
+            
+
+//
+//            if(){
+//
+//            }else{
+//                List<SystemTemDetailsModel> systemdetails = iSystemTemDetailsService.getTemDetailsWithUser(systemUserModel);
+//            }
+
+
+
+
+
             List<SystemTemDetailsModel> systemdetails = iSystemTemDetailsService.getTemDetailsWithUser(systemUserModel);
             Map map = new HashMap();
 
@@ -141,10 +156,8 @@ public class MoviePageShowController {
         List<MovieNameAndUrlModel> movieNameAndUrlModels = new ArrayList<>();
 
         try {
-
 //            根据不同入参 给参数
             movieNameAndUrlModels = asyncSearchCachedService.searchWord(searchName.trim(), search);
-
 
             if (movieNameAndUrlModels.size() == 0) {
                 return AjaxResult.hide("未找到该资源，请前往其他大厅查看");
