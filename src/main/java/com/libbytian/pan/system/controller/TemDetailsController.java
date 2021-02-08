@@ -16,8 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.HtmlUtils;
-import org.springframework.web.util.HtmlUtils;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.time.Duration;
@@ -121,14 +119,6 @@ public class TemDetailsController {
             iSystemTemDetailsService.addTemDetails(systemTemDetailsModel, systemTemDetailsModel.getTemplateId(),httpRequest.getRemoteUser());
             return AjaxResult.success("添加成功");
 
-
-
-            int result = iSystemTemDetailsService.addTemDetails(systemTemDetailsModel, systemTemDetailsModel.getTemplateId());
-            if (result == 1) {
-                return AjaxResult.success("添加成功");
-            } else {
-                return AjaxResult.error("添加失败！");
-            }
         } catch (Exception e) {
             log.error(e.getMessage());
             return AjaxResult.error(e.getMessage());
