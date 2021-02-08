@@ -21,7 +21,7 @@ import org.springframework.cache.interceptor.KeyGenerator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
-import org.springframework.data.redis.cache.RedisCacheManager;
+import org.springframework.data.redis.cache.RedisCacheWriter;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
@@ -116,7 +116,10 @@ public class RedisConfig extends CachingConfigurerSupport
                 .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(jackson2JsonRedisSerializer))
                 .disableCachingNullValues();
 
-        RedisCacheManager cacheManager = RedisCacheManager.builder(factory).cacheDefaults(config).build();
-        return cacheManager;
+        RedisCacheWriter redisCacheWriter = RedisCacheWriter.nonLockingRedisCacheWriter(factory);
+//        RedisCacheManager cacheManager = RedisCacheManager.builder(factory).cacheDefaults(config).build();
+
+
+        return  new CustomTtlRedisCacheManager(redisCacheWriter,config);
     }
 }

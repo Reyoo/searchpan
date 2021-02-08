@@ -1,17 +1,17 @@
 package com.libbytian.pan.wechat.service;
 
+import com.libbytian.pan.system.common.TemplateDetailsGetKeywordComponent;
 import com.libbytian.pan.system.model.SystemKeywordModel;
 import com.libbytian.pan.system.model.SystemTemDetailsModel;
+import com.libbytian.pan.system.model.SystemUserModel;
 import com.libbytian.pan.system.service.ISystemKeywordService;
 import com.libbytian.pan.system.service.ISystemTemDetailsService;
 import com.libbytian.pan.wechat.constant.TemplateKeyword;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -30,15 +30,16 @@ public class KeyWordSettingService {
 
     private final ISystemTemDetailsService iSystemTemDetailsService;
     private final ISystemKeywordService systemKeywordService;
+    private final TemplateDetailsGetKeywordComponent templateDetailsGetKeywordComponent;
 
+    public StringBuffer getTemplateKeyWord(SystemUserModel systemUserModel, String searchName, StringBuffer stringBuffer, String searchWord) throws Exception  {
 
-    public StringBuffer Setting(String username, String searchName, StringBuffer stringBuffer, String searchWord) throws ParseException, InterruptedException {
+        SystemTemDetailsModel secretContent = templateDetailsGetKeywordComponent.getUserKeywordDetail(systemUserModel, TemplateKeyword.SECRET_CONTENT);
+        SystemTemDetailsModel secretReply = templateDetailsGetKeywordComponent.getUserKeywordDetail(systemUserModel, TemplateKeyword.SECRET_REPLY);
 
-        SystemTemDetailsModel secretContent = iSystemTemDetailsService.getUserKeywordDetail(username, TemplateKeyword.SECRET_CONTENT);
-        SystemTemDetailsModel secretReply = iSystemTemDetailsService.getUserKeywordDetail(username, TemplateKeyword.SECRET_REPLY);
+        SystemTemDetailsModel keyContent = templateDetailsGetKeywordComponent.getUserKeywordDetail(systemUserModel, TemplateKeyword.KEY_CONTENT);
+        SystemTemDetailsModel preserveContent = templateDetailsGetKeywordComponent.getUserKeywordDetail(systemUserModel, TemplateKeyword.PRESERVE_CONTENT);
 
-        SystemTemDetailsModel keyContent = iSystemTemDetailsService.getUserKeywordDetail(username, TemplateKeyword.KEY_CONTENT);
-        SystemTemDetailsModel preserveContent = iSystemTemDetailsService.getUserKeywordDetail(username, TemplateKeyword.PRESERVE_CONTENT);
 
         /**
          * 关键词 隐藏判断
@@ -62,7 +63,7 @@ public class KeyWordSettingService {
             }
         }
 
-        SystemKeywordModel systemKeywordModel = systemKeywordService.getKeywordByUser(username);
+        SystemKeywordModel systemKeywordModel = systemKeywordService.getKeywordByUser(systemUserModel.getUsername());
 
 
         /**

@@ -4,7 +4,6 @@ import cn.hutool.core.lang.UUID;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.libbytian.pan.system.common.AjaxResult;
-import com.libbytian.pan.system.model.SystemTemDetailsModel;
 import com.libbytian.pan.system.model.SystemTemplateModel;
 import com.libbytian.pan.system.model.SystemUserModel;
 import com.libbytian.pan.system.model.SystemUserToTemplate;
@@ -39,6 +38,7 @@ public class TemplateController {
      * @return
      * @Description: 查询所有模板、根据条件查询模板
      */
+
 
     @RequestMapping(value = "/findtemplate", method = RequestMethod.POST)
     public AjaxResult findAllTemplate(@RequestBody(required = false) SystemTemplateModel systemTemplateModel) throws Exception {

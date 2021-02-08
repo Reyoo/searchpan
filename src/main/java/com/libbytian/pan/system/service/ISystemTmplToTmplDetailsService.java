@@ -2,12 +2,14 @@ package com.libbytian.pan.system.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.libbytian.pan.system.model.SystemTemToTemdetail;
+import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Transactional(propagation = Propagation.REQUIRES_NEW)
+@CacheConfig(cacheNames = "templateDetails")
 public interface ISystemTmplToTmplDetailsService extends IService<SystemTemToTemdetail> {
 
 
@@ -15,11 +17,13 @@ public interface ISystemTmplToTmplDetailsService extends IService<SystemTemToTem
 
 
     /**
-     * 根据模板详细删除 模板与模板详细关联表中模板详细的绑定关联
+     *  删除用户指定模板详细
      * @param templateIds
      * @return
      */
-    int dropTemplateAndDetails(List<String> templateIds);
+
+
+    int dropTemplateAndDetails(List<String> templateIds );
 
 
 }

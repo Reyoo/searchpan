@@ -1,5 +1,6 @@
 package com.libbytian.pan.wechat.controller;
 
+import com.libbytian.pan.system.common.TemplateDetailsGetKeywordComponent;
 import com.libbytian.pan.system.model.SystemTemDetailsModel;
 import com.libbytian.pan.system.model.SystemUserModel;
 import com.libbytian.pan.system.service.ISystemTemDetailsService;
@@ -43,6 +44,7 @@ public class WxPortalController {
     private final KeyWordSettingService keyWordSettingService;
     private final RedisTemplate redisTemplate;
     private final ISystemUserSearchMovieService iSystemUserSearchMovieService;
+    private final TemplateDetailsGetKeywordComponent templateDetailsGetKeywordComponent;
 
 
 
@@ -206,8 +208,10 @@ public class WxPortalController {
                  * 关键字 底部广告 lastModel.getKeywordToValue()
                  */
 
-                SystemTemDetailsModel headModel = iSystemTemDetailsService.getUserKeywordDetail(username, TemplateKeyword.TOP_ADVS);
-                SystemTemDetailsModel lastModel = iSystemTemDetailsService.getUserKeywordDetail(username, TemplateKeyword.TAIL_ADVS);
+                SystemTemDetailsModel headModel = templateDetailsGetKeywordComponent.getUserKeywordDetail(systemUserModel, TemplateKeyword.TOP_ADVS);
+                SystemTemDetailsModel lastModel = templateDetailsGetKeywordComponent.getUserKeywordDetail(systemUserModel, TemplateKeyword.TAIL_ADVS);
+
+
 
                 if (headModel.getEnableFlag()) {
                     stringBuffer.append(headModel.getKeywordToValue());
@@ -229,9 +233,8 @@ public class WxPortalController {
                     stringBuffer.append(lastModel.getKeywordToValue());
                 }
 
-                stringBuffer = keyWordSettingService.Setting(username, searchName, stringBuffer, searchWord);
+                stringBuffer = keyWordSettingService.getTemplateKeyWord(systemUserModel, searchName, stringBuffer, searchWord);
 
-//                Thread.sleep(1200);
                 outMessage = WxMpXmlOutTextMessage.TEXT()
                         .toUser(inMessage.getFromUser())
                         .fromUser(inMessage.getToUser())

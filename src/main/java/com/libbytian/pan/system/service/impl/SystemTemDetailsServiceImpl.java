@@ -1,8 +1,6 @@
 package com.libbytian.pan.system.service.impl;
 
 import cn.hutool.core.lang.UUID;
-import com.alibaba.fastjson.JSONObject;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -22,7 +20,6 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
@@ -32,8 +29,10 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 模板详细业务实现类
@@ -61,7 +60,7 @@ public class SystemTemDetailsServiceImpl extends ServiceImpl<SystemTemDetailsMap
      * @return
      * @throws Exception
      */
-    @Override
+
     public List<SystemTemDetailsModel> getTemDetails(SystemTemplateModel systemTemplateModel) throws Exception {
         return systemTemDetailsMapper.getTemDetails(systemTemplateModel);
     }
@@ -73,7 +72,7 @@ public class SystemTemDetailsServiceImpl extends ServiceImpl<SystemTemDetailsMap
      * @return
      */
     @Override
-    public int exportExceltoDb(String filename, InputStream inputStream, String templateId) throws Exception {
+    public List<SystemTemDetailsModel> exportExceltoDb(String filename, InputStream inputStream, String templateId,String username) throws Exception {
         List<SystemTemDetailsModel> systemTemDetailsModelList = new ArrayList<>();
         List<String> uuidList = new ArrayList<>();
 
@@ -140,20 +139,21 @@ public class SystemTemDetailsServiceImpl extends ServiceImpl<SystemTemDetailsMap
             systemTemDetailsModelList.add(systemTemDetailsModel);
         }
 
-
+        //插入模板详细表   这个地方 不应该用mybatisPlus封装的
         this.saveBatch(systemTemDetailsModelList);
 
+        //插入模板详细与模板关联表
         for (String uuid : uuidList) {
             SystemTemToTemdetail temToTemdetails = SystemTemToTemdetail.builder().templateid(templateId).templatedetailsid(uuid).build();
             iSystemTmplToTmplDetailsService.save(temToTemdetails);
         }
 
-        return 0;
+        return systemTemDetailsMapper.findTemDetailsByUser(new SystemUserModel(username));
     }
 
 
     @Override
-    public int addTemDetails(SystemTemDetailsModel systemTemDetailsModel, String templateId) throws Exception {
+    public  List<SystemTemDetailsModel> addTemDetails(SystemTemDetailsModel systemTemDetailsModel, String templateId,String username) throws Exception {
 
         systemTemDetailsModel.setCreatetime(LocalDateTime.now());
         systemTemDetailsModel.setTemdetailsId(UUID.randomUUID().toString());
@@ -167,9 +167,8 @@ public class SystemTemDetailsServiceImpl extends ServiceImpl<SystemTemDetailsMap
             //插入模板_模板详情表
             SystemTemToTemdetail temToDetails = SystemTemToTemdetail.builder().templateid(templateId).templatedetailsid(systemTemDetailsModel.getTemdetailsId()).build();
             iSystemTmplToTmplDetailsService.save(temToDetails);
-
         }
-        return result;
+        return systemTemDetailsMapper.findTemDetailsByUser(new SystemUserModel(username));
     }
 
 
@@ -189,7 +188,7 @@ public class SystemTemDetailsServiceImpl extends ServiceImpl<SystemTemDetailsMap
         //excel标题
         String title[] = {"id", "question", "answer", "userid", "date_time", "isTop"};
         //excel文件名
-        String temdetailsId =temdetailsIds.get(0);
+        String temdetailsId = temdetailsIds.get(0);
         SystemTemplateModel systemTemplateModel = iSystemTemplateService.getTemplateById(temdetailsId);
 
         //sheet名
@@ -254,7 +253,6 @@ public class SystemTemDetailsServiceImpl extends ServiceImpl<SystemTemDetailsMap
      * @param systemUserModel
      */
     @Override
-//    @Cacheable(value = "userTemplateDetail",key = "#systemUserModel.username")
     public List<SystemTemDetailsModel> getTemDetailsWithUser(SystemUserModel systemUserModel) throws Exception {
         List<SystemTemDetailsModel> systemTemDetailsModels = new ArrayList<>();
         try {
@@ -263,6 +261,12 @@ public class SystemTemDetailsServiceImpl extends ServiceImpl<SystemTemDetailsMap
             e.printStackTrace();
         }
         return systemTemDetailsModels;
+    }
+
+    @Override
+    public List<SystemTemDetailsModel> updateTempDetailsWithModel(SystemTemDetailsModel systemTemDetailsModel, String username) throws Exception {
+        systemTemDetailsMapper.updateTempDetailsWithModel(systemTemDetailsModel);
+        return systemTemDetailsMapper.findTemDetailsByUser(new SystemUserModel(username));
     }
 
     @Override
@@ -275,7 +279,6 @@ public class SystemTemDetailsServiceImpl extends ServiceImpl<SystemTemDetailsMap
     public void defaultSave(String templateId) {
 
         List<SystemTemDetailsModel> detailist = systemTemDetailsMapper.defultTemDetails();
-
 
 /**
  * 需要改成批量插入
@@ -295,42 +298,24 @@ public class SystemTemDetailsServiceImpl extends ServiceImpl<SystemTemDetailsMap
 
     }
 
+
     /**
      * 根据用户 及关键词返回模板详细
-     *
-     * @param username
+     * @param systemUserModel
      * @param keyword
      * @return
      */
-    @Override
-    public SystemTemDetailsModel getUserKeywordDetail(String username, String keyword) {
-        return systemTemDetailsMapper.selectUserKeywordDetail(username, keyword);
-
-    }
-
-    @Override
-    public int dropTemplateDetailsByUser(SystemUserModel systemUserModel) throws Exception {
-
-        if (getTemDetailsWithUser(systemUserModel).size() < 0) {
-            return 0;
-        }else {
-            log.info("开始删除");
-            systemTemDetailsMapper.deleteTemplateDetailsByUser(systemUserModel);
-        }
-
-
-        return 0;
-    }
 
 
     /**
      * 删除用户模板下详情
+     *
      * @param temdetailsId
      * @return
      */
     @Override
-    public int deleteTemplateDetails(List<String> temdetailsId) {
-       return systemTemDetailsMapper.deleteTemplateDetails(temdetailsId);
+    public int deleteTemplateDetails(List<String> temdetailsId,String username) {
+        return systemTemDetailsMapper.deleteTemplateDetails(temdetailsId);
     }
 
 }

@@ -6,14 +6,10 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.libbytian.pan.system.model.SystemTemDetailsModel;
 import com.libbytian.pan.system.model.SystemTemplateModel;
 import com.libbytian.pan.system.model.SystemUserModel;
-import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.Select;
 
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
 
 @Mapper
 public interface SystemTemDetailsMapper extends BaseMapper<SystemTemDetailsModel> {
@@ -30,6 +26,8 @@ public interface SystemTemDetailsMapper extends BaseMapper<SystemTemDetailsModel
 
     List<SystemTemDetailsModel> getTemDetails(SystemTemplateModel systemTemplateModel);
 
+
+
     List<SystemTemDetailsModel> findTemDetailsByUser(SystemUserModel systemUserModel);
 
     List<SystemTemDetailsModel> listTemDetailsObjectsByWord(SystemTemDetailsModel systemTemDetailsModel);
@@ -38,8 +36,15 @@ public interface SystemTemDetailsMapper extends BaseMapper<SystemTemDetailsModel
 
     SystemTemDetailsModel selectUserKeywordDetail(String username,String keyword);
 
+    int updateTempDetailsWithModel(SystemTemDetailsModel systemTemDetailsModel);
+
     int insertSystemTemDetails(SystemTemDetailsModel systemTemDetailsModels);
 
+    /**
+     * 批量删除用户所有模板
+     * @param systemUserModel
+     * @return
+     */
     int deleteTemplateDetailsByUser(SystemUserModel systemUserModel);
 
     int deleteTemplateDetails(List<String> temdetailsId);
