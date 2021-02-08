@@ -161,7 +161,7 @@ public class WxPortalController {
 
                 //首次关注
                 if (searchWord== null){
-                    SystemTemDetailsModel firstLike = iSystemTemDetailsService.getUserKeywordDetail(username, TemplateKeyword.First_Like);
+                    SystemTemDetailsModel firstLike = templateDetailsGetKeywordComponent.getUserKeywordDetail(systemUserModel, TemplateKeyword.First_Like);
                     if (firstLike.getEnableFlag()){
                         stringBuffer.append(firstLike.getKeywordToValue());
                     }else {
@@ -198,9 +198,6 @@ public class WxPortalController {
                 if (redisTemplate.boundHashOps("SensitiveWord").keys().contains(searchName)){
                     return "";
                 }
-
-
-//                asyncTask.crawlerMovie(searchName);
 
                 /**
                  * 响应内容
