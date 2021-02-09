@@ -79,13 +79,15 @@ public class TemplateController {
 
     /**
      * 获取用户所有的模板
+     * 用户模板引入缓存
      *
      * @return
      */
     @RequestMapping(value = "getuser", method = RequestMethod.GET)
     public AjaxResult getuserTemplate(HttpServletRequest httpServletRequest) {
-
         try {
+//            如果 redis中包含用户模板信息 则直接返回
+//            else 如果不包含 则 从数据库中查询后返回
             SystemUserModel systemUserModel = new SystemUserModel();
             systemUserModel.setUsername(httpServletRequest.getRemoteUser());
             List<SystemTemplateModel> result = iSystemTemplateService.listTemplatelByUser(systemUserModel);

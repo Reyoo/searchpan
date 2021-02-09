@@ -13,6 +13,7 @@ import com.libbytian.pan.system.service.ISystemTemDetailsService;
 import com.libbytian.pan.system.service.ISystemTemplateService;
 import com.libbytian.pan.system.service.ISystemTmplToTmplDetailsService;
 import com.libbytian.pan.system.util.ReadOrWriteExcelUtil;
+import com.libbytian.pan.wechat.constant.TemplateKeywordConstant;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -135,6 +136,7 @@ public class SystemTemDetailsServiceImpl extends ServiceImpl<SystemTemDetailsMap
 
             String uuid = UUID.randomUUID(true).toString();
             systemTemDetailsModel.setTemdetailsId(uuid);
+            systemTemDetailsModel.setEnableFlag(true);
             uuidList.add(uuid);
             systemTemDetailsModelList.add(systemTemDetailsModel);
         }
@@ -197,7 +199,11 @@ public class SystemTemDetailsServiceImpl extends ServiceImpl<SystemTemDetailsMap
         DateTimeFormatter pattern = DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm:ss");
         String[][] content = new String[systemTemDetailsModelList.size()][title.length];
         for (int i = 0; i < systemTemDetailsModelList.size(); i++) {
+
             SystemTemDetailsModel obj = systemTemDetailsModelList.get(i);
+            if(hasTemplateKeyWord(obj.getKeyword())){
+                continue;
+            }
             content[i][0] = obj.getTemdetailsId();
             content[i][1] = obj.getKeyword();
             content[i][2] = obj.getKeywordToValue();
@@ -220,6 +226,29 @@ public class SystemTemDetailsServiceImpl extends ServiceImpl<SystemTemDetailsMap
         }
 
     }
+
+    boolean hasTemplateKeyWord(String keyword){
+
+        if(keyword.equals(TemplateKeywordConstant.KEY_CONTENT)
+                || keyword.equals(TemplateKeywordConstant.SECRET_CONTENT)
+                || keyword.equals(TemplateKeywordConstant.PRESERVE_CONTENT)
+                || keyword.equals(TemplateKeywordConstant.END_WEB)
+                || keyword.equals(TemplateKeywordConstant.HEAD_WEB)
+                || keyword.equals(TemplateKeywordConstant.TAIL_ADVS)
+                || keyword.equals(TemplateKeywordConstant.TOP_ADVS)
+                || keyword.equals(TemplateKeywordConstant.First_Like)
+                || keyword.equals(TemplateKeywordConstant.SECRET_REPLY)){
+            return Boolean.TRUE;
+        }
+        return Boolean.FALSE;
+
+    }
+
+
+
+
+
+
 
 
     /**
