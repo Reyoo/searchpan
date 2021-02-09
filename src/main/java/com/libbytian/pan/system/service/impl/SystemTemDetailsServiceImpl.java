@@ -186,6 +186,14 @@ public class SystemTemDetailsServiceImpl extends ServiceImpl<SystemTemDetailsMap
 
         //得到了详细数据
         List<SystemTemDetailsModel> systemTemDetailsModelList = this.listByIds(temdetailsIds);
+        List<SystemTemDetailsModel> noContainKeyWordList = new ArrayList<>();
+        for(SystemTemDetailsModel systemTemDetailsModel: systemTemDetailsModelList){
+            if(hasTemplateKeyWord(systemTemDetailsModel.getKeyword())){
+                continue;
+            }
+            noContainKeyWordList.add(systemTemDetailsModel);
+        }
+
 
         //excel标题
         String title[] = {"id", "question", "answer", "userid", "date_time", "isTop"};
@@ -197,13 +205,10 @@ public class SystemTemDetailsServiceImpl extends ServiceImpl<SystemTemDetailsMap
         String sheetName = systemTemplateModel.getTemplatename();
         String fileName = sheetName + ".xls";
         DateTimeFormatter pattern = DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm:ss");
-        String[][] content = new String[systemTemDetailsModelList.size()][title.length];
-        for (int i = 0; i < systemTemDetailsModelList.size(); i++) {
+        String[][] content = new String[noContainKeyWordList.size()][title.length];
+        for (int i = 0; i < noContainKeyWordList.size(); i++) {
 
-            SystemTemDetailsModel obj = systemTemDetailsModelList.get(i);
-            if(hasTemplateKeyWord(obj.getKeyword())){
-                continue;
-            }
+            SystemTemDetailsModel obj = noContainKeyWordList.get(i);
             content[i][0] = obj.getTemdetailsId();
             content[i][1] = obj.getKeyword();
             content[i][2] = obj.getKeywordToValue();

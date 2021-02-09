@@ -151,8 +151,6 @@ public class WxPortalController {
         //获取用调用接口时间
         iSystemUserService.updateUser(systemUserModel);
 
-
-
         String out = null;
         try {
 
