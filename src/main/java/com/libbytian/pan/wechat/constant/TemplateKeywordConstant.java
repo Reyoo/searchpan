@@ -9,7 +9,7 @@ package com.libbytian.pan.wechat.constant;
  * @Date: 2020/12/7 20:46
  * @Version: 1.0
  */
-public class TemplateKeyword {
+public class TemplateKeywordConstant {
 
     public static final String First_Like = "首次关注";
 

@@ -6,7 +6,7 @@ import com.libbytian.pan.system.model.SystemUserModel;
 import com.libbytian.pan.system.service.ISystemTemDetailsService;
 import com.libbytian.pan.system.service.ISystemUserSearchMovieService;
 import com.libbytian.pan.system.service.ISystemUserService;
-import com.libbytian.pan.wechat.constant.TemplateKeyword;
+import com.libbytian.pan.wechat.constant.TemplateKeywordConstant;
 import com.libbytian.pan.wechat.service.KeyWordSettingService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -161,7 +161,7 @@ public class WxPortalController {
 
                 //首次关注
                 if (searchWord== null){
-                    SystemTemDetailsModel firstLike = templateDetailsGetKeywordComponent.getUserKeywordDetail(systemUserModel, TemplateKeyword.First_Like);
+                    SystemTemDetailsModel firstLike = templateDetailsGetKeywordComponent.getUserKeywordDetail(systemUserModel, TemplateKeywordConstant.First_Like);
                     if (firstLike.getEnableFlag()){
                         stringBuffer.append(firstLike.getKeywordToValue());
                     }else {
@@ -205,8 +205,8 @@ public class WxPortalController {
                  * 关键字 底部广告 lastModel.getKeywordToValue()
                  */
 
-                SystemTemDetailsModel headModel = templateDetailsGetKeywordComponent.getUserKeywordDetail(systemUserModel, TemplateKeyword.TOP_ADVS);
-                SystemTemDetailsModel lastModel = templateDetailsGetKeywordComponent.getUserKeywordDetail(systemUserModel, TemplateKeyword.TAIL_ADVS);
+                SystemTemDetailsModel headModel = templateDetailsGetKeywordComponent.getUserKeywordDetail(systemUserModel, TemplateKeywordConstant.TOP_ADVS);
+                SystemTemDetailsModel lastModel = templateDetailsGetKeywordComponent.getUserKeywordDetail(systemUserModel, TemplateKeywordConstant.TAIL_ADVS);
 
 
 

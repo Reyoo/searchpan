@@ -10,7 +10,12 @@ import java.util.List;
 public interface ISystemTemplateService extends IService<SystemTemplateModel> {
 
 
-
+     /**
+      * userId redis 的key
+      * @param systemUserModel
+      * @return
+      * @throws Exception
+      */
      List<SystemTemplateModel> listTemplatelByUser(SystemUserModel systemUserModel) throws Exception;
 
 
