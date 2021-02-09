@@ -88,6 +88,13 @@ public class WxPortalController {
                 return "无此接口认证权限，请联系管理员！";
             }
 
+            //判断用户账号到期时间
+            SystemUserModel userModel =iSystemUserService.getUser(systemUserModel);
+
+            if ( LocalDateTime.now().isAfter(userModel.getActTime())){
+                Thread.sleep(10000);
+            }
+
         } catch (Exception e) {
             return e.getMessage();
         }
@@ -129,6 +136,17 @@ public class WxPortalController {
 
         SystemUserModel systemUserModel = new SystemUserModel();
         systemUserModel.setUsername(username);
+
+        //判断用户账号到期时间
+        SystemUserModel userModel =iSystemUserService.getUser(systemUserModel);
+
+        if ( LocalDateTime.now().isAfter(userModel.getActTime())){
+            Thread.sleep(10000);
+        }
+
+
+
+
         systemUserModel.setCallTime(LocalDateTime.now());
         //获取用调用接口时间
         iSystemUserService.updateUser(systemUserModel);

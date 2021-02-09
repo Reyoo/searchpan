@@ -19,7 +19,7 @@
         <include refid="Base_Column_List"/>
         FROM  ${tablename}
         WHERE movie_name like  ${"'%"+movieName+"%'"}
-         order by updatetime DESC limit 10
+         order by updatetime DESC limit 15
 
     </select>
 
