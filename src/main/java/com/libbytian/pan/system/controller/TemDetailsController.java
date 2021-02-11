@@ -16,9 +16,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.HtmlUtils;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -57,9 +57,6 @@ public class TemDetailsController {
         try {
             IPage<SystemTemDetailsModel> result = iSystemTemDetailsService.findTemDetailsPage(findpage, templateId);
             LocalDateTime end = LocalDateTime.now();
-            System.out.println("=====");
-            System.out.println(Duration.between(begin, end).toMillis());
-            System.out.println("=====");
             return AjaxResult.success(result);
         } catch (Exception e) {
             log.error(e.getMessage());

@@ -5,7 +5,7 @@ import com.libbytian.pan.system.model.MovieNameAndUrlModel;
 import com.libbytian.pan.system.model.SystemTemDetailsModel;
 import com.libbytian.pan.system.model.SystemUserModel;
 import com.libbytian.pan.system.service.ISystemTemDetailsService;
-import com.libbytian.pan.wechat.service.AsyncSearchCachedServiceImpl;
+import com.libbytian.pan.wechat.service.AsyncSearchCachedComponent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +37,7 @@ public class MoviePageShowController {
 
     final Base64.Decoder decoder = Base64.getDecoder();
 
-    private final AsyncSearchCachedServiceImpl asyncSearchCachedService;
+    private final AsyncSearchCachedComponent asyncSearchCachedService;
     private final ISystemTemDetailsService iSystemTemDetailsService;
 
 
@@ -55,21 +55,6 @@ public class MoviePageShowController {
             String username = new String(decoder.decode(fishEncryption), "UTF-8");
             SystemUserModel systemUserModel = new SystemUserModel();
             systemUserModel.setUsername(username);
-
-//            从redis 中取 渠道 直接复制给list    List<SystemTemDetailsModel> systemdetails  = redisTempalte.getHas()
-//            娶不到  走 sql iSystemTemDetailsService.getTemDetailsWithUser(systemUserModel);
-            
-
-//
-//            if(){
-//
-//            }else{
-//                List<SystemTemDetailsModel> systemdetails = iSystemTemDetailsService.getTemDetailsWithUser(systemUserModel);
-//            }
-
-
-
-
 
             List<SystemTemDetailsModel> systemdetails = iSystemTemDetailsService.getTemDetailsWithUser(systemUserModel);
             Map map = new HashMap();
@@ -124,7 +109,6 @@ public class MoviePageShowController {
             systemUserModel.setUsername(username);
 
             List<SystemTemDetailsModel> systemdetails = iSystemTemDetailsService.getTemDetailsWithUser(systemUserModel);
-
 
             List<SystemTemDetailsModel> memberList = systemdetails.stream().
                     filter(systemTemdetailsModel -> searchName.equals(systemTemdetailsModel.getKeyword())).collect(Collectors.toList());

@@ -42,8 +42,8 @@ spring:
 
     type: com.alibaba.druid.pool.DruidDataSource
     filters: stat
-    maxActive: 50
-    initialSize: 20
+    maxActive: 30
+    initialSize: 10
     maxWait: 60000
     minIdle: 1
     timeBetweenEvictionRunsMillis: 60000
@@ -74,7 +74,7 @@ spring:
 # Logger Config
 logging:
   level:
-    com.vicente.vicentedemo: debug
+    com.vicente.vicentedemo: info
 # mybatis-plus相关配置
 mybatis-plus:
   # 支持统配符 * 或者 ; 分割
@@ -100,7 +100,8 @@ mybatis-plus:
     # 如果查询结果中包含空值的列，则 MyBatis 在映射的时候，不会映射这个字段
     call-setters-on-nulls: true
     # 这个配置会将执行的sql打印出来，在开发或测试的时候可以用
-    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+#    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    log-impl: org.apache.ibatis.logging.nologging.NoLoggingImpl
     jdbc-type-for-null: 'null'
 
 
