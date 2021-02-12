@@ -21,7 +21,7 @@ public class FindMovieInSumsuImpl extends ServiceImpl<MovieNameAndUrlMapper, Mov
     @Override
     public List<MovieNameAndUrlModel> findMovieUrl(String movieName) throws Exception {
 
-        return  movieNameAndUrlMapper.selectMovieUrlByLikeName("url_movie_aidianying", movieName);
+        return  movieNameAndUrlMapper.selectMovieUrlByLikeName("url_movie_sumsu", movieName);
 
     }
 }
