@@ -23,7 +23,7 @@ public class FindMovieInAidianYingImpl  extends ServiceImpl<MovieNameAndUrlMappe
     @Override
     public List<MovieNameAndUrlModel> findMovieUrl(String movieName) throws Exception {
 
-        return  movieNameAndUrlMapper.selectMovieUrlByLikeName("url_movie_sumsu", movieName);
+        return  movieNameAndUrlMapper.selectMovieUrlByLikeName("url_movie_aidianying", movieName);
 
     }
 }
