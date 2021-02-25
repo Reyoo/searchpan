@@ -122,7 +122,6 @@ public class TemDetailsController {
         }
     }
 
-
     /**
      * 更新关键字及对应回复
      *
@@ -130,7 +129,7 @@ public class TemDetailsController {
      * @return
      */
     @RequestMapping(value = "/updateTemDetails", method = RequestMethod.PATCH)
-    public AjaxResult updateTemDetails(@RequestBody SystemTemDetailsModel systemTemDetailsModel) {
+    public AjaxResult updateTemDetails(@RequestBody SystemTemDetailsModel systemTemDetailsModel,HttpServletRequest httpRequest) {
 
         try {
             if (StrUtil.isBlank(systemTemDetailsModel.getTemdetailsId())) {
@@ -141,16 +140,48 @@ public class TemDetailsController {
 
                 systemTemDetailsModel.setKeywordToValue(HtmlUtils.htmlUnescape(systemTemDetailsModel.getKeywordToValue()));
             }
-            if (iSystemTemDetailsService.updateById(systemTemDetailsModel)) {
-                return AjaxResult.success();
-            } else {
-                return AjaxResult.error("修改失败！");
-            }
+
+            iSystemTemDetailsService.updateTempDetailsWithModel(systemTemDetailsModel,httpRequest.getRemoteUser());
+
+
+            return AjaxResult.success();
+
         } catch (Exception e) {
             log.error(e.getMessage());
             return AjaxResult.error(e.getMessage());
         }
     }
+
+
+//    /**
+//     * 更新关键字及对应回复
+//     *
+//     * @param systemTemDetailsModel
+//     * @return
+//     */
+//    @RequestMapping(value = "/updateTemDetails", method = RequestMethod.PATCH)
+//    public AjaxResult updateTemDetails(@RequestBody SystemTemDetailsModel systemTemDetailsModel) {
+//
+//        try {
+//            if (StrUtil.isBlank(systemTemDetailsModel.getTemdetailsId())) {
+//                return AjaxResult.error("模板ID不能为空");
+//            }
+//            //修改时，对前端标签进行转义处理
+//            if(StringUtils.isNotBlank(systemTemDetailsModel.getKeywordToValue())){
+//
+//                systemTemDetailsModel.setKeywordToValue(HtmlUtils.htmlUnescape(systemTemDetailsModel.getKeywordToValue()));
+//            }
+//
+//            if (iSystemTemDetailsService.updateById(systemTemDetailsModel)) {
+//                return AjaxResult.success();
+//            } else {
+//                return AjaxResult.error("修改失败！");
+//            }
+//        } catch (Exception e) {
+//            log.error(e.getMessage());
+//            return AjaxResult.error(e.getMessage());
+//        }
+//    }
 
     /**
      * 根据ID删除对应模板详情

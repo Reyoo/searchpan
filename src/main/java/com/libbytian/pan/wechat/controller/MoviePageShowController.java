@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -104,6 +106,8 @@ public class MoviePageShowController {
     @RequestMapping(path = "/member/{fishEncryption}/{searchName}", method = RequestMethod.GET)
     public AjaxResult getMemberList(@PathVariable String fishEncryption, @PathVariable String searchName) {
         try {
+            long startTime=System.currentTimeMillis();
+
             String username = new String(decoder.decode(fishEncryption), "UTF-8");
             SystemUserModel systemUserModel = new SystemUserModel();
             systemUserModel.setUsername(username);
@@ -112,6 +116,10 @@ public class MoviePageShowController {
 
             List<SystemTemDetailsModel> memberList = systemdetails.stream().
                     filter(systemTemdetailsModel -> searchName.equals(systemTemdetailsModel.getKeyword())).collect(Collectors.toList());
+
+
+            long endTime=System.currentTimeMillis(); //获取结束时间
+            System.out.println("=====接口调用时间："+(endTime-startTime)+"ms==============");
 
 
             if (memberList.size() > 0) {

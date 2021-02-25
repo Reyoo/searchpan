@@ -298,10 +298,13 @@ public class SystemTemDetailsServiceImpl extends ServiceImpl<SystemTemDetailsMap
     }
 
     @Override
-    public List<SystemTemDetailsModel> updateTempDetailsWithModel(SystemTemDetailsModel systemTemDetailsModel, String username) throws Exception {
-        systemTemDetailsMapper.updateTempDetailsWithModel(systemTemDetailsModel);
+    public List<SystemTemDetailsModel> updateTempDetailsWithModel(SystemTemDetailsModel SystemTemDetailsModel, String username) throws Exception {
+
+        systemTemDetailsMapper.updateTempDetailsWithModel(SystemTemDetailsModel);
+
         return systemTemDetailsMapper.findTemDetailsByUser(new SystemUserModel(username));
     }
+
 
     @Override
     public List<SystemTemDetailsModel> listTemDetailsObjectsByWord(SystemTemDetailsModel systemTemDetailsModel) {

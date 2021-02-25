@@ -133,6 +133,8 @@ public class WxPortalController {
         //解析传入的username,拿到user,查询对应模板
         String username = new String(decoder.decode(verification), "UTF-8");
 
+        System.out.println("============================================"+appId+"============================================");
+
 
         SystemUserModel systemUserModel = new SystemUserModel();
         systemUserModel.setUsername(username);
@@ -266,6 +268,9 @@ public class WxPortalController {
                     return "";
                 }
                 out = outMessage.toEncryptedXml(wxService.getWxMpConfigStorage());
+
+
+
             }
         } catch (Exception e) {
             e.printStackTrace();
