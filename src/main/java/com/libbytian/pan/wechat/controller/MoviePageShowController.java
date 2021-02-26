@@ -115,7 +115,7 @@ public class MoviePageShowController {
             List<SystemTemDetailsModel> systemdetails = iSystemTemDetailsService.getTemDetailsWithUser(systemUserModel);
 
             List<SystemTemDetailsModel> memberList = systemdetails.stream().
-                    filter(systemTemdetailsModel -> searchName.equals(systemTemdetailsModel.getKeyword())).collect(Collectors.toList());
+                    filter(systemTemdetailsModel -> systemTemdetailsModel.getKeyword().contains(searchName) && systemTemdetailsModel.getShowOrder()==0).collect(Collectors.toList());
 
 
             long endTime=System.currentTimeMillis(); //获取结束时间

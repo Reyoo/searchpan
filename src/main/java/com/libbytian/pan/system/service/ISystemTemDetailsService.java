@@ -51,8 +51,11 @@ public interface ISystemTemDetailsService extends IService<SystemTemDetailsModel
     List<SystemTemDetailsModel> updateTempDetailsWithModel(SystemTemDetailsModel SystemTemDetailsModel,String username) throws Exception;
 
 
-
-
+    /**
+     * 查询模板详情
+     * @param systemTemDetailsModel
+     * @return
+     */
     List<SystemTemDetailsModel> listTemDetailsObjectsByWord(SystemTemDetailsModel systemTemDetailsModel);
 
     void  defaultSave(String templateId);
