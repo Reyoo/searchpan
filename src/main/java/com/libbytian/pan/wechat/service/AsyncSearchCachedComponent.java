@@ -4,6 +4,7 @@ import com.libbytian.pan.findmovie.aidianying.IFindMovieInAiDianYing;
 import com.libbytian.pan.findmovie.sumsu.IFindMovieInSumsu;
 import com.libbytian.pan.findmovie.unread.IFindMovieInUnread;
 import com.libbytian.pan.findmovie.xiaoyou.IFindMovieInXiaoyou;
+import com.libbytian.pan.findmovie.youjiang.IFindMovieInYoujiang;
 import com.libbytian.pan.system.model.MovieNameAndUrlModel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,6 +36,8 @@ public class AsyncSearchCachedComponent {
   private final IFindMovieInSumsu iFindMovieInSumsu;
   private final IFindMovieInUnread iFindMovieInUnread;
   private final IFindMovieInXiaoyou iFindMovieInXiaoyou;
+  private final IFindMovieInYoujiang IFindMovieInYoujiang;
+
 
 
     /**
@@ -51,18 +54,24 @@ public class AsyncSearchCachedComponent {
 
         switch (search) {
             //a 一号大厅
-            case "x":
-                return iFindMovieInAiDianYing.findMovieUrl(searchMovieText);
+            case "a":
+                List<MovieNameAndUrlModel> listA = new ArrayList<>();
+                //添加小悠
+                listA.addAll(iFindMovieInXiaoyou.findMovieUrl(searchMovieText));
+                //添加悠酱
+                listA.addAll(IFindMovieInYoujiang.findMovieUrl(searchMovieText));
+                return listA;
             //u 2号大厅
             case "u":
-            List<MovieNameAndUrlModel> movieNameAndUrlModels = new ArrayList<>();
-                movieNameAndUrlModels.addAll(iFindMovieInUnread.findMovieUrl(searchMovieText));
-                //从数据库里拿
-                movieNameAndUrlModels.addAll(iFindMovieInSumsu.findMovieUrl(searchMovieText));
-                return movieNameAndUrlModels;
-            case "a":
-//                  从小悠家获取资源
-                return iFindMovieInXiaoyou.findMovieUrl(searchMovieText);
+            List<MovieNameAndUrlModel> listU = new ArrayList<>();
+                //添加未读影单
+                listU.addAll(iFindMovieInUnread.findMovieUrl(searchMovieText));
+                //添加社区动力
+                listU.addAll(iFindMovieInSumsu.findMovieUrl(searchMovieText));
+                return listU;
+            case "x":
+                //爱电影
+                return iFindMovieInAiDianYing.findMovieUrl(searchMovieText);
 
             default:
                 return new ArrayList<MovieNameAndUrlModel>();
