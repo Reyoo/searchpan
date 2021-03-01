@@ -2,9 +2,12 @@ package com.libbytian.pan.wechat.controller;
 
 import com.libbytian.pan.system.common.AjaxResult;
 import com.libbytian.pan.system.model.MovieNameAndUrlModel;
+import com.libbytian.pan.system.model.SystemKeywordModel;
 import com.libbytian.pan.system.model.SystemTemDetailsModel;
 import com.libbytian.pan.system.model.SystemUserModel;
+import com.libbytian.pan.system.service.ISystemKeywordService;
 import com.libbytian.pan.system.service.ISystemTemDetailsService;
+import com.libbytian.pan.system.service.ISystemUserService;
 import com.libbytian.pan.wechat.service.AsyncSearchCachedComponent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -41,6 +44,7 @@ public class MoviePageShowController {
 
     private final AsyncSearchCachedComponent asyncSearchCachedService;
     private final ISystemTemDetailsService iSystemTemDetailsService;
+    private final ISystemUserService iSystemUserService;
 
 
 
@@ -111,6 +115,12 @@ public class MoviePageShowController {
             String username = new String(decoder.decode(fishEncryption), "UTF-8");
             SystemUserModel systemUserModel = new SystemUserModel();
             systemUserModel.setUsername(username);
+
+            //判断接口是否过期
+            SystemUserModel user = iSystemUserService.getUser(systemUserModel);
+            if (LocalDateTime.now().isAfter(user.getActTime())){
+                return AjaxResult.error("你的服务已到期");
+            }
 
             List<SystemTemDetailsModel> systemdetails = iSystemTemDetailsService.getTemDetailsWithUser(systemUserModel);
 

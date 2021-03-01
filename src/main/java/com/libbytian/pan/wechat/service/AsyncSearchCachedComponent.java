@@ -58,14 +58,14 @@ public class AsyncSearchCachedComponent {
                 List<MovieNameAndUrlModel> listA = new ArrayList<>();
                 //添加小悠
                 listA.addAll(iFindMovieInXiaoyou.findMovieUrl(searchMovieText));
-                //添加悠酱
-                listA.addAll(IFindMovieInYoujiang.findMovieUrl(searchMovieText));
+                //添加未读影单
+                listA.addAll(iFindMovieInUnread.findMovieUrl(searchMovieText));
                 return listA;
             //u 2号大厅
             case "u":
             List<MovieNameAndUrlModel> listU = new ArrayList<>();
-                //添加未读影单
-                listU.addAll(iFindMovieInUnread.findMovieUrl(searchMovieText));
+                //添加悠酱
+                listU.addAll(IFindMovieInYoujiang.findMovieUrl(searchMovieText));
                 //添加社区动力
                 listU.addAll(iFindMovieInSumsu.findMovieUrl(searchMovieText));
                 return listU;

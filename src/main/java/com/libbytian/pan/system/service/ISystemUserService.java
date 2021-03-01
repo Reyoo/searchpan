@@ -9,6 +9,8 @@ import com.libbytian.pan.system.model.SystemTemDetailsModel;
 import com.libbytian.pan.system.model.SystemTemplateModel;
 import com.libbytian.pan.system.model.SystemUserModel;
 import com.libbytian.pan.system.model.SystemUserToTemplate;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,6 +27,7 @@ import java.util.Map;
  * @since 2018-05-03
  */
 @Transactional(propagation = Propagation.REQUIRES_NEW)
+@CacheConfig(cacheNames = "user")
 public interface ISystemUserService extends IService<SystemUserModel> {
 
 
@@ -34,6 +37,7 @@ public interface ISystemUserService extends IService<SystemUserModel> {
      * @param systemUserModel
      * @return
      */
+    @Cacheable(key = "#systemUserModel.username",condition = "#systemUserModel.username != null")
     SystemUserModel getUser(SystemUserModel systemUserModel) ;
 
     /**
