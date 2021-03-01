@@ -157,8 +157,11 @@ public class MoviePageShowController {
         systemUserModel.setUsername(username);
         SystemUserModel user = iSystemUserService.getUser(systemUserModel);
         if (LocalDateTime.now().isAfter(user.getActTime())){
-            return AjaxResult.error("你的服务已到期,➕微信：haha6224039 获取使用时间");
+            System.out.println("===============用户："+username+"接口已过期===============");
+            return AjaxResult.error("该系统提供服务已到期,继续使用请 关注公众号：影子追剧社 ");
         }
+
+        System.out.println("===============用户："+username+"正在调用web页大厅===============");
 
 
         List<MovieNameAndUrlModel> movieNameAndUrlModels = new ArrayList<>();
