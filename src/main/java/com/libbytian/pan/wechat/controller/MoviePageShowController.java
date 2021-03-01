@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.UnsupportedEncodingException;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -116,12 +117,6 @@ public class MoviePageShowController {
             SystemUserModel systemUserModel = new SystemUserModel();
             systemUserModel.setUsername(username);
 
-            //判断接口是否过期
-            SystemUserModel user = iSystemUserService.getUser(systemUserModel);
-            if (LocalDateTime.now().isAfter(user.getActTime())){
-                return AjaxResult.error("你的服务已到期");
-            }
-
             List<SystemTemDetailsModel> systemdetails = iSystemTemDetailsService.getTemDetailsWithUser(systemUserModel);
 
             List<SystemTemDetailsModel> memberList = systemdetails.stream().
@@ -154,7 +149,18 @@ public class MoviePageShowController {
      * search 三号大厅  x
      */
     @RequestMapping(path = "/movie/{search}/{fishEncryption}/{searchName}", method = RequestMethod.GET)
-    public AjaxResult getMovieList(@PathVariable String search, @PathVariable String fishEncryption, @PathVariable String searchName) {
+    public AjaxResult getMovieList(@PathVariable String search, @PathVariable String fishEncryption, @PathVariable String searchName) throws UnsupportedEncodingException {
+
+        //判断接口是否过期
+        String username = new String(decoder.decode(fishEncryption), "UTF-8");
+        SystemUserModel systemUserModel = new SystemUserModel();
+        systemUserModel.setUsername(username);
+        SystemUserModel user = iSystemUserService.getUser(systemUserModel);
+        if (LocalDateTime.now().isAfter(user.getActTime())){
+            return AjaxResult.error("你的服务已到期,➕微信：haha6224039 获取使用时间");
+        }
+
+
         List<MovieNameAndUrlModel> movieNameAndUrlModels = new ArrayList<>();
 
         try {
