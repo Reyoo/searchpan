@@ -151,17 +151,17 @@ public class MoviePageShowController {
     @RequestMapping(path = "/movie/{search}/{fishEncryption}/{searchName}", method = RequestMethod.GET)
     public AjaxResult getMovieList(@PathVariable String search, @PathVariable String fishEncryption, @PathVariable String searchName) throws UnsupportedEncodingException {
 
-        //判断接口是否过期
+//        //判断接口是否过期
         String username = new String(decoder.decode(fishEncryption), "UTF-8");
         SystemUserModel systemUserModel = new SystemUserModel();
         systemUserModel.setUsername(username);
         SystemUserModel user = iSystemUserService.getUser(systemUserModel);
-        if (LocalDateTime.now().isAfter(user.getActTime())){
-            System.out.println("===============用户："+username+"接口已过期===============");
-            return AjaxResult.error("该系统提供服务已到期,继续使用请 关注公众号：影子追剧社 ");
-        }
+//        if (LocalDateTime.now().isAfter(user.getActTime())){
+//            System.out.println("===============用户："+username+"接口已过期===============");
+//            return AjaxResult.error("该系统提供服务已到期,继续使用请 关注公众号：影子追剧社 ");
+//        }
 
-        System.out.println("===============用户："+username+"正在调用web页大厅===============");
+//        System.out.println("===============用户："+username+"正在调用web页大厅===============");
 
 
         List<MovieNameAndUrlModel> movieNameAndUrlModels = new ArrayList<>();

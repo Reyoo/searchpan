@@ -27,7 +27,7 @@ import java.util.Map;
  * @since 2018-05-03
  */
 @Transactional(propagation = Propagation.REQUIRES_NEW)
-@CacheConfig(cacheNames = "user")
+//@CacheConfig(cacheNames = "user")
 public interface ISystemUserService extends IService<SystemUserModel> {
 
 
@@ -37,7 +37,7 @@ public interface ISystemUserService extends IService<SystemUserModel> {
      * @param systemUserModel
      * @return
      */
-    @Cacheable(key = "#systemUserModel.username",condition = "#systemUserModel.username != null")
+//    @Cacheable(key = "#systemUserModel.username",condition = "#systemUserModel.username != null")
     SystemUserModel getUser(SystemUserModel systemUserModel) ;
 
     /**
