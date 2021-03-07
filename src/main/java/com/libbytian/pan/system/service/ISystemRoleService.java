@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.libbytian.pan.system.model.SystemRoleModel;
 import com.libbytian.pan.system.model.SystemUserModel;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,6 +14,7 @@ import java.util.List;
 
 
 @Transactional(propagation = Propagation.REQUIRES_NEW)
+//@CacheConfig(cacheNames = "systemRoleModel")
 public interface ISystemRoleService extends IService<SystemRoleModel> {
 
 
@@ -21,6 +24,7 @@ public interface ISystemRoleService extends IService<SystemRoleModel> {
      * @param user
      * @return
      */
+//    @Cacheable(key = "#user.username",condition = "#user != null")
     List<SystemRoleModel> listRolesByUser(SystemUserModel user);
 
     SystemRoleModel getRoles(SystemRoleModel systemRoleModel);

@@ -10,6 +10,7 @@ import com.libbytian.pan.system.model.SystemTemplateModel;
 import com.libbytian.pan.system.model.SystemUserModel;
 import com.libbytian.pan.system.model.SystemUserToTemplate;
 import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,18 +28,18 @@ import java.util.Map;
  * @since 2018-05-03
  */
 @Transactional(propagation = Propagation.REQUIRES_NEW)
-//@CacheConfig(cacheNames = "user")
+//@CacheConfig(cacheNames = "userModel")
 public interface ISystemUserService extends IService<SystemUserModel> {
 
 
 
     /**
      * 查询 返回单个用户信息
-     * @param systemUserModel
+     * @param user
      * @return
      */
-//    @Cacheable(key = "#systemUserModel.username",condition = "#systemUserModel.username != null")
-    SystemUserModel getUser(SystemUserModel systemUserModel) ;
+//    @Cacheable(key = "#user",condition = "#user != null")
+    SystemUserModel getUser(SystemUserModel user) ;
 
     /**
      * 查询 返回多个用户信息
@@ -63,6 +64,7 @@ public interface ISystemUserService extends IService<SystemUserModel> {
     void removeUserAll(SystemUserModel user) throws Exception;
 
 
+//    @CachePut(key = "#user" ,condition = "#user != null")
     int updateUser(SystemUserModel user) throws Exception;
 
     IPage<SystemUserModel> findConditionByPage(Page<SystemUserModel> page, SystemUserModel user) throws Exception;

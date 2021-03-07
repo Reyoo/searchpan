@@ -3,6 +3,9 @@ package com.libbytian.pan.system.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.libbytian.pan.system.model.SystemKeywordModel;
 import com.libbytian.pan.system.model.SystemUserModel;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,11 +17,14 @@ import org.springframework.transaction.annotation.Transactional;
  * 描述: TODO
  */
 
-
+@Transactional(propagation = Propagation.REQUIRES_NEW)
+//@CacheConfig(cacheNames = "useKeyword")
 public interface ISystemKeywordService extends IService<SystemKeywordModel> {
 
+//    @Cacheable(key = "#username",condition = "#username != null")
     SystemKeywordModel getKeywordByUser(String username);
 
+//    @CachePut(key = "#systemKeywordModel.user" ,condition = "#systemKeywordModel != null")
     void updateKeyword(SystemKeywordModel systemKeywordModel);
 
 
