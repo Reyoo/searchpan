@@ -11,7 +11,8 @@
         k.start_time AS startTime,
         k.end_time AS endTime,
         k.fans_key AS fansKey,
-        k.app_id AS appId
+        k.app_id AS appId,
+        k.search_flag AS searchFlag
     </sql>
 
 
@@ -52,6 +53,10 @@
                 app_id =#{appId},
             </if>
 
+            <if test="searchFlag != null ">
+                search_flag =#{searchFlag},
+            </if>
+
 
         </trim>
         WHERE
@@ -86,6 +91,9 @@
             <if test="appId != null">
                 app_id,
             </if>
+            <if test="searchFlag != null ">
+                search_flag =#{searchFlag},
+            </if>
 
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -115,6 +123,9 @@
 
             <if test="appId != null">
                 #{appId,jdbcType=VARCHAR},
+            </if>
+            <if test="searchFlag != null">
+                #{searchFlag,jdbcType=int},
             </if>
         </trim>
     </insert>

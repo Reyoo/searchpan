@@ -81,6 +81,12 @@ public class SystemKeywordModel extends Model<SystemKeywordModel> {
     @TableField("app_id")
     private String appId;
 
+    /**
+     * 搜索框开关
+     */
+    @TableField("search_flag")
+    private int searchFlag;
+
 
 
     @Override
