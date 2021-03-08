@@ -158,7 +158,7 @@ public class MoviePageShowController {
         SystemUserModel user = iSystemUserService.getUser(systemUserModel);
         if (LocalDateTime.now().isAfter(user.getActTime())){
             System.out.println("===============用户："+username+"接口已过期===============");
-            return AjaxResult.error("该系统提供服务已到期,继续使用请 关注公众号：影子的胡言乱语 ");
+            return AjaxResult.error("该系统提供服务已过期,继续使用请 关注公众号：影子的胡言乱语 ");
         }
 
         System.out.println("===============用户："+username+"正在调用web页大厅===============");
