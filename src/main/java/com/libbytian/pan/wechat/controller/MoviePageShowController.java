@@ -7,10 +7,12 @@ import com.libbytian.pan.system.model.SystemTemDetailsModel;
 import com.libbytian.pan.system.model.SystemUserModel;
 import com.libbytian.pan.system.service.ISystemKeywordService;
 import com.libbytian.pan.system.service.ISystemTemDetailsService;
+import com.libbytian.pan.system.service.ISystemUserSearchMovieService;
 import com.libbytian.pan.system.service.ISystemUserService;
 import com.libbytian.pan.wechat.service.AsyncSearchCachedComponent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -46,6 +49,7 @@ public class MoviePageShowController {
     private final AsyncSearchCachedComponent asyncSearchCachedService;
     private final ISystemTemDetailsService iSystemTemDetailsService;
     private final ISystemUserService iSystemUserService;
+    private final ISystemUserSearchMovieService iSystemUserSearchMovieService;
 
 
 
@@ -119,12 +123,18 @@ public class MoviePageShowController {
 
             List<SystemTemDetailsModel> systemdetails = iSystemTemDetailsService.getTemDetailsWithUser(systemUserModel);
 
+            searchName.replace("+","");
+
             List<SystemTemDetailsModel> memberList = systemdetails.stream().
                     filter(systemTemdetailsModel -> systemTemdetailsModel.getKeyword().contains(searchName) && systemTemdetailsModel.getShowOrder()==0).collect(Collectors.toList());
 
 
             long endTime=System.currentTimeMillis(); //获取结束时间
             System.out.println("=====接口调用时间："+(endTime-startTime)+"ms==============");
+
+            //获取接口最新调用时间
+            systemUserModel.setCallTime(LocalDateTime.now());
+            iSystemUserService.updateUser(systemUserModel);
 
 
             if (memberList.size() > 0) {
@@ -165,6 +175,18 @@ public class MoviePageShowController {
 
 
         List<MovieNameAndUrlModel> movieNameAndUrlModels = new ArrayList<>();
+
+
+        searchName = URLDecoder.decode(searchName,"UTF-8");
+
+        System.out.println(searchName);
+
+
+        /**
+         * 统计用户查询记录
+         */
+        iSystemUserSearchMovieService.userSearchMovieCountInFindfish(searchName);
+
 
         try {
 //            根据不同入参 给参数

@@ -1,8 +1,10 @@
 package com.libbytian.pan.wechat.controller;
 
 import com.libbytian.pan.system.common.TemplateDetailsGetKeywordComponent;
+import com.libbytian.pan.system.model.SystemKeywordModel;
 import com.libbytian.pan.system.model.SystemTemDetailsModel;
 import com.libbytian.pan.system.model.SystemUserModel;
+import com.libbytian.pan.system.service.ISystemKeywordService;
 import com.libbytian.pan.system.service.ISystemTemDetailsService;
 import com.libbytian.pan.system.service.ISystemUserSearchMovieService;
 import com.libbytian.pan.system.service.ISystemUserService;
@@ -45,7 +47,7 @@ public class WxPortalController {
     private final RedisTemplate redisTemplate;
     private final ISystemUserSearchMovieService iSystemUserSearchMovieService;
     private final TemplateDetailsGetKeywordComponent templateDetailsGetKeywordComponent;
-
+    private final ISystemKeywordService systemKeywordService;
 
 
 
@@ -142,34 +144,32 @@ public class WxPortalController {
         //判断用户账号到期时间
         SystemUserModel userModel =iSystemUserService.getUser(systemUserModel);
 
-        if ( LocalDateTime.now().isAfter(userModel.getActTime())){
-            // 明文传输的消息
-            WxMpXmlMessage inMessage = WxMpXmlMessage.fromXml(requestBody);
-            WxMpXmlOutMessage outMessage = this.route(inMessage);
-            StringBuffer stringBuffer = new StringBuffer();
-            stringBuffer.append("该公众号提供服务已过期");
-            stringBuffer.append("\r\n");
-            stringBuffer.append("\r\n");
-            stringBuffer.append("关注公众号『影子的胡言乱语』");
-            stringBuffer.append("\r\n");
-            stringBuffer.append("\r\n");
-            stringBuffer.append("可继续使用");
-
-            outMessage = WxMpXmlOutTextMessage.TEXT()
-                    .toUser(inMessage.getFromUser())
-                    .fromUser(inMessage.getToUser())
-                    .content(stringBuffer.toString()).build();
-
-            return outMessage.toXml();
-//            Thread.sleep(10000);
-        }
-
+//        if ( LocalDateTime.now().isAfter(userModel.getActTime())){
+//            // 明文传输的消息
+//            WxMpXmlMessage inMessage = WxMpXmlMessage.fromXml(requestBody);
+//            WxMpXmlOutMessage outMessage = this.route(inMessage);
+//            StringBuffer stringBuffer = new StringBuffer();
+//            stringBuffer.append("该公众号提供服务已过期");
+//            stringBuffer.append("\r\n");
+//            stringBuffer.append("\r\n");
+//            stringBuffer.append("关注公众号『影子的胡言乱语』");
+//            stringBuffer.append("\r\n");
+//            stringBuffer.append("\r\n");
+//            stringBuffer.append("可继续使用");
+//
+//            outMessage = WxMpXmlOutTextMessage.TEXT()
+//                    .toUser(inMessage.getFromUser())
+//                    .fromUser(inMessage.getToUser())
+//                    .content(stringBuffer.toString()).build();
+//
+//            return outMessage.toXml();
+//        }
 
 
 
-        systemUserModel.setCallTime(LocalDateTime.now());
         //获取用调用接口时间
-        iSystemUserService.updateUser(systemUserModel);
+//        systemUserModel.setCallTime(LocalDateTime.now());
+//        iSystemUserService.updateUser(systemUserModel);
 
         String out = null;
         try {
@@ -193,10 +193,11 @@ public class WxPortalController {
 
 
                 System.out.println(inMessage.getContent());
-                String searchWord = inMessage.getContent();
+//                String searchWord = inMessage.getContent();
+                String searchName = inMessage.getContent();
 
                 //首次关注
-                if (searchWord== null){
+                if (searchName== null){
                     SystemTemDetailsModel firstLike = templateDetailsGetKeywordComponent.getUserKeywordDetail(systemUserModel, TemplateKeywordConstant.First_Like);
                     if (firstLike.getEnableFlag()){
                         stringBuffer.append(firstLike.getKeywordToValue());
@@ -215,20 +216,33 @@ public class WxPortalController {
                 }
 
 
-                searchWord = inMessage.getContent().trim();
+//                searchWord = inMessage.getContent().trim();
 
-                String searchName = null;
-                if(searchWord.contains(" ")){
-                    int idx = searchWord.lastIndexOf(" ");
-                     searchName = searchWord.substring(idx + 1);
-                }else{
-                    searchName = searchWord;
+
+//                String searchName = null;
+//                if(searchWord.contains(" ")){
+//                    int idx = searchWord.lastIndexOf(" ");
+//                     searchName = searchWord.substring(idx + 1);
+//                }else{
+//                    searchName = searchWord;
+//                }
+
+                SystemKeywordModel systemKeywordModel = systemKeywordService.getKeywordByUser(systemUserModel.getUsername());
+                String key = systemKeywordModel.getFansKey();
+                if (searchName.startsWith(key)){
+                    searchName = searchName.split(key)[1].trim();
+                    System.out.println(searchName);
+                    searchName.trim();
+                    System.out.println(searchName);
                 }
+
+
+
 
                 /**
                  * 统计用户查询记录
                  */
-                iSystemUserSearchMovieService.userSearchMovieCountInFindfish(searchName);
+//                iSystemUserSearchMovieService.userSearchMovieCountInFindfish(searchName);
 
                 //从Redis中取出所有key,判断是传入内容是否为敏感词
                 if (redisTemplate.boundHashOps("SensitiveWord").keys().contains(searchName)){
@@ -252,8 +266,9 @@ public class WxPortalController {
                     stringBuffer.append("\r\n");
                 }
 
+                String dealName = searchName.replaceAll(" ","+");
                 stringBuffer.append("<a href =\"http://findfish.top/#/mobileView?searchname=");
-                stringBuffer.append(searchName);
+                stringBuffer.append(dealName);
                 stringBuffer.append("&verification=");
                 stringBuffer.append(verification);
                 stringBuffer.append("&type=mobile");
@@ -266,7 +281,10 @@ public class WxPortalController {
                     stringBuffer.append(lastModel.getKeywordToValue());
                 }
 
-                stringBuffer = keyWordSettingService.getTemplateKeyWord(systemUserModel, searchName, stringBuffer, searchWord);
+                System.out.println(stringBuffer);
+
+//                stringBuffer = keyWordSettingService.getTemplateKeyWord(systemUserModel, searchName, stringBuffer, searchWord);
+                stringBuffer = keyWordSettingService.getTemplateKeyWord(systemUserModel, searchName, stringBuffer,systemKeywordModel);
 
                 outMessage = WxMpXmlOutTextMessage.TEXT()
                         .toUser(inMessage.getFromUser())

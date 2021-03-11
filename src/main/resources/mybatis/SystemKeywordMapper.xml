@@ -92,7 +92,7 @@
                 app_id,
             </if>
             <if test="searchFlag != null ">
-                search_flag =#{searchFlag},
+                search_flag,
             </if>
 
         </trim>

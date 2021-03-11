@@ -32,7 +32,7 @@ public class KeyWordSettingService {
     private final ISystemKeywordService systemKeywordService;
     private final TemplateDetailsGetKeywordComponent templateDetailsGetKeywordComponent;
 
-    public StringBuffer getTemplateKeyWord(SystemUserModel systemUserModel, String searchName, StringBuffer stringBuffer, String searchWord) throws Exception  {
+    public StringBuffer getTemplateKeyWord(SystemUserModel systemUserModel, String searchName, StringBuffer stringBuffer,SystemKeywordModel systemKeywordModel) throws Exception  {
 
         SystemTemDetailsModel secretContent = templateDetailsGetKeywordComponent.getUserKeywordDetail(systemUserModel, TemplateKeywordConstant.SECRET_CONTENT);
         SystemTemDetailsModel secretReply = templateDetailsGetKeywordComponent.getUserKeywordDetail(systemUserModel, TemplateKeywordConstant.SECRET_REPLY);
@@ -63,7 +63,7 @@ public class KeyWordSettingService {
             }
         }
 
-        SystemKeywordModel systemKeywordModel = systemKeywordService.getKeywordByUser(systemUserModel.getUsername());
+//        SystemKeywordModel systemKeywordModel = systemKeywordService.getKeywordByUser(systemUserModel.getUsername());
 
 
         /**
@@ -108,7 +108,7 @@ public class KeyWordSettingService {
 
 
                 //维护期内判断秘钥功能
-                if (!searchWord.contains(fansKey) && ! fansKey.equals("000000") ) {
+                if (!searchName.contains(fansKey) && ! fansKey.equals("000000") ) {
 
                     if (keyContent.getEnableFlag()) {
                         stringBuffer.setLength(0);
