@@ -40,7 +40,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @RequestMapping("/fantasy")
 @EnableAsync
-@SentinelResource("movieFind")
+@SentinelResource("fantasy")
 public class MoviePageShowController {
 
     final Base64.Decoder decoder = Base64.getDecoder();
