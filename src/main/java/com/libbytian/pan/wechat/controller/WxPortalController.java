@@ -1,5 +1,6 @@
 package com.libbytian.pan.wechat.controller;
 
+import com.alibaba.csp.sentinel.annotation.SentinelResource;
 import com.libbytian.pan.system.common.TemplateDetailsGetKeywordComponent;
 import com.libbytian.pan.system.model.SystemKeywordModel;
 import com.libbytian.pan.system.model.SystemTemDetailsModel;
@@ -31,6 +32,7 @@ import java.util.Base64;
 @RequiredArgsConstructor
 @RestController
 @Log4j2
+@SentinelResource("wechat")
 @RequestMapping("/wechat/portal")
 
 public class WxPortalController {

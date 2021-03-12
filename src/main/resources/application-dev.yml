@@ -17,6 +17,8 @@ server:
 
 
 spring:
+  application:
+    name: findfish
   redis:
     host: 121.36.6.92
     port: 36379
@@ -72,6 +74,10 @@ spring:
   messages:
     encoding: UTF-8
     basename: message/messages_zh
+  cloud:
+    sentinel:
+      transport:
+        dashboard: localhost:8899
 #  # 定位模板的目录,给返回的页面添加后缀名
 #  thymeleaf:
 #    prefix: classpath:/templates/

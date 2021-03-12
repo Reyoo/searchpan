@@ -17,6 +17,8 @@ server:
 # Spring Security Default user name and password
 
 spring:
+  application:
+    name: findfish
   redis:
     host: 121.36.6.92
     port: 36379
@@ -65,6 +67,10 @@ spring:
     encoding: UTF-8
     basename: message/messages_zh
   level: debug
+  cloud:
+    sentinel:
+      transport:
+        dashboard: 121.36.6.92:8899
 #  # 定位模板的目录,给返回的页面添加后缀名
 #  thymeleaf:
 #    prefix: classpath:/templates/

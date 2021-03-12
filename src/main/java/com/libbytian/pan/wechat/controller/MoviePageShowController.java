@@ -1,5 +1,6 @@
 package com.libbytian.pan.wechat.controller;
 
+import com.alibaba.csp.sentinel.annotation.SentinelResource;
 import com.libbytian.pan.system.common.AjaxResult;
 import com.libbytian.pan.system.model.MovieNameAndUrlModel;
 import com.libbytian.pan.system.model.SystemKeywordModel;
@@ -42,6 +43,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @RequestMapping("/fantasy")
 @EnableAsync
+@SentinelResource("fantasy")
 public class MoviePageShowController {
 
     final Base64.Decoder decoder = Base64.getDecoder();
