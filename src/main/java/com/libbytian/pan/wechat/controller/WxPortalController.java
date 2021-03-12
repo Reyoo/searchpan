@@ -231,11 +231,12 @@ public class WxPortalController {
 
                 SystemKeywordModel systemKeywordModel = systemKeywordService.getKeywordByUser(systemUserModel.getUsername());
                 String key = systemKeywordModel.getFansKey();
+                String splitName = null;
                 if (searchName.startsWith(key)){
-                    searchName = searchName.split(key)[1].trim();
-                    System.out.println(searchName);
-                    searchName.trim();
-                    System.out.println(searchName);
+                    splitName = searchName.split(key)[1].trim();
+
+                }else {
+                    splitName=searchName;
                 }
 
 
@@ -247,7 +248,7 @@ public class WxPortalController {
 //                iSystemUserSearchMovieService.userSearchMovieCountInFindfish(searchName);
 
                 //从Redis中取出所有key,判断是传入内容是否为敏感词
-                if (redisTemplate.boundHashOps("SensitiveWord").keys().contains(searchName)){
+                if (redisTemplate.boundHashOps("SensitiveWord").keys().contains(splitName)){
                     return "";
                 }
 
@@ -268,14 +269,14 @@ public class WxPortalController {
                     stringBuffer.append("\r\n");
                 }
 
-                String dealName = searchName.replaceAll(" ","+");
+                String dealName = splitName.replaceAll(" ","+");
                 stringBuffer.append("<a href =\"http://findfish.top/#/mobileView?searchname=");
                 stringBuffer.append(dealName);
                 stringBuffer.append("&verification=");
                 stringBuffer.append(verification);
                 stringBuffer.append("&type=mobile");
                 stringBuffer.append("\">[");
-                stringBuffer.append(searchName);
+                stringBuffer.append(splitName);
                 stringBuffer.append("]关键词已获取，点击查看查询结果</a>");
                 if (lastModel.getEnableFlag()) {
                     stringBuffer.append("\r\n");
@@ -286,7 +287,7 @@ public class WxPortalController {
                 System.out.println(stringBuffer);
 
 //                stringBuffer = keyWordSettingService.getTemplateKeyWord(systemUserModel, searchName, stringBuffer, searchWord);
-                stringBuffer = keyWordSettingService.getTemplateKeyWord(systemUserModel, searchName, stringBuffer,systemKeywordModel);
+                stringBuffer = keyWordSettingService.getTemplateKeyWord(systemUserModel, splitName, searchName,stringBuffer,systemKeywordModel);
 
                 outMessage = WxMpXmlOutTextMessage.TEXT()
                         .toUser(inMessage.getFromUser())

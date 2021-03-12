@@ -32,7 +32,7 @@ public class KeyWordSettingService {
     private final ISystemKeywordService systemKeywordService;
     private final TemplateDetailsGetKeywordComponent templateDetailsGetKeywordComponent;
 
-    public StringBuffer getTemplateKeyWord(SystemUserModel systemUserModel, String searchName, StringBuffer stringBuffer,SystemKeywordModel systemKeywordModel) throws Exception  {
+    public StringBuffer getTemplateKeyWord(SystemUserModel systemUserModel, String splitName,String searchName , StringBuffer stringBuffer,SystemKeywordModel systemKeywordModel) throws Exception  {
 
         SystemTemDetailsModel secretContent = templateDetailsGetKeywordComponent.getUserKeywordDetail(systemUserModel, TemplateKeywordConstant.SECRET_CONTENT);
         SystemTemDetailsModel secretReply = templateDetailsGetKeywordComponent.getUserKeywordDetail(systemUserModel, TemplateKeywordConstant.SECRET_REPLY);
@@ -51,7 +51,7 @@ public class KeyWordSettingService {
 
             for (String s : str) {
                 //判断传入的 片名 是否在隐藏资源中
-                if (s.equals(searchName)) {
+                if (s.equals(splitName)) {
                     stringBuffer.setLength(0);
                     if (secretReply.getEnableFlag()) {
                         stringBuffer.append(secretReply.getKeywordToValue());

@@ -125,7 +125,7 @@
                 #{appId,jdbcType=VARCHAR},
             </if>
             <if test="searchFlag != null">
-                #{searchFlag,jdbcType=int},
+                #{searchFlag,jdbcType=INTEGER},
             </if>
         </trim>
     </insert>
