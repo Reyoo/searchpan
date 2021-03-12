@@ -118,8 +118,6 @@ mybatis-plus:
 
 
 
-
-
 wx:
   mp:
     configs:
@@ -131,9 +129,4 @@ wx:
 #        secret: 1111
 #        token: 111
 #        aesKey: 111
-
-
-
-
-
 
