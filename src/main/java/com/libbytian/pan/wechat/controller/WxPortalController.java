@@ -24,6 +24,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.Base64;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author sun7127
@@ -99,6 +101,14 @@ public class WxPortalController {
 //                Thread.sleep(10000);
 //            }
 
+            //正则校验appid
+            String regular = "^wx(?=.*\\d)(?=.*[a-z])[\\da-z]{16}$";
+            Pattern p = Pattern.compile(regular);
+            if (!p.matcher(appId).matches()){
+                return "appid格式不对,请前往公众号获取";
+            }
+
+
         } catch (Exception e) {
             return e.getMessage();
         }
@@ -146,26 +156,26 @@ public class WxPortalController {
         //判断用户账号到期时间
         SystemUserModel userModel =iSystemUserService.getUser(systemUserModel);
 
-//        if ( LocalDateTime.now().isAfter(userModel.getActTime())){
-//            // 明文传输的消息
-//            WxMpXmlMessage inMessage = WxMpXmlMessage.fromXml(requestBody);
-//            WxMpXmlOutMessage outMessage = this.route(inMessage);
-//            StringBuffer stringBuffer = new StringBuffer();
-//            stringBuffer.append("该公众号提供服务已过期");
-//            stringBuffer.append("\r\n");
-//            stringBuffer.append("\r\n");
-//            stringBuffer.append("关注公众号『影子的胡言乱语』");
-//            stringBuffer.append("\r\n");
-//            stringBuffer.append("\r\n");
-//            stringBuffer.append("可继续使用");
-//
-//            outMessage = WxMpXmlOutTextMessage.TEXT()
-//                    .toUser(inMessage.getFromUser())
-//                    .fromUser(inMessage.getToUser())
-//                    .content(stringBuffer.toString()).build();
-//
-//            return outMessage.toXml();
-//        }
+        if ( LocalDateTime.now().isAfter(userModel.getActTime())){
+            // 明文传输的消息
+            WxMpXmlMessage inMessage = WxMpXmlMessage.fromXml(requestBody);
+            WxMpXmlOutMessage outMessage = this.route(inMessage);
+            StringBuffer stringBuffer = new StringBuffer();
+            stringBuffer.append("该公众号提供服务已过期");
+            stringBuffer.append("\r\n");
+            stringBuffer.append("\r\n");
+            stringBuffer.append("关注公众号『影子的胡言乱语』");
+            stringBuffer.append("\r\n");
+            stringBuffer.append("\r\n");
+            stringBuffer.append("可继续使用");
+
+            outMessage = WxMpXmlOutTextMessage.TEXT()
+                    .toUser(inMessage.getFromUser())
+                    .fromUser(inMessage.getToUser())
+                    .content(stringBuffer.toString()).build();
+
+            return outMessage.toXml();
+        }
 
 
 
