@@ -2,24 +2,16 @@ package com.libbytian.pan.wechat.controller;
 
 import com.alibaba.csp.sentinel.annotation.SentinelResource;
 import com.libbytian.pan.system.common.AjaxResult;
-import com.libbytian.pan.system.model.MovieNameAndUrlModel;
-import com.libbytian.pan.system.model.SystemKeywordModel;
-import com.libbytian.pan.system.model.SystemTemDetailsModel;
-import com.libbytian.pan.system.model.SystemUserModel;
-import com.libbytian.pan.system.service.ISystemKeywordService;
-import com.libbytian.pan.system.service.ISystemTemDetailsService;
-import com.libbytian.pan.system.service.ISystemUserSearchMovieService;
-import com.libbytian.pan.system.service.ISystemUserService;
+import com.libbytian.pan.system.mapper.SystemTemDetailsMapper;
+import com.libbytian.pan.system.model.*;
+import com.libbytian.pan.system.service.*;
 import com.libbytian.pan.wechat.service.AsyncSearchCachedComponent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.EnableAsync;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -54,6 +46,11 @@ public class MoviePageShowController {
     private final ISystemUserSearchMovieService iSystemUserSearchMovieService;
 
 
+    private final ISystemTemplateService iSystemTemplateService;
+    private final SystemTemDetailsMapper systemTemDetailsMapper;
+    private final ISystemTmplToTmplDetailsService iSystemTmplToTmplDetailsService;
+
+
 
 
     /**
@@ -72,6 +69,16 @@ public class MoviePageShowController {
             List<SystemTemDetailsModel> systemdetails = iSystemTemDetailsService.getTemDetailsWithUser(systemUserModel);
             Map map = new HashMap();
 
+
+            //返回Map初始化
+            Map keynullMap = new HashMap();
+            keynullMap.put("keywordToValue", "");
+
+                map.put("head", keynullMap);
+                map.put("foot", keynullMap);
+                map.put("searchBox", keynullMap);
+
+            //遍历
             for (SystemTemDetailsModel systemTemDetailsModel : systemdetails) {
                 if (systemTemDetailsModel.getKeyword().equals("头部提示web") && systemTemDetailsModel.getEnableFlag()) {
                     systemTemDetailsModel.setKeyword("0");
@@ -84,23 +91,13 @@ public class MoviePageShowController {
                     map.put("foot", systemTemDetailsModel);
                     continue;
                 }
-            }
 
-            Map keynullMap = new HashMap();
-            keynullMap.put("keywordToValue", "");
-
-            if (map.size() == 0) {
-                map.put("head", keynullMap);
-                map.put("foot", keynullMap);
+                if (systemTemDetailsModel.getKeyword().equals("web页搜索框") && systemTemDetailsModel.getEnableFlag()) {
+                    systemTemDetailsModel.setKeyword("2");
+                    map.put("searchBox", systemTemDetailsModel);
+                    continue;
+                }
             }
-
-            if (map.containsKey("head") && !map.containsKey("foot")) {
-                map.put("foot", keynullMap);
-            }
-            if (!map.containsKey("head") && map.containsKey("foot")) {
-                map.put("head", keynullMap);
-            }
-
 
             return AjaxResult.success(map);
         } catch (Exception e) {
@@ -112,7 +109,8 @@ public class MoviePageShowController {
     /**
      * @param fishEncryption
      * @return
-     * @Description: 根据加密内容 返回会员信息 头尾list
+     * @Description: 根据加密内容 返回会员信息 头尾list  X
+     * @Description: 根据加密内容 返回会员大厅
      */
     @RequestMapping(path = "/member/{fishEncryption}/{searchName}", method = RequestMethod.GET)
     public AjaxResult getMemberList(@PathVariable String fishEncryption, @PathVariable String searchName) {
@@ -203,4 +201,36 @@ public class MoviePageShowController {
             return AjaxResult.hide("全网搜 '" + searchName + "' 中 挖坑埋点土数个一二三四五，再点一次大厅");
         }
     }
+
+
+    /**
+     * 当新增加系统关键词时，插入到每一个用户的模板详情中
+      * @param details
+     * @return
+     */
+    @RequestMapping(value = "/addKeyword", method = RequestMethod.POST)
+    public AjaxResult addKeyword(@RequestBody SystemTemDetailsModel details){
+
+        //获取所有模板
+        List<SystemTemplateModel> allTemplate = iSystemTemplateService.getAllTemplate();
+        //遍历所有模板，将新增关键词存入 详情表，绑定中间表。
+        for (SystemTemplateModel templateModel : allTemplate) {
+            details.setTemdetailsId(UUID.randomUUID().toString());
+            details.setCreatetime(LocalDateTime.now());
+
+            //插入模板详情表
+            int result = systemTemDetailsMapper.insert(details);
+            if (result == 1) {
+                //插入模板_模板详情表
+                SystemTemToTemdetail temToDetails = SystemTemToTemdetail.builder().templateid(templateModel.getTemplateid()).templatedetailsid(details.getTemdetailsId()).build();
+                iSystemTmplToTmplDetailsService.save(temToDetails);
+            }
+        }
+        return AjaxResult.success("新增成功");
+
+    }
+
+
+
+
 }

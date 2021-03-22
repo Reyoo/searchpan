@@ -39,4 +39,11 @@ public interface ISystemTemplateService extends IService<SystemTemplateModel> {
       */
      public SystemTemplateModel getTemplateById(String temdetailsId);
 
+
+     /**
+      * 查询所有模板
+      * @return
+      */
+     List<SystemTemplateModel> getAllTemplate();
+
 }

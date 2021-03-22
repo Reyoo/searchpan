@@ -324,9 +324,13 @@ public class SystemTemDetailsServiceImpl extends ServiceImpl<SystemTemDetailsMap
             SystemTemDetailsModel details = detailist.get(i);
             details.setTemdetailsId(UUID.randomUUID().toString());
             details.setCreatetime(LocalDateTime.now());
-            details.setTemdetailsstatus(false);
-            details.setEnableFlag(false);
-            details.setShowOrder(1);
+
+            if ("web页搜索框".equals(details.getKeyword())){
+                details.setShowOrder(8);
+            }else {
+                details.setShowOrder(1);
+            }
+
             systemTemDetailsMapper.insertSystemTemDetails(details);
             //用户模板绑定模板详情
             SystemTemToTemdetail temToTemdetail = SystemTemToTemdetail.builder().templateid(templateId).templatedetailsid(details.getTemdetailsId()).build();

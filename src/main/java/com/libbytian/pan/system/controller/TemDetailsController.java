@@ -1,12 +1,17 @@
 package com.libbytian.pan.system.controller;
 
+import cn.hutool.core.lang.UUID;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.libbytian.pan.system.common.AjaxResult;
+import com.libbytian.pan.system.mapper.SystemTemDetailsMapper;
 import com.libbytian.pan.system.model.SystemTemDetailsModel;
+import com.libbytian.pan.system.model.SystemTemToTemdetail;
+import com.libbytian.pan.system.model.SystemTemplateModel;
 import com.libbytian.pan.system.service.ISystemSensitiveWordService;
 import com.libbytian.pan.system.service.ISystemTemDetailsService;
+import com.libbytian.pan.system.service.ISystemTemplateService;
 import com.libbytian.pan.system.service.ISystemTmplToTmplDetailsService;
 import com.libbytian.pan.system.util.CheckStrContainUrlUtil;
 import lombok.RequiredArgsConstructor;
@@ -38,6 +43,7 @@ public class TemDetailsController {
     private final ISystemSensitiveWordService iSystemSensitiveWordService;
 
     private final ISystemTmplToTmplDetailsService systemTmplToTmplDetailsService;
+
 
 
     /**
@@ -258,6 +264,8 @@ public class TemDetailsController {
             return AjaxResult.error("无效URL");
         }
     }
+
+
 
 
 }

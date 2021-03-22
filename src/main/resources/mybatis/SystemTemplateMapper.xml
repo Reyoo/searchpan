@@ -105,4 +105,13 @@
         WHERE td.templatedetails_id = #{temdetailsId}
     </select>
 
+
+
+    <!-- 查询全部模板-->
+    <select id="getAllTemplate" resultType="com.libbytian.pan.system.model.SystemTemplateModel">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM sys_template t
+    </select>
+
 </mapper>

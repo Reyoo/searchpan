@@ -33,5 +33,9 @@ public interface SystemTemplateMapper extends BaseMapper<SystemTemplateModel> {
 
     SystemTemplateModel getTemplateById(String temdetailsId);
 
-
+    /**
+     * 查询所有模板
+     * @return
+     */
+    List<SystemTemplateModel> getAllTemplate();
 }

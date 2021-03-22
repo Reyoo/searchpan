@@ -28,6 +28,7 @@ public class XssFilter implements Filter {
             "/login", "/logout","/wechat", ".html", ".js", ".gif", ".jpg", ".png", ".css",
             ".ico", ".woff2", ".woff", ".tt", ".ttf");
 
+    @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain) throws IOException, ServletException {
         HttpServletRequest req = (HttpServletRequest) request;
         if (handleExcludeURL(req)) {

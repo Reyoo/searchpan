@@ -161,7 +161,6 @@ public class SystemUserServiceImpl extends ServiceImpl<SystemUserMapper, SystemU
             systemKeywordModel.setStartTime("00:00");
             systemKeywordModel.setEndTime("00:00");
             systemKeywordModel.setAppId(appId);
-            systemKeywordModel.setSearchFlag(0);
             //新增用户 信息类 插入关键字表
             keywordService.addkeyword(systemKeywordModel);
             //插入关联表

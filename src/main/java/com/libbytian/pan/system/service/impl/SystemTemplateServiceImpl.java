@@ -90,4 +90,13 @@ public class SystemTemplateServiceImpl extends ServiceImpl<SystemTemplateMapper,
         return systemTemplateMapper.getTemplateById(temdetailsId);
     }
 
+    /**
+     * 查询所有模板
+     * @return
+     */
+    @Override
+    public List<SystemTemplateModel> getAllTemplate() {
+        return systemTemplateMapper.getAllTemplate();
+    }
+
 }

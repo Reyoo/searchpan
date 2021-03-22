@@ -22,6 +22,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.time.LocalDateTime;
 import java.util.Base64;
 import java.util.regex.Matcher;
@@ -94,19 +96,18 @@ public class WxPortalController {
                 return "无此接口认证权限，请联系管理员！";
             }
 
-            //判断用户账号到期时间
-//            SystemUserModel userModel =iSystemUserService.getUser(systemUserModel);
-//
-//            if ( LocalDateTime.now().isAfter(userModel.getActTime())){
-//                Thread.sleep(10000);
-//            }
-
             //正则校验appid
             String regular = "^wx(?=.*\\d)(?=.*[a-z])[\\da-z]{16}$";
             Pattern p = Pattern.compile(regular);
             if (!p.matcher(appId).matches()){
                 return "appid格式不对,请前往公众号获取";
             }
+
+            //判断用户账号到期时间
+//            SystemUserModel userModel =iSystemUserService.getUser(systemUserModel);
+//            if ( LocalDateTime.now().isAfter(userModel.getActTime())){
+//                Thread.sleep(10000);
+//            }
 
 
         } catch (Exception e) {
@@ -279,7 +280,9 @@ public class WxPortalController {
                     stringBuffer.append("\r\n");
                 }
 
+//                String urlSearchName = URLEncoder.encode(splitName,"UTF-8");
                 String dealName = splitName.replaceAll(" ","+");
+
                 stringBuffer.append("<a href =\"http://findfish.top/#/mobileView?searchname=");
                 stringBuffer.append(dealName);
                 stringBuffer.append("&verification=");
