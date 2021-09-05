@@ -56,28 +56,68 @@ public class AsyncSearchCachedComponent {
             //a 一号大厅
             case "a":
                 List<MovieNameAndUrlModel> listA = new ArrayList<>();
-                //添加悠酱
-                listA.addAll(IFindMovieInYoujiang.findMovieUrl(searchMovieText));
-                //添加未读影单
-                listA.addAll(iFindMovieInUnread.findMovieUrl(searchMovieText));
+                //添加小悠
+                listA.addAll(iFindMovieInXiaoyou.findMovieUrl(searchMovieText));
+
                 return listA;
             //u 2号大厅
             case "u":
-                //爱电影
-                return iFindMovieInAiDianYing.findMovieUrl(searchMovieText);
+                List<MovieNameAndUrlModel> listB = new ArrayList<>();
+
+                //添加未读影单
+                listB.addAll(iFindMovieInUnread.findMovieUrl(searchMovieText));
+                //添加社区动力
+                listB.addAll(iFindMovieInSumsu.findMovieUrl(searchMovieText));
+
+                return listB;
             //x 3号大厅
             case "x":
 
             List<MovieNameAndUrlModel> listC = new ArrayList<>();
-            //添加小悠
-                listC.addAll(iFindMovieInXiaoyou.findMovieUrl(searchMovieText));
-            //添加社区动力
-                listC.addAll(iFindMovieInSumsu.findMovieUrl(searchMovieText));
+
+            //添加悠酱
+                listC.addAll(IFindMovieInYoujiang.findMovieUrl(searchMovieText));
+            //爱电影
+                listC.addAll(iFindMovieInAiDianYing.findMovieUrl(searchMovieText));
+
             return listC;
 
             default:
                 return new ArrayList<MovieNameAndUrlModel>();
         }
+
+
+        /**
+         * 备份使用
+         */
+//        switch (search) {
+//            //a 一号大厅
+//            case "a":
+//                List<MovieNameAndUrlModel> listA = new ArrayList<>();
+//                //添加悠酱
+//                listA.addAll(IFindMovieInYoujiang.findMovieUrl(searchMovieText));
+//
+//                //添加未读影单
+//                listA.addAll(iFindMovieInUnread.findMovieUrl(searchMovieText));
+//                return listA;
+//            //u 2号大厅
+//            case "u":
+//                //爱电影
+//                return iFindMovieInAiDianYing.findMovieUrl(searchMovieText);
+//            //x 3号大厅
+//            case "x":
+//
+//                List<MovieNameAndUrlModel> listC = new ArrayList<>();
+//            //添加小悠
+//                listC.addAll(iFindMovieInXiaoyou.findMovieUrl(searchMovieText));
+//
+//                //添加社区动力
+//                listC.addAll(iFindMovieInSumsu.findMovieUrl(searchMovieText));
+//                return listC;
+//
+//            default:
+//                return new ArrayList<MovieNameAndUrlModel>();
+//        }
     }
 }
 
