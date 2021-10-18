@@ -1,5 +1,6 @@
 package com.libbytian.pan.wechat.controller;
 
+import cn.hutool.core.util.CharUtil;
 import com.alibaba.csp.sentinel.annotation.SentinelResource;
 import com.libbytian.pan.system.common.AjaxResult;
 import com.libbytian.pan.system.mapper.SystemTemDetailsMapper;
@@ -167,19 +168,14 @@ public class MoviePageShowController {
         systemUserModel.setUsername(username);
         SystemUserModel user = iSystemUserService.getUser(systemUserModel);
         if (LocalDateTime.now().isAfter(user.getActTime())){
-            System.out.println("===============用户："+username+"接口已过期===============");
+            log.info("===============用户：{}接口已过期===============",username);
             return AjaxResult.error("该系统提供服务已过期,继续使用请 关注公众号：影子的胡言乱语 ");
         }
 
-        System.out.println("===============用户："+username+"正在调用web页大厅===============");
-
-
+        log.info("===============用户: {}正在调用web页大厅===============",username);
         List<MovieNameAndUrlModel> movieNameAndUrlModels = new ArrayList<>();
-
-
         searchName = URLDecoder.decode(searchName,"UTF-8");
-
-        System.out.println(searchName);
+        log.info(searchName);
 
 
         /**
