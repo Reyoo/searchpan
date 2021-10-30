@@ -37,14 +37,12 @@ public class RequestLimitContract {
     @Autowired
     private RedisTemplate redisTemplate;
 
-
     @Around("@annotation(limit)")
     @Transactional(rollbackFor = Exception.class)
     public Object requestLimit(ProceedingJoinPoint process, RequestLimit limit)  throws Exception{
 
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        long startTime = System.currentTimeMillis();
 
+        long startTime = System.currentTimeMillis();
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         HttpServletRequest request = attributes.getRequest();
         MethodSignature methodSignature = (MethodSignature) process.getSignature();
@@ -55,7 +53,6 @@ public class RequestLimitContract {
         String requestIp = request.getRemoteHost();
         String className = method.getDeclaringClass().getName();
 
-
         Object[] args = process.getArgs();
         for (int i = 0; i < args.length; i++) {
             if (args[i] instanceof HttpServletRequest) {
@@ -63,11 +60,9 @@ public class RequestLimitContract {
                 break;
             }
         }
-
         if (request == null) {
             throw new Exception("未知IP");
         }
-
 //        log.info("请求时间:{}, clientIp:{}, 请求方法:{}, 请求参数{}", simpleDateFormat.format(startTime), "", methodName);
         Object result = null;
         try {
