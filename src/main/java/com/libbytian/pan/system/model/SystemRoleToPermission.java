@@ -6,16 +6,15 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.*;
+import lombok.experimental.Accessors;
 import org.springframework.beans.factory.annotation.Value;
 
 import java.io.Serializable;
 
-@Builder
+@Accessors(fluent = true)
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
-@Setter
-@ToString
+@Data
 @TableName("role_permission")
 public class SystemRoleToPermission extends Model<SystemRoleToPermission> {
 
@@ -51,9 +50,4 @@ public class SystemRoleToPermission extends Model<SystemRoleToPermission> {
     @Value("false")
     private Boolean checked;
 
-
-    @Override
-    protected Serializable pkVal() {
-        return this.rolepermissionId;
-    }
 }

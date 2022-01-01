@@ -1,6 +1,6 @@
 package com.libbytian.pan.wechat.controller;
 
-import com.alibaba.csp.sentinel.annotation.SentinelResource;
+
 import com.libbytian.pan.system.common.TemplateDetailsGetKeywordComponent;
 import com.libbytian.pan.system.model.SystemKeywordModel;
 import com.libbytian.pan.system.model.SystemTemDetailsModel;
@@ -22,11 +22,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
-import java.net.URLDecoder;
-import java.net.URLEncoder;
 import java.time.LocalDateTime;
 import java.util.Base64;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
@@ -36,7 +33,7 @@ import java.util.regex.Pattern;
 @RequiredArgsConstructor
 @RestController
 @Log4j2
-@SentinelResource("wechat")
+//@SentinelResource("wechat")
 @RequestMapping("/wechat/portal")
 
 public class WxPortalController {
@@ -90,7 +87,7 @@ public class WxPortalController {
             String username = new String(decoder.decode(verification), "UTF-8");
 
             SystemUserModel systemUserModel = new SystemUserModel();
-            systemUserModel.setUsername(username);
+            systemUserModel.username(username);
             iSystemUserService.checkUserStatus(systemUserModel);
             if (iSystemUserService.getUser(systemUserModel) == null) {
                 return "无此接口认证权限，请联系管理员！";
@@ -152,12 +149,12 @@ public class WxPortalController {
 
 
         SystemUserModel systemUserModel = new SystemUserModel();
-        systemUserModel.setUsername(username);
+        systemUserModel.username(username);
 
         //判断用户账号到期时间
         SystemUserModel userModel =iSystemUserService.getUser(systemUserModel);
 
-        if ( LocalDateTime.now().isAfter(userModel.getActTime())){
+        if ( LocalDateTime.now().isAfter(userModel.actTime())){
             // 明文传输的消息
             WxMpXmlMessage inMessage = WxMpXmlMessage.fromXml(requestBody);
             WxMpXmlOutMessage outMessage = this.route(inMessage);
@@ -181,7 +178,7 @@ public class WxPortalController {
 
 
         //获取用调用接口时间
-//        systemUserModel.setCallTime(LocalDateTime.now());
+//        systemUserModel.callTime(LocalDateTime.now());
 //        iSystemUserService.updateUser(systemUserModel);
 
         String out = null;
@@ -212,8 +209,8 @@ public class WxPortalController {
                 //首次关注
                 if (searchName== null){
                     SystemTemDetailsModel firstLike = templateDetailsGetKeywordComponent.getUserKeywordDetail(systemUserModel, TemplateKeywordConstant.First_Like);
-                    if (firstLike.getEnableFlag()){
-                        stringBuffer.append(firstLike.getKeywordToValue());
+                    if (firstLike.enableFlag()){
+                        stringBuffer.append(firstLike.keywordToValue());
                     }else {
                         Thread.sleep(5000);
                     }
@@ -240,8 +237,8 @@ public class WxPortalController {
 //                    searchName = searchWord;
 //                }
 
-                SystemKeywordModel systemKeywordModel = systemKeywordService.getKeywordByUser(systemUserModel.getUsername());
-                String key = systemKeywordModel.getFansKey();
+                SystemKeywordModel systemKeywordModel = systemKeywordService.keywordByUser(systemUserModel.username());
+                String key = systemKeywordModel.fansKey();
                 String splitName = null;
                 if (searchName.startsWith(key)){
                     splitName = searchName.split(key)[1].trim();
@@ -265,8 +262,8 @@ public class WxPortalController {
 
                 /**
                  * 响应内容
-                 * 关键字 头部广告 headModel.getKeywordToValue()
-                 * 关键字 底部广告 lastModel.getKeywordToValue()
+                 * 关键字 头部广告 headModel.keywordToValue()
+                 * 关键字 底部广告 lastModel.keywordToValue()
                  */
 
                 SystemTemDetailsModel headModel = templateDetailsGetKeywordComponent.getUserKeywordDetail(systemUserModel, TemplateKeywordConstant.TOP_ADVS);
@@ -274,8 +271,8 @@ public class WxPortalController {
 
 
 
-                if (headModel.getEnableFlag()) {
-                    stringBuffer.append(headModel.getKeywordToValue());
+                if (headModel.enableFlag()) {
+                    stringBuffer.append(headModel.keywordToValue());
                     stringBuffer.append("\r\n");
                     stringBuffer.append("\r\n");
                 }
@@ -291,10 +288,10 @@ public class WxPortalController {
                 stringBuffer.append("\">[");
                 stringBuffer.append(splitName);
                 stringBuffer.append("]关键词已获取，点击查看查询结果</a>");
-                if (lastModel.getEnableFlag()) {
+                if (lastModel.enableFlag()) {
                     stringBuffer.append("\r\n");
                     stringBuffer.append("\r\n");
-                    stringBuffer.append(lastModel.getKeywordToValue());
+                    stringBuffer.append(lastModel.keywordToValue());
                 }
 
                 System.out.println(stringBuffer);

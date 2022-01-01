@@ -88,8 +88,7 @@ public class TemplateController {
         try {
 //            如果 redis中包含用户模板信息 则直接返回
 //            else 如果不包含 则 从数据库中查询后返回
-            SystemUserModel systemUserModel = new SystemUserModel();
-            systemUserModel.setUsername(httpServletRequest.getRemoteUser());
+            SystemUserModel systemUserModel = new SystemUserModel().username(httpServletRequest.getRemoteUser());
             List<SystemTemplateModel> result = iSystemTemplateService.listTemplatelByUser(systemUserModel);
             List<SystemTemplateModel> oldResult = new ArrayList<>();
             for (SystemTemplateModel systemTemplateModel : result) {
@@ -122,7 +121,7 @@ public class TemplateController {
 
             String username = httpRequest.getRemoteUser();
             SystemUserModel userModel = new SystemUserModel();
-            userModel.setUsername(username);
+            userModel.username(username);
             //校验模板
             Boolean hasTemplateOn = iSystemTemplateService.checkTemplateIsBinded(userModel);
 
@@ -159,7 +158,7 @@ public class TemplateController {
             String username = httpRequest.getRemoteUser();
 
             SystemUserModel userModel = new SystemUserModel();
-            userModel.setUsername(username);
+            userModel.username(username);
 
             if (systemTemplateModel.getTemplatestatus() == true) {
                 //校验模板
@@ -175,12 +174,12 @@ public class TemplateController {
             systemTemplateModel.setTemplatecreatetime(LocalDateTime.now());
             iSystemTemplateService.save(systemTemplateModel);
 
-            userModel.setUsername(username);
+            userModel.username(username);
             SystemUserModel systemUserModel = iSystemUserService.getUser(userModel);
             SystemUserToTemplate systemUserToTemplate = new SystemUserToTemplate();
-            systemUserToTemplate.setUserId(systemUserModel.getUserId());
-            systemUserToTemplate.setTemplateId(templateId);
-            systemUserToTemplate.setUserTemplateStatus(true);
+            systemUserToTemplate.userId(systemUserModel.userId());
+            systemUserToTemplate.templateId(templateId);
+            systemUserToTemplate.userTemplateStatus(true);
             iSystemUserToTemplateService.save(systemUserToTemplate);
             //新增模板设置默认关键字
             iSystemTemDetailsService.defaultSave(templateId);

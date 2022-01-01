@@ -13,6 +13,9 @@ import java.util.List;
 
 
 
+/**
+ * @author SunQi
+ */
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 @Slf4j
@@ -22,8 +25,6 @@ public class FindMovieInAidianYingImpl  extends ServiceImpl<MovieNameAndUrlMappe
 
     @Override
     public List<MovieNameAndUrlModel> findMovieUrl(String movieName) throws Exception {
-
         return  movieNameAndUrlMapper.selectMovieUrlByLikeName("url_movie_aidianying", movieName);
-
     }
 }

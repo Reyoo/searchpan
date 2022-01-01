@@ -56,7 +56,7 @@ public class SensitiveWordController {
     @RequestMapping(value = "/saveSensitiveWord" ,method = RequestMethod.POST)
     public AjaxResult saveSensitiveWord(@RequestBody SensitiveWordModel sensitiveWordModel){
         try {
-            sensitiveWordModel.setCreateTime(LocalDateTime.now());
+            sensitiveWordModel.createTime(LocalDateTime.now());
             boolean result =  iSystemSensitiveWordService.save(sensitiveWordModel);
             return AjaxResult.success(result);
         } catch (Exception e) {

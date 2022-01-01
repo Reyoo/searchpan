@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.*;
+import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -19,9 +20,8 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
-@Setter
-@ToString
+@Data
+@Accessors(fluent = true)
 @TableName("sys_keyword")
 public class SystemKeywordModel extends Model<SystemKeywordModel> {
 
@@ -80,15 +80,5 @@ public class SystemKeywordModel extends Model<SystemKeywordModel> {
 
     @TableField("app_id")
     private String appId;
-
-
-
-
-    @Override
-    protected Serializable pkVal() {
-        return this.keywordId;
-    }
-
-
 
 }

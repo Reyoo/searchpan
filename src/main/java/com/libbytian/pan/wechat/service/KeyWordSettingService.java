@@ -36,7 +36,6 @@ public class KeyWordSettingService {
 
         SystemTemDetailsModel secretContent = templateDetailsGetKeywordComponent.getUserKeywordDetail(systemUserModel, TemplateKeywordConstant.SECRET_CONTENT);
         SystemTemDetailsModel secretReply = templateDetailsGetKeywordComponent.getUserKeywordDetail(systemUserModel, TemplateKeywordConstant.SECRET_REPLY);
-
         SystemTemDetailsModel keyContent = templateDetailsGetKeywordComponent.getUserKeywordDetail(systemUserModel, TemplateKeywordConstant.KEY_CONTENT);
         SystemTemDetailsModel preserveContent = templateDetailsGetKeywordComponent.getUserKeywordDetail(systemUserModel, TemplateKeywordConstant.PRESERVE_CONTENT);
 
@@ -45,16 +44,16 @@ public class KeyWordSettingService {
          * 关键词 隐藏判断
          * 空格作为区分
          */
-        if (secretContent.getEnableFlag()) {
+        if (secretContent.enableFlag()) {
             //隐藏的片名以空格分隔，获取隐藏片名的数组
-            String[] str = secretContent.getKeywordToValue().split(" ");
+            String[] str = secretContent.keywordToValue().split(" ");
 
             for (String s : str) {
                 //判断传入的 片名 是否在隐藏资源中
                 if (s.equals(splitName)) {
                     stringBuffer.setLength(0);
-                    if (secretReply.getEnableFlag()) {
-                        stringBuffer.append(secretReply.getKeywordToValue());
+                    if (secretReply.enableFlag()) {
+                        stringBuffer.append(secretReply.keywordToValue());
                     } else {
                         Thread.sleep(5000);
                     }
@@ -63,7 +62,7 @@ public class KeyWordSettingService {
             }
         }
 
-//        SystemKeywordModel systemKeywordModel = systemKeywordService.getKeywordByUser(systemUserModel.getUsername());
+//        SystemKeywordModel systemKeywordModel = systemKeywordService.keywordByUser(systemUserModel.getUsername());
 
 
         /**
@@ -73,10 +72,10 @@ public class KeyWordSettingService {
          */
 
         //维护时间
-        String userStart = systemKeywordModel.getStartTime();
-        String userEnd = systemKeywordModel.getEndTime();
+        String userStart = systemKeywordModel.startTime();
+        String userEnd = systemKeywordModel.endTime();
 
-        String fansKey = systemKeywordModel.getFansKey();
+        String fansKey = systemKeywordModel.fansKey();
 
         if (!"00:00".equals(userStart) || !"00:00".equals(userEnd)) {
 
@@ -110,13 +109,13 @@ public class KeyWordSettingService {
                 //维护期内判断秘钥功能
                 if (!searchName.contains(fansKey) && ! fansKey.equals("000000") ) {
 
-                    if (keyContent.getEnableFlag()) {
+                    if (keyContent.enableFlag()) {
                         stringBuffer.setLength(0);
-                        stringBuffer.append(keyContent.getKeywordToValue());
+                        stringBuffer.append(keyContent.keywordToValue());
                     }else {
-                        if (preserveContent.getEnableFlag()){
+                        if (preserveContent.enableFlag()){
                             stringBuffer.setLength(0);
-                            stringBuffer.append(preserveContent.getKeywordToValue());
+                            stringBuffer.append(preserveContent.keywordToValue());
                         }else {
                             Thread.sleep(5000);
                         }
@@ -125,9 +124,9 @@ public class KeyWordSettingService {
                 //判断段维护期内 没开秘钥情况
                 if (fansKey.equals("000000")){
 
-                    if (preserveContent.getEnableFlag()){
+                    if (preserveContent.enableFlag()){
                         stringBuffer.setLength(0);
-                        stringBuffer.append(preserveContent.getKeywordToValue());
+                        stringBuffer.append(preserveContent.keywordToValue());
                     }else {
                         Thread.sleep(5000);
                     }

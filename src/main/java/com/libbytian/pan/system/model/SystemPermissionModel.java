@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.*;
+import lombok.experimental.Accessors;
 import org.springframework.beans.factory.annotation.Value;
 
 import java.time.LocalDateTime;
@@ -16,9 +17,8 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
-@Setter
-@ToString
+@Data
+@Accessors(fluent = true)
 @TableName("sys_permission")
 public class SystemPermissionModel {
 

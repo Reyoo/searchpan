@@ -69,7 +69,7 @@ public class JwtUser implements UserDetails {
         return true;
     }
 
-    public void setUsername(String username) {
+    public void username(String username) {
         this.username = username;
     }
 

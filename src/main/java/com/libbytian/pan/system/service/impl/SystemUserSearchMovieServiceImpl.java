@@ -27,7 +27,6 @@ public class SystemUserSearchMovieServiceImpl extends ServiceImpl<SystemUserSear
     @Override
     @Async("crawler-Executor")
     public void userSearchMovieCountInFindfish(String searchStr){
-
         if(StrUtil.isEmpty(searchStr)){
             return;
         }
@@ -42,9 +41,9 @@ public class SystemUserSearchMovieServiceImpl extends ServiceImpl<SystemUserSear
                 log.info("xxx--> " + searchStr  + "  新增词条插入失败");
             }
         }else {
-            int searcchTimes = systemUserSearchMovieModel.getSearchTimes() + 1;
-            systemUserSearchMovieModel.setSearchTimes(searcchTimes);
-            systemUserSearchMovieModel.setLastSearchTime(LocalDateTime.now());
+            int searcchTimes = systemUserSearchMovieModel.searchTimes() + 1;
+            systemUserSearchMovieModel.searchTimes(searcchTimes);
+            systemUserSearchMovieModel.lastSearchTime(LocalDateTime.now());
 
             if( updateUserSearchMovie(systemUserSearchMovieModel)){
                 log.info("--> " + searchStr  + "  更新词条插入成功 第" + searcchTimes + "次查询" );

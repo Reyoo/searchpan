@@ -10,16 +10,15 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import lombok.*;
+import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
-@Setter
-@ToString
+//@Accessors(fluent = true)
+@Data
 @TableName("sys_template")
 public class SystemTemplateModel extends Model<SystemTemplateModel> {
 
@@ -28,14 +27,14 @@ public class SystemTemplateModel extends Model<SystemTemplateModel> {
     /**
      * 主键
      */
-    @TableId(value = "template_id",type = IdType.INPUT)
-    private String templateid;
+    @TableId(value = "template_id", type = IdType.INPUT)
+    String templateid;
 
     /**
      * 模板名称
      */
     @TableField(value = "template_name")
-    private String templatename;
+    String templatename;
 
     /**
      * 创建时间
@@ -43,7 +42,7 @@ public class SystemTemplateModel extends Model<SystemTemplateModel> {
     @TableField(value = "template_createtime")
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @JsonSerialize(using = LocalDateTimeSerializer.class)
-    private LocalDateTime templatecreatetime;
+    LocalDateTime templatecreatetime;
 
     /**
      * 最后修改时间
@@ -51,26 +50,20 @@ public class SystemTemplateModel extends Model<SystemTemplateModel> {
     @TableField(value = "template_lastupdate")
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @JsonSerialize(using = LocalDateTimeSerializer.class)
-    private LocalDateTime templatelastupdate;
+    LocalDateTime templatelastupdate;
 
     /**
      * 状态值 true启动，false禁用
      */
     @TableField(value = "template_status")
-    private Boolean templatestatus;
-
+    Boolean templatestatus;
 
 
     /**
      * 条数
      */
     @TableField(exist = false)
-    private Integer detialsize;
+    Long detialsize;
 
-
-    @Override
-    protected Serializable pkVal() {
-        return this.templateid;
-    }
 
 }

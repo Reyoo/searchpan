@@ -76,8 +76,7 @@ public class XssFilter implements Filter {
         @Override
         public String getParameter(String name) {
             String[] results = parameterMap.get(name);
-            if (results == null || results.length <= 0)
-                return null;
+            if (results == null || results.length <= 0) { return null; }
             else {
                 String value = results[0];
                 if (value != null) {

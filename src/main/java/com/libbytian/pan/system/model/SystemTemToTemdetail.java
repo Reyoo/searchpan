@@ -15,9 +15,7 @@ import java.io.Serializable;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
-@Setter
-@ToString
+@Data
 @TableName("tem_temdetails")
 public class SystemTemToTemdetail extends Model<SystemTemToTemdetail> {
 
@@ -39,9 +37,5 @@ public class SystemTemToTemdetail extends Model<SystemTemToTemdetail> {
     @TableField(value = "templatedetails_id")
     private String templatedetailsid;
 
-    @Override
-    protected Serializable pkVal() {
-        return this.temtemdetailsid;
-    }
 
 }

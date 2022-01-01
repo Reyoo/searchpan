@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import lombok.*;
+import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -21,23 +22,12 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
+@Accessors(fluent = true)
 @TableName("sys_temdetails")
-
 public class  SystemTemDetailsModel extends Model<SystemTemDetailsModel> {
 
 
     private static final long serialVersionUID = 1L;
-
-
-    public SystemTemDetailsModel(String temdetailsId, String keyword, String keywordToValue, LocalDateTime createtime, Boolean temdetailsstatus, Integer showOrder , Boolean enableFlag) {
-        this.temdetailsId = temdetailsId;
-        this.keyword = keyword;
-        this.keywordToValue = keywordToValue;
-        this.createtime = createtime;
-        this.temdetailsstatus = temdetailsstatus;
-        this.showOrder = showOrder;
-        this.enableFlag = enableFlag;
-    }
 
     /**
      * 主键
@@ -95,9 +85,4 @@ public class  SystemTemDetailsModel extends Model<SystemTemDetailsModel> {
     private String templateId;
 
 
-
-    @Override
-    protected Serializable pkVal() {
-        return this.temdetailsId;
-    }
 }

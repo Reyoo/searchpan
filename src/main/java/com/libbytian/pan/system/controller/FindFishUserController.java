@@ -38,11 +38,8 @@ public class FindFishUserController {
      */
     @RequestMapping(value = "/select", method = RequestMethod.POST)
     public AjaxResult findConditionByPage(@RequestBody(required = false) SystemUserModel user) {
-
-
-        Long page = user.getPage()== null ? 1L:user.getPage();
-        Long limits = user.getLimits() == null?10L :user.getLimits();
-
+        Long page = user.page()== null ? 1L:user.page();
+        Long limits = user.limits() == null?10L :user.limits();
         Page<SystemUserModel> findpage = new Page<>(page, limits);
         try {
             IPage<SystemUserModel> result = iSystemUserService.findConditionByPage(findpage, user);
@@ -117,22 +114,22 @@ public class FindFishUserController {
         try {
 
             SystemUserToRole systemUserToRole = new SystemUserToRole();
-            systemUserToRole.setUserId(user.getUserId());
+            systemUserToRole.userId(user.userId());
             List<SystemUserToRole> systemUserToRoles = iSystemUserToRoleService.getUserToRoleObject(systemUserToRole);
             if (systemUserToRoles.size() <= 0) {
                 List<SystemRoleModel> systemRoleModelsAll = iSystemRoleService.list();
                 return AjaxResult.success(systemRoleModelsAll);
             }
 
-            List<String> roleIds = systemUserToRoles.stream().map(SystemUserToRole::getRoleId).collect(Collectors.toList());
+            List<String> roleIds = systemUserToRoles.stream().map(SystemUserToRole::roleId).collect(Collectors.toList());
             List<SystemRoleModel> systemRoleModelList = iSystemRoleService.listByIds(roleIds);
-            systemRoleModelList.forEach(role -> role.setChecked(true));
+            systemRoleModelList.forEach(role -> role.checked(true));
             List<SystemRoleModel> systemRoleModelsAll = iSystemRoleService.list();
             //id为两个列表相同属性，取出A的list中的id
-            List<String> roleIdList = systemRoleModelList.stream().map(SystemRoleModel::getRoleId).collect(Collectors.toList());
+            List<String> roleIdList = systemRoleModelList.stream().map(SystemRoleModel::roleId).collect(Collectors.toList());
             //B列表去除A列表已有的数据
-            systemRoleModelsAll = systemRoleModelsAll.stream().filter(SystemRoleModel -> !roleIdList.contains(SystemRoleModel.getRoleId())).collect(Collectors.toList());
-            systemRoleModelsAll.forEach(role -> role.setChecked(false));
+            systemRoleModelsAll = systemRoleModelsAll.stream().filter(SystemRoleModel -> !roleIdList.contains(SystemRoleModel.roleId())).collect(Collectors.toList());
+            systemRoleModelsAll.forEach(role -> role.checked(false));
             systemRoleModelsAll.addAll(systemRoleModelList);
 
             return AjaxResult.success(systemRoleModelsAll);
@@ -155,7 +152,7 @@ public class FindFishUserController {
 
         try {
             if (systemUserToRole != null) {
-                if (systemUserToRole.getChecked()) {
+                if (systemUserToRole.checked()) {
                     //更新
                     return AjaxResult.success(iSystemUserToRoleService.save(systemUserToRole));
                 } else {
@@ -170,7 +167,6 @@ public class FindFishUserController {
             return AjaxResult.error(e.getMessage());
         }
     }
-
 
 //    /**
 //     * 更新用户模板表

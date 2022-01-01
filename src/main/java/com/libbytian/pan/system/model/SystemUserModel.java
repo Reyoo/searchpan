@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import lombok.*;
+import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -26,16 +27,15 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
-@Setter
-@ToString
+@Data
+@Accessors(fluent = true)
 @TableName("sys_user")
-public class SystemUserModel extends Model<SystemUserModel>   {
+public class SystemUserModel extends Model<SystemUserModel> {
 
-    private static final long serialVersionUID = -6832900779447088497L;
+    static final long serialVersionUID = -6832900779447088497L;
 
 
-    public SystemUserModel(String username){
+    public SystemUserModel(String username) {
         this.username = username;
     }
 
@@ -43,24 +43,24 @@ public class SystemUserModel extends Model<SystemUserModel>   {
      * 用户主键
      */
     @TableField("user_id")
-    private String userId;
+    String userId;
 
     /**
      * 用户名
      */
     @TableId("user_name")
-    private String username;
+    String username;
 
     /**
      * 用户手机号
      */
     @TableField("user_mobile")
-    private String mobile;
+    String mobile;
     /**
      * 密码
      */
     @TableField("user_password")
-    private String password;
+    String password;
 
     /**
      * 最后修改时间
@@ -68,7 +68,7 @@ public class SystemUserModel extends Model<SystemUserModel>   {
     @TableField("user_lastlogin_time")
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @JsonSerialize(using = LocalDateTimeSerializer.class)
-    private LocalDateTime lastLoginTime;
+    LocalDateTime lastLoginTime;
 
     /**
      * 创建时间
@@ -76,7 +76,7 @@ public class SystemUserModel extends Model<SystemUserModel>   {
     @TableField("createtime")
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @JsonSerialize(using = LocalDateTimeSerializer.class)
-    private LocalDateTime createTime;
+    LocalDateTime createTime;
 
     /**
      * 接口调用最后时间
@@ -84,15 +84,14 @@ public class SystemUserModel extends Model<SystemUserModel>   {
     @TableField("call_time")
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @JsonSerialize(using = LocalDateTimeSerializer.class)
-    private LocalDateTime callTime;
-
+    LocalDateTime callTime;
 
 
     /**
      * 状态值（1：启用，2：禁用，3：删除）
      */
     @TableField("status")
-    private Boolean status;
+    Boolean status;
 
     /**
      * 激活到期时间
@@ -100,81 +99,55 @@ public class SystemUserModel extends Model<SystemUserModel>   {
     @TableField("act_time")
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @JsonSerialize(using = LocalDateTimeSerializer.class)
-    private LocalDateTime actTime;
-
+    LocalDateTime actTime;
 
 
     /**
      * 用户付费状态（0：白嫖用户 ，1：付费用户）
      */
     @TableField("user_flag")
-    private Boolean userFlag;
+    Boolean userFlag;
 
 
     /**
      * 可修改状态（0：不允许，1：允许）
      */
     @TableField("allowremove")
-    private Boolean allowremove;
-
-
-
-
-
-
-
-
-
+    Boolean allowremove;
 
     /**
      * 虚拟字段 查询开始时间
      */
     @TableField(exist = false)
-    private LocalDate starttime;
-
-
+    LocalDate starttime;
 
     /**
      * 虚拟字段 查询结束时间
      */
     @TableField(exist = false)
-    private LocalDate endtime;
-
-
-    @TableField(exist = false )
-    private Long  page;
+    LocalDate endtime;
 
 
     @TableField(exist = false)
-    private  Long limits;
-
-
-
-
-    @TableField(exist = false)
-    private String token;
-
-    @TableField(exist = false)
-    private Integer rememberMe;
+    Long page;
 
 
     @TableField(exist = false)
-    private String wxToken;
+    Long limits;
 
 
     @TableField(exist = false)
-    private String appId;
+    String token;
+
+    @TableField(exist = false)
+    Integer rememberMe;
 
 
+    @TableField(exist = false)
+    String wxToken;
 
 
-    @Override
-    protected Serializable pkVal() {
-        return this.userId;
-    }
-
-
-
-
+    @TableField(exist = false)
+    String appId;
 
 }

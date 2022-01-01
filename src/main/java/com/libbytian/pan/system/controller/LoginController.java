@@ -52,13 +52,12 @@ public class LoginController {
         try {
 
             SystemUserModel userModel = new SystemUserModel();
-            userModel.setUsername(systemUserModel.getUsername());
+            userModel.username(systemUserModel.username());
             SystemUserModel user = iSystemUserService.getUser(userModel);
             if (user != null) {
                 return AjaxResult.error("该用户已存在,不可添加");
             }
             iSystemUserService.register(systemUserModel);
-
             return AjaxResult.success();
         } catch (Exception e) {
             log.error(e.getMessage());

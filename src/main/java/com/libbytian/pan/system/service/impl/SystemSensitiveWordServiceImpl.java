@@ -40,11 +40,8 @@ import java.util.*;
 public class SystemSensitiveWordServiceImpl extends ServiceImpl<SensitiveWordMapper, SensitiveWordModel> implements ISystemSensitiveWordService {
 
     private final SensitiveWordMapper sensitiveWordMapper;
-
     private final ISystemRecordSensitiveService iSystemRecordSensitiveService;
-
     private final ISystemUserService iSystemUserService;
-
     private final RedisTemplate redisTemplate;
 
 
@@ -54,32 +51,26 @@ public class SystemSensitiveWordServiceImpl extends ServiceImpl<SensitiveWordMap
      */
     @Override
     public Boolean isContaintSensitiveWord(SystemTemDetailsModel systemTemDetailsModel){
-        log.info("[通用短信请求]是否包含敏感词验证, 短信内容为: {}", systemTemDetailsModel.getKeyword());
+        log.info("[通用短信请求]是否包含敏感词验证, 短信内容为: {}", systemTemDetailsModel.keyword());
 
         Boolean boo = false;
 
         try {
-            if (redisTemplate.boundHashOps("SensitiveWord").keys().contains(systemTemDetailsModel.getKeyword())){
+            if (redisTemplate.boundHashOps("SensitiveWord").keys().contains(systemTemDetailsModel.keyword())){
                 //敏感词存入记录库
                 SystemRecordSensitiveModel record = new SystemRecordSensitiveModel();
-                record.setRecordSaveTime(LocalDateTime.now());
-                record.setRecordWord(systemTemDetailsModel.getKeyword());
-
+                record.recordSaveTime(LocalDateTime.now());
+                record.recordWord(systemTemDetailsModel.keyword());
                 SensitiveWordModel sensitiveWordModel =  new SensitiveWordModel();
-                sensitiveWordModel.setWord(systemTemDetailsModel.getKeyword());
-
+                sensitiveWordModel.word(systemTemDetailsModel.keyword());
                 //查询到type存入记录库
-                SensitiveWordsType type = sensitiveWordMapper.listSensitiveWordObjects(sensitiveWordModel).get(0).getType();
-                record.setRecordType(type);
-
+                SensitiveWordsType type = sensitiveWordMapper.listSensitiveWordObjects(sensitiveWordModel).get(0).type();
+                record.recordType(type);
                 //通过templateId查询到username
-                record.setRecordUsername(iSystemUserService.getUserByUerToTemplate(systemTemDetailsModel.getTemplateId()).getUsername());
-
+                record.recordUsername(iSystemUserService.getUserByUerToTemplate(systemTemDetailsModel.templateId()).username());
                 iSystemRecordSensitiveService.save(record);
-
                 boo = true;
             }
-
         } catch (Exception e) {
             log.error("[通用短信请求]是否包含敏感词验证异常！{}", e.getMessage());
         }
@@ -93,7 +84,7 @@ public class SystemSensitiveWordServiceImpl extends ServiceImpl<SensitiveWordMap
      */
     @Override
     public Set<String> getSensitiveWord(SystemTemDetailsModel systemTemDetailsModel){
-        log.info("[通用短信请求]获取敏感词内容, 短信内容为: {}", systemTemDetailsModel.getKeyword());
+        log.info("[通用短信请求]获取敏感词内容, 短信内容为: {}", systemTemDetailsModel.keyword());
         Map<String, Object> paramMap = new HashMap<String, Object>();
         Set<String> sensitiveWordList = null;
         try {
@@ -105,7 +96,7 @@ public class SystemSensitiveWordServiceImpl extends ServiceImpl<SensitiveWordMap
 
             // 传入SensitivewordEngine类中的敏感词库
             SensitiveWordEngine.sensitiveWordMap =  SensitiveWordInit.sensitiveWordMap;
-            sensitiveWordList = SensitiveWordEngine.getSensitiveWord(systemTemDetailsModel.getKeyword(), 2);
+            sensitiveWordList = SensitiveWordEngine.getSensitiveWord(systemTemDetailsModel.keyword(), 2);
 
             log.info("[通用短信请求]获取敏感词内容, 敏感词为: {}", sensitiveWordList);
 
@@ -132,9 +123,7 @@ public class SystemSensitiveWordServiceImpl extends ServiceImpl<SensitiveWordMap
 
     @Override
     public int exportExceltoDb(String filename, InputStream inputStream) throws Exception {
-
         List<SensitiveWordModel> systemTemDetailsModelList = new ArrayList<>();
-
         Workbook wb =null;
         Sheet sheet = null;
         Row row = null;
@@ -167,80 +156,56 @@ public class SystemSensitiveWordServiceImpl extends ServiceImpl<SensitiveWordMap
                 list.add(map);
             }
         }
-
-
-
         //遍历解析出来的list
         for (Map<String,String> map : list) {
-
             SensitiveWordModel sensitiveWordModel = new SensitiveWordModel();
-
             boolean boo = false;
-
             // 传入SensitivewordEngine类中的敏感词库
             SensitiveWordEngine.sensitiveWordMap =  SensitiveWordInit.sensitiveWordMap;
-
-
                 for (Map.Entry<String,String> entry : map.entrySet()) {
-
-
                     if(entry.getKey().equals("SENSITIVEWORDS")){
-
-                        sensitiveWordModel.setWord(entry.getValue());
-
+                        sensitiveWordModel.word(entry.getValue());
                     }
                     if(entry.getKey().equals("SENSITIVETYPE")){
-
                         switch (entry.getValue()){
                             case "色情":
-                                sensitiveWordModel.setType(SensitiveWordsType.PORNO);
+                                sensitiveWordModel.type(SensitiveWordsType.PORNO);
                                 break;
                             case "政治":
-                                sensitiveWordModel.setType(SensitiveWordsType.POLITICS);
+                                sensitiveWordModel.type(SensitiveWordsType.POLITICS);
                                 break;
                             case "暴恐":
-                                sensitiveWordModel.setType(SensitiveWordsType.TERROR);
+                                sensitiveWordModel.type(SensitiveWordsType.TERROR);
                                 break;
                             case "民生":
-                                sensitiveWordModel.setType(SensitiveWordsType.LIVELIHOOD);
+                                sensitiveWordModel.type(SensitiveWordsType.LIVELIHOOD);
                                 break;
                             case "反动":
-                                sensitiveWordModel.setType(SensitiveWordsType.REACTION);
+                                sensitiveWordModel.type(SensitiveWordsType.REACTION);
                                 break;
                             case "贪腐":
-                                sensitiveWordModel.setType(SensitiveWordsType.CORRUPTION);
+                                sensitiveWordModel.type(SensitiveWordsType.CORRUPTION);
                                 break;
                             case "其他":
-                                sensitiveWordModel.setType(SensitiveWordsType.OTHERS);
+                                sensitiveWordModel.type(SensitiveWordsType.OTHERS);
                                 break;
-
                         }
-
                     }
-
             }
 
-
-            if(sensitiveWordModel.getWord() != null){
-                boo = SensitiveWordEngine.isContaintSensitiveWord(sensitiveWordModel.getWord(), 2);
+            if(sensitiveWordModel.word() != null){
+                boo = SensitiveWordEngine.isContaintSensitiveWord(sensitiveWordModel.word(), 2);
                 if (boo){
                     continue;
                 }
-
             }
-
-            sensitiveWordModel.setCreateTime(LocalDateTime.now());
-            sensitiveWordModel.setCreator("admin");
-
-
+            sensitiveWordModel.createTime(LocalDateTime.now());
+            sensitiveWordModel.creator("admin");
             systemTemDetailsModelList.add(sensitiveWordModel);
         }
-
         this.saveBatch(systemTemDetailsModelList);
-
         return 0;
     }
-
     @Override
     public int removeRepeat() {
       return  sensitiveWordMapper.removeRepeat();

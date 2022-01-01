@@ -31,20 +31,13 @@ import javax.annotation.PostConstruct;
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class SensitiveWordInit {
 
-
-    @Autowired
-    ISystemSensitiveWordService iSystemSensitiveWordService;
-
-
+    private final ISystemSensitiveWordService iSystemSensitiveWordService;
     private final RedisTemplate redisTemplate;
-
 
     /**
      * 敏感词库
      */
     public static HashMap sensitiveWordMap = new HashMap();
-
-
 
 //    @PostConstruct
 //    public void studentsRedis(){
@@ -60,8 +53,6 @@ public class SensitiveWordInit {
 //        operations.set("key",jsonArray);
 //    }
 
-
-
     /**
      * 初始化敏感词
      *
@@ -71,17 +62,13 @@ public class SensitiveWordInit {
     public void initKeyWord() {
         try {
             if (redisTemplate.boundHashOps("SensitiveWord").keys() == null){
-
                 // 从敏感词集合对象中取出敏感词并封装到Set集合中
                 Set<String> keyWordSet = new HashSet<String>();
-
-                for (SensitiveWordModel s : iSystemSensitiveWordService.list()) {
-                    keyWordSet.add(s.getWord().trim());
-                    redisTemplate.boundHashOps("SensitiveWord").put(s.getWord(),s);
-                }
+                iSystemSensitiveWordService.list().parallelStream().forEach( sensitiveWordModel -> {
+                    keyWordSet.add(sensitiveWordModel.word());
+                    redisTemplate.boundHashOps("SensitiveWord").put(sensitiveWordModel.word(),sensitiveWordModel);
+                });
             }
-
-
         } catch (Exception e) {
             e.printStackTrace();
         }

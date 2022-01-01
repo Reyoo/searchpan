@@ -21,7 +21,7 @@ public @interface RequestLimit {
      * 调用的次数
      * @return
      */
-    int count() default 3;
+    int count() default 5;
 
     /**
      * 时间段； 在time内调用的次数count -单位秒

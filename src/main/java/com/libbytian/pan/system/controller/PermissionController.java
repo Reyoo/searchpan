@@ -30,14 +30,13 @@ public class PermissionController {
         long page = 1L;
         long limits = 10L;
         if (systemPermissionModel != null) {
-            if (systemPermissionModel.getPage() != null) {
-                page = Long.valueOf(systemPermissionModel.getPage());
+            if (systemPermissionModel.page() != null) {
+                page = Long.valueOf(systemPermissionModel.page());
             }
-            if (systemPermissionModel.getLimits() != null) {
-                limits = Long.valueOf(systemPermissionModel.getLimits());
+            if (systemPermissionModel.limits() != null) {
+                limits = Long.valueOf(systemPermissionModel.limits());
             }
         }
-
 
         Page<SystemPermissionModel> systemPermissionModelPage = new Page<>(page, limits);
         try {

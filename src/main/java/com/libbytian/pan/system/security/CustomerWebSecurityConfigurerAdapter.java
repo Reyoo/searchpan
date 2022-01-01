@@ -23,6 +23,8 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
+import java.util.ArrayList;
+
 
 /**
  * @description： 登录配置
@@ -32,26 +34,18 @@ import org.springframework.web.filter.CorsFilter;
 @Configuration
 public class CustomerWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapter {
 
-
-
-
     @Autowired
     private JwtUserDetailServiceImpl jwtUserDetailService;
-
 
     @Autowired
     RedisTemplate redisTemplate;
 
-
     @Autowired
     ValidateCodeFilter validateCodeFilter;
-
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 
-
         validateCodeFilter.setredisTemplate(redisTemplate);
-
         JWTAuthenticationFilter jwtAuthenticationFilter = new JWTAuthenticationFilter();
         jwtAuthenticationFilter.setAuthenticationManager(this.authenticationManagerBean());
         http
@@ -64,13 +58,10 @@ public class CustomerWebSecurityConfigurerAdapter extends WebSecurityConfigurerA
                 .addFilterAfter(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(validateCodeFilter, JWTAuthenticationFilter.class)
 //                .addFilter(new JWTAuthenticationFilter(authenticationManager()))
-
-
                 //异常处理
                 .exceptionHandling().authenticationEntryPoint(new CustomAuthenticationEntryPoint())
                 //添加无权限时的处理
                 .accessDeniedHandler(new LoginAccessDeineHandler())
-
                 .and()
                 //禁用session
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
@@ -90,9 +81,16 @@ public class CustomerWebSecurityConfigurerAdapter extends WebSecurityConfigurerA
         final UrlBasedCorsConfigurationSource urlBasedCorsConfigurationSource = new UrlBasedCorsConfigurationSource();
         final CorsConfiguration corsConfiguration = new CorsConfiguration();
         corsConfiguration.setAllowCredentials(true);
-        corsConfiguration.addAllowedOrigin("*");
+        corsConfiguration.addAllowedOriginPattern("*");
         corsConfiguration.addAllowedHeader("*");
         corsConfiguration.addAllowedMethod("*");
+        ArrayList<String> arrayList = new ArrayList<>();
+        arrayList.add("GET");
+        arrayList.add("HEAD");
+        arrayList.add("POST");
+        arrayList.add("DELETE");
+        arrayList.add("OPTIONS");
+        corsConfiguration.setAllowedMethods(arrayList);
         urlBasedCorsConfigurationSource.registerCorsConfiguration("/**", corsConfiguration);
         return new CorsFilter(urlBasedCorsConfigurationSource);
     }

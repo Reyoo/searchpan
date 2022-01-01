@@ -78,7 +78,6 @@ public class JWTAuthenticationFilter extends AbstractAuthenticationProcessingFil
         JwtUser jwtUser = (JwtUser) authentication.getPrincipal();
         log.info("jwtUser:" + jwtUser.toString());
         boolean isRemember = threadLocal.get() == 1;
-
         Set<String> roles = AuthorityUtils.authorityListToSet(authentication.getAuthorities());
         //签发token
         String token = JwtTokenUtils.createToken(jwtUser.getUsername(), roles, isRemember);
@@ -91,7 +90,6 @@ public class JWTAuthenticationFilter extends AbstractAuthenticationProcessingFil
             authenticationSuccessModel.setRoute("index/userManagement");
             response.getWriter().write(JSON.toJSONString(authenticationSuccessModel));
         }
-
         /**
          * 付费用户
          */
@@ -100,10 +98,7 @@ public class JWTAuthenticationFilter extends AbstractAuthenticationProcessingFil
             authenticationSuccessModel.setRoute("mainManagement");
             response.getWriter().write(JSON.toJSONString(authenticationSuccessModel));
         }
-
-//        /**
-//         * 未付费用户 HuangS
-//         */
+        /**未付费用户 HuangS*/
         if (roles.contains("ROLE_NORMAL")) {
             //登录到cms管理
             authenticationSuccessModel.setRoute("mainManagement");
@@ -111,8 +106,6 @@ public class JWTAuthenticationFilter extends AbstractAuthenticationProcessingFil
 //            authenticationSuccessModel.setToken(null);
             response.getWriter().write(JSON.toJSONString(authenticationSuccessModel));
         }
-
-
         response.setHeader("token", JwtTokenUtils.TOKEN_PREFIX + token);
     }
 

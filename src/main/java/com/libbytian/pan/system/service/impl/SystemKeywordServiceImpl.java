@@ -25,8 +25,8 @@ public class SystemKeywordServiceImpl extends ServiceImpl<SystemKeywordMapper, S
 
 
     @Override
-    public SystemKeywordModel getKeywordByUser(String username ) {
-        return systemKeywordMapper.getKeywordByUser(username);
+    public SystemKeywordModel keywordByUser(String username ) {
+        return systemKeywordMapper.keywordByUser(username);
     }
 
     @Override

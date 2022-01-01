@@ -36,38 +36,26 @@ public class SystemPermissionImpl extends ServiceImpl<SystemPermissionMapper, Sy
 
     @Override
     public IPage<SystemPermissionModel> findPermission(Page page, SystemPermissionModel systemPermissionModel) throws Exception {
-
-
-        QueryWrapper queryWrapper = new QueryWrapper();
-
+        QueryWrapper<SystemPermissionModel> queryWrapper = new QueryWrapper();
         /**
          * 这里systemusermodel 不做空判断 。getusername 空指针  null.getUsername
          */
         if(systemPermissionModel != null){
-            if(systemPermissionModel.getPermissionUrl() != null&&!systemPermissionModel.getPermissionUrl().equals("")){
-                queryWrapper.eq("permission_url",systemPermissionModel.getPermissionUrl());
+            if(StrUtil.isNotEmpty(systemPermissionModel.permissionUrl())){
+                queryWrapper.lambda().eq(SystemPermissionModel::permissionUrl,systemPermissionModel.permissionUrl());
             }
-
-            if(systemPermissionModel.getPermissionComment() != null&&!"".equals(systemPermissionModel.getPermissionComment())){
-                queryWrapper.eq("permission_comment",systemPermissionModel.getPermissionComment());
+            if(StrUtil.isNotEmpty(systemPermissionModel.permissionComment())){
+                queryWrapper.lambda().eq(SystemPermissionModel::permissionComment,systemPermissionModel.permissionComment());
             }
-            if (systemPermissionModel.getCreatetime() != null){
-                queryWrapper.eq("createtime",systemPermissionModel.getCreatetime());
+            if (systemPermissionModel.createtime() != null){
+                queryWrapper.lambda().eq(SystemPermissionModel::createtime,systemPermissionModel.createtime());
             }
-
-
-            if(systemPermissionModel.getPermissionstatus() != null){
-                queryWrapper.eq("permission_status",systemPermissionModel.getPermissionstatus());
-
+            if(systemPermissionModel.permissionstatus() != null){
+                queryWrapper.lambda().eq(SystemPermissionModel::permissionstatus,systemPermissionModel.permissionstatus());
             }
-
-
-
         }
-        queryWrapper.orderByDesc("createtime");
-
+        queryWrapper.lambda().orderByDesc(SystemPermissionModel::createtime);
         return systemPermissionMapper.selectPage(page,queryWrapper);
-
 
     }
 
@@ -75,12 +63,11 @@ public class SystemPermissionImpl extends ServiceImpl<SystemPermissionMapper, Sy
     @Override
     public int savePermission(SystemPermissionModel permission) throws Exception {
 
-        permission.setCreatetime(LocalDateTime.now());
-        permission.setPermissionId(UUID.randomUUID().toString());
-        if(StrUtil.isBlank(permission.getPermissionComment())){
+        permission.createtime(LocalDateTime.now());
+        permission.permissionId(UUID.randomUUID().toString());
+        if(StrUtil.isBlank(permission.permissionComment())){
             throw new Exception("权限名不允许为空");
         }
-
         return systemPermissionMapper.insertPermission(permission);
     }
 
