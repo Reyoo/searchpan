@@ -18,9 +18,9 @@ import java.io.Serializable;
  * @Version: 1.0
  */
 @Builder
-@Accessors(fluent = true)
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(callSuper=false)
 @Data
 public class MovieNameAndUrlModel extends Model<MovieNameAndUrlModel> {
 

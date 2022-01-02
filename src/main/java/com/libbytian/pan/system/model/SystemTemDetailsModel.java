@@ -22,7 +22,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-@Accessors(fluent = true)
 @TableName("sys_temdetails")
 public class  SystemTemDetailsModel extends Model<SystemTemDetailsModel> {
 

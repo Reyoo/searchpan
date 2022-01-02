@@ -25,7 +25,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-@Accessors(fluent = true)
 @TableName("sys_recordsensitive")
 public class SystemRecordSensitiveModel implements Serializable {
 

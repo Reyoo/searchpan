@@ -56,8 +56,6 @@ public class ValidateCodeFilter extends OncePerRequestFilter implements Initiali
     protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain) throws ServletException, IOException {
         try {
             httpServletResponse.setContentType("application/json;charset=utf-8");
-            AtomicBoolean action = new AtomicBoolean(false);
-            String requestURI = httpServletRequest.getRequestURI();
             String tokenHeader = httpServletRequest.getHeader(JwtTokenUtils.TOKEN_HEADER);
             // 如果请求头中没有Authorization信息则直接放行了
             if (tokenHeader == null || !tokenHeader.startsWith(JwtTokenUtils.TOKEN_PREFIX)) {

@@ -117,9 +117,9 @@ public class TemDetailsController {
             }
 
             //对前端标签进行转义处理
-            systemTemDetailsModel.keywordToValue(HtmlUtils.htmlUnescape(systemTemDetailsModel.keywordToValue()));
+            systemTemDetailsModel.setKeywordToValue(HtmlUtils.htmlUnescape(systemTemDetailsModel.getKeywordToValue()));
 
-            iSystemTemDetailsService.addTemDetails(systemTemDetailsModel, systemTemDetailsModel.templateId(),httpRequest.getRemoteUser());
+            iSystemTemDetailsService.addTemDetails(systemTemDetailsModel, systemTemDetailsModel.getTemplateId(),httpRequest.getRemoteUser());
             return AjaxResult.success("添加成功");
 
         } catch (Exception e) {
@@ -138,13 +138,13 @@ public class TemDetailsController {
     public AjaxResult updateTemDetails(@RequestBody SystemTemDetailsModel systemTemDetailsModel,HttpServletRequest httpRequest) {
 
         try {
-            if (StrUtil.isBlank(systemTemDetailsModel.temdetailsId())) {
+            if (StrUtil.isBlank(systemTemDetailsModel.getTemdetailsId())) {
                 return AjaxResult.error("模板ID不能为空");
             }
             //修改时，对前端标签进行转义处理
-            if(StringUtils.isNotBlank(systemTemDetailsModel.keywordToValue())){
+            if(StringUtils.isNotBlank(systemTemDetailsModel.getKeywordToValue())){
 
-                systemTemDetailsModel.keywordToValue((HtmlUtils.htmlUnescape(systemTemDetailsModel.keywordToValue())));
+                systemTemDetailsModel.setKeywordToValue((HtmlUtils.htmlUnescape(systemTemDetailsModel.getKeywordToValue())));
             }
 
             iSystemTemDetailsService.updateTempDetailsWithModel(systemTemDetailsModel,httpRequest.getRemoteUser());
@@ -246,7 +246,7 @@ public class TemDetailsController {
         try {
             List<String> urlList = new ArrayList<>();
             SystemTemDetailsModel systemTemDetailsModel = iSystemTemDetailsService.getById(detailId);
-            String answerStr = systemTemDetailsModel.keywordToValue();
+            String answerStr = systemTemDetailsModel.getKeywordToValue();
             if (answerStr.contains("http")) {
                 Matcher matcher = CheckStrContainUrlUtil.WEB_URL.matcher(answerStr);
                 while (matcher.find()) {

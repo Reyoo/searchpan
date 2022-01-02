@@ -44,16 +44,16 @@ public class KeyWordSettingService {
          * 关键词 隐藏判断
          * 空格作为区分
          */
-        if (secretContent.enableFlag()) {
+        if (secretContent.getEnableFlag()) {
             //隐藏的片名以空格分隔，获取隐藏片名的数组
-            String[] str = secretContent.keywordToValue().split(" ");
+            String[] str = secretContent.getKeywordToValue().split(" ");
 
             for (String s : str) {
                 //判断传入的 片名 是否在隐藏资源中
                 if (s.equals(splitName)) {
                     stringBuffer.setLength(0);
-                    if (secretReply.enableFlag()) {
-                        stringBuffer.append(secretReply.keywordToValue());
+                    if (secretReply.getEnableFlag()) {
+                        stringBuffer.append(secretReply.getKeywordToValue());
                     } else {
                         Thread.sleep(5000);
                     }
@@ -72,10 +72,10 @@ public class KeyWordSettingService {
          */
 
         //维护时间
-        String userStart = systemKeywordModel.startTime();
-        String userEnd = systemKeywordModel.endTime();
+        String userStart = systemKeywordModel.getStartTime();
+        String userEnd = systemKeywordModel.getEndTime();
 
-        String fansKey = systemKeywordModel.fansKey();
+        String fansKey = systemKeywordModel.getFansKey();
 
         if (!"00:00".equals(userStart) || !"00:00".equals(userEnd)) {
 
@@ -109,13 +109,13 @@ public class KeyWordSettingService {
                 //维护期内判断秘钥功能
                 if (!searchName.contains(fansKey) && ! fansKey.equals("000000") ) {
 
-                    if (keyContent.enableFlag()) {
+                    if (keyContent.getEnableFlag()) {
                         stringBuffer.setLength(0);
-                        stringBuffer.append(keyContent.keywordToValue());
+                        stringBuffer.append(keyContent.getKeywordToValue());
                     }else {
-                        if (preserveContent.enableFlag()){
+                        if (preserveContent.getEnableFlag()){
                             stringBuffer.setLength(0);
-                            stringBuffer.append(preserveContent.keywordToValue());
+                            stringBuffer.append(preserveContent.getKeywordToValue());
                         }else {
                             Thread.sleep(5000);
                         }
@@ -124,9 +124,9 @@ public class KeyWordSettingService {
                 //判断段维护期内 没开秘钥情况
                 if (fansKey.equals("000000")){
 
-                    if (preserveContent.enableFlag()){
+                    if (preserveContent.getEnableFlag()){
                         stringBuffer.setLength(0);
-                        stringBuffer.append(preserveContent.keywordToValue());
+                        stringBuffer.append(preserveContent.getKeywordToValue());
                     }else {
                         Thread.sleep(5000);
                     }

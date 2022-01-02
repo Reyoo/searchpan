@@ -34,8 +34,8 @@ public class SystemNotifyServiceImpl extends ServiceImpl<SystemNotifyServiceMapp
     public IPage<SystemNotifyModel> findConditionByPage(Page<SystemNotifyModel> page, SystemNotifyModel systemNotifyModel) throws Exception {
         QueryWrapper queryWrapper = new QueryWrapper();
         if (systemNotifyModel != null) {
-            if (systemNotifyModel.notifyText() != null && !systemNotifyModel.notifyText().equals("")) {
-                queryWrapper.eq("notify_text", systemNotifyModel.notifyText());
+            if (systemNotifyModel.getNotifyText() != null && !systemNotifyModel.getNotifyText().equals("")) {
+                queryWrapper.eq("notify_text", systemNotifyModel.getNotifyText());
             }
         }
         return baseMapper.selectPage(page, queryWrapper).addOrder(OrderItem.desc("modify_date"));

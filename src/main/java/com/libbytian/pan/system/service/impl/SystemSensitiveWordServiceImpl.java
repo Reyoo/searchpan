@@ -51,23 +51,23 @@ public class SystemSensitiveWordServiceImpl extends ServiceImpl<SensitiveWordMap
      */
     @Override
     public Boolean isContaintSensitiveWord(SystemTemDetailsModel systemTemDetailsModel){
-        log.info("[通用短信请求]是否包含敏感词验证, 短信内容为: {}", systemTemDetailsModel.keyword());
+        log.info("[通用短信请求]是否包含敏感词验证, 短信内容为: {}", systemTemDetailsModel.getKeyword());
 
         Boolean boo = false;
 
         try {
-            if (redisTemplate.boundHashOps("SensitiveWord").keys().contains(systemTemDetailsModel.keyword())){
+            if (redisTemplate.boundHashOps("SensitiveWord").keys().contains(systemTemDetailsModel.getKeyword())){
                 //敏感词存入记录库
                 SystemRecordSensitiveModel record = new SystemRecordSensitiveModel();
-                record.recordSaveTime(LocalDateTime.now());
-                record.recordWord(systemTemDetailsModel.keyword());
+                record.setRecordSaveTime(LocalDateTime.now());
+                record.setRecordWord(systemTemDetailsModel.getKeyword());
                 SensitiveWordModel sensitiveWordModel =  new SensitiveWordModel();
-                sensitiveWordModel.word(systemTemDetailsModel.keyword());
+                sensitiveWordModel.setWord(systemTemDetailsModel.getKeyword());
                 //查询到type存入记录库
-                SensitiveWordsType type = sensitiveWordMapper.listSensitiveWordObjects(sensitiveWordModel).get(0).type();
-                record.recordType(type);
+                SensitiveWordsType type = sensitiveWordMapper.listSensitiveWordObjects(sensitiveWordModel).get(0).getType();
+                record.setRecordType(type);
                 //通过templateId查询到username
-                record.recordUsername(iSystemUserService.getUserByUerToTemplate(systemTemDetailsModel.templateId()).username());
+                record.setRecordUsername(iSystemUserService.getUserByUerToTemplate(systemTemDetailsModel.getTemplateId()).getUsername());
                 iSystemRecordSensitiveService.save(record);
                 boo = true;
             }
@@ -84,7 +84,7 @@ public class SystemSensitiveWordServiceImpl extends ServiceImpl<SensitiveWordMap
      */
     @Override
     public Set<String> getSensitiveWord(SystemTemDetailsModel systemTemDetailsModel){
-        log.info("[通用短信请求]获取敏感词内容, 短信内容为: {}", systemTemDetailsModel.keyword());
+        log.info("[通用短信请求]获取敏感词内容, 短信内容为: {}", systemTemDetailsModel.getKeyword());
         Map<String, Object> paramMap = new HashMap<String, Object>();
         Set<String> sensitiveWordList = null;
         try {
@@ -96,7 +96,7 @@ public class SystemSensitiveWordServiceImpl extends ServiceImpl<SensitiveWordMap
 
             // 传入SensitivewordEngine类中的敏感词库
             SensitiveWordEngine.sensitiveWordMap =  SensitiveWordInit.sensitiveWordMap;
-            sensitiveWordList = SensitiveWordEngine.getSensitiveWord(systemTemDetailsModel.keyword(), 2);
+            sensitiveWordList = SensitiveWordEngine.getSensitiveWord(systemTemDetailsModel.getKeyword(), 2);
 
             log.info("[通用短信请求]获取敏感词内容, 敏感词为: {}", sensitiveWordList);
 
@@ -164,43 +164,43 @@ public class SystemSensitiveWordServiceImpl extends ServiceImpl<SensitiveWordMap
             SensitiveWordEngine.sensitiveWordMap =  SensitiveWordInit.sensitiveWordMap;
                 for (Map.Entry<String,String> entry : map.entrySet()) {
                     if(entry.getKey().equals("SENSITIVEWORDS")){
-                        sensitiveWordModel.word(entry.getValue());
+                        sensitiveWordModel.setWord(entry.getValue());
                     }
                     if(entry.getKey().equals("SENSITIVETYPE")){
                         switch (entry.getValue()){
                             case "色情":
-                                sensitiveWordModel.type(SensitiveWordsType.PORNO);
+                                sensitiveWordModel.setType(SensitiveWordsType.PORNO);
                                 break;
                             case "政治":
-                                sensitiveWordModel.type(SensitiveWordsType.POLITICS);
+                                sensitiveWordModel.setType(SensitiveWordsType.POLITICS);
                                 break;
                             case "暴恐":
-                                sensitiveWordModel.type(SensitiveWordsType.TERROR);
+                                sensitiveWordModel.setType(SensitiveWordsType.TERROR);
                                 break;
                             case "民生":
-                                sensitiveWordModel.type(SensitiveWordsType.LIVELIHOOD);
+                                sensitiveWordModel.setType(SensitiveWordsType.LIVELIHOOD);
                                 break;
                             case "反动":
-                                sensitiveWordModel.type(SensitiveWordsType.REACTION);
+                                sensitiveWordModel.setType(SensitiveWordsType.REACTION);
                                 break;
                             case "贪腐":
-                                sensitiveWordModel.type(SensitiveWordsType.CORRUPTION);
+                                sensitiveWordModel.setType(SensitiveWordsType.CORRUPTION);
                                 break;
                             case "其他":
-                                sensitiveWordModel.type(SensitiveWordsType.OTHERS);
+                                sensitiveWordModel.setType(SensitiveWordsType.OTHERS);
                                 break;
                         }
                     }
             }
 
-            if(sensitiveWordModel.word() != null){
-                boo = SensitiveWordEngine.isContaintSensitiveWord(sensitiveWordModel.word(), 2);
+            if(sensitiveWordModel.getWord() != null){
+                boo = SensitiveWordEngine.isContaintSensitiveWord(sensitiveWordModel.getWord(), 2);
                 if (boo){
                     continue;
                 }
             }
-            sensitiveWordModel.createTime(LocalDateTime.now());
-            sensitiveWordModel.creator("admin");
+            sensitiveWordModel.setCreateTime(LocalDateTime.now());
+            sensitiveWordModel.setCreator("admin");
             systemTemDetailsModelList.add(sensitiveWordModel);
         }
         this.saveBatch(systemTemDetailsModelList);

@@ -23,7 +23,7 @@ public class TemplateDetailsGetKeywordComponent {
 
     public SystemTemDetailsModel getUserKeywordDetail(SystemUserModel systemUserModel, String keyword) throws Exception {
         List<SystemTemDetailsModel> temDetailsModelList = systemTemDetailsService.getTemDetailsWithUser(systemUserModel);
-        SystemTemDetailsModel systemTemDetailsModel =  temDetailsModelList.parallelStream().filter(t -> t.keyword().equals(keyword)).collect(Collectors.toList()).get(0);
+        SystemTemDetailsModel systemTemDetailsModel =  temDetailsModelList.parallelStream().filter(t -> t.getKeyword().equals(keyword)).collect(Collectors.toList()).get(0);
         return systemTemDetailsModel;
     }
 

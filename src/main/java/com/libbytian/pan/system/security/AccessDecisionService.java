@@ -69,7 +69,7 @@ public class AccessDecisionService {
 
         String username =  (String)auth.getPrincipal();
         SystemUserModel userModel = new SystemUserModel();
-        userModel.username(username.trim());
+        userModel.setUsername(username.trim());
 
         List<String> urls = queryUrlByUser(userModel);
         for (String url : urls) {
@@ -99,7 +99,7 @@ public class AccessDecisionService {
             /**
              * 重排序获取url
              */
-            List<String> urlList = systemPermissionModelList.stream().map(SystemPermissionModel::permissionUrl).collect(Collectors.toList());
+            List<String> urlList = systemPermissionModelList.stream().map(SystemPermissionModel::getPermissionUrl).collect(Collectors.toList());
             return urlList;
         } catch (Exception e) {
             log.error(e.getMessage());

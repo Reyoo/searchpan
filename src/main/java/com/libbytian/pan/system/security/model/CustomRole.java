@@ -13,6 +13,6 @@ public class CustomRole implements GrantedAuthority {
 
     @Override
     public String getAuthority() {
-        return this.systemRoleModel.roleName();
+        return this.systemRoleModel.getRoleName();
     }
 }

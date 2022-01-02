@@ -44,8 +44,8 @@ public class MovieNameAndUrlServiceImpl extends ServiceImpl<MovieNameAndUrlMappe
 
 
         /**待测试*/
-        movieNameAndUrlModels.parallelStream().filter( movieNameAndUrlModel -> StrUtil.isNotEmpty(movieNameAndUrlModel.movieName())).forEach(t -> {
-            List<MovieNameAndUrlModel> list = movieNameAndUrlMapper.selectMovieUrlByName(tableName, t.movieName().trim());
+        movieNameAndUrlModels.parallelStream().filter( movieNameAndUrlModel -> StrUtil.isNotEmpty(movieNameAndUrlModel.getMovieName())).forEach(t -> {
+            List<MovieNameAndUrlModel> list = movieNameAndUrlMapper.selectMovieUrlByName(tableName, t.getMovieName().trim());
             if (list.size() > 0) {
 //                如果查询到数据 则更新
                 movieNameAndUrlMapper.updateUrlMovieUrl(tableName,t);

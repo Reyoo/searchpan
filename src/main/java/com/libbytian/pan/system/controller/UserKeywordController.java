@@ -45,17 +45,17 @@ public class UserKeywordController {
     public AjaxResult updateUserKeyword(HttpServletRequest httpRequest, @RequestBody(required = true) SystemKeywordModel systemKeywordModel) {
         String userSafeKey = null;
         try {
-            if (StrUtil.isEmpty(systemKeywordModel.appId())) {
+            if (StrUtil.isEmpty(systemKeywordModel.getAppId())) {
                 userSafeKey = "http://51.findfish.top/wechat/portal/" + Base64.getEncoder().encodeToString(httpRequest.getRemoteUser().getBytes()) + "/" + "请填写appID";
-                systemKeywordModel.userSafeKey(userSafeKey);
+                systemKeywordModel.setUserSafeKey(userSafeKey);
             }else{
-                userSafeKey = "http://51.findfish.top/wechat/portal/" + Base64.getEncoder().encodeToString(httpRequest.getRemoteUser().getBytes()) + "/" + systemKeywordModel.appId();
-                systemKeywordModel.userSafeKey(userSafeKey);
+                userSafeKey = "http://51.findfish.top/wechat/portal/" + Base64.getEncoder().encodeToString(httpRequest.getRemoteUser().getBytes()) + "/" + systemKeywordModel.getAppId();
+                systemKeywordModel.setUserSafeKey(userSafeKey);
             }
             iSystemKeywordService.updateKeyword(systemKeywordModel);
             return AjaxResult.success("update is success !!! ");
         } catch (Exception e) {
-            log.error("systemKeywordModel -- >" + systemKeywordModel.keywordId() + "error -> " + e.getMessage());
+            log.error("systemKeywordModel -- >" + systemKeywordModel.getKeywordId() + "error -> " + e.getMessage());
             return AjaxResult.error(e.getMessage());
         }
     }

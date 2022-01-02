@@ -65,8 +65,8 @@ public class SensitiveWordInit {
                 // 从敏感词集合对象中取出敏感词并封装到Set集合中
                 Set<String> keyWordSet = new HashSet<String>();
                 iSystemSensitiveWordService.list().parallelStream().forEach( sensitiveWordModel -> {
-                    keyWordSet.add(sensitiveWordModel.word());
-                    redisTemplate.boundHashOps("SensitiveWord").put(sensitiveWordModel.word(),sensitiveWordModel);
+                    keyWordSet.add(sensitiveWordModel.getWord());
+                    redisTemplate.boundHashOps("SensitiveWord").put(sensitiveWordModel.getWord(),sensitiveWordModel);
                 });
             }
         } catch (Exception e) {

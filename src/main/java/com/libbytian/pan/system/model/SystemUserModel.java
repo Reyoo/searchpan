@@ -24,16 +24,13 @@ import java.time.LocalDateTime;
  * @author liugh123
  * @since 2018-06-25
  */
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-@Accessors(fluent = true)
 @TableName("sys_user")
 public class SystemUserModel extends Model<SystemUserModel> {
 
     static final long serialVersionUID = -6832900779447088497L;
-
 
     public SystemUserModel(String username) {
         this.username = username;

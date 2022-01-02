@@ -21,9 +21,8 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-@Accessors(fluent = true)
 @TableName("sys_keyword")
-public class SystemKeywordModel extends Model<SystemKeywordModel> {
+public class SystemKeywordModel extends Model<SystemKeywordModel> implements Serializable{
 
     private static final long serialVersionUID = 1L;
 

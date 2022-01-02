@@ -1,6 +1,5 @@
 package com.libbytian.pan.wechat.controller;
 
-
 import com.libbytian.pan.system.common.TemplateDetailsGetKeywordComponent;
 import com.libbytian.pan.system.model.SystemKeywordModel;
 import com.libbytian.pan.system.model.SystemTemDetailsModel;
@@ -87,7 +86,7 @@ public class WxPortalController {
             String username = new String(decoder.decode(verification), "UTF-8");
 
             SystemUserModel systemUserModel = new SystemUserModel();
-            systemUserModel.username(username);
+            systemUserModel.setUsername(username);
             iSystemUserService.checkUserStatus(systemUserModel);
             if (iSystemUserService.getUser(systemUserModel) == null) {
                 return "无此接口认证权限，请联系管理员！";
@@ -140,21 +139,14 @@ public class WxPortalController {
         log.info("\n接收微信请求：[openid=[{}], [signature=[{}], encType=[{}], msgSignature=[{}],"
                         + " timestamp=[{}], nonce=[{}], requestBody=[\n{}\n] ",
                 openid, signature, encType, msgSignature, timestamp, nonce, requestBody);
-
-
         //解析传入的username,拿到user,查询对应模板
         String username = new String(decoder.decode(verification), "UTF-8");
-
         System.out.println("===========================================appId： "+appId+"============================================");
-
-
         SystemUserModel systemUserModel = new SystemUserModel();
-        systemUserModel.username(username);
-
+        systemUserModel.setUsername(username);
         //判断用户账号到期时间
         SystemUserModel userModel =iSystemUserService.getUser(systemUserModel);
-
-        if ( LocalDateTime.now().isAfter(userModel.actTime())){
+        if ( LocalDateTime.now().isAfter(userModel.getActTime())){
             // 明文传输的消息
             WxMpXmlMessage inMessage = WxMpXmlMessage.fromXml(requestBody);
             WxMpXmlOutMessage outMessage = this.route(inMessage);
@@ -171,11 +163,8 @@ public class WxPortalController {
                     .toUser(inMessage.getFromUser())
                     .fromUser(inMessage.getToUser())
                     .content(stringBuffer.toString()).build();
-
             return outMessage.toXml();
         }
-
-
 
         //获取用调用接口时间
 //        systemUserModel.callTime(LocalDateTime.now());
@@ -183,38 +172,29 @@ public class WxPortalController {
 
         String out = null;
         try {
-
             if (!wxService.checkSignature(timestamp, nonce, signature)) {
                 throw new IllegalArgumentException("非法请求，可能属于伪造的请求！");
             }
-
             if (encType == null) {
                 // 明文传输的消息
                 WxMpXmlMessage inMessage = WxMpXmlMessage.fromXml(requestBody);
-
-
                 //方法提前
                 StringBuffer stringBuffer = new StringBuffer();
                 WxMpXmlOutMessage outMessage = this.route(inMessage);
-
                 if (outMessage == null) {
                     return "";
                 }
-
-
                 System.out.println(inMessage.getContent());
 //                String searchWord = inMessage.getContent();
                 String searchName = inMessage.getContent();
-
                 //首次关注
                 if (searchName== null){
                     SystemTemDetailsModel firstLike = templateDetailsGetKeywordComponent.getUserKeywordDetail(systemUserModel, TemplateKeywordConstant.First_Like);
-                    if (firstLike.enableFlag()){
-                        stringBuffer.append(firstLike.keywordToValue());
+                    if (firstLike.getEnableFlag()){
+                        stringBuffer.append(firstLike.getKeywordToValue());
                     }else {
                         Thread.sleep(5000);
                     }
-
                     outMessage = WxMpXmlOutTextMessage.TEXT()
                             .toUser(inMessage.getFromUser())
                             .fromUser(inMessage.getToUser())
@@ -224,62 +204,37 @@ public class WxPortalController {
 
                     return out;
                 }
-
-
-//                searchWord = inMessage.getContent().trim();
-
-
-//                String searchName = null;
-//                if(searchWord.contains(" ")){
-//                    int idx = searchWord.lastIndexOf(" ");
-//                     searchName = searchWord.substring(idx + 1);
-//                }else{
-//                    searchName = searchWord;
-//                }
-
-                SystemKeywordModel systemKeywordModel = systemKeywordService.keywordByUser(systemUserModel.username());
-                String key = systemKeywordModel.fansKey();
+                SystemKeywordModel systemKeywordModel = systemKeywordService.keywordByUser(systemUserModel.getUsername());
+                String key = systemKeywordModel.getFansKey();
                 String splitName = null;
                 if (searchName.startsWith(key)){
                     splitName = searchName.split(key)[1].trim();
-
                 }else {
                     splitName=searchName;
                 }
-
-
-
 
                 /**
                  * 统计用户查询记录
                  */
 //                iSystemUserSearchMovieService.userSearchMovieCountInFindfish(searchName);
-
                 //从Redis中取出所有key,判断是传入内容是否为敏感词
                 if (redisTemplate.boundHashOps("SensitiveWord").keys().contains(splitName)){
                     return "";
                 }
-
                 /**
                  * 响应内容
                  * 关键字 头部广告 headModel.keywordToValue()
                  * 关键字 底部广告 lastModel.keywordToValue()
                  */
-
                 SystemTemDetailsModel headModel = templateDetailsGetKeywordComponent.getUserKeywordDetail(systemUserModel, TemplateKeywordConstant.TOP_ADVS);
                 SystemTemDetailsModel lastModel = templateDetailsGetKeywordComponent.getUserKeywordDetail(systemUserModel, TemplateKeywordConstant.TAIL_ADVS);
-
-
-
-                if (headModel.enableFlag()) {
-                    stringBuffer.append(headModel.keywordToValue());
+                if (headModel.getEnableFlag()) {
+                    stringBuffer.append(headModel.getKeywordToValue());
                     stringBuffer.append("\r\n");
                     stringBuffer.append("\r\n");
                 }
-
 //                String urlSearchName = URLEncoder.encode(splitName,"UTF-8");
                 String dealName = splitName.replaceAll(" ","+");
-
                 stringBuffer.append("<a href =\"http://findfish.top/#/mobileView?searchname=");
                 stringBuffer.append(dealName);
                 stringBuffer.append("&verification=");
@@ -288,25 +243,18 @@ public class WxPortalController {
                 stringBuffer.append("\">[");
                 stringBuffer.append(splitName);
                 stringBuffer.append("]关键词已获取，点击查看查询结果</a>");
-                if (lastModel.enableFlag()) {
+                if (lastModel.getEnableFlag()) {
                     stringBuffer.append("\r\n");
                     stringBuffer.append("\r\n");
-                    stringBuffer.append(lastModel.keywordToValue());
+                    stringBuffer.append(lastModel.getKeywordToValue());
                 }
-
-                System.out.println(stringBuffer);
-
-//                stringBuffer = keyWordSettingService.getTemplateKeyWord(systemUserModel, searchName, stringBuffer, searchWord);
+                log.info(stringBuffer);
                 stringBuffer = keyWordSettingService.getTemplateKeyWord(systemUserModel, splitName, searchName,stringBuffer,systemKeywordModel);
-
                 outMessage = WxMpXmlOutTextMessage.TEXT()
                         .toUser(inMessage.getFromUser())
                         .fromUser(inMessage.getToUser())
                         .content(stringBuffer.toString()).build();
-
                 out = outMessage.toXml();
-
-
             } else if ("aes".equalsIgnoreCase(encType)) {
                 // aes加密的消息
                 WxMpXmlMessage inMessage = WxMpXmlMessage.fromEncryptedXml(requestBody, wxService.getWxMpConfigStorage(),
@@ -317,9 +265,6 @@ public class WxPortalController {
                     return "";
                 }
                 out = outMessage.toEncryptedXml(wxService.getWxMpConfigStorage());
-
-
-
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -332,14 +277,12 @@ public class WxPortalController {
 
     }
 
-
     private WxMpXmlOutMessage route(WxMpXmlMessage message) {
         try {
             return this.messageRouter.route(message);
         } catch (Exception e) {
             log.error("路由消息时出现异常！", e);
         }
-
         return null;
     }
 

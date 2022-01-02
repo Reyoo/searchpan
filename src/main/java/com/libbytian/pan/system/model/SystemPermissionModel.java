@@ -18,7 +18,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-@Accessors(fluent = true)
 @TableName("sys_permission")
 public class SystemPermissionModel {
 

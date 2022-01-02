@@ -62,7 +62,7 @@ public class MoviePageShowController {
 //           待封装  根据用户username 取出在使用的用户模板
             String username = new String(decoder.decode(fishEncryption), "UTF-8");
             SystemUserModel systemUserModel = new SystemUserModel();
-            systemUserModel.username(username);
+            systemUserModel.setUsername(username);
 
             List<SystemTemDetailsModel> systemdetails = iSystemTemDetailsService.getTemDetailsWithUser(systemUserModel);
             Map map = new HashMap();
@@ -78,20 +78,20 @@ public class MoviePageShowController {
 
             //遍历
             for (SystemTemDetailsModel systemTemDetailsModel : systemdetails) {
-                if (systemTemDetailsModel.keyword().equals("头部提示web") && systemTemDetailsModel.enableFlag()) {
-                    systemTemDetailsModel.keyword("0");
+                if (systemTemDetailsModel.getKeyword().equals("头部提示web") && systemTemDetailsModel.getEnableFlag()) {
+                    systemTemDetailsModel.setKeyword("0");
                     map.put("head", systemTemDetailsModel);
                     continue;
                 }
 
-                if (systemTemDetailsModel.keyword().equals("底部提示web") && systemTemDetailsModel.enableFlag()) {
-                    systemTemDetailsModel.keyword("1");
+                if (systemTemDetailsModel.getKeyword().equals("底部提示web") && systemTemDetailsModel.getEnableFlag()) {
+                    systemTemDetailsModel.setKeyword("1");
                     map.put("foot", systemTemDetailsModel);
                     continue;
                 }
 
-                if (systemTemDetailsModel.keyword().equals("web页搜索框") && systemTemDetailsModel.enableFlag()) {
-                    systemTemDetailsModel.keyword("2");
+                if (systemTemDetailsModel.getKeyword().equals("web页搜索框") && systemTemDetailsModel.getEnableFlag()) {
+                    systemTemDetailsModel.setKeyword("2");
                     map.put("searchBox", systemTemDetailsModel);
                     continue;
                 }
@@ -117,21 +117,21 @@ public class MoviePageShowController {
 
             String username = new String(decoder.decode(fishEncryption), "UTF-8");
             SystemUserModel systemUserModel = new SystemUserModel();
-            systemUserModel.username(username);
+            systemUserModel.setUsername(username);
 
             List<SystemTemDetailsModel> systemdetails = iSystemTemDetailsService.getTemDetailsWithUser(systemUserModel);
 
             searchName.replace("+", "");
 
             List<SystemTemDetailsModel> memberList = systemdetails.stream().
-                    filter(systemTemdetailsModel -> systemTemdetailsModel.keyword().contains(searchName) && systemTemdetailsModel.showOrder() == 0).collect(Collectors.toList());
+                    filter(systemTemdetailsModel -> systemTemdetailsModel.getKeyword().contains(searchName) && systemTemdetailsModel.getShowOrder() == 0).collect(Collectors.toList());
 
 
             long endTime = System.currentTimeMillis(); //获取结束时间
             System.out.println("=====接口调用时间：" + (endTime - startTime) + "ms==============");
 
             //获取接口最新调用时间
-            systemUserModel.callTime(LocalDateTime.now());
+            systemUserModel.setCallTime(LocalDateTime.now());
             iSystemUserService.updateUser(systemUserModel);
 
 
@@ -160,9 +160,10 @@ public class MoviePageShowController {
     public AjaxResult getMovieList(@PathVariable String search, @PathVariable String fishEncryption, @PathVariable String searchName) {
         try {
             String username = new String(decoder.decode(fishEncryption), "UTF-8");
-            SystemUserModel systemUserModel = new SystemUserModel().username(username);
+            SystemUserModel systemUserModel = new SystemUserModel();
+            systemUserModel.setUsername(username);
             SystemUserModel user = iSystemUserService.getUser(systemUserModel);
-            if (LocalDateTime.now().isAfter(user.actTime())) {
+            if (LocalDateTime.now().isAfter(user.getActTime())) {
                 log.debug("===============用户：{}接口已过期===============", username);
                 return AjaxResult.error("该系统提供服务已过期,继续使用请 关注公众号：影子的胡言乱语 ");
             }
@@ -203,13 +204,13 @@ public class MoviePageShowController {
         //获取所有模板
         List<SystemTemplateModel> allTemplate = iSystemTemplateService.getAllTemplate();
         allTemplate.parallelStream().forEach( templateModel -> {
-            details.temdetailsId(UUID.randomUUID().toString());
-            details.createtime(LocalDateTime.now());
+            details.setTemdetailsId(UUID.randomUUID().toString());
+            details.setCreatetime(LocalDateTime.now());
             //插入模板详情表
             int result = systemTemDetailsMapper.insert(details);
             if (result == 1) {
                 //插入模板_模板详情表
-                SystemTemToTemdetail temToDetails = SystemTemToTemdetail.builder().templateid(templateModel.getTemplateid()).templatedetailsid(details.temdetailsId()).build();
+                SystemTemToTemdetail temToDetails = SystemTemToTemdetail.builder().templateid(templateModel.getTemplateid()).templatedetailsid(details.getTemdetailsId()).build();
                 iSystemTmplToTmplDetailsService.save(temToDetails);
             }
         });

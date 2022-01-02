@@ -14,9 +14,8 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-@Accessors(fluent = true)
 @TableName("user_template")
-public class SystemUserToTemplate extends Model<SystemUserToTemplate> {
+public class SystemUserToTemplate extends Model<SystemUserToTemplate> implements Serializable {
 
     private static final long serialVersionUID = 1L;
 

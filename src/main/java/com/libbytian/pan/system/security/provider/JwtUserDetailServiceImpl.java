@@ -60,7 +60,9 @@ public class JwtUserDetailServiceImpl implements UserDetailsService {
             log.error("用户名输入不能为空");
             throw new UsernameNotFoundException(JSONObject.toJSONString(new ResultExceptionModel("用户名不能为空!!",0,"")));
         }
-        SystemUserModel userModel = new SystemUserModel().username(username).lastLoginTime(LocalDateTime.now());
+        SystemUserModel userModel = new SystemUserModel();
+        userModel.setUsername(username);
+        userModel.setLastLoginTime(LocalDateTime.now());
         iSystemUserService.updateUser(userModel);
         SystemUserModel systemUserModel = iSystemUserService.getUser(userModel);
         if (systemUserModel == null){
@@ -72,7 +74,7 @@ public class JwtUserDetailServiceImpl implements UserDetailsService {
         for (SystemRoleModel systemRoleModel: roles ) {
             authorities.add(new CustomRole(systemRoleModel));
         }
-        return new JwtUser(username,systemUserModel.password(),authorities);
+        return new JwtUser(username,systemUserModel.getPassword(),authorities);
     }
 
 

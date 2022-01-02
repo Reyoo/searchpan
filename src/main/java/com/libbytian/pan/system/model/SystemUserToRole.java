@@ -23,9 +23,8 @@ import java.io.Serializable;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Accessors(fluent = true)
 @TableName("sys_user_role")
-public class SystemUserToRole extends Model<SystemUserToRole> {
+public class SystemUserToRole extends Model<SystemUserToRole> implements Serializable{
 
     private static final long serialVersionUID = 1L;
 

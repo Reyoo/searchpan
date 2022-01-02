@@ -11,12 +11,11 @@ import org.springframework.beans.factory.annotation.Value;
 
 import java.io.Serializable;
 
-@Accessors(fluent = true)
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
 @TableName("role_permission")
-public class SystemRoleToPermission extends Model<SystemRoleToPermission> {
+public class SystemRoleToPermission extends Model<SystemRoleToPermission> implements Serializable{
 
     private static final long serialVersionUID = 1L;
 

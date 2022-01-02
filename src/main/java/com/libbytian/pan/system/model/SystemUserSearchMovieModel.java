@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.*;
 import lombok.experimental.Accessors;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
@@ -19,9 +20,8 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-@Accessors(fluent = true)
 @TableName("user_movie_search")
-public class SystemUserSearchMovieModel extends Model<SystemUserSearchMovieModel> {
+public class SystemUserSearchMovieModel extends Model<SystemUserSearchMovieModel> implements Serializable {
 
 
     private static final long serialVersionUID = 1L;

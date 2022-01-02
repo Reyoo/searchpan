@@ -17,10 +17,9 @@ import java.time.LocalDateTime;
 
 @AllArgsConstructor
 @NoArgsConstructor
-//@Accessors(fluent = true)
 @Data
 @TableName("sys_template")
-public class SystemTemplateModel extends Model<SystemTemplateModel> {
+public class SystemTemplateModel extends Model<SystemTemplateModel> implements Serializable{
 
     private static final long serialVersionUID = 1L;
 

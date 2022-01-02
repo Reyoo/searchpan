@@ -57,20 +57,20 @@ public class SystemRoleImpl extends ServiceImpl<SystemRoleMapper, SystemRoleMode
          * 查询时间段，starttime，endtime为虚拟字段
          */
         if (ObjectUtil.isNotEmpty(systemRoleModel)) {
-            if (StrUtil.isNotBlank(systemRoleModel.roleName())) {
-                queryWrapper.lambda().eq(SystemRoleModel::roleName, systemRoleModel.roleName());
+            if (StrUtil.isNotBlank(systemRoleModel.getRoleName())) {
+                queryWrapper.lambda().eq(SystemRoleModel::getRoleName, systemRoleModel.getRoleName());
             }
-            if (StrUtil.isNotBlank(systemRoleModel.showName())) {
-                queryWrapper.lambda().eq(SystemRoleModel::showName, systemRoleModel.showName());
+            if (StrUtil.isNotBlank(systemRoleModel.getShowName())) {
+                queryWrapper.lambda().eq(SystemRoleModel::getShowName, systemRoleModel.getShowName());
             }
-            if (systemRoleModel.createTime() != null) {
-                queryWrapper.lambda().eq(SystemRoleModel::createTime, systemRoleModel.createTime());
+            if (systemRoleModel.getCreateTime() != null) {
+                queryWrapper.lambda().eq(SystemRoleModel::getCreateTime, systemRoleModel.getCreateTime());
             }
-            if (systemRoleModel.roleStatus() != null) {
-                queryWrapper.lambda().eq(SystemRoleModel::roleStatus, systemRoleModel.roleStatus());
+            if (systemRoleModel.getRoleStatus() != null) {
+                queryWrapper.lambda().eq(SystemRoleModel::getRoleStatus, systemRoleModel.getRoleStatus());
             }
         }
-        queryWrapper.lambda().orderByDesc(SystemRoleModel::createTime);
+        queryWrapper.lambda().orderByDesc(SystemRoleModel::getCreateTime);
 
         return systemRoleMapper.selectPage(page, queryWrapper);
 
@@ -82,7 +82,7 @@ public class SystemRoleImpl extends ServiceImpl<SystemRoleMapper, SystemRoleMode
     public IPage<SystemRoleModel> findRoleById(Page<SystemRoleModel> page, String roleId) throws Exception {
         IPage<SystemRoleModel> result = systemRoleMapper.selectRoleById(page, roleId);
         SystemRoleModel systemRoleModel = new SystemRoleModel();
-        systemRoleModel.roleId(roleId);
+        systemRoleModel.setRoleId(roleId);
 ///        IPage<SystemRoleModel> result = systemRoleMapper.getRolesPage(page,systemRoleModel);
         return result;
     }
@@ -139,7 +139,7 @@ public class SystemRoleImpl extends ServiceImpl<SystemRoleMapper, SystemRoleMode
 
         try {
             SystemRoleModel roleModel = getRoles(systemRoleModel);
-            if (roleModel.allowremove()) {
+            if (roleModel.getAllowremove()) {
                 return Boolean.TRUE;
             }
         } catch (Exception e) {

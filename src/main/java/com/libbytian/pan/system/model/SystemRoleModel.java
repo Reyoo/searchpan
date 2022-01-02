@@ -29,7 +29,6 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-@Accessors(fluent = true)
 @TableName("sys_role")
 public class SystemRoleModel extends Model<SystemRoleModel> {
 

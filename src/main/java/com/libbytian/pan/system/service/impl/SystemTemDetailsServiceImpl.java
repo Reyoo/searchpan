@@ -119,24 +119,24 @@ public class SystemTemDetailsServiceImpl extends ServiceImpl<SystemTemDetailsMap
             SystemTemDetailsModel systemTemDetailsModel = new SystemTemDetailsModel();
             for (Map.Entry<String, String> entry : map.entrySet()) {
                 if (entry.getKey().equals("question")) {
-                    systemTemDetailsModel.keyword(entry.getValue());
+                    systemTemDetailsModel.setKeyword(entry.getValue());
                 }
                 if (entry.getKey().equals("answer")) {
-                    systemTemDetailsModel.keywordToValue(entry.getValue());
+                    systemTemDetailsModel.setKeywordToValue(entry.getValue());
                 }
                 if (entry.getKey().equals("date_time")) {
 
                     LocalDateTime time = LocalDateTime.parse(entry.getValue(), dateTimeFormatter);
-                    systemTemDetailsModel.createtime(time);
+                    systemTemDetailsModel.setCreatetime(time);
                 }
                 if (entry.getKey().equals("isTop")) {
-                    systemTemDetailsModel.temdetailsstatus(Boolean.valueOf(entry.getValue()));
+                    systemTemDetailsModel.setTemdetailsstatus(Boolean.valueOf(entry.getValue()));
                 }
             }
 
             String uuid = UUID.randomUUID(true).toString();
-            systemTemDetailsModel.temdetailsId(uuid);
-            systemTemDetailsModel.enableFlag(true);
+            systemTemDetailsModel.setTemdetailsId(uuid);
+            systemTemDetailsModel.setEnableFlag(true);
             uuidList.add(uuid);
             systemTemDetailsModelList.add(systemTemDetailsModel);
         }
@@ -157,15 +157,15 @@ public class SystemTemDetailsServiceImpl extends ServiceImpl<SystemTemDetailsMap
     @Override
     public  List<SystemTemDetailsModel> addTemDetails(SystemTemDetailsModel systemTemDetailsModel, String templateId,String username) throws Exception {
 
-        systemTemDetailsModel.createtime(LocalDateTime.now());
-        systemTemDetailsModel.temdetailsId(UUID.randomUUID().toString());
-        systemTemDetailsModel.temdetailsstatus(false);
-        systemTemDetailsModel.enableFlag(true);
+        systemTemDetailsModel.setCreatetime(LocalDateTime.now());
+        systemTemDetailsModel.setTemdetailsId(UUID.randomUUID().toString());
+        systemTemDetailsModel.setTemdetailsstatus(false);
+        systemTemDetailsModel.setEnableFlag(true);
         //插入模板详情表
         int result = systemTemDetailsMapper.insert(systemTemDetailsModel);
         if (result == 1) {
             //插入模板_模板详情表
-            SystemTemToTemdetail temToDetails = SystemTemToTemdetail.builder().templateid(templateId).templatedetailsid(systemTemDetailsModel.temdetailsId()).build();
+            SystemTemToTemdetail temToDetails = SystemTemToTemdetail.builder().templateid(templateId).templatedetailsid(systemTemDetailsModel.getTemdetailsId()).build();
             iSystemTmplToTmplDetailsService.save(temToDetails);
         }
         return systemTemDetailsMapper.findTemDetailsByUser(new SystemUserModel(username));
@@ -186,7 +186,7 @@ public class SystemTemDetailsServiceImpl extends ServiceImpl<SystemTemDetailsMap
         List<SystemTemDetailsModel> systemTemDetailsModelList = this.listByIds(temdetailsIds);
         List<SystemTemDetailsModel> noContainKeyWordList = new ArrayList<>();
         for(SystemTemDetailsModel systemTemDetailsModel: systemTemDetailsModelList){
-            if(hasTemplateKeyWord(systemTemDetailsModel.keyword())){
+            if(hasTemplateKeyWord(systemTemDetailsModel.getKeyword())){
                 continue;
             }
             noContainKeyWordList.add(systemTemDetailsModel);
@@ -207,12 +207,12 @@ public class SystemTemDetailsServiceImpl extends ServiceImpl<SystemTemDetailsMap
         for (int i = 0; i < noContainKeyWordList.size(); i++) {
 
             SystemTemDetailsModel obj = noContainKeyWordList.get(i);
-            content[i][0] = obj.temdetailsId();
-            content[i][1] = obj.keyword();
-            content[i][2] = obj.keywordToValue();
+            content[i][0] = obj.getTemdetailsId();
+            content[i][1] = obj.getKeyword();
+            content[i][2] = obj.getKeywordToValue();
             content[i][3] = httpServletRequest.getRemoteUser();
-            content[i][4] = obj.createtime().format(pattern);
-            content[i][5] = obj.temdetailsstatus().toString();
+            content[i][4] = obj.getCreatetime().format(pattern);
+            content[i][5] = obj.getTemdetailsstatus().toString();
         }
 
         //创建HSSFWorkbook
@@ -320,18 +320,18 @@ public class SystemTemDetailsServiceImpl extends ServiceImpl<SystemTemDetailsMap
  */
         for (int i = 0; i < detailist.size(); i++) {
             SystemTemDetailsModel details = detailist.get(i);
-            details.temdetailsId(UUID.randomUUID().toString());
-            details.createtime(LocalDateTime.now());
+            details.setTemdetailsId(UUID.randomUUID().toString());
+            details.setCreatetime(LocalDateTime.now());
 
-            if ("web页搜索框".equals(details.keyword())){
-                details.showOrder(8);
+            if ("web页搜索框".equals(details.getKeyword())){
+                details.setShowOrder(8);
             }else {
-                details.showOrder(1);
+                details.setShowOrder(1);
             }
 
             systemTemDetailsMapper.insertSystemTemDetails(details);
             //用户模板绑定模板详情
-            SystemTemToTemdetail temToTemdetail = SystemTemToTemdetail.builder().templateid(templateId).templatedetailsid(details.temdetailsId()).build();
+            SystemTemToTemdetail temToTemdetail = SystemTemToTemdetail.builder().templateid(templateId).templatedetailsid(details.getTemplateId()).build();
             iSystemTmplToTmplDetailsService.save(temToTemdetail);
         }
 

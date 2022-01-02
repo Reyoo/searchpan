@@ -41,20 +41,20 @@ public class SystemPermissionImpl extends ServiceImpl<SystemPermissionMapper, Sy
          * 这里systemusermodel 不做空判断 。getusername 空指针  null.getUsername
          */
         if(systemPermissionModel != null){
-            if(StrUtil.isNotEmpty(systemPermissionModel.permissionUrl())){
-                queryWrapper.lambda().eq(SystemPermissionModel::permissionUrl,systemPermissionModel.permissionUrl());
+            if(StrUtil.isNotEmpty(systemPermissionModel.getPermissionUrl())){
+                queryWrapper.lambda().eq(SystemPermissionModel::getPermissionUrl,systemPermissionModel.getPermissionUrl());
             }
-            if(StrUtil.isNotEmpty(systemPermissionModel.permissionComment())){
-                queryWrapper.lambda().eq(SystemPermissionModel::permissionComment,systemPermissionModel.permissionComment());
+            if(StrUtil.isNotEmpty(systemPermissionModel.getPermissionComment())){
+                queryWrapper.lambda().eq(SystemPermissionModel::getPermissionComment,systemPermissionModel.getPermissionComment());
             }
-            if (systemPermissionModel.createtime() != null){
-                queryWrapper.lambda().eq(SystemPermissionModel::createtime,systemPermissionModel.createtime());
+            if (systemPermissionModel.getCreatetime() != null){
+                queryWrapper.lambda().eq(SystemPermissionModel::getCreatetime,systemPermissionModel.getCreatetime());
             }
-            if(systemPermissionModel.permissionstatus() != null){
-                queryWrapper.lambda().eq(SystemPermissionModel::permissionstatus,systemPermissionModel.permissionstatus());
+            if(systemPermissionModel.getPermissionstatus() != null){
+                queryWrapper.lambda().eq(SystemPermissionModel::getPermissionstatus,systemPermissionModel.getPermissionstatus());
             }
         }
-        queryWrapper.lambda().orderByDesc(SystemPermissionModel::createtime);
+        queryWrapper.lambda().orderByDesc(SystemPermissionModel::getCreatetime);
         return systemPermissionMapper.selectPage(page,queryWrapper);
 
     }
@@ -63,9 +63,9 @@ public class SystemPermissionImpl extends ServiceImpl<SystemPermissionMapper, Sy
     @Override
     public int savePermission(SystemPermissionModel permission) throws Exception {
 
-        permission.createtime(LocalDateTime.now());
-        permission.permissionId(UUID.randomUUID().toString());
-        if(StrUtil.isBlank(permission.permissionComment())){
+        permission.setCreatetime(LocalDateTime.now());
+        permission.setPermissionId(UUID.randomUUID().toString());
+        if(StrUtil.isBlank(permission.getPermissionComment())){
             throw new Exception("权限名不允许为空");
         }
         return systemPermissionMapper.insertPermission(permission);

@@ -37,8 +37,8 @@ public class FindFishNotifyController {
     public AjaxResult findNotifyByPage(@RequestBody(required = false) SystemNotifyModel systemNotifyModel) {
         // 下个版本 迭代出来
 //        PageHelper.startPage(systemNotifyModel.page().intValue(), systemNotifyModel.limits().intValue());
-        Long page = systemNotifyModel.page()== null ? 1L:systemNotifyModel.page();
-        Long limits = systemNotifyModel.limits() == null?10L :systemNotifyModel.limits();
+        Long page = systemNotifyModel.getPage()== null ? 1L:systemNotifyModel.getPage();
+        Long limits = systemNotifyModel.getLimits() == null?10L :systemNotifyModel.getLimits();
         Page<SystemNotifyModel> findpage = new Page<>(page, limits);
         try {
             IPage<SystemNotifyModel> result = systemNotifyService.findConditionByPage(findpage, systemNotifyModel);
@@ -59,8 +59,8 @@ public class FindFishNotifyController {
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     public AjaxResult addNotify(@RequestBody SystemNotifyModel systemNotifyModel) {
         try {
-            systemNotifyModel.id(UUID.fastUUID().toString());
-            systemNotifyModel.modifyDate(LocalDateTime.now());
+            systemNotifyModel.setId(UUID.fastUUID().toString());
+            systemNotifyModel.setModifyDate(LocalDateTime.now());
             systemNotifyService.addSystemNotify(systemNotifyModel);
             return AjaxResult.success("add is ok!!!");
         } catch (Exception e) {
@@ -97,7 +97,7 @@ public class FindFishNotifyController {
     @RequestMapping(value = "/update", method = RequestMethod.PATCH)
     public AjaxResult updateNotify(@RequestBody SystemNotifyModel systemNotifyModel) {
         try {
-            systemNotifyModel.modifyDate(LocalDateTime.now());
+            systemNotifyModel.setModifyDate(LocalDateTime.now());
             systemNotifyService.updateSystemNoitfy(systemNotifyModel);
             return AjaxResult.success("update is OK !");
         } catch (Exception e) {
