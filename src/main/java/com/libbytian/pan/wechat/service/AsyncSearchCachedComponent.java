@@ -1,6 +1,7 @@
 package com.libbytian.pan.wechat.service;
 
 import com.libbytian.pan.findmovie.aidianying.IFindMovieInAiDianYing;
+import com.libbytian.pan.findmovie.lili.IFindMovieInLiLi;
 import com.libbytian.pan.findmovie.sumsu.IFindMovieInSumsu;
 import com.libbytian.pan.findmovie.unread.IFindMovieInUnread;
 import com.libbytian.pan.findmovie.xiaoyou.IFindMovieInXiaoyou;
@@ -35,7 +36,8 @@ public class AsyncSearchCachedComponent {
     private final IFindMovieInSumsu iFindMovieInSumsu;
     private final IFindMovieInUnread iFindMovieInUnread;
     private final IFindMovieInXiaoyou iFindMovieInXiaoyou;
-    private final IFindMovieInYoujiang IFindMovieInYoujiang;
+    private final IFindMovieInYoujiang iFindMovieInYoujiang;
+    private final IFindMovieInLiLi iFindMovieInLiLi;
 
 
     /**
@@ -60,7 +62,8 @@ public class AsyncSearchCachedComponent {
             //u 2号大厅
             case "u":
                 List<MovieNameAndUrlModel> listB = new ArrayList<>();
-
+                //添加莉莉
+                listB.addAll(iFindMovieInLiLi.findMovieUrl(searchMovieText));
                 //添加未读影单
                 listB.addAll(iFindMovieInUnread.findMovieUrl(searchMovieText));
                 //添加社区动力
@@ -73,7 +76,7 @@ public class AsyncSearchCachedComponent {
             List<MovieNameAndUrlModel> listC = new ArrayList<>();
 
             //添加悠酱
-                listC.addAll(IFindMovieInYoujiang.findMovieUrl(searchMovieText));
+                listC.addAll(iFindMovieInYoujiang.findMovieUrl(searchMovieText));
             //爱电影
                 listC.addAll(iFindMovieInAiDianYing.findMovieUrl(searchMovieText));
 
