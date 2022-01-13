@@ -27,7 +27,6 @@ public class SystemUserSearchMovieServiceImpl extends ServiceImpl<SystemUserSear
     @Override
     @Async("crawler-Executor")
     public void userSearchMovieCountInFindfish(String searchStr){
-
         if(StrUtil.isEmpty(searchStr)){
             return;
         }

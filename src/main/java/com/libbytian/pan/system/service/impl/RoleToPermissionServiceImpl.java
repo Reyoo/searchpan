@@ -10,6 +10,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+/**
+ * @author SunQi
+ */
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class RoleToPermissionServiceImpl extends ServiceImpl<SystemRoleToPermissionMapper, SystemRoleToPermission> implements IRoleToPermissionService {

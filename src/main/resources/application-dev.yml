@@ -15,29 +15,10 @@ server:
 #    port: 8080
 
 
-
 spring:
-  application:
-    name: findfish
   redis:
-    host: 121.36.6.92
-    port: 36379
-    password: findfish
-    # redis client配置，使用lettuce
-    lettuce:
-      pool:
-        # 连接池最大连接数（使用负值表示没有限制） 默认 8
-        max-active: 20
-        # 连接池中的最小空闲连接 默认 0
-        min-idle: 10
-        # 连接池最大阻塞等待时间（使用负值表示没有限制） 默认 -1
-        max-wait: -1ms
-        max-idle: 8
-
-    # Redis默认情况下有16个分片，这里配置具体使用的分片，默认是0
-    database: 10
-    timeout: 3600000
-
+    redisson:
+      file: classpath:redisson.yaml
 
   # 配置数据源
   datasource:
@@ -87,7 +68,7 @@ spring:
 # Logger Config
 logging:
   level:
-    com.vicente.vicentedemo: debug
+    com.vicente.vicentedemo: info
 # mybatis-plus相关配置
 mybatis-plus:
   # 支持统配符 * 或者 ; 分割
@@ -98,7 +79,7 @@ mybatis-plus:
   global-config:
     db-config:
       #主键类型 AUTO:"数据库ID自增" INPUT:"用户输入ID",ID_WORKER:"全局唯一ID (数字类型唯一ID)", UUID:"全局唯一ID UUID";
-      id-type: UUID
+      id-type: ASSIGN_UUID
       #字段策略 IGNORED:"忽略判断"  NOT_NULL:"非 NULL 判断")  NOT_EMPTY:"非空判断"
       field-strategy: NOT_EMPTY
       #数据库类型
@@ -116,6 +97,12 @@ mybatis-plus:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
     jdbc-type-for-null: 'null'
 
+pagehelper:
+  reasonable: false # 禁用合理化时，如果pageNum<1或pageNum>pages会返回空数据
+  support-methods-arguments: true
+  params: count=countSql
+  row-bounds-with-count: true
+  helper-dialect: mysql
 
 
 wx:

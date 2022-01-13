@@ -38,7 +38,6 @@ public class PermissionController {
             }
         }
 
-
         Page<SystemPermissionModel> systemPermissionModelPage = new Page<>(page, limits);
         try {
             IPage<SystemPermissionModel> result = iSystemPermissionService.findPermission(systemPermissionModelPage, systemPermissionModel);

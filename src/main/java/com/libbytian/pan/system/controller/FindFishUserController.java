@@ -38,11 +38,8 @@ public class FindFishUserController {
      */
     @RequestMapping(value = "/select", method = RequestMethod.POST)
     public AjaxResult findConditionByPage(@RequestBody(required = false) SystemUserModel user) {
-
-
         Long page = user.getPage()== null ? 1L:user.getPage();
         Long limits = user.getLimits() == null?10L :user.getLimits();
-
         Page<SystemUserModel> findpage = new Page<>(page, limits);
         try {
             IPage<SystemUserModel> result = iSystemUserService.findConditionByPage(findpage, user);
@@ -170,7 +167,6 @@ public class FindFishUserController {
             return AjaxResult.error(e.getMessage());
         }
     }
-
 
 //    /**
 //     * 更新用户模板表

@@ -22,7 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 public interface ISystemKeywordService extends IService<SystemKeywordModel> {
 
 //    @Cacheable(key = "#username",condition = "#username != null")
-    SystemKeywordModel getKeywordByUser(String username);
+    SystemKeywordModel keywordByUser(String username);
 
 //    @CachePut(key = "#systemKeywordModel.user" ,condition = "#systemKeywordModel != null")
     void updateKeyword(SystemKeywordModel systemKeywordModel);

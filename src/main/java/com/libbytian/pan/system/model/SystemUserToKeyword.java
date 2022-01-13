@@ -5,6 +5,9 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.*;
+import lombok.experimental.Accessors;
+
+import java.io.Serializable;
 
 /**
  * @author: QiSun
@@ -16,11 +19,9 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
-@Setter
-@ToString
+@Data
 @TableName("sys_user_keyword")
-public class SystemUserToKeyword  extends Model<SystemUserToKeyword> {
+public class SystemUserToKeyword  extends Model<SystemUserToKeyword> implements Serializable {
 
     private static final long serialVersionUID = 1L;
 

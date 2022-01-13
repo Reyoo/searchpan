@@ -1,5 +1,6 @@
 package com.libbytian.pan.system.service.impl;
 
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.libbytian.pan.system.mapper.MovieNameAndUrlMapper;
 import com.libbytian.pan.system.model.MovieNameAndUrlModel;
@@ -41,22 +42,37 @@ public class MovieNameAndUrlServiceImpl extends ServiceImpl<MovieNameAndUrlMappe
     @Override
     public void addOrUpdateMovieUrls(List<MovieNameAndUrlModel> movieNameAndUrlModels,String tableName) throws Exception {
 
-        for (MovieNameAndUrlModel movieNameAndUrlModel : movieNameAndUrlModels) {
 
-            if(movieNameAndUrlModel.getMovieName()==null){
-                continue;
-            }
-            List<MovieNameAndUrlModel> list = movieNameAndUrlMapper.selectMovieUrlByName(tableName, movieNameAndUrlModel.getMovieName().trim());
+        /**待测试*/
+        movieNameAndUrlModels.parallelStream().filter( movieNameAndUrlModel -> StrUtil.isNotEmpty(movieNameAndUrlModel.getMovieName())).forEach(t -> {
+            List<MovieNameAndUrlModel> list = movieNameAndUrlMapper.selectMovieUrlByName(tableName, t.getMovieName().trim());
             if (list.size() > 0) {
 //                如果查询到数据 则更新
-                movieNameAndUrlMapper.updateUrlMovieUrl(tableName,movieNameAndUrlModel);
-                log.info("更新电影列表-->" + movieNameAndUrlModel);
+                movieNameAndUrlMapper.updateUrlMovieUrl(tableName,t);
+                log.info("更新电影列表-->" + t);
 
             } else {
-                movieNameAndUrlMapper.insertMovieUrl(tableName,movieNameAndUrlModel);
-                log.info("插入电影列表-->" + movieNameAndUrlModel);
+                movieNameAndUrlMapper.insertMovieUrl(tableName,t);
+                log.info("插入电影列表-->" + t);
             }
-        }
+        });
+
+//        for (MovieNameAndUrlModel movieNameAndUrlModel : movieNameAndUrlModels) {
+//
+//            if(movieNameAndUrlModel.movieName()==null){
+//                continue;
+//            }
+//            List<MovieNameAndUrlModel> list = movieNameAndUrlMapper.selectMovieUrlByName(tableName, movieNameAndUrlModel.getMovieName().trim());
+//            if (list.size() > 0) {
+////                如果查询到数据 则更新
+//                movieNameAndUrlMapper.updateUrlMovieUrl(tableName,movieNameAndUrlModel);
+//                log.info("更新电影列表-->" + movieNameAndUrlModel);
+//
+//            } else {
+//                movieNameAndUrlMapper.insertMovieUrl(tableName,movieNameAndUrlModel);
+//                log.info("插入电影列表-->" + movieNameAndUrlModel);
+//            }
+//        }
 
     }
 

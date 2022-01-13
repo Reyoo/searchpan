@@ -33,7 +33,7 @@ public class UserKeywordController {
     public AjaxResult getUserKeywordByUser(@PathVariable String username) {
 
         try {
-            return AjaxResult.success(iSystemKeywordService.getKeywordByUser(username));
+            return AjaxResult.success(iSystemKeywordService.keywordByUser(username));
         } catch (Exception e) {
             log.error("error -> " + e.getMessage());
             return AjaxResult.error(e.getMessage());
@@ -45,7 +45,6 @@ public class UserKeywordController {
     public AjaxResult updateUserKeyword(HttpServletRequest httpRequest, @RequestBody(required = true) SystemKeywordModel systemKeywordModel) {
         String userSafeKey = null;
         try {
-
             if (StrUtil.isEmpty(systemKeywordModel.getAppId())) {
                 userSafeKey = "http://51.findfish.top/wechat/portal/" + Base64.getEncoder().encodeToString(httpRequest.getRemoteUser().getBytes()) + "/" + "请填写appID";
                 systemKeywordModel.setUserSafeKey(userSafeKey);

@@ -8,6 +8,9 @@ import org.springframework.cache.annotation.Cacheable;
 
 import java.util.List;
 
+/**
+ * @author SunQi
+ */
 @CacheConfig(cacheNames = "sumsu")
 public interface IFindMovieInSumsu extends IService<MovieNameAndUrlModel> {
 

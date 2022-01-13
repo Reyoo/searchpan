@@ -8,6 +8,9 @@ import org.springframework.cache.annotation.Cacheable;
 
 import java.util.List;
 
+/**
+ * @author SunQi
+ */
 @CacheConfig(cacheNames = "unread")
 public interface IFindMovieInUnread extends IService<MovieNameAndUrlModel> {
 

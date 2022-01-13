@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.*;
+import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 
@@ -19,9 +20,8 @@ import java.io.Serializable;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
-@Setter
-@ToString
+@EqualsAndHashCode(callSuper=false)
+@Data
 public class MovieNameAndUrlModel extends Model<MovieNameAndUrlModel> {
 
     /**
@@ -39,8 +39,4 @@ public class MovieNameAndUrlModel extends Model<MovieNameAndUrlModel> {
     String wangPanPassword;
 
 
-    @Override
-    protected Serializable pkVal() {
-        return this.id;
-    }
 }

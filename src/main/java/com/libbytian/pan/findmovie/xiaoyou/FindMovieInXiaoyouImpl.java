@@ -20,8 +20,6 @@ public class FindMovieInXiaoyouImpl extends ServiceImpl<MovieNameAndUrlMapper, M
 
     @Override
     public List<MovieNameAndUrlModel> findMovieUrl(String movieName) throws Exception {
-
         return  movieNameAndUrlMapper.selectMovieUrlByLikeName("url_movie_xiaoyou", movieName);
-
     }
 }

@@ -34,13 +34,14 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * 图片验证码（支持算术形式）
+ *
  * @author SunQi
  */
 
 @RestController
 @RequestMapping("/captcha")
 @Slf4j
-public class SysCaptchaController  {
+public class SysCaptchaController {
 
     @Autowired
     private RedisTemplate redisTemplate;
@@ -54,17 +55,10 @@ public class SysCaptchaController  {
     /**
      * 验证码生成
      */
-    @GetMapping(value = "/captchaImage" ,produces = {"application/json;charset=UTF-8"})
+    @GetMapping(value = "/captchaImage", produces = {"application/json;charset=UTF-8"})
     public AjaxResult getKaptchaImage() {
-
-
         LocalDateTime now = LocalDateTime.now();
-//        ServletOutputStream out = null;
         try {
-//            ArrayList typeList = new ArrayList();
-//            typeList.add("math");
-//            typeList.add("char");
-
             String type = "char";
             String capStr;
             String code = null;
@@ -81,17 +75,12 @@ public class SysCaptchaController  {
 
             String uuid = UUID.fastUUID().toString();
             log.info("验证码-->" + code);
-            redisTemplate.opsForValue().set(uuid,code,10, TimeUnit.MINUTES);
-
-
+            redisTemplate.opsForValue().set(uuid, code, 10, TimeUnit.MINUTES);
             // 转换流信息写出
             FastByteArrayOutputStream os = new FastByteArrayOutputStream();
-            try
-            {
+            try {
                 ImageIO.write(bufferedImage, "jpg", os);
-            }
-            catch (IOException e)
-            {
+            } catch (IOException e) {
                 return AjaxResult.error(e.getMessage());
             }
 

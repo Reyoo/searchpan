@@ -1,5 +1,6 @@
 package com.libbytian.pan.system.controller;
 
+import cn.hutool.core.util.ObjectUtil;
 import com.libbytian.pan.system.common.AjaxResult;
 import com.libbytian.pan.system.model.SystemTemDetailsModel;
 import com.libbytian.pan.system.model.SystemUserModel;
@@ -54,11 +55,10 @@ public class LoginController {
             SystemUserModel userModel = new SystemUserModel();
             userModel.setUsername(systemUserModel.getUsername());
             SystemUserModel user = iSystemUserService.getUser(userModel);
-            if (user != null) {
+            if (ObjectUtil.isNotEmpty(user)) {
                 return AjaxResult.error("该用户已存在,不可添加");
             }
             iSystemUserService.register(systemUserModel);
-
             return AjaxResult.success();
         } catch (Exception e) {
             log.error(e.getMessage());

@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.*;
+import lombok.experimental.Accessors;
 import org.springframework.beans.factory.annotation.Value;
 
 import java.io.Serializable;
@@ -19,13 +20,11 @@ import java.io.Serializable;
  * @since 2018-06-25
  */
 @Builder
-@Getter
-@Setter
-@ToString
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @TableName("sys_user_role")
-public class SystemUserToRole extends Model<SystemUserToRole> {
+public class SystemUserToRole extends Model<SystemUserToRole> implements Serializable{
 
     private static final long serialVersionUID = 1L;
 
@@ -54,11 +53,4 @@ public class SystemUserToRole extends Model<SystemUserToRole> {
     private Boolean checked;
 
 
-
-
-
-    @Override
-    protected Serializable pkVal() {
-        return this.userToRoleId;
-    }
 }

@@ -1,6 +1,7 @@
 package com.libbytian.pan.system.controller;
 
 
+import cn.hutool.core.collection.CollectionUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.libbytian.pan.system.common.AjaxResult;
@@ -28,7 +29,6 @@ public class FindFishRoleController {
     private final ISystemPermissionService iPermissionService;
     private final ISystemRoleService iSystemRoleService;
 
-
     /**
      * 查询角色
      *
@@ -48,14 +48,10 @@ public class FindFishRoleController {
                 limits = Long.valueOf(systemRoleModel.getLimits());
             }
         }
-
         Page<SystemRoleModel> syspage = new Page<>(page, limits);
         try {
-
             IPage<SystemRoleModel> result = iSystemRoleService.findRole(syspage, systemRoleModel);
             return AjaxResult.success(result);
-
-
         } catch (Exception e) {
             return AjaxResult.error(e.getMessage());
         }
@@ -99,12 +95,6 @@ public class FindFishRoleController {
                 return AjaxResult.error("该角色为系统保留用户禁止修改");
             }
 
-//            if ("ROLE_ADMIN".equals(role.getRoleName()) || "ROLE_NORMAL".equals(role.getRoleName()) || "ROLE_PAYUSER".equals(role.getRoleName())) {
-//                return AjaxResult.error("该用户权限不允许修改");
-//            }
-//            iSystemRoleService.updateById(role);
-//            return AjaxResult.success();
-
         } catch (Exception e) {
             return AjaxResult.error(e.getMessage());
         }
@@ -124,9 +114,6 @@ public class FindFishRoleController {
             if (StringUtils.isBlank(role.getRoleId())) {
                 return AjaxResult.error("字段不能为空");
             }
-//            if ("ROLE_ADMIN".equals(role.getRoleName()) || "ROLE_NORMAL".equals(role.getRoleName()) || "ROLE_PAYUSER".equals(role.getRoleName())) {
-//                return AjaxResult.error("该用户权限不允许修改");
-//            }
 
             if (!iSystemRoleService.checkRolerCouldDel(role)) {
                 return AjaxResult.error("该角色为系统保留用户禁止删除");
@@ -136,12 +123,9 @@ public class FindFishRoleController {
             SystemUserToRole systemUserToRole = new SystemUserToRole();
             systemUserToRole.setRoleId(role.getRoleId());
             int count = iSystemUserToRoleService.getUserToRoleObject(systemUserToRole).size();
-
             if (count > 0) {
                 return AjaxResult.error("该角色已绑定用户，不可删除");
             }
-
-
             iSystemRoleService.dropRole(role);
             return AjaxResult.success();
         } catch (Exception e) {
@@ -164,24 +148,14 @@ public class FindFishRoleController {
             systemRoleToPermission.setRoleId(systemRoleModel.getRoleId());
             //获取到角色管理权限的id集合
             List<SystemRoleToPermission> systemRoleToPermissionList = iRoleToPermissionService.listRoleToPermissionObjects(systemRoleToPermission);
-
-            if (systemRoleToPermissionList.size() <= 0) {
+            if (CollectionUtil.isEmpty(systemRoleToPermissionList)) {
                 List<SystemPermissionModel> systemRoleToPermissions = iPermissionService.list();
                 return AjaxResult.success(systemRoleToPermissions);
             }
 
-
             List<String> permissionId = systemRoleToPermissionList.stream().map(SystemRoleToPermission::getPermissionId).collect(Collectors.toList());
-
-//            List<SystemPermissionModel> systemRoleModelListAll = iPermissionService.listByIds(permissionId);
             List<SystemPermissionModel> systemRoleModelListAll = iPermissionService.listPermissionByPermission(permissionId);
-
-
-
-
             systemRoleModelListAll.forEach(permissionModel -> permissionModel.setChecked(true));
-
-
             List<SystemPermissionModel> systemPermissionModelList = iPermissionService.list();
             //id为两个列表相同属性，取出A的list中的id
             List<String> permissionIdList = systemRoleModelListAll.stream().map(SystemPermissionModel::getPermissionId).collect(Collectors.toList());
@@ -189,7 +163,6 @@ public class FindFishRoleController {
             systemPermissionModelList = systemPermissionModelList.stream().filter(SystemRoleToPermission -> !permissionIdList.contains(SystemRoleToPermission.getPermissionId())).collect(Collectors.toList());
             systemPermissionModelList.forEach(permissionModel -> permissionModel.setChecked(false));
             systemPermissionModelList.addAll(systemRoleModelListAll);
-
             return AjaxResult.success(systemPermissionModelList);
         } catch (Exception e) {
             return AjaxResult.error(e.getMessage());
@@ -217,7 +190,6 @@ public class FindFishRoleController {
                 }
             }
             return AjaxResult.error("修改失败");
-
         } catch (Exception e) {
             return AjaxResult.error(e.getMessage());
         }

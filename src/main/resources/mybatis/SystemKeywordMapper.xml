@@ -15,7 +15,7 @@
     </sql>
 
 
-    <select id="getKeywordByUser" parameterType="java.lang.String"
+    <select id="keywordByUser" parameterType="java.lang.String"
             resultType="com.libbytian.pan.system.model.SystemKeywordModel">
         SELECT
         <include refid="Base_Column_List"/>

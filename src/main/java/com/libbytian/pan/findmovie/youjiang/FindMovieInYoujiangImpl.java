@@ -21,11 +21,11 @@ import java.util.List;
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 @Slf4j
 public class FindMovieInYoujiangImpl extends ServiceImpl<MovieNameAndUrlMapper, MovieNameAndUrlModel> implements IFindMovieInYoujiang{
+
     private final MovieNameAndUrlMapper movieNameAndUrlMapper;
 
     @Override
     public List<MovieNameAndUrlModel> findMovieUrl(String movieName) throws Exception {
         return  movieNameAndUrlMapper.selectMovieUrlByLikeName("url_movie_youjiang", movieName);
-
     }
 }

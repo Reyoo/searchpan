@@ -11,6 +11,9 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 
+/**
+ * @author SunQi
+ */
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 @Slf4j
@@ -20,8 +23,6 @@ public class FindMovieInUnreadImpl extends ServiceImpl<MovieNameAndUrlMapper, Mo
 
     @Override
     public List<MovieNameAndUrlModel> findMovieUrl(String movieName) throws Exception {
-
         return  movieNameAndUrlMapper.selectMovieUrlByLikeName("url_movie_unread", movieName);
-
     }
 }

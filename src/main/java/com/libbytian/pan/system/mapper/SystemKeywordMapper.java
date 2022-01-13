@@ -16,7 +16,7 @@ import org.apache.ibatis.annotations.Mapper;
 public interface SystemKeywordMapper extends BaseMapper<SystemKeywordModel> {
 
 
-    SystemKeywordModel getKeywordByUser(String username);
+    SystemKeywordModel keywordByUser(String username);
 
     /**
      * 更新用户关联关键字

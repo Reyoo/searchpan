@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
+import lombok.experimental.Accessors;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 
@@ -27,9 +28,7 @@ import java.util.Date;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
-@Setter
-@ToString
+@Data
 @TableName("sys_role")
 public class SystemRoleModel extends Model<SystemRoleModel> {
 
@@ -88,9 +87,4 @@ public class SystemRoleModel extends Model<SystemRoleModel> {
     @TableField(exist = false)
     Long limits;
 
-
-    @Override
-    protected Serializable pkVal() {
-        return this.roleId;
-    }
 }

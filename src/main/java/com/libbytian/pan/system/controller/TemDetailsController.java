@@ -144,7 +144,7 @@ public class TemDetailsController {
             //修改时，对前端标签进行转义处理
             if(StringUtils.isNotBlank(systemTemDetailsModel.getKeywordToValue())){
 
-                systemTemDetailsModel.setKeywordToValue(HtmlUtils.htmlUnescape(systemTemDetailsModel.getKeywordToValue()));
+                systemTemDetailsModel.setKeywordToValue((HtmlUtils.htmlUnescape(systemTemDetailsModel.getKeywordToValue())));
             }
 
             iSystemTemDetailsService.updateTempDetailsWithModel(systemTemDetailsModel,httpRequest.getRemoteUser());

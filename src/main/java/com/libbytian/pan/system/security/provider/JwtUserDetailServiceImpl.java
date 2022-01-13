@@ -33,7 +33,6 @@ import java.util.List;
 @Component
 public class JwtUserDetailServiceImpl implements UserDetailsService {
 
-    private final PasswordEncoder passwordEncoder;
 
 
     @Autowired
@@ -44,10 +43,7 @@ public class JwtUserDetailServiceImpl implements UserDetailsService {
     private ISystemRoleService iSystemRoleService;
 
 
-    @Autowired
-    public JwtUserDetailServiceImpl(PasswordEncoder passwordEncoder) {
-        this.passwordEncoder = passwordEncoder;
-    }
+
 
     /** 数据库查询
      * @param username
@@ -64,20 +60,15 @@ public class JwtUserDetailServiceImpl implements UserDetailsService {
             log.error("用户名输入不能为空");
             throw new UsernameNotFoundException(JSONObject.toJSONString(new ResultExceptionModel("用户名不能为空!!",0,"")));
         }
-
         SystemUserModel userModel = new SystemUserModel();
         userModel.setUsername(username);
         userModel.setLastLoginTime(LocalDateTime.now());
         iSystemUserService.updateUser(userModel);
-
         SystemUserModel systemUserModel = iSystemUserService.getUser(userModel);
-
         if (systemUserModel == null){
             log.error("该用户名不存在");
             throw new UsernameNotFoundException(JSONObject.toJSONString(new ResultExceptionModel("该用户名不存在!",0,"")));
-
         }
-
         List<SystemRoleModel> roles = iSystemRoleService.listRolesByUser(systemUserModel);
         log.info("用户:{}开始查询对应的角色." , username);
         for (SystemRoleModel systemRoleModel: roles ) {
@@ -85,7 +76,6 @@ public class JwtUserDetailServiceImpl implements UserDetailsService {
         }
         return new JwtUser(username,systemUserModel.getPassword(),authorities);
     }
-
 
 
 }

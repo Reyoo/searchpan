@@ -15,6 +15,9 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 
+/**
+ * @author SunQi
+ */
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class SystemNotifyServiceImpl extends ServiceImpl<SystemNotifyServiceMapper, SystemNotifyModel> implements ISystemNotifyService {
@@ -30,7 +33,6 @@ public class SystemNotifyServiceImpl extends ServiceImpl<SystemNotifyServiceMapp
     @Override
     public IPage<SystemNotifyModel> findConditionByPage(Page<SystemNotifyModel> page, SystemNotifyModel systemNotifyModel) throws Exception {
         QueryWrapper queryWrapper = new QueryWrapper();
-
         if (systemNotifyModel != null) {
             if (systemNotifyModel.getNotifyText() != null && !systemNotifyModel.getNotifyText().equals("")) {
                 queryWrapper.eq("notify_text", systemNotifyModel.getNotifyText());

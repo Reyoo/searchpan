@@ -13,7 +13,6 @@ import org.springframework.web.client.RestTemplate;
 @SpringBootApplication
 @EnableAsync
 @EnableTransactionManagement
-
 @EnableCaching
 public class SearchpanApplication {
 

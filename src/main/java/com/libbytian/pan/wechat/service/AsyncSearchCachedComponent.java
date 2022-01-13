@@ -31,13 +31,11 @@ import java.util.List;
 public class AsyncSearchCachedComponent {
 
 
-
-  private final IFindMovieInAiDianYing iFindMovieInAiDianYing;
-  private final IFindMovieInSumsu iFindMovieInSumsu;
-  private final IFindMovieInUnread iFindMovieInUnread;
-  private final IFindMovieInXiaoyou iFindMovieInXiaoyou;
-  private final IFindMovieInYoujiang IFindMovieInYoujiang;
-
+    private final IFindMovieInAiDianYing iFindMovieInAiDianYing;
+    private final IFindMovieInSumsu iFindMovieInSumsu;
+    private final IFindMovieInUnread iFindMovieInUnread;
+    private final IFindMovieInXiaoyou iFindMovieInXiaoyou;
+    private final IFindMovieInYoujiang IFindMovieInYoujiang;
 
 
     /**
@@ -51,7 +49,6 @@ public class AsyncSearchCachedComponent {
 
 
     public List<MovieNameAndUrlModel> searchWord(String searchMovieText, String search) throws Exception {
-
         switch (search) {
             //a 一号大厅
             case "a":

@@ -161,10 +161,8 @@ public class SystemTemDetailsServiceImpl extends ServiceImpl<SystemTemDetailsMap
         systemTemDetailsModel.setTemdetailsId(UUID.randomUUID().toString());
         systemTemDetailsModel.setTemdetailsstatus(false);
         systemTemDetailsModel.setEnableFlag(true);
-
         //插入模板详情表
         int result = systemTemDetailsMapper.insert(systemTemDetailsModel);
-
         if (result == 1) {
             //插入模板_模板详情表
             SystemTemToTemdetail temToDetails = SystemTemToTemdetail.builder().templateid(templateId).templatedetailsid(systemTemDetailsModel.getTemdetailsId()).build();
@@ -333,7 +331,7 @@ public class SystemTemDetailsServiceImpl extends ServiceImpl<SystemTemDetailsMap
 
             systemTemDetailsMapper.insertSystemTemDetails(details);
             //用户模板绑定模板详情
-            SystemTemToTemdetail temToTemdetail = SystemTemToTemdetail.builder().templateid(templateId).templatedetailsid(details.getTemdetailsId()).build();
+            SystemTemToTemdetail temToTemdetail = SystemTemToTemdetail.builder().templateid(templateId).templatedetailsid(details.getTemplateId()).build();
             iSystemTmplToTmplDetailsService.save(temToTemdetail);
         }
 

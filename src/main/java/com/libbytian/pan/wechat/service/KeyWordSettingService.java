@@ -36,7 +36,6 @@ public class KeyWordSettingService {
 
         SystemTemDetailsModel secretContent = templateDetailsGetKeywordComponent.getUserKeywordDetail(systemUserModel, TemplateKeywordConstant.SECRET_CONTENT);
         SystemTemDetailsModel secretReply = templateDetailsGetKeywordComponent.getUserKeywordDetail(systemUserModel, TemplateKeywordConstant.SECRET_REPLY);
-
         SystemTemDetailsModel keyContent = templateDetailsGetKeywordComponent.getUserKeywordDetail(systemUserModel, TemplateKeywordConstant.KEY_CONTENT);
         SystemTemDetailsModel preserveContent = templateDetailsGetKeywordComponent.getUserKeywordDetail(systemUserModel, TemplateKeywordConstant.PRESERVE_CONTENT);
 
@@ -63,7 +62,7 @@ public class KeyWordSettingService {
             }
         }
 
-//        SystemKeywordModel systemKeywordModel = systemKeywordService.getKeywordByUser(systemUserModel.getUsername());
+//        SystemKeywordModel systemKeywordModel = systemKeywordService.keywordByUser(systemUserModel.getUsername());
 
 
         /**

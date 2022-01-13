@@ -52,8 +52,8 @@ public class TestController {
 //    public AjaxResult addKeyword(@RequestBody SystemTemDetailsModel details){
 //
 ////        SystemTemDetailsModel details = new SystemTemDetailsModel();
-////        details.setKeyword(keyword);
-////        details.setKeywordToValue(keywordToValue);
+////        details.keyword(keyword);
+////        details.keywordToValue(keywordToValue);
 //
 //        //获取所有模板
 //        List<SystemTemplateModel> allTemplate = iSystemTemplateService.getAllTemplate();

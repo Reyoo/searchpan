@@ -4,6 +4,8 @@ package com.libbytian.pan.system.controller;
 import cn.hutool.core.lang.UUID;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.libbytian.pan.system.common.AjaxResult;
 import com.libbytian.pan.system.model.SystemNotifyModel;
 import com.libbytian.pan.system.service.ISystemNotifyService;
@@ -22,9 +24,7 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 @RequestMapping("/notify")
 @Slf4j
-
 public class FindFishNotifyController {
-
 
     private final ISystemNotifyService systemNotifyService;
 
@@ -35,13 +35,14 @@ public class FindFishNotifyController {
      */
     @RequestMapping(value = "/select", method = RequestMethod.POST)
     public AjaxResult findNotifyByPage(@RequestBody(required = false) SystemNotifyModel systemNotifyModel) {
-
+        // 下个版本 迭代出来
+//        PageHelper.startPage(systemNotifyModel.page().intValue(), systemNotifyModel.limits().intValue());
         Long page = systemNotifyModel.getPage()== null ? 1L:systemNotifyModel.getPage();
         Long limits = systemNotifyModel.getLimits() == null?10L :systemNotifyModel.getLimits();
-
         Page<SystemNotifyModel> findpage = new Page<>(page, limits);
         try {
             IPage<SystemNotifyModel> result = systemNotifyService.findConditionByPage(findpage, systemNotifyModel);
+//            PageInfo pageInfo = new PageInfo<>(list);
             return AjaxResult.success(result);
         } catch (Exception e) {
             log.error(e.getMessage());
@@ -66,7 +67,6 @@ public class FindFishNotifyController {
             log.error(e.getMessage());
             return AjaxResult.error(e.getMessage());
         }
-
     }
 
 
@@ -96,7 +96,6 @@ public class FindFishNotifyController {
      */
     @RequestMapping(value = "/update", method = RequestMethod.PATCH)
     public AjaxResult updateNotify(@RequestBody SystemNotifyModel systemNotifyModel) {
-
         try {
             systemNotifyModel.setModifyDate(LocalDateTime.now());
             systemNotifyService.updateSystemNoitfy(systemNotifyModel);

@@ -11,6 +11,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+/**
+ * @author SunQi
+ */
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class SystemTmplToDetailsServiceImpl extends ServiceImpl<SystemTemToTemDetailsMapper, SystemTemToTemdetail> implements ISystemTmplToTmplDetailsService {
