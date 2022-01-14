@@ -8,12 +8,15 @@ import com.libbytian.pan.system.service.ISystemKeywordService;
 import com.libbytian.pan.system.service.ISystemTemDetailsService;
 import com.libbytian.pan.system.service.ISystemUserSearchMovieService;
 import com.libbytian.pan.system.service.ISystemUserService;
+import com.libbytian.pan.wechat.config.WxMpConfiguration;
 import com.libbytian.pan.wechat.constant.TemplateKeywordConstant;
+import com.libbytian.pan.wechat.handler.SubscribeHandler;
 import com.libbytian.pan.wechat.service.KeyWordSettingService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import me.chanjar.weixin.mp.api.WxMpMessageRouter;
 import me.chanjar.weixin.mp.api.WxMpService;
+import me.chanjar.weixin.mp.api.WxMpSubscribeMsgService;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlMessage;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlOutMessage;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlOutTextMessage;
@@ -41,7 +44,7 @@ public class WxPortalController {
     private final WxMpMessageRouter messageRouter;
 
     //首次关注 需要开发编写新接口
-//    private final SubscribeHandler subscribeHandler;
+    private final SubscribeHandler subscribeHandler;
 
     private final ISystemTemDetailsService iSystemTemDetailsService;
     private final ISystemUserService iSystemUserService;
@@ -81,7 +84,6 @@ public class WxPortalController {
         if (StringUtils.isAnyBlank(signature, timestamp, nonce, echostr)) {
             return "非法请求";
         }
-
         try {
             String username = new String(decoder.decode(verification), "UTF-8");
 
@@ -98,12 +100,6 @@ public class WxPortalController {
             if (!p.matcher(appId).matches()){
                 return "appid格式不对,请前往公众号获取";
             }
-
-            //判断用户账号到期时间
-//            SystemUserModel userModel =iSystemUserService.getUser(systemUserModel);
-//            if ( LocalDateTime.now().isAfter(userModel.getActTime())){
-//                Thread.sleep(10000);
-//            }
 
 
         } catch (Exception e) {
@@ -235,7 +231,8 @@ public class WxPortalController {
                 }
 //                String urlSearchName = URLEncoder.encode(splitName,"UTF-8");
                 String dealName = splitName.replaceAll(" ","+");
-                stringBuffer.append("<a href =\"http://findfish.top/#/mobileView?searchname=");
+                stringBuffer.append("<a href =\"http://42.192.79.2/#/mobileView?searchname=");
+//                stringBuffer.append("<a href =\"http://findfish.top/#/mobileView?searchname=");
                 stringBuffer.append(dealName);
                 stringBuffer.append("&verification=");
                 stringBuffer.append(verification);
