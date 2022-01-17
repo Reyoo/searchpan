@@ -2,6 +2,8 @@ package com.libbytian.pan.wechat.controller;
 
 
 import cn.hutool.core.collection.CollectionUtil;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.libbytian.pan.system.common.AjaxResult;
 import com.libbytian.pan.system.mapper.SystemTemDetailsMapper;
 import com.libbytian.pan.system.model.*;
@@ -9,12 +11,10 @@ import com.libbytian.pan.system.service.*;
 import com.libbytian.pan.wechat.service.AsyncSearchCachedComponent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -157,7 +157,8 @@ public class MoviePageShowController {
      * search 三号大厅  x
      */
     @RequestMapping(path = "/movie/{search}/{fishEncryption}/{searchName}", method = RequestMethod.GET)
-    public AjaxResult getMovieList(@PathVariable String search, @PathVariable String fishEncryption, @PathVariable String searchName) {
+    public AjaxResult getMovieList(@PathVariable String search, @PathVariable String fishEncryption, @PathVariable String searchName,@RequestParam(defaultValue = "1") int pageNum,
+                                   @RequestParam(defaultValue = "5") int pageSize) {
         try {
             String username = new String(decoder.decode(fishEncryption), "UTF-8");
             SystemUserModel systemUserModel = new SystemUserModel();
@@ -168,7 +169,9 @@ public class MoviePageShowController {
                 return AjaxResult.error("该系统提供服务已过期,继续使用请 关注公众号：影子的胡言乱语 ");
             }
             log.debug("===============用户: {}正在调用web页大厅===============", username);
-            List<MovieNameAndUrlModel> movieNameAndUrlModels = new ArrayList<>();
+//            List<MovieNameAndUrlModel> movieNameAndUrlModels = new ArrayList<>();
+            Map<String, List<MovieNameAndUrlModel>> movieNameAndUrlModels = new HashMap<>();
+
             searchName = URLDecoder.decode(searchName, "UTF-8");
             log.debug(searchName);
             /**
@@ -181,6 +184,7 @@ public class MoviePageShowController {
 //            根据不同入参 给参数
             completableFuture.get();
             movieNameAndUrlModels = asyncSearchCachedService.searchWord(searchName.trim(), search);
+
             if (CollectionUtil.isEmpty(movieNameAndUrlModels)) {
                 return AjaxResult.hide("未找到该资源，请前往其他大厅查看");
             }

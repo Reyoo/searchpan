@@ -14,7 +14,10 @@ import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @ProjectName: pansearch
@@ -50,41 +53,73 @@ public class AsyncSearchCachedComponent {
      */
 
 
-    public List<MovieNameAndUrlModel> searchWord(String searchMovieText, String search) throws Exception {
+//    public List<MovieNameAndUrlModel> searchWord(String searchMovieText, String search) throws Exception {
+//
+//        switch (search) {
+//            //a 一号大厅
+//            case "a":
+//                List<MovieNameAndUrlModel> listA = new ArrayList<>();
+//                //添加 莉莉
+//                List<MovieNameAndUrlModel> movieUrl = iFindMovieInLiLi.findMovieUrl(searchMovieText);
+//                movieUrl.stream().forEach(movieNameAndUrlModel -> movieNameAndUrlModel.setMovieName(movieNameAndUrlModel.getMovieName()+movieNameAndUrlModel.getTitleName()));
+//                listA.addAll(movieUrl);
+//
+//                return listA;
+//            //u 2号大厅
+//            case "u":
+//                List<MovieNameAndUrlModel> listB = new ArrayList<>();
+//                //添加小悠
+//                List<MovieNameAndUrlModel> xiaoYouMovieUrl = iFindMovieInXiaoyou.findMovieUrl(searchMovieText);
+//                xiaoYouMovieUrl.stream().forEach(movieNameAndUrlModel -> movieNameAndUrlModel.setMovieName(movieNameAndUrlModel.getMovieName()+movieNameAndUrlModel.getTitleName()));
+//                listB.addAll(xiaoYouMovieUrl);
+//                //添加未读影单
+//                listB.addAll(iFindMovieInUnread.findMovieUrl(searchMovieText));
+//                return listB;
+//            //x 3号大厅
+//            case "x":
+//                List<MovieNameAndUrlModel> listC = new ArrayList<>();
+//                //添加悠酱
+////                listC.addAll(iFindMovieInYoujiang.findMovieUrl(searchMovieText));
+//                //爱电影
+//                listC.addAll(iFindMovieInAiDianYing.findMovieUrl(searchMovieText));
+//                //添加社区动力
+//                listC.addAll(iFindMovieInSumsu.findMovieUrl(searchMovieText));
+//                return listC;
+//            default:
+//                return new ArrayList<MovieNameAndUrlModel>();
+//        }
+
+
+
+
+   // 分组功能待联调
+    public Map<String, List<MovieNameAndUrlModel>> searchWord(String searchMovieText, String search) throws Exception {
+
         switch (search) {
-            //a 一号大厅
+            //a 一号大厅 小悠
             case "a":
-                List<MovieNameAndUrlModel> listA = new ArrayList<>();
-                //添加小悠
-                listA.addAll(iFindMovieInXiaoyou.findMovieUrl(searchMovieText));
-
-                return listA;
-            //u 2号大厅
+                Map<String, List<MovieNameAndUrlModel>> collectXiaoYou = iFindMovieInXiaoyou.findMovieUrl(searchMovieText).stream().collect(Collectors.groupingBy(MovieNameAndUrlModel::getMovieName));
+                return collectXiaoYou;
+            //u 2号大厅 莉莉
             case "u":
-                List<MovieNameAndUrlModel> listB = new ArrayList<>();
-                //添加莉莉
-                listB.addAll(iFindMovieInLiLi.findMovieUrl(searchMovieText));
-                //添加未读影单
-                listB.addAll(iFindMovieInUnread.findMovieUrl(searchMovieText));
-                //添加社区动力
-                listB.addAll(iFindMovieInSumsu.findMovieUrl(searchMovieText));
-
-                return listB;
+                Map<String, List<MovieNameAndUrlModel>> collectLiLi = iFindMovieInLiLi.findMovieUrl(searchMovieText).stream().collect(Collectors.groupingBy(MovieNameAndUrlModel::getMovieName));
+                return collectLiLi;
             //x 3号大厅
             case "x":
+                Map<String,  List<MovieNameAndUrlModel>> combineResultMap = new HashMap<>();
+                Map<String, List<MovieNameAndUrlModel>> collectUnread = iFindMovieInUnread.findMovieUrl(searchMovieText).stream().collect(Collectors.groupingBy(MovieNameAndUrlModel::getMovieName));
+                Map<String, List<MovieNameAndUrlModel>> collectAiDianYing = iFindMovieInAiDianYing.findMovieUrl(searchMovieText).stream().collect(Collectors.groupingBy(MovieNameAndUrlModel::getMovieName));
 
-            List<MovieNameAndUrlModel> listC = new ArrayList<>();
-
-            //添加悠酱
-                listC.addAll(iFindMovieInYoujiang.findMovieUrl(searchMovieText));
-            //爱电影
-                listC.addAll(iFindMovieInAiDianYing.findMovieUrl(searchMovieText));
-
-            return listC;
-
+                //添加未读影单
+                combineResultMap.putAll(collectUnread);
+                //添加爱电影
+                combineResultMap.putAll(collectAiDianYing);
+            return combineResultMap;
             default:
-                return new ArrayList<MovieNameAndUrlModel>();
+                return new HashMap<>();
+
         }
+
 
 
         /**

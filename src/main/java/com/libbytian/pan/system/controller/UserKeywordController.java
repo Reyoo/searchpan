@@ -4,7 +4,6 @@ package com.libbytian.pan.system.controller;
 import cn.hutool.core.util.StrUtil;
 import com.libbytian.pan.system.common.AjaxResult;
 import com.libbytian.pan.system.model.SystemKeywordModel;
-import com.libbytian.pan.system.model.SystemUserModel;
 import com.libbytian.pan.system.service.ISystemKeywordService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

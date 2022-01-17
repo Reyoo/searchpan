@@ -259,6 +259,13 @@
             <artifactId>spring-boot-starter-cache</artifactId>
         </dependency>
 
+<!--        &lt;!&ndash;分页 &ndash;&gt;-->
+<!--        <dependency>-->
+<!--            <groupId>com.github.pagehelper</groupId>-->
+<!--            <artifactId>pagehelper-spring-boot-starter</artifactId>-->
+<!--            <version>1.2.5</version>-->
+<!--        </dependency>-->
+
         <!-- https://mvnrepository.com/artifact/com.alibaba.cloud/spring-cloud-starter-alibaba-sentinel -->
 <!--        <dependency>
             <groupId>com.alibaba.cloud</groupId>

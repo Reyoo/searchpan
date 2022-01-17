@@ -4,9 +4,6 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.*;
-import lombok.experimental.Accessors;
-
-import java.io.Serializable;
 
 /**
  * @ProjectName: pan
@@ -37,6 +34,10 @@ public class MovieNameAndUrlModel extends Model<MovieNameAndUrlModel> {
     String wangPanUrl;
     @TableField("wangpan_passwd")
     String wangPanPassword;
+    @TableField("title_name")
+    String titleName;
+    @TableField("pan_source")
+    String panSource;
 
 
 }

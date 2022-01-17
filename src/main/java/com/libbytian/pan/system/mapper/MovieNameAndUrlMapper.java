@@ -2,6 +2,7 @@ package com.libbytian.pan.system.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.libbytian.pan.system.model.MovieNameAndUrlModel;
+import org.apache.ibatis.annotations.MapKey;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;

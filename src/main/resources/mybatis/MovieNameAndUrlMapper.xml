@@ -9,7 +9,9 @@
         AS id,
             movie_name AS movieName,
             wangpan_url AS wangPanUrl,
-            wangpan_passwd AS wangPanPassword
+            wangpan_passwd AS wangPanPassword,
+            title_name As titleName,
+            pan_source As panSource
     </sql>
 
 
