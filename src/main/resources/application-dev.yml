@@ -116,4 +116,13 @@ wx:
 #        secret: 1111
 #        token: 111
 #        aesKey: 111
+http://51:
+  findfish:
+    top/wechat/portal/:
 
+
+
+findfish:
+  config:
+#    wechatFace: http://51.findfish.top/wechat/portal/
+    wechatFace: http://42.192.79.2/wechat/portal/

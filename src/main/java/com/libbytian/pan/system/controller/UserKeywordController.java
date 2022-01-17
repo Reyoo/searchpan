@@ -8,6 +8,7 @@ import com.libbytian.pan.system.service.ISystemKeywordService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -27,6 +28,8 @@ public class UserKeywordController {
 
     private final ISystemKeywordService iSystemKeywordService;
 
+    @Value("${findfish.config.wechatFace}")
+    String findfishWechatUrl;
 
     @RequestMapping(value = "/list/{username}", method = RequestMethod.GET)
     public AjaxResult getUserKeywordByUser(@PathVariable String username) {
@@ -45,10 +48,10 @@ public class UserKeywordController {
         String userSafeKey = null;
         try {
             if (StrUtil.isEmpty(systemKeywordModel.getAppId())) {
-                userSafeKey = "http://51.findfish.top/wechat/portal/" + Base64.getEncoder().encodeToString(httpRequest.getRemoteUser().getBytes()) + "/" + "请填写appID";
+                userSafeKey = findfishWechatUrl + Base64.getEncoder().encodeToString(httpRequest.getRemoteUser().getBytes()) + "/" + "请填写appID";
                 systemKeywordModel.setUserSafeKey(userSafeKey);
             }else{
-                userSafeKey = "http://51.findfish.top/wechat/portal/" + Base64.getEncoder().encodeToString(httpRequest.getRemoteUser().getBytes()) + "/" + systemKeywordModel.getAppId();
+                userSafeKey = findfishWechatUrl + Base64.getEncoder().encodeToString(httpRequest.getRemoteUser().getBytes()) + "/" + systemKeywordModel.getAppId();
                 systemKeywordModel.setUserSafeKey(userSafeKey);
             }
             iSystemKeywordService.updateKeyword(systemKeywordModel);

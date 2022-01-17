@@ -16,7 +16,7 @@
 
     <properties>
         <java.version>1.8</java.version>
-        <weixin-java-mp.version>3.9.0</weixin-java-mp.version>
+        <weixin-java-mp.version>4.2.0</weixin-java-mp.version>
         <spring-security-jwt.version>1.0.10.RELEASE</spring-security-jwt.version>
         <jjwt.version>0.9.1</jjwt.version>
         <fastjson.version>1.2.79</fastjson.version>

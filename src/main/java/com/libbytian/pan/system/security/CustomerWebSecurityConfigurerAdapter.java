@@ -24,6 +24,8 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 
 /**
@@ -79,19 +81,19 @@ public class CustomerWebSecurityConfigurerAdapter extends WebSecurityConfigurerA
     @Bean
     public CorsFilter corsFilter() {
         final UrlBasedCorsConfigurationSource urlBasedCorsConfigurationSource = new UrlBasedCorsConfigurationSource();
-        final CorsConfiguration corsConfiguration = new CorsConfiguration();
-        corsConfiguration.setAllowCredentials(true);
-        corsConfiguration.addAllowedOriginPattern("*");
-        corsConfiguration.addAllowedHeader("*");
-        corsConfiguration.addAllowedMethod("*");
-        ArrayList<String> arrayList = new ArrayList<>();
-        arrayList.add("GET");
-        arrayList.add("HEAD");
-        arrayList.add("POST");
-        arrayList.add("DELETE");
-        arrayList.add("OPTIONS");
-        corsConfiguration.setAllowedMethods(arrayList);
-        urlBasedCorsConfigurationSource.registerCorsConfiguration("/**", corsConfiguration);
+        final CorsConfiguration corsConfig = new CorsConfiguration();
+        List<String> allowedHeaders = Arrays.asList("x-auth-token", "content-type", "X-Requested-With", "XMLHttpRequest","Access-Control-Allow-Origin","Authorization","authorization");
+        List<String> exposedHeaders = Arrays.asList("x-auth-token", "content-type", "X-Requested-With", "XMLHttpRequest","Access-Control-Allow-Origin","Authorization","authorization");
+        List<String> allowedMethods = Arrays.asList("POST", "GET", "DELETE", "PUT", "OPTIONS");
+        List<String> allowedOrigins = Arrays.asList("*");
+        corsConfig.setAllowedHeaders(allowedHeaders);
+        corsConfig.setAllowedMethods(allowedMethods);
+        corsConfig.setAllowedOrigins(allowedOrigins);
+        corsConfig.setExposedHeaders(exposedHeaders);
+        corsConfig.setMaxAge(36000L);
+        corsConfig.setAllowCredentials(true);
+
+        urlBasedCorsConfigurationSource.registerCorsConfiguration("/**", corsConfig);
         return new CorsFilter(urlBasedCorsConfigurationSource);
     }
 

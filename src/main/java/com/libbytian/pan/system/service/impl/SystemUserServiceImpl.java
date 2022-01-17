@@ -14,6 +14,7 @@ import com.libbytian.pan.system.service.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -69,6 +70,8 @@ public class SystemUserServiceImpl extends ServiceImpl<SystemUserMapper, SystemU
 
     private final SystemUserToKeywordMapper systemUserToKeywordMapper;
 
+    @Value("${findfish.config.wechatFace}")
+    String findfishWechatUrl;
 
     @Override
     public Boolean checkUserCouldDel(SystemUserModel user) throws Exception {
@@ -147,7 +150,7 @@ public class SystemUserServiceImpl extends ServiceImpl<SystemUserMapper, SystemU
             }
 
             SystemKeywordModel systemKeywordModel = new SystemKeywordModel();
-            systemKeywordModel.setUserSafeKey("http://51.findfish.top/wechat/portal/" + Base64.getEncoder().encodeToString(user.getUsername().getBytes()) + "/" + appId);
+            systemKeywordModel.setUserSafeKey(findfishWechatUrl + Base64.getEncoder().encodeToString(user.getUsername().getBytes()) + "/" + appId);
             systemKeywordModel.setKeywordId(templateId);
             //00:00-00：00 默认全天开
             systemKeywordModel.setStartTime("00:00");
