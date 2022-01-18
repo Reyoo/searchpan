@@ -111,7 +111,7 @@ wx:
 
 findfish:
   config:
-    #    wechatFace: http://51.findfish.top/wechat/portal/
-    wechatFace: http://42.192.79.2/wechat/portal/
+    wechatFace: http://51.findfish.top/wechat/portal/
+#    wechatFace: http://42.192.79.2/wechat/portal/
 
 
