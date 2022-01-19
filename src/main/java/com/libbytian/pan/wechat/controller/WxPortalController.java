@@ -231,8 +231,8 @@ public class WxPortalController {
                 }
 //                String urlSearchName = URLEncoder.encode(splitName,"UTF-8");
                 String dealName = splitName.replaceAll(" ","+");
-                stringBuffer.append("<a href =\"http://42.192.79.2/#/mobileView?searchname=");
-//                stringBuffer.append("<a href =\"http://findfish.top/#/mobileView?searchname=");
+//                stringBuffer.append("<a href =\"http://42.192.79.2/#/mobileView?searchname=");
+                stringBuffer.append("<a href =\"http://findfish.top/#/mobileView?searchname=");
                 stringBuffer.append(dealName);
                 stringBuffer.append("&verification=");
                 stringBuffer.append(verification);
