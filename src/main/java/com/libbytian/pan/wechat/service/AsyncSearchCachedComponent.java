@@ -55,18 +55,18 @@ public class AsyncSearchCachedComponent {
         switch (search) {
             //a 一号大厅 小悠
             case "a":
-                Map<String, List<MovieNameAndUrlModel>> collectXiaoYou = iFindMovieInXiaoyou.findMovieUrl(searchMovieText).stream().collect(Collectors.groupingBy(MovieNameAndUrlModel::getMovieName));
-                return collectXiaoYou;
-            //u 2号大厅 莉莉
-            case "u":
                 Map<String, List<MovieNameAndUrlModel>> collectLiLi = iFindMovieInLiLi.findMovieUrl(searchMovieText).stream().collect(Collectors.groupingBy(MovieNameAndUrlModel::getMovieName));
                 return collectLiLi;
+            //u 二号大厅 莉莉
+            case "u":
+                Map<String, List<MovieNameAndUrlModel>> collectXiaoYou = iFindMovieInXiaoyou.findMovieUrl(searchMovieText).stream().collect(Collectors.groupingBy(MovieNameAndUrlModel::getMovieName));
+                return collectXiaoYou;
+
             //x 3号大厅
             case "x":
                 Map<String,  List<MovieNameAndUrlModel>> combineResultMap = new HashMap<>();
                 Map<String, List<MovieNameAndUrlModel>> collectUnread = iFindMovieInUnread.findMovieUrl(searchMovieText).stream().collect(Collectors.groupingBy(MovieNameAndUrlModel::getMovieName));
                 Map<String, List<MovieNameAndUrlModel>> collectAiDianYing = iFindMovieInAiDianYing.findMovieUrl(searchMovieText).stream().collect(Collectors.groupingBy(MovieNameAndUrlModel::getMovieName));
-
                 //添加未读影单
                 combineResultMap.putAll(collectUnread);
                 //添加爱电影
@@ -76,7 +76,6 @@ public class AsyncSearchCachedComponent {
                 return new HashMap<>();
 
         }
-
 
 
         /**
