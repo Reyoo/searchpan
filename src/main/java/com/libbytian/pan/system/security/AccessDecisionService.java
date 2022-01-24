@@ -39,49 +39,34 @@ public class AccessDecisionService {
     public boolean hasPermission(HttpServletRequest request, Authentication auth) {
 
         List<String> whiteList = new ArrayList();
-        /**
-         * 注册接口放过
-         */
+        /** 注册接口放过*/
         whiteList.add("/login/register");
-        /**
-         * 微信通用接口
-         */
+        /** 微信通用接口 */
         whiteList.add("/wechat/portal/**");
-
-        /**
-         * 验证码接口放过
-         */
+        /** 验证码接口放过 */
         whiteList.add("/captcha/captchaImage");
 //        whiteList.add("/userkey/**");
-
         whiteList.add("/fantasy/**");
-
-
         for (String url : whiteList) {
             if (antPathMatcher.match(url, request.getRequestURI())) {
                 return true;
             }
         }
-
         if (auth instanceof AnonymousAuthenticationToken) {
             return false;
         }
-
         String username =  (String)auth.getPrincipal();
         SystemUserModel userModel = new SystemUserModel();
         userModel.setUsername(username.trim());
-
         List<String> urls = queryUrlByUser(userModel);
         for (String url : urls) {
             if (antPathMatcher.match(url, request.getRequestURI())) {
                 return true;
             }
         }
-
 //        if (auth instanceof AnonymousAuthenticationToken) {
 //            return false;
 //        }
-
         return false;
     }
 

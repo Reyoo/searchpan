@@ -1,5 +1,6 @@
 package com.libbytian.pan.system.security.filter;
 
+import cn.hutool.core.util.StrUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.libbytian.pan.system.common.AjaxResult;
 import com.libbytian.pan.system.exception.ImageCodeException;
@@ -109,7 +110,7 @@ public class ValidateCodeFilter extends OncePerRequestFilter implements Initiali
         /*获取图片验证码与redis验证*/
         String imageCode = httpServletRequest.getParameter("imageCode");
         /*redis的验证码不能为空*/
-        if (StringUtils.isEmpty(redisImageCode) || StringUtils.isEmpty(imageCode)) {
+        if (StrUtil.isEmpty(redisImageCode) || StrUtil.isEmpty(imageCode)) {
             log.error("验证码不能为空");
             throw new ImageCodeException("验证码不能为空");
         }

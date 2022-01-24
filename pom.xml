@@ -11,7 +11,7 @@
     <groupId>com.libbytian</groupId>
     <artifactId>findfish</artifactId>
     <version>v1.0</version>
-    <name>findfish</name>
+    <name>findfish-face</name>
     <description>findfish-home</description>
 
     <properties>

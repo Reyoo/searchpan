@@ -40,7 +40,6 @@ public class TemDetailsController {
     private final ISystemTmplToTmplDetailsService systemTmplToTmplDetailsService;
 
 
-
     /**
      * 根据模板ID查询模板详情
      *
@@ -53,7 +52,6 @@ public class TemDetailsController {
     @RequestMapping(value = "/getTempWithId", method = RequestMethod.GET)
     public AjaxResult findTemDetails(@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int limit, @RequestParam String templateId) {
         LocalDateTime begin = LocalDateTime.now();
-
         Page<SystemTemDetailsModel> findpage = new Page<>(page, limit);
         try {
             IPage<SystemTemDetailsModel> result = iSystemTemDetailsService.findTemDetailsPage(findpage, templateId);
@@ -72,21 +70,19 @@ public class TemDetailsController {
      * 必传字段 templateid
      * 未分页
      * 是否会有分页bug ?  Qi
+     *
      * @param systemTemDetailsModel
      * @return
      */
     @RequestMapping(value = "listTemDetailsObjectsByWord", method = RequestMethod.POST)
     public AjaxResult listTemDetailsObjectsByWord(@RequestBody SystemTemDetailsModel systemTemDetailsModel) {
-
         try {
             List<SystemTemDetailsModel> result = iSystemTemDetailsService.listTemDetailsObjectsByWord(systemTemDetailsModel);
-
             if (result.size() > 0) {
                 return AjaxResult.success(result);
             } else {
                 return AjaxResult.error("未搜索到该内容");
             }
-
         } catch (Exception e) {
             e.printStackTrace();
             log.error(e.getMessage());
@@ -102,21 +98,15 @@ public class TemDetailsController {
      * @return
      */
     @RequestMapping(value = "/add", method = RequestMethod.POST)
-    public AjaxResult addTemDetails(@RequestBody SystemTemDetailsModel systemTemDetailsModel,HttpServletRequest httpRequest) {
-
+    public AjaxResult addTemDetails(@RequestBody SystemTemDetailsModel systemTemDetailsModel, HttpServletRequest httpRequest) {
         try {
-
             if (iSystemSensitiveWordService.isContaintSensitiveWord(systemTemDetailsModel)) {
-
                 return AjaxResult.error("包含敏感词请重新填写");
             }
-
             //对前端标签进行转义处理
             systemTemDetailsModel.setKeywordToValue(HtmlUtils.htmlUnescape(systemTemDetailsModel.getKeywordToValue()));
-
-            iSystemTemDetailsService.addTemDetails(systemTemDetailsModel, systemTemDetailsModel.getTemplateId(),httpRequest.getRemoteUser());
+            iSystemTemDetailsService.addTemDetails(systemTemDetailsModel, systemTemDetailsModel.getTemplateId(), httpRequest.getRemoteUser());
             return AjaxResult.success("添加成功");
-
         } catch (Exception e) {
             log.error(e.getMessage());
             return AjaxResult.error(e.getMessage());
@@ -130,30 +120,22 @@ public class TemDetailsController {
      * @return
      */
     @RequestMapping(value = "/updateTemDetails", method = RequestMethod.PATCH)
-    public AjaxResult updateTemDetails(@RequestBody SystemTemDetailsModel systemTemDetailsModel,HttpServletRequest httpRequest) {
-
+    public AjaxResult updateTemDetails(@RequestBody SystemTemDetailsModel systemTemDetailsModel, HttpServletRequest httpRequest) {
         try {
             if (StrUtil.isBlank(systemTemDetailsModel.getTemdetailsId())) {
                 return AjaxResult.error("模板ID不能为空");
             }
             //修改时，对前端标签进行转义处理
-            if(StringUtils.isNotBlank(systemTemDetailsModel.getKeywordToValue())){
-
+            if (StringUtils.isNotBlank(systemTemDetailsModel.getKeywordToValue())) {
                 systemTemDetailsModel.setKeywordToValue((HtmlUtils.htmlUnescape(systemTemDetailsModel.getKeywordToValue())));
             }
-
-            iSystemTemDetailsService.updateTempDetailsWithModel(systemTemDetailsModel,httpRequest.getRemoteUser());
-
-
+            iSystemTemDetailsService.updateTempDetailsWithModel(systemTemDetailsModel, httpRequest.getRemoteUser());
             return AjaxResult.success();
-
         } catch (Exception e) {
             log.error(e.getMessage());
             return AjaxResult.error(e.getMessage());
         }
     }
-
-
 
 
     /**
@@ -163,12 +145,11 @@ public class TemDetailsController {
      * @return
      */
     @RequestMapping(value = "/removeTemDetails", method = RequestMethod.DELETE)
-    public AjaxResult deleteTemDetails(@RequestBody List<String> temdetailsId,HttpServletRequest httpRequest) {
+    public AjaxResult deleteTemDetails(@RequestBody List<String> temdetailsId, HttpServletRequest httpRequest) {
         try {
-            if (iSystemTemDetailsService.deleteTemplateDetails(temdetailsId,httpRequest.getRemoteUser()) > 0) {
+            if (iSystemTemDetailsService.deleteTemplateDetails(temdetailsId, httpRequest.getRemoteUser()) > 0) {
                 //删除关联表   tem_temdetails
                 systemTmplToTmplDetailsService.dropTemplateAndDetails(temdetailsId);
-
                 return AjaxResult.success("删除成功");
             } else {
                 return AjaxResult.error("该字段为系统保留字段，不允许删除");
@@ -188,20 +169,17 @@ public class TemDetailsController {
      * @return
      */
     @RequestMapping(value = "/excelimport", method = RequestMethod.POST)
-    public AjaxResult addTemDetails(@RequestParam("file") MultipartFile multipartFile, @RequestParam String templateId,HttpServletRequest httpRequest) {
+    public AjaxResult addTemDetails(@RequestParam("file") MultipartFile multipartFile, @RequestParam String templateId, HttpServletRequest httpRequest) {
 
         //判断当前是否存在模板，如果没有模板不允许导入    HuangS
         if (StringUtils.isBlank(templateId)) {
             return AjaxResult.error("导入文件失败,请先创建模板!!!");
         }
-
         if (multipartFile.isEmpty()) {
             return AjaxResult.error("上传失败，请选择文件!!!");
         }
-
         try {
-
-            iSystemTemDetailsService.exportExceltoDb(multipartFile.getOriginalFilename(), multipartFile.getInputStream(), templateId,httpRequest.getRemoteUser());
+            iSystemTemDetailsService.exportExceltoDb(multipartFile.getOriginalFilename(), multipartFile.getInputStream(), templateId, httpRequest.getRemoteUser());
             return AjaxResult.success();
         } catch (Exception e) {
             log.error(e.getMessage());
@@ -259,8 +237,6 @@ public class TemDetailsController {
             return AjaxResult.error("无效URL");
         }
     }
-
-
 
 
 }

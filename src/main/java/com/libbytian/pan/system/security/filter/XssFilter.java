@@ -19,13 +19,13 @@ import java.util.List;
 import java.util.Map;
 
 @Slf4j
-@WebFilter(filterName="xssFilter", urlPatterns="/*")
+@WebFilter(filterName = "xssFilter", urlPatterns = "/*")
 @SuppressWarnings("unchecked")
 public class XssFilter implements Filter {
 
     // endsWith(exclude),放行静态资源
     public List<String> excludes = Arrays.asList(
-            "/login", "/logout","/wechat", ".html", ".js", ".gif", ".jpg", ".png", ".css",
+            "/login", "/logout", "/wechat", ".html", ".js", ".gif", ".jpg", ".png", ".css",
             ".ico", ".woff2", ".woff", ".tt", ".ttf");
 
     @Override
@@ -46,12 +46,12 @@ public class XssFilter implements Filter {
         }
 
         String path = request.getServletPath();
-        if(path == null){
+        if (path == null) {
             return false;
         }
 
         return excludes.stream()
-                .anyMatch(method->path.endsWith(method)
+                .anyMatch(method -> path.endsWith(method)
                         || path.matches(method));
     }
 
@@ -76,8 +76,9 @@ public class XssFilter implements Filter {
         @Override
         public String getParameter(String name) {
             String[] results = parameterMap.get(name);
-            if (results == null || results.length <= 0) { return null; }
-            else {
+            if (results == null || results.length <= 0) {
+                return null;
+            } else {
                 String value = results[0];
                 if (value != null) {
                     value = FindFishStringUtil.cleanXSS(value);
@@ -107,12 +108,10 @@ public class XssFilter implements Filter {
 
         @Override
         public ServletInputStream getInputStream() throws IOException {
-            if (super.getContentType().contains("application/json"))
-            {
+            if (super.getContentType().contains("application/json")) {
                 String string = getRequestBody(super.getInputStream());
                 Object parameterObj = JSON.parse(string);
-                if (parameterObj instanceof JSONObject)
-                {
+                if (parameterObj instanceof JSONObject) {
                     Map<String, Object> map = JSON.parseObject(string, Map.class);
                     Map<String, Object> resultMap = new HashMap<>(map.size());
                     for (String key : map.keySet()) {
@@ -124,7 +123,7 @@ public class XssFilter implements Filter {
                         }
                     }
                     string = JSON.toJSONString(resultMap);
-                }else {
+                } else {
                     string = FindFishStringUtil.cleanXSS(string);
                 }
 
@@ -149,7 +148,7 @@ public class XssFilter implements Filter {
                     public void setReadListener(ReadListener listener) {
                     }
                 };
-            }else {
+            } else {
                 return super.getInputStream();
             }
         }
@@ -158,7 +157,6 @@ public class XssFilter implements Filter {
             String line = null;
             StringBuilder body = new StringBuilder();
             BufferedReader reader = new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8));
-
             try {
                 while ((line = reader.readLine()) != null) {
                     body.append(line);

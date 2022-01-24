@@ -54,6 +54,7 @@ public class WxPortalController {
     private final TemplateDetailsGetKeywordComponent templateDetailsGetKeywordComponent;
     private final ISystemKeywordService systemKeywordService;
 
+//    private final WxMpConfiguration wxMpConfiguration;
 
 
     final Base64.Decoder decoder = Base64.getDecoder();
@@ -135,6 +136,9 @@ public class WxPortalController {
         log.info("\n接收微信请求：[openid=[{}], [signature=[{}], encType=[{}], msgSignature=[{}],"
                         + " timestamp=[{}], nonce=[{}], requestBody=[\n{}\n] ",
                 openid, signature, encType, msgSignature, timestamp, nonce, requestBody);
+
+
+//        wxMpConfiguration.messageRouter(wxService);
         //解析传入的username,拿到user,查询对应模板
         String username = new String(decoder.decode(verification), "UTF-8");
         System.out.println("===========================================appId： "+appId+"============================================");

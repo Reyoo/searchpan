@@ -1,5 +1,5 @@
 server:
-  port: 8083
+  port: 8849
 
 ##Actuator的端点配置，详细了解请点击文上方Actuator连接
 #management:
@@ -116,11 +116,6 @@ wx:
 #        secret: 1111
 #        token: 111
 #        aesKey: 111
-http://51:
-  findfish:
-    top/wechat/portal/:
-
-
 
 findfish:
   config:
