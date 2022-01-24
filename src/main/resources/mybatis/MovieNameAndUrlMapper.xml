@@ -21,7 +21,7 @@
         <include refid="Base_Column_List"/>
         FROM  ${tablename}
         WHERE movie_name like  ${"'%"+movieName+"%'"}
-        order by id DESC limit 15
+        order by id DESC limit 20
 
     </select>
 
