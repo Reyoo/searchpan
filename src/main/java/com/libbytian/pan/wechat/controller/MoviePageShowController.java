@@ -66,37 +66,26 @@ public class MoviePageShowController {
 
             List<SystemTemDetailsModel> systemdetails = iSystemTemDetailsService.getTemDetailsWithUser(systemUserModel);
             Map map = new HashMap();
-
-
             //返回Map初始化
             Map keynullMap = new HashMap();
             keynullMap.put("keywordToValue", "");
-
             map.put("head", keynullMap);
             map.put("foot", keynullMap);
             map.put("searchBox", keynullMap);
-
-            //遍历
-            for (SystemTemDetailsModel systemTemDetailsModel : systemdetails) {
+            systemdetails.parallelStream().forEach( systemTemDetailsModel ->{
                 if (systemTemDetailsModel.getKeyword().equals("头部提示web") && systemTemDetailsModel.getEnableFlag()) {
                     systemTemDetailsModel.setKeyword("0");
                     map.put("head", systemTemDetailsModel);
-                    continue;
                 }
-
                 if (systemTemDetailsModel.getKeyword().equals("底部提示web") && systemTemDetailsModel.getEnableFlag()) {
                     systemTemDetailsModel.setKeyword("1");
                     map.put("foot", systemTemDetailsModel);
-                    continue;
                 }
-
                 if (systemTemDetailsModel.getKeyword().equals("web页搜索框") && systemTemDetailsModel.getEnableFlag()) {
                     systemTemDetailsModel.setKeyword("2");
                     map.put("searchBox", systemTemDetailsModel);
-                    continue;
                 }
-            }
-
+            });
             return AjaxResult.success(map);
         } catch (Exception e) {
             e.printStackTrace();
@@ -118,23 +107,15 @@ public class MoviePageShowController {
             String username = new String(decoder.decode(fishEncryption), "UTF-8");
             SystemUserModel systemUserModel = new SystemUserModel();
             systemUserModel.setUsername(username);
-
             List<SystemTemDetailsModel> systemdetails = iSystemTemDetailsService.getTemDetailsWithUser(systemUserModel);
-
             searchName.replace("+", "");
-
             List<SystemTemDetailsModel> memberList = systemdetails.stream().
                     filter(systemTemdetailsModel -> systemTemdetailsModel.getKeyword().contains(searchName) && systemTemdetailsModel.getShowOrder() == 0).collect(Collectors.toList());
-
-
             long endTime = System.currentTimeMillis(); //获取结束时间
             System.out.println("=====接口调用时间：" + (endTime - startTime) + "ms==============");
-
             //获取接口最新调用时间
             systemUserModel.setCallTime(LocalDateTime.now());
             iSystemUserService.updateUser(systemUserModel);
-
-
             if (memberList.size() > 0) {
                 return AjaxResult.success(memberList);
             } else {
@@ -145,7 +126,6 @@ public class MoviePageShowController {
             return AjaxResult.hide();
         }
     }
-
 
     /**
      * @param fishEncryption
@@ -171,7 +151,6 @@ public class MoviePageShowController {
             log.debug("===============用户: {}正在调用web页大厅===============", username);
 //            List<MovieNameAndUrlModel> movieNameAndUrlModels = new ArrayList<>();
             Map<String, List<MovieNameAndUrlModel>> movieNameAndUrlModels = new HashMap<>();
-
             searchName = URLDecoder.decode(searchName, "UTF-8");
             log.debug(searchName);
             /**
@@ -184,8 +163,7 @@ public class MoviePageShowController {
 //            根据不同入参 给参数
             completableFuture.get();
             movieNameAndUrlModels = asyncSearchCachedService.searchWord(searchName.trim(), search);
-
-            if (CollectionUtil.isEmpty(movieNameAndUrlModels)) {
+            if (movieNameAndUrlModels == null) {
                 return AjaxResult.hide("未找到该资源，请前往其他大厅查看");
             }
             return AjaxResult.success(movieNameAndUrlModels);

@@ -28,12 +28,8 @@ import java.util.Date;
 @Slf4j
 public class KeyWordSettingService {
 
-    private final ISystemTemDetailsService iSystemTemDetailsService;
-    private final ISystemKeywordService systemKeywordService;
     private final TemplateDetailsGetKeywordComponent templateDetailsGetKeywordComponent;
-
     public StringBuffer getTemplateKeyWord(SystemUserModel systemUserModel, String splitName,String searchName , StringBuffer stringBuffer,SystemKeywordModel systemKeywordModel) throws Exception  {
-
         SystemTemDetailsModel secretContent = templateDetailsGetKeywordComponent.getUserKeywordDetail(systemUserModel, TemplateKeywordConstant.SECRET_CONTENT);
         SystemTemDetailsModel secretReply = templateDetailsGetKeywordComponent.getUserKeywordDetail(systemUserModel, TemplateKeywordConstant.SECRET_REPLY);
         SystemTemDetailsModel keyContent = templateDetailsGetKeywordComponent.getUserKeywordDetail(systemUserModel, TemplateKeywordConstant.KEY_CONTENT);
@@ -47,7 +43,6 @@ public class KeyWordSettingService {
         if (secretContent.getEnableFlag()) {
             //隐藏的片名以空格分隔，获取隐藏片名的数组
             String[] str = secretContent.getKeywordToValue().split(" ");
-
             for (String s : str) {
                 //判断传入的 片名 是否在隐藏资源中
                 if (s.equals(splitName)) {
@@ -99,16 +94,10 @@ public class KeyWordSettingService {
             if (beginTime.after(endTime)) {
                 endTime.add(Calendar.DATE, 1);
             }
-
-
-
             //如果当前时间在维护期内，返回维护内容,开始=结束 全天维护
             if (nowTime.after(beginTime) && nowTime.before(endTime) || userStart.equals(endTime)) {
-
-
                 //维护期内判断秘钥功能
                 if (!searchName.contains(fansKey) && ! fansKey.equals("000000") ) {
-
                     if (keyContent.getEnableFlag()) {
                         stringBuffer.setLength(0);
                         stringBuffer.append(keyContent.getKeywordToValue());
@@ -123,7 +112,6 @@ public class KeyWordSettingService {
                 }
                 //判断段维护期内 没开秘钥情况
                 if (fansKey.equals("000000")){
-
                     if (preserveContent.getEnableFlag()){
                         stringBuffer.setLength(0);
                         stringBuffer.append(preserveContent.getKeywordToValue());
@@ -131,7 +119,6 @@ public class KeyWordSettingService {
                         Thread.sleep(5000);
                     }
                 }
-
             }
         }
         return stringBuffer;

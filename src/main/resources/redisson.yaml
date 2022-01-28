@@ -18,7 +18,7 @@ singleServerConfig:
   # 客户端名称
   clientName: axin
   #  # 节点地址
-  address: redis://121.36.6.92:36379
+  address: redis://42.192.79.2:36379
   # 发布和订阅连接的最小空闲连接数
   subscriptionConnectionMinimumIdleSize: 1
   # 发布和订阅连接池大小
@@ -28,7 +28,7 @@ singleServerConfig:
   # 连接池大小
   connectionPoolSize: 64
   # 数据库编号
-  database: 0
+  database: 1
   # DNS监测时间间隔，单位：毫秒
   dnsMonitoringInterval: 5000
 # 线程池数量,默认值: 当前处理核数量 * 2

@@ -1,5 +1,5 @@
 server:
-  port: 8849
+  port: 80
 
 ##Actuator的端点配置，详细了解请点击文上方Actuator连接
 #management:
@@ -23,11 +23,11 @@ spring:
   # 配置数据源
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://121.36.6.92:33306/findfish?useUnicode=true&characterEncoding=utf-8&serverTimezone=Hongkong
+    url: jdbc:mysql://101.43.155.108:33306/findfishdeploy?useUnicode=true&characterEncoding=utf-8&serverTimezone=Hongkong
     username: root
     password: libbytian123QWE
 
-#    url: jdbc:mysql://114.116.229.225:33306/findfish?useUnicode=true&characterEncoding=utf-8&serverTimezone=Hongkong
+#    url: jdbc:mysql://114.116.229.225:33306/findfishdeploy?useUnicode=true&characterEncoding=utf-8&serverTimezone=Hongkong
 #    username: root
 #    password: libbytian123QWE!@#
 
@@ -108,8 +108,8 @@ pagehelper:
 wx:
   mp:
     configs:
-      - appId: 11111
-        secret: 1111
+      - appId: wx9d9ce20752ffc38b
+        secret: 1c34fd3c4413b3acdb819b1c05c88b9c
         token: 1111 # 接口配置里的Token值
         aesKey: 1111 # 接口配置里的EncodingAESKey值
 #      - appId: 2222 # 第二个公众号的appid，以下同上
@@ -119,6 +119,6 @@ wx:
 
 findfish:
   config:
-#    wechatFace: http://51.findfish.top/wechat/portal/
+    wechatFace: http://51.findfish.top/wechat/portal/
 #    wechatFace: http://42.192.79.2/wechat/portal/
-     wechatFace: http://localhost:8083/wechat/portal/
+#     wechatFace: http://localhost:8083/wechat/portal/

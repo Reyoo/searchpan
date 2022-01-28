@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.libbytian.pan.system.mapper.SystemWxUserConfigServiceMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.libbytian.pan.system.model.SystemWxUserConfigModel">
+        <id column="user_id" property="userId" />
+        <result column="user_name" property="username" />
+        <result column="wx_appId" property="wxAppId" />
+        <result column="wx_secret" property="wxSecret" />
+        <result column="wx_token" property="wxToken" />
+        <result column="wx_aesKey" property="wxAesKey" />
+        <result column="wx_id" property="wxId" />
+        <result column="user_safe_key" property="userSafeKey" />
+        <result column="record_time" property="recordTime" />
+    </resultMap>
+
+</mapper>

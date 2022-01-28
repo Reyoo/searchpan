@@ -36,7 +36,7 @@ import java.util.Map;
  */
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-@Transactional
+@Transactional(rollbackFor = Exception.class)
 @Slf4j
 public class SystemUserServiceImpl extends ServiceImpl<SystemUserMapper, SystemUserModel> implements ISystemUserService {
 
@@ -46,29 +46,18 @@ public class SystemUserServiceImpl extends ServiceImpl<SystemUserMapper, SystemU
     private final SystemUserMapper systemUserMapper;
     private final SystemTemplateMapper systemTemplateMapper;
     private final SystemTemToTemDetailsMapper systemTemToTemDetailsMapper;
-
     private final SystemUserToTemplateMapper systemUserToTemplateMapper;
-
     private final SystemKeywordMapper systemKeywordMapper;
-
-
     private final ISystemRoleService systemRoleService;
-
-
     private final SystemUserToRoleMapper userToRoleMapper;
-
-
     private final ISystemUserToTemplateService userToTemplateService;
-
     private final ISystemTemplateService systemTemplateService;
-
     private final ISystemTemDetailsService systemTemDetailsService;
-
     private final SystemTemDetailsMapper systemTemDetailsMapper;
-
     private final ISystemKeywordService keywordService;
-
     private final SystemUserToKeywordMapper systemUserToKeywordMapper;
+    private final ISystemWxUserConfigService systemWxUserConfigService;
+
 
     @Value("${findfish.config.wechatFace}")
     String findfishWechatUrl;
@@ -107,7 +96,6 @@ public class SystemUserServiceImpl extends ServiceImpl<SystemUserMapper, SystemU
 
     @Override
     public SystemUserModel register(SystemUserModel user) throws Exception {
-
         String userId = UUID.fastUUID().toString();
         user.setCreateTime(LocalDateTime.now());
         user.setUserId(userId);
@@ -121,10 +109,7 @@ public class SystemUserServiceImpl extends ServiceImpl<SystemUserMapper, SystemU
         int insertFlag = systemUserMapper.insertSystemUser(user);
         SystemRoleModel systemRoleModel = new SystemRoleModel();
         systemRoleModel.setRoleName("ROLE_NORMAL");
-
-
         SystemRoleModel roleModel = systemRoleService.getRoles(systemRoleModel);
-
         if (insertFlag == 1) {
             String templateId = UUID.randomUUID().toString(true);
             //保存用户角色信息
@@ -148,21 +133,22 @@ public class SystemUserServiceImpl extends ServiceImpl<SystemUserMapper, SystemU
             if (StrUtil.isEmpty(appId)) {
                 appId = "请填写appID";
             }
-
             SystemKeywordModel systemKeywordModel = new SystemKeywordModel();
-            systemKeywordModel.setUserSafeKey(findfishWechatUrl + Base64.getEncoder().encodeToString(user.getUsername().getBytes()) + "/" + appId);
             systemKeywordModel.setKeywordId(templateId);
             //00:00-00：00 默认全天开
             systemKeywordModel.setStartTime("00:00");
             systemKeywordModel.setEndTime("00:00");
-            systemKeywordModel.setAppId(appId);
             //新增用户 信息类 插入关键字表
             keywordService.addkeyword(systemKeywordModel);
             //插入关联表
             SystemUserToKeyword systemUserToKeyword = new SystemUserToKeyword(UUID.randomUUID().toString(true), user.getUserId(), templateId);
             systemUserToKeywordMapper.insertSysuserToKeyword(systemUserToKeyword);
-
-
+            SystemWxUserConfigModel systemWxUserConfigModel =  SystemWxUserConfigModel.builder().userId(userId)
+                    .wxAppId(appId).userSafeKey(findfishWechatUrl.concat(Base64.getEncoder().encodeToString(user.getUsername().getBytes())).concat(appId))
+                    .wxToken("1111")
+                    .wxSecret("1111")
+                    .wxAesKey("1111").build();
+            systemWxUserConfigService.saveOrUpdate(systemWxUserConfigModel);
         }
         return user;
     }
