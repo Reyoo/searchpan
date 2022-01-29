@@ -96,7 +96,7 @@ public class WxPortalController {
         } catch (Exception e) {
             return e.getMessage();
         }
-//        /**如果限制appid 则为私有 */
+        /**如果限制appid 则为私有 */
         if (!this.wxService.switchover(appId)) {
             throw new IllegalArgumentException(String.format("未找到对应appid=[%s]的配置，请核实！", appId));
         }
@@ -154,6 +154,10 @@ public class WxPortalController {
         //获取用调用接口时间
 //        systemUserModel.callTime(LocalDateTime.now());
 //        iSystemUserService.updateUser(systemUserModel);
+        /**如果限制appid 则为私有 */
+        if (!this.wxService.switchover(appId)) {
+            throw new IllegalArgumentException(String.format("未找到对应appid=[%s]的配置，请核实！", appId));
+        }
         String out = "输入内容不能为空";
         try {
             if (!wxService.checkSignature(timestamp, nonce, signature)) {

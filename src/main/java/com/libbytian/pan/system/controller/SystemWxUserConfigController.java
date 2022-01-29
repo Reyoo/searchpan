@@ -70,7 +70,7 @@ public class SystemWxUserConfigController {
     public AjaxResult updateWXUser(@RequestBody(required = true) SystemWxUserConfigDTO dto) {
         try {
             if(StrUtil.isNotBlank(dto.getWxAppId())){
-                dto.setUserSafeKey(findfishWechatUrl.concat(Base64.getEncoder().encodeToString(dto.getUsername().getBytes(StandardCharsets.UTF_8))).concat(dto.getWxAppId()));
+                dto.setUserSafeKey(findfishWechatUrl.concat(Base64.getEncoder().encodeToString(dto.getUsername().getBytes(StandardCharsets.UTF_8))).concat("/").concat(dto.getWxAppId()));
             }
             boolean b = systemWxUserConfigService.saveOrUpdate(dto);
             if (b) {

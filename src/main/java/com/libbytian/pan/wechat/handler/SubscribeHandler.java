@@ -34,11 +34,11 @@ public class SubscribeHandler extends AbstractHandler {
         this.logger.info("新关注用户 OPENID: " + wxMessage.getFromUser());
         // 获取微信用户基本信息
         try {
-            WxMpUser userWxInfo = weixinService.getUserService()
-                    .userInfo(wxMessage.getFromUser(), null);
-            if (userWxInfo != null) {
-                // TODO 可以添加关注用户到本地数据库
-            }
+//            WxMpUser userWxInfo = weixinService.getUserService()
+//                    .userInfo(wxMessage.getFromUser(), null);
+//            if (userWxInfo != null) {
+//                // TODO 可以添加关注用户到本地数据库
+//            }
             WxMpXmlOutMessage responseResult = this.handleSpecial(wxMessage);
             if (responseResult != null) {
                 return responseResult;
@@ -51,6 +51,7 @@ public class SubscribeHandler extends AbstractHandler {
             }
             return new TextBuilder().build(stringBuffer.toString(), wxMessage, weixinService);
         } catch (WxErrorException e) {
+            e.printStackTrace();
             if (e.getError().getErrorCode() == 48001) {
                 this.logger.info("该公众号没有获取用户信息权限！");
             }
