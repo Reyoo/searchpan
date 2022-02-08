@@ -112,12 +112,12 @@
             <version>${weixin-java-mp.version}</version>
         </dependency>
 
-<!--        &lt;!&ndash;emoji 转换器 https://github.com/binarywang/java-emoji-converter&ndash;&gt;
-        <dependency>
-            <groupId>com.github.binarywang</groupId>
-            <artifactId>java-emoji-converter</artifactId>
-            <version>1.0.1</version>
-        </dependency>-->
+        <!--        &lt;!&ndash;emoji 转换器 https://github.com/binarywang/java-emoji-converter&ndash;&gt;
+                <dependency>
+                    <groupId>com.github.binarywang</groupId>
+                    <artifactId>java-emoji-converter</artifactId>
+                    <version>1.0.1</version>
+                </dependency>-->
 
         <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-data-redis -->
         <dependency>
@@ -190,9 +190,6 @@
         </dependency>
 
 
-
-
-
         <!-- 解析excel-->
         <!-- https://mvnrepository.com/artifact/org.apache.poi/poi -->
         <dependency>
@@ -247,11 +244,11 @@
 
 
         <!-- https://mvnrepository.com/artifact/com.alicp.jetcache/jetcache-starter-redis -->
-<!--        <dependency>
-            <groupId>com.alicp.jetcache</groupId>
-            <artifactId>jetcache-starter-redis-lettuce</artifactId>
-            <version>2.6.0</version>
-        </dependency>-->
+        <!--        <dependency>
+                    <groupId>com.alicp.jetcache</groupId>
+                    <artifactId>jetcache-starter-redis-lettuce</artifactId>
+                    <version>2.6.0</version>
+                </dependency>-->
 
 
         <dependency>
@@ -261,11 +258,11 @@
 
 
         <!-- https://mvnrepository.com/artifact/com.alibaba.cloud/spring-cloud-starter-alibaba-sentinel -->
-<!--        <dependency>
-            <groupId>com.alibaba.cloud</groupId>
-            <artifactId>spring-cloud-starter-alibaba-sentinel</artifactId>
-            <version>2.2.5.RELEASE</version>
-        </dependency>-->
+        <!--        <dependency>
+                    <groupId>com.alibaba.cloud</groupId>
+                    <artifactId>spring-cloud-starter-alibaba-sentinel</artifactId>
+                    <version>2.2.5.RELEASE</version>
+                </dependency>-->
     </dependencies>
 
     <build>

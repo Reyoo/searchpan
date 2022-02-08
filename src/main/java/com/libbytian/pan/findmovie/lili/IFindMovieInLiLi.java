@@ -17,7 +17,7 @@ import java.util.List;
 @CacheConfig(cacheNames = "lili")
 public interface IFindMovieInLiLi extends IService<MovieNameAndUrlModel> {
 
-    @Cacheable(key = "#movieName", condition = "#movieName != null")
+    @Cacheable(key = "#movieName" , condition = "#movieName != null")
     List<MovieNameAndUrlModel> findMovieUrl(String movieName) throws Exception;
 
 }

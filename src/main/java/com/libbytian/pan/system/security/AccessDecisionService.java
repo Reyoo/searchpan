@@ -47,6 +47,9 @@ public class AccessDecisionService {
         whiteList.add("/captcha/captchaImage");
 //        whiteList.add("/userkey/**");
         whiteList.add("/fantasy/**");
+        whiteList.add("/sys/wx/**");
+
+
         for (String url : whiteList) {
             if (antPathMatcher.match(url, request.getRequestURI())) {
                 return true;

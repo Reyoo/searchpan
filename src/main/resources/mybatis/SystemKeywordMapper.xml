@@ -6,12 +6,9 @@
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
         k.keyword_id  AS keywordId,
-        k.user_safe_key AS userSafeKey,
-        k.user_token AS userToken,
         k.start_time AS startTime,
         k.end_time AS endTime,
-        k.fans_key AS fansKey,
-        k.app_id AS appId
+        k.fans_key AS fansKey
     </sql>
 
 
@@ -43,15 +40,6 @@
             <if test="fansKey != null and fansKey != ''">
                 fans_key =#{fansKey},
             </if>
-
-            <if test="userSafeKey != null and userSafeKey != ''">
-                user_safe_key =#{userSafeKey},
-            </if>
-
-            <if test="appId != null ">
-                app_id =#{appId},
-            </if>
-
         </trim>
         WHERE
         keyword_id =#{keywordId}
@@ -63,12 +51,6 @@
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="keywordId != null">
                 keyword_id,
-            </if>
-            <if test="userSafeKey != null">
-                user_safe_key,
-            </if>
-            <if test="userToken != null">
-                user_token,
             </if>
             <if test="startTime != null">
                 start_time,
@@ -82,24 +64,11 @@
                 fans_key,
             </if>
 
-            <if test="appId != null">
-                app_id,
-            </if>
-
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="keywordId != null">
                 #{keywordId,jdbcType=VARCHAR},
             </if>
-
-            <if test="userSafeKey != null">
-                #{userSafeKey,jdbcType=VARCHAR},
-            </if>
-
-            <if test="userToken != null">
-                #{userToken,jdbcType=VARCHAR},
-            </if>
-
             <if test="startTime != null">
                 #{startTime,jdbcType=VARCHAR},
             </if>
@@ -111,11 +80,6 @@
             <if test="fansKey != null">
                 #{fansKey,jdbcType=VARCHAR},
             </if>
-
-            <if test="appId != null">
-                #{appId,jdbcType=VARCHAR},
-            </if>
-
         </trim>
     </insert>
 

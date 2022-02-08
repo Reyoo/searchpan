@@ -26,38 +26,11 @@ public class SystemKeywordModel extends Model<SystemKeywordModel> implements Ser
 
     private static final long serialVersionUID = 1L;
 
-
-
-
     /**
      * 关键词id主键
      */
     @TableId(value = "keyword_id")
     private String keywordId;
-
-    /**
-     * 秘钥
-     */
-    @TableField("secret_key")
-    private String secretKey;
-
-
-
-    /**
-     * 用户base64 认证
-     */
-    @TableField("user_safe_key")
-    private String userSafeKey;
-
-
-
-
-    /**
-     * 用户接口认证token
-     */
-    @TableField("user_token")
-    private String userToken;
-
 
 
     /**
@@ -75,9 +48,5 @@ public class SystemKeywordModel extends Model<SystemKeywordModel> implements Ser
 
     @TableField("fans_key")
     private String fansKey;
-
-
-    @TableField("app_id")
-    private String appId;
 
 }

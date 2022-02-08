@@ -33,7 +33,6 @@ public class UserKeywordController {
 
     @RequestMapping(value = "/list/{username}", method = RequestMethod.GET)
     public AjaxResult getUserKeywordByUser(@PathVariable String username) {
-
         try {
             return AjaxResult.success(iSystemKeywordService.keywordByUser(username));
         } catch (Exception e) {
@@ -45,15 +44,7 @@ public class UserKeywordController {
 
     @RequestMapping(value = "/fresh", method = RequestMethod.PATCH)
     public AjaxResult updateUserKeyword(HttpServletRequest httpRequest, @RequestBody(required = true) SystemKeywordModel systemKeywordModel) {
-        String userSafeKey = null;
         try {
-            if (StrUtil.isEmpty(systemKeywordModel.getAppId())) {
-                userSafeKey = findfishWechatUrl + Base64.getEncoder().encodeToString(httpRequest.getRemoteUser().getBytes()) + "/" + "请填写appID";
-                systemKeywordModel.setUserSafeKey(userSafeKey);
-            }else{
-                userSafeKey = findfishWechatUrl + Base64.getEncoder().encodeToString(httpRequest.getRemoteUser().getBytes()) + "/" + systemKeywordModel.getAppId();
-                systemKeywordModel.setUserSafeKey(userSafeKey);
-            }
             iSystemKeywordService.updateKeyword(systemKeywordModel);
             return AjaxResult.success("update is success !!! ");
         } catch (Exception e) {

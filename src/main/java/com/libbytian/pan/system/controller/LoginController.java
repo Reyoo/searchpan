@@ -8,6 +8,7 @@ import com.libbytian.pan.system.service.ISystemUserService;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import me.chanjar.weixin.mp.api.WxMpService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,7 +31,7 @@ public class LoginController {
 
     private final ISystemUserService iSystemUserService;
 
-
+    private final WxMpService  wxMpService;
     /**
      * 登录跳转
      *
