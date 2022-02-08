@@ -18,17 +18,17 @@ import java.io.InputStream;
 import java.util.List;
 
 @Transactional(propagation = Propagation.REQUIRES_NEW)
-@CacheConfig(cacheNames = "templateDetails")
+//@CacheConfig(cacheNames = "templateDetails")
 public interface ISystemTemDetailsService extends IService<SystemTemDetailsModel> {
 
 
     IPage<SystemTemDetailsModel> findTemDetailsPage(Page page,String templateId) throws Exception;
 
 
-    @CachePut(key = "#username" ,condition = "#username != null")
+//    @CachePut(key = "#username" ,condition = "#username != null")
     List<SystemTemDetailsModel> addTemDetails(SystemTemDetailsModel systemTemDetailsModel,String templateId,String username) throws Exception;
 
-    @CachePut(key = "#username" ,condition = "#username != null")
+//    @CachePut(key = "#username" ,condition = "#username != null")
     List<SystemTemDetailsModel> exportExceltoDb(String filename, InputStream inputStream, String templateId,String username) throws Exception;
 
 
@@ -38,7 +38,7 @@ public interface ISystemTemDetailsService extends IService<SystemTemDetailsModel
     /**
      * 根据用户信息获取 启用状态的模板详细List
      */
-    @Cacheable(key = "#systemUserModel.username",condition = "#systemUserModel.username != null")
+//    @Cacheable(key = "#systemUserModel.username",condition = "#systemUserModel.username != null")
     List<SystemTemDetailsModel> getTemDetailsWithUser (SystemUserModel systemUserModel) throws Exception;
 
 
@@ -47,7 +47,7 @@ public interface ISystemTemDetailsService extends IService<SystemTemDetailsModel
      * @param SystemTemDetailsModel
      * @return
      */
-    @CachePut(key = "#username" ,condition = "#username != null")
+//    @CachePut(key = "#username" ,condition = "#username != null")
     List<SystemTemDetailsModel> updateTempDetailsWithModel(SystemTemDetailsModel SystemTemDetailsModel,String username) throws Exception;
 
 
@@ -60,13 +60,7 @@ public interface ISystemTemDetailsService extends IService<SystemTemDetailsModel
 
     void  defaultSave(String templateId);
 
-
-
-
-
-
-
-    @CacheEvict(key = "#username" ,condition = "#username != null" ,allEntries = true,beforeInvocation = true )
+//    @CacheEvict(key = "#username" ,condition = "#username != null" ,allEntries = true,beforeInvocation = true )
     int deleteTemplateDetails(List<String> temdetailsId,String username);
 
 }

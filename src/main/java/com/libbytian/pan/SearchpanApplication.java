@@ -9,6 +9,8 @@ import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.client.RestTemplate;
 
+import javax.annotation.PostConstruct;
+
 
 @SpringBootApplication
 @EnableAsync
@@ -19,6 +21,12 @@ public class SearchpanApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(SearchpanApplication.class, args);
+    }
+
+
+    @PostConstruct
+    public void setProperties(){
+        System.setProperty("druid.mysql.usePingMethod","false");
     }
 
     @Bean
