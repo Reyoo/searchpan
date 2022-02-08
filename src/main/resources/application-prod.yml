@@ -55,7 +55,7 @@ spring:
   cloud:
     sentinel:
       transport:
-        dashboard: 121.36.6.92:8899
+        dashboard: 101.43.155.108:8899
 #  # 定位模板的目录,给返回的页面添加后缀名
 #  thymeleaf:
 #    prefix: classpath:/templates/
