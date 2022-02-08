@@ -105,17 +105,7 @@ pagehelper:
   helper-dialect: mysql
 
 
-wx:
-  mp:
-    configs:
-      - appId: wx9d9ce20752ffc38b
-        secret: 1c34fd3c4413b3acdb819b1c05c88b9c
-        token: 1111 # 接口配置里的Token值
-        aesKey: 1111 # 接口配置里的EncodingAESKey值
-#      - appId: 2222 # 第二个公众号的appid，以下同上
-#        secret: 1111
-#        token: 111
-#        aesKey: 111
+
 
 findfish:
   config:

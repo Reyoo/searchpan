@@ -183,8 +183,9 @@ public class WxPortalController {
                     splitName = inMessage.getContent();
                 }
 
+                String finalSplitName = splitName;
                 CompletableFuture<Void> completableFuture = CompletableFuture.runAsync(() -> {
-                    iSystemUserSearchMovieService.userSearchMovieCountInFindfish(inMessage.getContent());
+                    iSystemUserSearchMovieService.userSearchMovieCountInFindfish(finalSplitName);
                 });
 
                 //从Redis中取出所有key,判断是传入内容是否为敏感词
@@ -213,8 +214,6 @@ public class WxPortalController {
                 stringBuffer.append(splitName);
                 stringBuffer.append("]关键词已获取，点击查看查询结果</a>");
                 if (lastModel.getEnableFlag()) {
-                    stringBuffer.append("\r\n");
-                    stringBuffer.append("如未查询到结果请重新输入简写,例奥特曼大战变形金刚,输入奥特曼即可");
                     stringBuffer.append("\r\n");
                     stringBuffer.append("\r\n");
                     stringBuffer.append(lastModel.getKeywordToValue());

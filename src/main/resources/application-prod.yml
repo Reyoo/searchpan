@@ -26,11 +26,10 @@ spring:
     url: jdbc:mysql://101.43.155.108:33306/findfish?useUnicode=true&characterEncoding=utf-8&serverTimezone=Hongkong
     username: root
     password: libbytian123QWE
-
     type: com.alibaba.druid.pool.DruidDataSource
     filters: stat
     maxActive: 30
-    initialSize: 10
+    initialSize: 20
     maxWait: 60000
     minIdle: 1
     timeBetweenEvictionRunsMillis: 60000
@@ -95,18 +94,6 @@ mybatis-plus:
     log-impl: org.apache.ibatis.logging.nologging.NoLoggingImpl
     jdbc-type-for-null: 'null'
 
-
-wx:
-  mp:
-    configs:
-      - appId: 11111# 第一个公众号的appid
-        secret: 111111# 公众号的appsecret
-        token: 1111 # 接口配置里的Token值
-        aesKey: 1111 # 接口配置里的EncodingAESKey值
-#      - appId: 2222 # 第二个公众号的appid，以下同上
-#        secret: 1111
-#        token: 111
-#        aesKey: 111
 
 
 findfish:
