@@ -5,8 +5,6 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.*;
 
-import java.time.LocalDateTime;
-
 /**
  * @ProjectName: pan
  * @Package: com.search.pan.system.model
@@ -40,8 +38,5 @@ public class MovieNameAndUrlModel extends Model<MovieNameAndUrlModel> {
     String titleName;
     @TableField("pan_source")
     String panSource;
-    @TableField("updatetime")
-    LocalDateTime updateTime;
-
 
 }

@@ -55,13 +55,12 @@ public class AsyncSearchCachedComponent {
         switch (search) {
             //a 一号大厅 小悠
             case "a":
-                Map<String, List<MovieNameAndUrlModel>> collectLiLi = iFindMovieInLiLi.findMovieUrl(searchMovieText).stream().collect(Collectors.groupingBy(MovieNameAndUrlModel::getMovieName));
-                return collectLiLi;
-            //u 二号大厅 莉莉
-            case "u":
                 Map<String, List<MovieNameAndUrlModel>> collectXiaoYou = iFindMovieInXiaoyou.findMovieUrl(searchMovieText).stream().collect(Collectors.groupingBy(MovieNameAndUrlModel::getMovieName));
                 return collectXiaoYou;
-
+            //u 二号大厅 莉莉
+            case "u":
+                Map<String, List<MovieNameAndUrlModel>> collectLiLi = iFindMovieInLiLi.findMovieUrl(searchMovieText).stream().collect(Collectors.groupingBy(MovieNameAndUrlModel::getMovieName));
+                return collectLiLi;
             //x 3号大厅
             case "x":
                 Map<String,  List<MovieNameAndUrlModel>> combineResultMap = new HashMap<>();
