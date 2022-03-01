@@ -331,7 +331,7 @@ public class SystemTemDetailsServiceImpl extends ServiceImpl<SystemTemDetailsMap
 
             systemTemDetailsMapper.insertSystemTemDetails(details);
             //用户模板绑定模板详情
-            SystemTemToTemdetail temToTemdetail = SystemTemToTemdetail.builder().templateid(templateId).templatedetailsid(details.getTemplateId()).build();
+            SystemTemToTemdetail temToTemdetail = SystemTemToTemdetail.builder().templateid(templateId).templatedetailsid(details.getTemdetailsId()).build();
             iSystemTmplToTmplDetailsService.save(temToTemdetail);
         }
 

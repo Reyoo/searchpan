@@ -147,7 +147,9 @@ public class SystemUserServiceImpl extends ServiceImpl<SystemUserMapper, SystemU
                     .wxAppId(appId).userSafeKey(findfishWechatUrl.concat(Base64.getEncoder().encodeToString(user.getUsername().getBytes())).concat(appId))
                     .wxToken("1111")
                     .wxSecret("1111")
-                    .wxAesKey("1111").build();
+                    .wxAesKey("1111")
+                    .wxId("1111")
+                    .username(user.getUsername()).build();
             systemWxUserConfigService.saveOrUpdate(systemWxUserConfigModel);
         }
         return user;

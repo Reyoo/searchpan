@@ -7,6 +7,7 @@ import lombok.*;
 import lombok.experimental.Accessors;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 /**
  * @ProjectName: pan
@@ -36,6 +37,10 @@ public class MovieNameAndUrlModel extends Model<MovieNameAndUrlModel> {
     String wangPanUrl;
     @TableField("wangpan_passwd")
     String wangPanPassword;
+    @TableField("title_name")
+    String titleName;
+    @TableField("pan_source")
+    String panSource;
 
 
 }
