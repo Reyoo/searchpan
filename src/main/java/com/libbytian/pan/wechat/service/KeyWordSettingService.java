@@ -37,6 +37,28 @@ public class KeyWordSettingService {
 
 
         /**
+         * 关键词 维护判断
+         * 00：00-00：00全天开放
+         * 其他相同起始时间为全天维护  全天维护权限最高，所以最先判断
+         */
+
+        //维护时间
+        String userStart = systemKeywordModel.getStartTime();
+        String userEnd = systemKeywordModel.getEndTime();
+
+        //如果时间相同且不为0：00，全天开启秘钥回复，此时口令无效。
+        if (userStart.equals(userEnd) && !"00:00".equals(userStart) ){
+            stringBuffer.setLength(0);
+            if (keyContent.getEnableFlag()){
+                stringBuffer.append(keyContent.getKeywordToValue());
+            }else {
+                stringBuffer.append("正在维护中。。。");
+            }
+            return stringBuffer;
+        }
+
+
+        /**
          * 关键词 隐藏判断
          * 空格作为区分
          */
@@ -57,22 +79,13 @@ public class KeyWordSettingService {
             }
         }
 
-//        SystemKeywordModel systemKeywordModel = systemKeywordService.keywordByUser(systemUserModel.getUsername());
 
-
-        /**
-         * 关键词 维护判断
-         * 00：00-00：00全天开放
-         * 其他相同起始时间为全天维护
-         */
-
-        //维护时间
-        String userStart = systemKeywordModel.getStartTime();
-        String userEnd = systemKeywordModel.getEndTime();
+        //00:00-00:00 为全天不维护，直接放开返回
+        if ("00:00".equals(userStart) && "00:00".equals(userEnd)){
+            return stringBuffer;
+        }
 
         String fansKey = systemKeywordModel.getFansKey();
-
-        if (!"00:00".equals(userStart) || !"00:00".equals(userEnd)) {
 
             SimpleDateFormat df = new SimpleDateFormat("HH:mm");
             Date dateStart = df.parse(userStart);
@@ -95,32 +108,18 @@ public class KeyWordSettingService {
                 endTime.add(Calendar.DATE, 1);
             }
             //如果当前时间在维护期内，返回维护内容,开始=结束 全天维护
+
             if (nowTime.after(beginTime) && nowTime.before(endTime) || userStart.equals(endTime)) {
                 //维护期内判断秘钥功能
-                if (!searchName.contains(fansKey) && ! fansKey.equals("000000") ) {
-                    if (keyContent.getEnableFlag()) {
-                        stringBuffer.setLength(0);
-                        stringBuffer.append(keyContent.getKeywordToValue());
-                    }else {
-                        if (preserveContent.getEnableFlag()){
-                            stringBuffer.setLength(0);
-                            stringBuffer.append(preserveContent.getKeywordToValue());
-                        }else {
-                            Thread.sleep(5000);
-                        }
-                    }
-                }
-                //判断段维护期内 没开秘钥情况
-                if (fansKey.equals("000000")){
-                    if (preserveContent.getEnableFlag()){
-                        stringBuffer.setLength(0);
-                        stringBuffer.append(preserveContent.getKeywordToValue());
-                    }else {
+                if (!searchName.contains(fansKey)) {
+                    if (!preserveContent.getEnableFlag()){
                         Thread.sleep(5000);
                     }
+                    stringBuffer.setLength(0);
+                    stringBuffer.append(preserveContent.getKeywordToValue());
                 }
             }
-        }
+
         return stringBuffer;
     }
 
